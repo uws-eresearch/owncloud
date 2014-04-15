@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ownCloud - Cr8it App
+ * ownCloud - file_previewer App
  *
  * @author Lloyd Harischandra
  * @copyright 2014 University of Western Sydney www.uws.edu.au

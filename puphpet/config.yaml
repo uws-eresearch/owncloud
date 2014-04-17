@@ -34,10 +34,14 @@ vagrantfile-local:
                 source: ./apps/crate_it/
                 target: /var/www/html/owncloud/apps/crate_it/
                 nfs: 'false'
+                owner: 'vagrant'
+                group: 'vagrant'
             Fw54BFecYw33:
                 source: ./apps/file_previewer/
                 target: /var/www/html/owncloud/apps/file_previewer/
                 nfs: 'false'
+                owner: 'vagrant'
+                group: 'vagrant'        
         usable_port_range: 2200..2250
     ssh:
         host: null

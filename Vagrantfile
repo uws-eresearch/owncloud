@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   data['vm']['synced_folder'].each do |i, folder|
     if folder['source'] != '' && folder['target'] != '' && folder['id'] != ''
       nfs = (folder['nfs'] == "true") ? "nfs" : nil
-      config.vm.synced_folder "#{folder['source']}", "#{folder['target']}", id: "#{folder['id']}", type: nfs
+      config.vm.synced_folder "#{folder['source']}", "#{folder['target']}", id: "#{folder['id']}", type: nfs, owner:"#{folder['owner']}", group:"#{folder['group']}", mount_options: ["dmode=775,fmode=664"]
     end
   end
 

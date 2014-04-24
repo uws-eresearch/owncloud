@@ -10,3 +10,7 @@ sudo yum -y install owncloud-6.0.2-8.2.noarch
 sudo setenforce 0
 sudo service iptables stop
 sudo service httpd start
+# ensure iptables stay stopped
+sudo chkconfig iptables off
+# ensure httpd starts on boot
+sudo chkconfig httpd on

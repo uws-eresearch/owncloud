@@ -25,13 +25,6 @@ You should see the directories crate_it and file_previewer
 
 #### Access owncloud
 The server should be started already, go to "http://localhost:8080/owncloud", and create an account by entering a username and password.
-
-If the page does not load, you may have to restart the server manually:
-
-    vagrant ssh
-    sudo su -
-    iptables stop
-    service httpd restart
     
 ### QA Setup
 

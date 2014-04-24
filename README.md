@@ -28,6 +28,14 @@ The server should be started already, go to "http://localhost:8080/owncloud", an
     
 ### QA Setup
 
+#### Install PHP 
+If you don't have PHP5.4 already, do the following to install (this is for CentOS 5.4):
+
+    sudo rpm -Uvh http://mirror.webtatic.com/yum/el5/latest.rpm
+    sudo yum install php54w
+    sudo yum install php54w-xml
+    sudo yum install php54w-mbstring
+    
     TODO
 
 ### To update production site

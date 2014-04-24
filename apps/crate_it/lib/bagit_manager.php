@@ -689,7 +689,7 @@ class BagItManager{
             }
         } else {
            header("HTTP/1.1 ".$sd->sac_status." ".$sd->sac_statusmessage);
-           break;
+           //break;
         }
 
         return $collections;

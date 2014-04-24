@@ -1,0 +1,6 @@
+tmp/**/*
+.project
+log/*.log
+log
+.vagrant
+.vagrant/**/*

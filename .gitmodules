@@ -1,3 +1,34 @@
 [submodule "apps/crate_it/3rdparty/swordappv2-php-library"]
 	path = apps/crate_it/3rdparty/swordappv2-php-library
 	url = https://github.com/swordapp/swordappv2-php-library.git
+[submodule "apps/crate_it/vendor/behat/behat"]
+	path = apps/crate_it/vendor/behat/behat
+	url = https://github.com/Behat/Behat.git
+[submodule "apps/crate_it/vendor/behat/gherkin"]
+        path = apps/crate_it/vendor/behat/gherkin
+        url = https://github.com/Behat/Gherkin.git
+[submodule "apps/crate_it/vendor/symfony/config/Symfony/Component/Config"]
+	path = apps/crate_it/vendor/symfony/config/Symfony/Component/Config
+	url = git://github.com/symfony/Config.git
+[submodule "apps/crate_it/vendor/symfony/console/Symfony/Component/Console"]
+        path = apps/crate_it/vendor/symfony/console/Symfony/Component/Console
+        url = git://github.com/symfony/Console.git
+[submodule "apps/crate_it/vendor/symfony/dependency-injection/Symfony/Component/DependencyInjection"]
+        path = apps/crate_it/vendor/symfony/dependency-injection/Symfony/Component/DependencyInjection
+        url = git://github.com/symfony/DependencyInjection.git
+[submodule "apps/crate_it/vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher"]
+        path = apps/crate_it/vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher
+        url = git://github.com/symfony/EventDispatcher.git
+[submodule "apps/crate_it/vendor/symfony/filesystem/Symfony/Component/Filesystem"]
+        path = apps/crate_it/vendor/symfony/filesystem/Symfony/Component/Filesystem
+        url = git://github.com/symfony/Filesystem
+[submodule "apps/crate_it/vendor/symfony/finder/Symfony/Component/Finder"]
+        path = apps/crate_it/vendor/symfony/finder/Symfony/Component/Finder
+        url = git://github.com/symfony/Finder.git
+[submodule "apps/crate_it/vendor/symfony/translation/Symfony/Component/Translation"]
+        path = apps/crate_it/vendor/symfony/translation/Symfony/Component/Translation
+        url = git://github.com/symfony/Translation.git
+[submodule "apps/crate_it/vendor/symfony/yaml/Symfony/Component/Yaml"]
+        path = apps/crate_it/vendor/symfony/yaml/Symfony/Component/Yaml
+        url = git://github.com/symfony/Yaml.git
+

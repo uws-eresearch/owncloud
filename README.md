@@ -10,7 +10,7 @@ Download Vagrant and Virtual Box
 
 #### Set up environment
 
-     git clone git@github.com/IntersectAustralia/owncloud.git
+     git clone git@github.com:IntersectAustralia/owncloud.git
      git submodule init
      git submodule update
      vagrant up

@@ -40,11 +40,16 @@ OCP\Util::addscript('crate_it/3rdparty', 'jqtree/jqTreeContextMenu');
 OCP\Util::addscript('crate_it', 'loader');
 OCP\Util::addscript('crate_it', 'crate');
 
+// Font awesome
+OCP\Util::addStyle('crate_it', 'font-awesome.min');
 
 // Bootstrap
 OCP\Util::addStyle('crate_it/3rdparty', 'bootstrap/bootstrap');
 OCP\Util::addStyle('crate_it', 'crate');
 OCP\Util::addStyle('crate_it/3rdparty', 'jqtree/jqtree');
+
+
+
 
 $config_file = \OC::$SERVERROOT.'/data/cr8it_config.json';
 if(!file_exists($config_file)){

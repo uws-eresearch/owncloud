@@ -19,8 +19,6 @@
 
  -->
 
- <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
 <div id="container" class="crateit">
 
   <div class="bar-actions">

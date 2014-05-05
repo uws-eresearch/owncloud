@@ -10,7 +10,7 @@ Download Vagrant and Virtual Box
 
 #### Set up environment
 
-     git clone git@github.com/IntersectAustralia/owncloud.git
+     git clone git@github.com:IntersectAustralia/owncloud.git
      git submodule init
      git submodule update
      vagrant up
@@ -24,5 +24,5 @@ Download Vagrant and Virtual Box
 You should see the directories crate_it and file_previewer
 
 #### Access owncloud
-The server should be started already, go to "http://localhost:8080/owncloud", and create an account by entering a username and password.
+The server should be started already, go to [http://localhost:8080/owncloud](http://localhost:8080/owncloud) and create an account by entering a username and password.
     

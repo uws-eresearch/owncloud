@@ -1,4 +1,4 @@
-.dropdown 
+.dropdown
 {
 color: #555;
 margin: 3px -22px 0 0;
@@ -21,7 +21,7 @@ padding: 40px 0 5px;
 border-radius: 6px;
 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 }
-.dropdown li a 
+.dropdown li a
 {
 color: #555555;
 display: block;
@@ -38,7 +38,7 @@ background:#155FB0;
 color: #FFFFFF;
 text-decoration: none;
 }
-a.account 
+a.account
 {
 font-size: 11px;
 line-height: 16px;
@@ -70,4 +70,44 @@ border-top:1px solid #dedede;
 
 #dialog-help > li {
     display: list-item;
+}
+
+
+.pull-right {
+	float: right!important;
+}
+
+.crateit input[type="text"], .crateit input[type="password"], .crateit input[type="search"], .crateit input[type="number"], .crateit input[type="email"], .crateit input[type="url"], .crateit input[type="time"], .crateit textarea, .crateit select, .crateit button, .crateit input[type="button"], .crateit .button, .crateit #quota, .crateit .pager li a {
+	width: 10em;
+	margin: .3em;
+	padding: .6em .5em .4em;
+	font-size: 1em;
+/*	color: #333;*/
+	border: 1px solid #ddd;
+	outline: none;
+	border-radius: 3px;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	display: inline-block;
+	height: 36px;
+	padding: 7px 10px;
+}
+
+.bar-actions {
+	height: 44px;
+	background-color: #eee;
+	border-bottom: 1px solid #e7e7e7;
+
+	font-size: 14px;
+}
+
+.bar-actions form { display: inline-block; }
+
+.bar-actions button {
+	font-size: 14px;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	display: inline-block;
+	height: 36px;
+	padding: 7px 10px;
 }

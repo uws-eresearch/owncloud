@@ -4,3 +4,5 @@ log/*.log
 log
 .vagrant
 .vagrant/**/*
+apps/crate_it/vendor/*
+apps/crate_it/composer.phar

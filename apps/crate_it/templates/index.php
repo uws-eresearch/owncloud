@@ -23,28 +23,9 @@
 
   <div class="bar-actions">
     <form id="crate_input" method="get">
-      Create new crate:
-      <input type="text" id="create">
-      <input id="subbutton" type="submit" value="Submit">
+      <a id="subbutton" class="button fa fa-plus"></a>
     </form>
 
-    <div class="pull-right">
-      <?php if ($_['previews']==="on" ):?>
-        <input id="epub" type="button" value="EPUB" />
-      <?php endif; ?>
-      <input id="download" type="button" value="Download Crate as zip" />
-
-      <input id="clear" type="button" value="Clear Crate" />
-      <a id="delete" type="button" class="button">
-        <i class="fa fa-trash-o"></i>
-      </a>
-
-      <button id="help_button"> Help? </button>
-    </div>
-
-  </div>
-
-  <div style="padding-top:20px; padding-left:5px;">
     <select id="crates">
       <?php foreach($_['crates'] as $crate):?>
         <option id="<?php echo $crate; ?>" value="<?php echo $crate; ?>" <?php if($_['selected_crate']==$crate){echo 'selected';}?>>
@@ -52,24 +33,41 @@
         </option>
       <?php endforeach;?>
     </select>
-    <?php if ($_['sword_status'] === "enabled" ):?>
-      <div>
-        <select id="sword_collection">
+
+    <div class="pull-right">
+
+      <?php if ($_['sword_status'] === "enabled" ):?>
+
+<!--         <select id="sword_collection">
           <?php foreach ($_['sword_collections'] as $collection => $href): ?>
             <option value="<?php echo $href?>">
               <?php echo $collection; ?>
             </option>
           <?php endforeach; ?>
-        </select>
-        <input id="post" type="button" value="Post Crate to SWORD" />
-
+        </select> -->
+        <!-- <input id="post" type="button" value="Post Crate to SWORD" /> -->
+        <a id="post" class="button fa fa-envelope"></a>
       <?php endif; ?>
+
+      <?php if ($_['previews']==="on" ):?>
+        <a id="epub" class="button fa fa-book"></a>
+      <?php endif; ?>
+
+      <a id="download" class="button fa fa-download"></a>
+
+      <a id="clear" class="button fa fa-ban"></a>
+
+      <a id="delete" class="button fa fa-trash-o"></a>
+
+      <a id="help_button" class="button fa fa-question"></a>
     </div>
 
-    <div id="metadata" style="float:right;">
+  </div>
+
+<!--     <div id="metadata" style="float:right;">
       <?php if ($_['mint_status'] === "enabled" ):?>
 
-        <!--
+
         <div id="anzsrc_for">
         <div>
         <select id="for_top_level" class="for_codes">
@@ -91,8 +89,8 @@
 <option id="select_third" value="for_third_choose">Choose a code</option>
 </select>
 </div>
-</div>
--->
+</div> -->
+
 
 <div id="creators_box">
   <div>

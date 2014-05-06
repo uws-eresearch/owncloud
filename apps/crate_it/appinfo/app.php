@@ -41,7 +41,8 @@ OCP\Util::addscript('crate_it', 'loader');
 OCP\Util::addscript('crate_it', 'crate');
 
 // Font awesome
-OCP\Util::addStyle('crate_it', 'font-awesome.min');
+OCP\Util::addStyle('crate_it', 'font-awesome');
+OCP\Util::addStyle('crate_it', 'font-awesome.overrides');
 
 // Bootstrap
 OCP\Util::addStyle('crate_it/3rdparty', 'bootstrap/bootstrap');

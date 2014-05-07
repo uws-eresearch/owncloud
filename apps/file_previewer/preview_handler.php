@@ -48,10 +48,33 @@ if (\OC\Files\Filesystem::isReadable($file)) {
 		return;
 	}
 } elseif (!\OC\Files\Filesystem::file_exists($file)) {
-	header("HTTP/1.0 404 Not Found");
-	$tmpl = new OC_Template('', '404', 'guest');
-	$tmpl->assign('file', $name);
-	$tmpl->printPage();
+	//If this is a text file, show content
+	$parent_dir = dirname($file);
+	$parts = pathinfo($parent_dir);
+	$f_name = substr_replace($parts['dirname'], $parts['basename'], -5);
+	$f_path = \OC\Files\Filesystem::getLocalFile($f_name);
+	$file_info = new finfo(FILEINFO_MIME_TYPE); 
+	$mime_type = $file_info->buffer(file_get_contents($f_path));  
+	
+	if($mime_type == "text/plain") {
+		$handle = fopen($f_path, "r");
+		if ($handle) {
+			while (($buffer = fgets($handle)) !== false) {
+				echo $buffer . '<br/>';
+			}
+			if (!feof($handle)) {
+				echo "Error: unexpected fgets() fail\n";
+			}
+			fclose($handle);
+		}
+		return;
+	}
+	else {
+		header("HTTP/1.0 404 Not Found");
+		$tmpl = new OC_Template('', '404', 'guest');
+		$tmpl->assign('file', $name);
+		$tmpl->printPage();
+	}
 } else {
 	header("HTTP/1.0 403 Forbidden");
 	die('403 Forbidden');

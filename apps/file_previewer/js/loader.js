@@ -86,47 +86,45 @@ function getRequestURL(dir, filename, type) {
 }
 
 $(document).ready(function() {
-	if(!$.browser.msie){//doesn't work on IE
-		//if(location.href.indexOf("files")!=-1) {
-			if(typeof FileActions!=='undefined'){
-				var supportedMimes = new Array(
-					'application/msword',
-					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-					'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
-					'application/msexcel',
-					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-					'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-					'application/mspowerpoint',
-					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-					'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-					'application/vnd.openxmlformats-officedocument.presentationml.template',
-					'application/vnd.openxmlformats-officedocument.presentationml.slide',
-					'application/vnd.oasis.opendocument.text', 
-					'application/vnd.oasis.opendocument.spreadsheet',
-					'application/vnd.oasis.opendocument.graphics',
-					'application/vnd.oasis.opendocument.presentation');
-				for (var i = 0; i < supportedMimes.length; ++i){
-					var mime = supportedMimes[i];
-					FileActions.register(mime,'Preview',OC.PERMISSION_READ,'',function(filename){
-						showPreview($('#dir').val(),filename, 'html');
-					});
-					/*FileActions.register(mime,'Prev',OC.PERMISSION_READ,'',function(filename){
-						showPreview($('#dir').val(),filename, 'pdf');
-					});
-					FileActions.setDefault(mime,'Prev');*/
-				}
-			}
-		//}
-		
-		//if(location.href.indexOf("files")!=-1) {
-			if(typeof FileActions!=='undefined') {
-				FileActions.register('application/msword','ePub', OC.PERMISSION_READ, '',function(filename) {
-					//window.location = OC.linkTo('file_previewer', 'docViewer.php')+'?dir='+encodeURIComponent($('#dir').val()).replace(/%2F/g, '/')+'&file='+encodeURIComponent(filename.replace('&', '%26'))+'&type=epub';
-					window.location = getRequestURL($('#dir').val(), filename, '.epub');
+	//if(location.href.indexOf("files")!=-1) {
+		if(typeof FileActions!=='undefined'){
+			var supportedMimes = new Array(
+				'text/plain',
+				'application/msword',
+				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+				'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+				'application/msexcel',
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
+				'application/mspowerpoint',
+				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+				'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+				'application/vnd.openxmlformats-officedocument.presentationml.template',
+				'application/vnd.openxmlformats-officedocument.presentationml.slide',
+				'application/vnd.oasis.opendocument.text', 
+				'application/vnd.oasis.opendocument.spreadsheet',
+				'application/vnd.oasis.opendocument.graphics',
+				'application/vnd.oasis.opendocument.presentation');
+			for (var i = 0; i < supportedMimes.length; ++i){
+				var mime = supportedMimes[i];
+				FileActions.register(mime,'Preview',OC.PERMISSION_READ,'',function(filename){
+					showPreview($('#dir').val(),filename, 'html');
 				});
+				/*FileActions.register(mime,'Prev',OC.PERMISSION_READ,'',function(filename){
+					showPreview($('#dir').val(),filename, 'pdf');
+				});
+				FileActions.setDefault(mime,'Prev');*/
 			}
-		//}
+		}
+	//}
+	
+	//if(location.href.indexOf("files")!=-1) {
+		if(typeof FileActions!=='undefined') {
+			FileActions.register('application/msword','ePub', OC.PERMISSION_READ, '',function(filename) {
+				//window.location = OC.linkTo('file_previewer', 'docViewer.php')+'?dir='+encodeURIComponent($('#dir').val()).replace(/%2F/g, '/')+'&file='+encodeURIComponent(filename.replace('&', '%26'))+'&type=epub';
+				window.location = getRequestURL($('#dir').val(), filename, '.epub');
+			});
+		}
+	//}
 		
-		
-	}
 });

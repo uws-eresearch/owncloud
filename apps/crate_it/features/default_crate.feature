@@ -3,7 +3,7 @@ Feature: Default crate always exists
   I want to create a crate that holds files and folders
 
   Background:
-    Given I'm logged in to ownCloud
+    Given I'm logged in to ownCloud as "test"
     When I go to the crate_it page
 
   #CRATEIT-49

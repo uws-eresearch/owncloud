@@ -35,11 +35,14 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Given /^I\'m logged in to ownCloud$/
-     */  
-    public function iMLoggedInToOwncloud()
+     * @Given /^I\'m logged in to ownCloud as "([^"]*)"$/
+     */
+    public function iMLoggedInToOwncloudAs2($user)
     {
-        throw new PendingException();
+        $this->visit('/owncloud');
+        $this->fillField('user', $user);
+        $this->fillField('password', $user);
+        $this->pressButton('submit');
     }
 
     /**
@@ -47,7 +50,7 @@ class FeatureContext extends MinkContext
      */
     public function iGoToTheCrateItPage()
     {
-        throw new PendingException();
+        $this->visit('/owncloud/index.php/apps/crate_it');
     }
 
     /**

@@ -3,7 +3,7 @@ Feature: Add files and folders to a crate
   I want to add files and folders to crate
 
   Background:
-    Given I'm logged in to ownCloud
+    Given I'm logged in to ownCloud as "test"
     And I have file "file.txt" within the root folder
     And I have folder "folder1" within the root folder
     And I have folder "folder2" within "folder1"

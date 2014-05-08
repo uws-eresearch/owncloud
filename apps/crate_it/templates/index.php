@@ -50,16 +50,31 @@
       <?php endif; ?>
 
       <?php if ($_['previews']==="on" ):?>
-        <a id="epub" class="button fa fa-book"></a>
+        <a id="epub" class="button">
+          <i class="fa fa-book"></i>
+           Publish
+        </a>
       <?php endif; ?>
 
-      <a id="download" class="button fa fa-download"></a>
+      <a id="download" class="button">
+        <i class="fa fa-download"></i>
+         Download
+      </a>
 
-      <a id="clear" class="button fa fa-ban"></a>
+      <a id="clear" class="button">
+        <i class="fa fa-ban"></i>
+         Clear
+      </a>
 
-      <a id="delete" class="button fa fa-trash-o"></a>
+      <a id="delete" class="button">
+        <i class="fa fa-trash-o"></i>
+         Delete
+      </a>
 
-      <a id="help_button" class="button fa fa-question"></a>
+      <a id="help_button" class="button">
+        <i class="fa fa-question"></i>
+         Help
+      </a>
     </div>
 
   </div>
@@ -92,59 +107,9 @@
 </div> -->
 
 
-<div id="creators_box">
-  <div>
-    <label for="creators">Add Data Creator/s</label>
-  </div>
-  <ul id="creators">
-    <?php foreach($_['creators'] as $creator):?>
-      <li>
-        <input id="creator_<?php echo $creator['creator_id'] ?>" type="button" value="Remove" />
-        <span id="<?php echo $creator['creator_id'] ?>" class="full_name"><?php echo $creator['full_name'] ?></span>
-      </li>
-    <?php endforeach;?>
-  </ul>
-</div>
 
-<div id="search_people_box">
-  <input id="keyword" type="text" name="keyword" />
-  <input id="search_people" type="button" value="Search People" />
-</div>
 
-<div id="search_people_result_box">
-  <ul id="search_people_results">
-  </ul>
-</div>
 
-<div id="avtivities_box">
-  <div>
-    <label for="activities">Add Grant Number/s</label>
-  </div>
-  <ul id="activities">
-    <?php foreach($_['activities'] as $activity):?>
-      <li>
-        <input id="activity_<?php echo $activity['activity_id'] ?>" type="button" value="Remove" />
-        <span id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></span>
-      </li>
-    <?php endforeach;?>
-		    </ul>
-		</div>
-
-		<div id="search_activity_box">
-		    <input id="keyword_activity" type="text" name="keyword_activity" />
-		    <input id="search_activity" type="button" value="Search Grant Number" />
-		</div>
-
-		<div id="search_activity_result_box">
-		    <ul id="search_activity_results">
-		    </ul>
-		</div>
-
-	    <?php endif; ?>
-
-	</div>
-
-    <div>
         <div style="padding-top:20px; padding-left:5px;">
             <span id="crateName" style="font-weight:bold;font-size:large; padding-left:10px;"><?php echo $_['selected_crate'] ?></span>
             <div id='#description_box'>
@@ -154,13 +119,66 @@
             </div>
         </div>
 
-        <div style="float:left; padding-left:20px; padding-top:5px;">
-            <div id="files"></div>
-            <span>Crate size: </span><span id="crate_size_human"></span>
-        </div>
-    </div>
+        <div id="files"></div>
+        <span>Crate size: </span><span id="crate_size_human"></span>
 
-</div>
+        <div class="container-metadata">
+
+          <div id="creators_box">
+            <div>
+              <label for="creators">Add Data Creator/s</label>
+            </div>
+            <ul id="creators">
+              <?php foreach($_['creators'] as $creator):?>
+                <li>
+                  <input id="creator_<?php echo $creator['creator_id'] ?>" type="button" value="Remove" />
+                  <span id="<?php echo $creator['creator_id'] ?>" class="full_name"><?php echo $creator['full_name'] ?></span>
+                </li>
+              <?php endforeach;?>
+            </ul>
+          </div>
+
+          <div id="search_people_box">
+            <input id="keyword" type="text" name="keyword" />
+            <input id="search_people" type="button" value="Search People" />
+          </div>
+
+          <div id="search_people_result_box">
+            <ul id="search_people_results">
+            </ul>
+          </div>
+
+          <div id="avtivities_box">
+            <div>
+              <label for="activities">Add Grant Number/s</label>
+            </div>
+            <ul id="activities">
+              <?php foreach($_['activities'] as $activity):?>
+                <li>
+                  <input id="activity_<?php echo $activity['activity_id'] ?>" type="button" value="Remove" />
+                  <span id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></span>
+                </li>
+              <?php endforeach;?>
+                  </ul>
+              </div>
+
+              <div id="search_activity_box">
+                  <input id="keyword_activity" type="text" name="keyword_activity" />
+                  <input id="search_activity" type="button" value="Search Grant Number" />
+              </div>
+
+              <div id="search_activity_result_box">
+                  <ul id="search_activity_results">
+                  </ul>
+              </div>
+
+                <?php endif; ?>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 

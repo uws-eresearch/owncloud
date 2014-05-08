@@ -78,7 +78,7 @@ border-top:1px solid #dedede;
 }
 
 .crateit input[type="text"], .crateit input[type="password"], .crateit input[type="search"], .crateit input[type="number"], .crateit input[type="email"], .crateit input[type="url"], .crateit input[type="time"], .crateit textarea, .crateit select, .crateit button, .crateit input[type="button"], .crateit .button, .crateit #quota, .crateit .pager li a {
-	width: 10em;
+/*	width: 10em;*/
 	margin: .3em;
 	padding: .6em .5em .4em;
 	font-size: 1em;
@@ -110,4 +110,55 @@ border-top:1px solid #dedede;
 	display: inline-block;
 	height: 36px;
 	padding: 7px 10px;
+}
+
+#files ul {
+	margin: 0;
+	padding: 0;
+}
+
+#files .jqtree-element {
+	background-color: #fff;
+	height: 2.5em;
+	position: relative;
+	width: 100%;
+	-webkit-transition: background-image 500ms;
+	-moz-transition: background-image 500ms;
+	-o-transition: background-image 500ms;
+	transition: background-image 500ms;
+	border-bottom: 1px solid #eee;
+	font-style: normal;
+	background-position: 8px center;
+	background-repeat: no-repeat;
+}
+
+#files ul.jqtree-tree li.jqtree-folder .jqtree-title {
+	margin-left: 40px;
+}
+
+#files ul.jqtree-tree li.jqtree-selected > .jqtree-element, #files ul.jqtree-tree li.jqtree-selected > .jqtree-element:hover {
+background-color: none;
+background: none;
+}
+
+#files ul.jqtree-tree .jqtree-toggler {
+display: block;
+position: absolute;
+left: 20px;
+top: 30%;
+font-size: 12px;
+line-height: 12px;
+font-family: arial;
+border-bottom: none;
+color: #333;
+}
+
+.container-metadata {
+	position: absolute;
+	padding: 20px;
+	top: 45px;
+	bottom: 0;
+	right: 0;
+	width: 250px;
+	background: #444;
 }

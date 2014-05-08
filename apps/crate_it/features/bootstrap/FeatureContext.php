@@ -123,14 +123,6 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @When /^I add a "([^"]*)" within the root folder to the default crate$/
-     */
-    public function iAddAWithinTheRootFolderToTheDefaultCrate($arg1)
-    {
-        throw new PendingException();
-    }
-
-    /**
      * @Then /^the default crate should contain "([^"]*)" in the root folder$/
      */
     public function theDefaultCrateShouldContainInTheRootFolder($arg1)
@@ -252,12 +244,27 @@ class FeatureContext extends MinkContext
         $this->getSession()->getDriver()->getWebDriverSession()->dismiss_alert();
     }
 
-        /**
+    /**
      * @Given /^I wait for (\d+) seconds$/
      */
     public function iWaitForSeconds($seconds)
     {
         sleep($seconds);
+    }
+
+    /**
+     * @Given /^I have no files$/
+     */
+    public function iHaveNoFiles()
+    {
+        throw new PendingException();
+        $page = $this->getSession()->getPage();
+        $files = $page->findAll('css', '.action.delete.delete-icon');
+        foreach ($files as $file) {
+            $file->mouseOver();
+            $file->click();
+        }
+
     }
 
 }

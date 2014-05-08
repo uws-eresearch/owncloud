@@ -7,6 +7,8 @@ use Behat\Behat\Context\ClosuredContextInterface,
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
+use Behat\MinkExtension\Context\MinkContext;
+
 //
 // Require 3rd-party libraries here:
 //
@@ -14,12 +16,12 @@ use Behat\Gherkin\Node\PyStringNode,
 //   require_once 'PHPUnit/Framework/Assert/Functions.php';
 
 // require_once '../../vendor/autoload.php';
-require_once 'vendor/autoload.php';
+// require_once 'vendor/autoload.php';
 
 /**
  * Features context.
  */
-class FeatureContext extends BehatContext
+class FeatureContext extends MinkContext
 {
     /**
      * Initializes context.
@@ -33,11 +35,15 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @Given /^I\'m logged in to ownCloud$/
-     */  
-    public function iMLoggedInToOwncloud()
+     * @Given /^I\'m logged in to ownCloud as "([^"]*)"$/
+     */
+    public function iMLoggedInToOwncloudAs2($user)
     {
-        throw new PendingException();
+        $this->visit('/owncloud');
+        $this->fillField('user', $user);
+        $this->fillField('password', $user);
+        $this->pressButton('submit');
+        sleep(10);
     }
 
     /**
@@ -45,7 +51,7 @@ class FeatureContext extends BehatContext
      */
     public function iGoToTheCrateItPage()
     {
-        throw new PendingException();
+        $this->visit('/owncloud/index.php/apps/crate_it');
     }
 
     /**
@@ -59,15 +65,15 @@ class FeatureContext extends BehatContext
        /**
      * @Given /^I have file "([^"]*)" within the root folder$/
      */
-    public function iHaveFileWithinTheRootFolder($arg1)
+    public function iHaveFileWithinTheRootFolder($file)
     {
-        throw new PendingException();
+        $this->iHaveFileWithin($file, "");
     }
 
     /**
      * @Given /^I have folder "([^"]*)" within the root folder$/
      */
-    public function iHaveFolderWithinTheRootFolder($arg1)
+    public function iHaveFolderWithinTheRootFolder($folder)
     {
         throw new PendingException();
     }
@@ -83,9 +89,11 @@ class FeatureContext extends BehatContext
     /**
      * @Given /^I have file "([^"]*)" within "([^"]*)"$/
      */
-    public function iHaveFileWithin($arg1, $arg2)
+    public function iHaveFileWithin($file, $folder)
     {
-        throw new PendingException();
+        $this->visit('/owncloud/index.php/apps/files?dir='.$folder);
+        $page = $this->getSession()->getPage();
+        $page->find('css', 'li[data-type=file]')->click();
     }
 
     /**

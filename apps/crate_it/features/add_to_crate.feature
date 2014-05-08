@@ -1,3 +1,4 @@
+@javascript
 Feature: Add files and folders to a crate
   As a user
   I want to add files and folders to crate

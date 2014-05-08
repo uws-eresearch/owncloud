@@ -43,6 +43,7 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
+        sleep(10);
     }
 
     /**
@@ -64,15 +65,15 @@ class FeatureContext extends MinkContext
        /**
      * @Given /^I have file "([^"]*)" within the root folder$/
      */
-    public function iHaveFileWithinTheRootFolder($arg1)
+    public function iHaveFileWithinTheRootFolder($file)
     {
-        throw new PendingException();
+        $this->iHaveFileWithin($file, "");
     }
 
     /**
      * @Given /^I have folder "([^"]*)" within the root folder$/
      */
-    public function iHaveFolderWithinTheRootFolder($arg1)
+    public function iHaveFolderWithinTheRootFolder($folder)
     {
         throw new PendingException();
     }
@@ -88,9 +89,11 @@ class FeatureContext extends MinkContext
     /**
      * @Given /^I have file "([^"]*)" within "([^"]*)"$/
      */
-    public function iHaveFileWithin($arg1, $arg2)
+    public function iHaveFileWithin($file, $folder)
     {
-        throw new PendingException();
+        $this->visit('/owncloud/index.php/apps/files?dir='.$folder);
+        $page = $this->getSession()->getPage();
+        $page->find('css', 'li[data-type=file]')->click();
     }
 
     /**

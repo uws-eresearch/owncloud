@@ -1,0 +1,11 @@
+default:
+  context:
+    parameters:
+      javascript_session:   selenium
+      base_url:             http://test.mink.dev/
+      show_cmd:             open %s
+    extensions:
+      Behat\MinkExtension\Extension:
+          base_url: 'http://localhost:8080/owncloud'
+          goutte: ~
+          selenium2: ~

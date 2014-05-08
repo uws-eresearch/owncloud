@@ -83,17 +83,26 @@ class FeatureContext extends MinkContext
     /**
      * @Given /^I have folder "([^"]*)" within the root folder$/
      */
-    public function iHaveFolderWithinTheRootFolder($folder)
+    public function iHaveFolderWithinTheRootFolder($new_folder)
     {
-        throw new PendingException();
+        $this->iHaveFolderWithin($new_folder, "");
     }
 
     /**
      * @Given /^I have folder "([^"]*)" within "([^"]*)"$/
      */
-    public function iHaveFolderWithin($arg1, $arg2)
+    public function iHaveFolderWithin($new_folder, $folder)
     {
-        throw new PendingException();
+        $this->visit('/owncloud/index.php/apps/files?dir='.$folder);
+        $page = $this->getSession()->getPage();
+        $page->find('css', '#new > a')->click();
+        $page->find('xpath', '//div[@id="new"]//li[@data-type="folder"]/p')->click();
+        try { // NOTE: The element disappears after setting the value causing an exception
+            $page->find('xpath', '//div[@id="new"]//li[@data-type="folder"]//input')->setValue($new_folder."\n");
+        } catch(Exception $e) {
+            // Do nothing
+        }
+        $this->visit('/owncloud/index.php/apps/files?dir=');
     }
 
     /**

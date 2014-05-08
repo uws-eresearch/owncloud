@@ -18,6 +18,7 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+alert = function() {};
 
 function hideNotification(delayTime) {
     setTimeout(function() {
@@ -34,7 +35,7 @@ function buildFileTree(data) {
         onCanMoveTo: function(moved_node, target_node, position) {
             // Can move before or after any node.
 	    // Can only move INSIDE of a node whose id ends with 'folder' 
-	    console.log(target_node.id);
+	    //console.log(target_node.id);
 	    if (target_node.id.indexOf('folder', target_node.id.length - 'folder'.length) == -1) {
 		return (position != 'inside');
 	    }
@@ -736,4 +737,4 @@ $(document).ready(function() {
 
     activateRemoveActivityButtons();
 
-});	
+});

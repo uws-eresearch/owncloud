@@ -1,3 +1,4 @@
+@javascript
 Feature: Default crate always exists
   As a user
   I want to create a crate that holds files and folders

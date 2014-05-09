@@ -195,14 +195,6 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @When /^I add "([^"]*)" to the default crate$/
-     */
-    public function iAddToTheDefaultCrate($arg1)
-    {
-        throw new PendingException();
-    }
-
-    /**
      * @When /^I add folder "([^"]*)" within "([^"]*)" to the default crate$/
      */
     public function iAddFolderWithinToTheDefaultCrate($arg1, $arg2)

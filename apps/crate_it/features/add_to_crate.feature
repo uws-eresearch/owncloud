@@ -15,7 +15,8 @@ Feature: Add files and folders to a crate
   Scenario: A user can add a file to a crate
     When I add "file.txt" within the root folder to the default crate
     Then I go to the crate_it page
-    Then the default crate should contain "file1.txt" in the root folder
+    Then I wait for 2 seconds
+    Then the default crate should contain "file.txt" in the root folder
   
   #CRATEIT-46
   Scenario: A user can add a folder to a crate preserving its structure

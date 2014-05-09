@@ -244,14 +244,6 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Given /^I wait for (\d+) seconds$/
-     */
-    public function iWaitForSeconds($seconds)
-    {
-        sleep($seconds);
-    }
-
-    /**
      * @Given /^I have no files$/
      */
     public function iHaveNoFiles()
@@ -260,6 +252,14 @@ class FeatureContext extends MinkContext
         $page = $this->getSession()->getPage();
         $page->find('css', 'label[for=select_all]')->click();
 		$page->find('css', 'a[class=delete-selected]')->click();
+    }
+
+    /**
+     * @Given /^I wait for (\d+) seconds$/
+     */
+    public function iWaitForSeconds($seconds)
+    {
+        sleep($seconds);
     }
 
 }

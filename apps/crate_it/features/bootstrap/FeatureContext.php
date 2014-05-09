@@ -8,6 +8,7 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
 use Behat\MinkExtension\Context\MinkContext;
+use Behat\Mink\WebAssert;
 
 //
 // Require 3rd-party libraries here:
@@ -43,7 +44,6 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
-        sleep(3); // allow the page to load
     }
 
     /**
@@ -113,9 +113,10 @@ class FeatureContext extends MinkContext
         $this->visit('/owncloud/index.php/apps/files?dir='.$folder);
         $page = $this->getSession()->getPage();
         $page->find('css', '#new > a')->click();
-        $page->find('xpath', '//div[@id="new"]//p')->click();
+        $page->find('xpath', '//div[@id="new"]//li[@data-type="file"]/p')->click();
         try { // NOTE: The element disappears after setting the value causing an exception
-            $page->find('xpath', '//div[@id="new"]//input')->setValue($file."\n");
+        	$filename = strstr($file,'.',true); // ditch file suffix 
+            $page->find('xpath', '//div[@id="new"]//input')->setValue($filename."\n");
         } catch(Exception $e) {
             // Do nothing
         }
@@ -127,15 +128,21 @@ class FeatureContext extends MinkContext
      */
     public function theDefaultCrateShouldContainInTheRootFolder($arg1)
     {
-        throw new PendingException();
-    }
+        $page = $this->getSession()->getPage();
+		$web_assert = new WebAssert($this->getSession());
+        $root_folder = $web_assert->elementExists('xpath', '//div[@id="files"]/ul/li', $page);
+		////div[@id="files"]/ul/li/ul/li//span[text()="file.txt"]
+ 	    $web_assert->elementExists('xpath', '/ul/li//span[text()="'. $arg1 .'"]', $root_folder);   	
+	}
 
     /**
      * @When /^I add "([^"]*)" within the root folder to the default crate$/
      */
     public function iAddWithinTheRootFolderToTheDefaultCrate($arg1)
     {
-        throw new PendingException();
+        $page = $this->getSession()->getPage();
+        $page->find('xpath', '//tr[@data-file="' . $arg1. '"]//label')->click();
+		$page->find('xpath', '//tr[@data-file="' . $arg1. '"]//a[@data-action="Add to crate"]')->click();
     }
 
     /**
@@ -249,14 +256,10 @@ class FeatureContext extends MinkContext
      */
     public function iHaveNoFiles()
     {
-        throw new PendingException();
+    	
         $page = $this->getSession()->getPage();
-        $files = $page->findAll('css', '.action.delete.delete-icon');
-        foreach ($files as $file) {
-            $file->mouseOver();
-            $file->click();
-        }
-
+        $page->find('css', 'label[for=select_all]')->click();
+		$page->find('css', 'a[class=delete-selected]')->click();
     }
 
 }

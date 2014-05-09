@@ -44,6 +44,8 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
+
+        sleep(3); // allow the page to load
     }
 
     /**
@@ -268,6 +270,29 @@ class FeatureContext extends MinkContext
         $page = $this->getSession()->getPage();
         $page->find('css', 'label[for=select_all]')->click();
 		$page->find('css', 'a[class=delete-selected]')->click();
+    }
+
+    /**
+     * @Given /^I wait for (\d+) seconds$/
+     */
+    public function iWaitForSeconds($seconds)
+    {
+        sleep($seconds);
+    }
+
+    /**
+     * @Given /^I have no files$/
+     */
+    public function iHaveNoFiles()
+    {
+        throw new PendingException();
+        $page = $this->getSession()->getPage();
+        $files = $page->findAll('css', '.action.delete.delete-icon');
+        foreach ($files as $file) {
+            $file->mouseOver();
+            $file->click();
+        }
+
     }
 
 }

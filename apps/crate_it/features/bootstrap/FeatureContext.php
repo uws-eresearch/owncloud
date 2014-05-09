@@ -43,6 +43,7 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
+        sleep(3); // allow the page to load
     }
 
     /**
@@ -102,7 +103,14 @@ class FeatureContext extends MinkContext
     {
         $this->visit('/owncloud/index.php/apps/files?dir='.$folder);
         $page = $this->getSession()->getPage();
-        $page->find('css', 'li[data-type=file]')->click();
+        $page->find('css', '#new > a')->click();
+        $page->find('xpath', '//div[@id="new"]//p')->click();
+        try { // NOTE: The element disappears after setting the value causing an exception
+            $page->find('xpath', '//div[@id="new"]//input')->setValue($file."\n");
+        } catch(Exception $e) {
+            // Do nothing
+        }
+        $this->visit('/owncloud/index.php/apps/files?dir=');
     }
 
     /**
@@ -233,6 +241,14 @@ class FeatureContext extends MinkContext
     public function cancelPopup()
     {
         $this->getSession()->getDriver()->getWebDriverSession()->dismiss_alert();
+    }
+
+        /**
+     * @Given /^I wait for (\d+) seconds$/
+     */
+    public function iWaitForSeconds($seconds)
+    {
+        sleep($seconds);
     }
 
 }

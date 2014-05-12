@@ -43,7 +43,6 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
-        sleep(10);
     }
 
     /**
@@ -59,10 +58,20 @@ class FeatureContext extends MinkContext
      */
     public function iShouldSeeTheDefaultCrateAlreadyCreatedAndSelected()
     {
-        throw new PendingException();
-    }
+        $page = $this->getSession()->getPage();
+    	$optionElement = $page->find('xpath', '//select[@id="crates"]/option[@selected]');
+		if (!$optionElement) 
+		{
+			throw new Exception('No default value specified in the crate select dropdown');
+		}
+		$selectedDefaultValue = (string)$optionElement->getText();
+		if ($selectedDefaultValue != "default_crate")
+		{
+			throw new Exception('Default value is "' . $selectedDefaultValue . '" , not "default_crate"');
+		}
+	}
 
-       /**
+     /**
      * @Given /^I have file "([^"]*)" within the root folder$/
      */
     public function iHaveFileWithinTheRootFolder($file)
@@ -205,7 +214,25 @@ class FeatureContext extends MinkContext
      */
     public function iDeleteTheDefaultCrate()
     {
-        throw new PendingException();
+       $page = $this->getSession()->getPage();
+       $page->find('css', 'a[id=delete]')->click();
+       $this->confirmPopup();
+	}
+	
+    /**
+     * @when /^(?:|I )confirm the popup$/
+     */
+    public function confirmPopup()
+    {
+        $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
+    }
+ 
+    /**
+     * @when /^(?:|I )cancel the popup$/
+     */
+    public function cancelPopup()
+    {
+        $this->getSession()->getDriver()->getWebDriverSession()->dismiss_alert();
     }
 
 }

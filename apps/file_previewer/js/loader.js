@@ -93,6 +93,8 @@ $(document).ready(function() {
 				'text/markdown',
 				'image/tiff',
 				'image/tiff-fx',
+				'image/gif',
+				'image/jpeg',
 				'application/msword',
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.template',

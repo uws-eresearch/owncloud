@@ -95,6 +95,7 @@ $(document).ready(function() {
 				'image/tiff-fx',
 				'image/gif',
 				'image/jpeg',
+				'image/png',
 				'application/msword',
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.template',

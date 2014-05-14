@@ -90,6 +90,8 @@ $(document).ready(function() {
 		if(typeof FileActions!=='undefined'){
 			var supportedMimes = new Array(
 				'text/plain',
+				'image/tiff',
+				'image/tiff-fx',
 				'application/msword',
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.template',

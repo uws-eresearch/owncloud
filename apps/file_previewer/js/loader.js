@@ -90,6 +90,7 @@ $(document).ready(function() {
 		if(typeof FileActions!=='undefined'){
 			var supportedMimes = new Array(
 				'text/plain',
+				'text/markdown',
 				'image/tiff',
 				'image/tiff-fx',
 				'application/msword',

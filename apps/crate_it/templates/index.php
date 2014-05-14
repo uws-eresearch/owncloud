@@ -22,8 +22,13 @@
 <div id="container" class="crateit">
 
   <div class="bar-actions">
+
+    <img class="icon svg" src="/owncloud/apps/crate_it/img/milk-crate-grey.png">
+
     <form id="crate_input" method="get">
-      <a id="subbutton" class="button fa fa-plus"></a>
+      <a id="subbutton" class="button">
+        <i class="fa fa-plus"></i>
+      </a>
     </form>
 
     <select id="crates">
@@ -46,7 +51,9 @@
           <?php endforeach; ?>
         </select> -->
         <!-- <input id="post" type="button" value="Post Crate to SWORD" /> -->
-        <a id="post" class="button fa fa-envelope"></a>
+        <a id="post" class="button">
+          <i class="fa fa-envelope"></i>
+        </a>
       <?php endif; ?>
 
       <?php if ($_['previews']==="on" ):?>
@@ -110,20 +117,15 @@
 
 
 
-        <div style="padding-top:20px; padding-left:5px;">
-            <span id="crateName" style="font-weight:bold;font-size:large; padding-left:10px;"><?php echo $_['selected_crate'] ?></span>
-            <div id='#description_box'>
-                <label for="description">Description</label>
-		<input id="edit_description" type="button" value="Edit" />
-                <div id="description"><?php echo htmlentities($_['description']) ?></div>
+
             </div>
-        </div>
 
         <div id="files"></div>
-        <span>Crate size: </span><span id="crate_size_human"></span>
 
         <div class="container-metadata">
 
+          <span>Crate size: </span><span id="crate_size_human"></span>
+          
           <div id="creators_box">
             <div>
               <label for="creators">Add Data Creator/s</label>
@@ -178,6 +180,9 @@
 
         </div>
 
+      <footer class="attribution">
+        Cr9it has been developed through a collaboration between the University of Newcastle, the University of Western Sydney, and Intersect Australia Ltd.
+      </footer>
     </div>
 
 

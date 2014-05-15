@@ -112,12 +112,14 @@
 
             </div>
 
-        <!-- TODO: Style this -->
-        <span id="crateName"><?php echo $_['selected_crate'] ?></span>
+        
 
         <div id="files"></div>
 
         <div class="container-metadata">
+          <!-- TODO: Style this -->
+          <!-- TODO: Move this -->
+          <span id="crateName"><?php echo $_['selected_crate'] ?></span>
 
           <!-- TODO: Style this -->
           <div id='#description_box'>

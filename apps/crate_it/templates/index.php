@@ -82,7 +82,7 @@
          Delete
       </a>
 
-      <a id="help_button" class="button">
+      <a id="help_button" class="button"   data-toggle="modal" data-target="#helpModal">
         <i class="fa fa-question"></i>
          Help
       </a>
@@ -212,44 +212,59 @@
     <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Remove item from crate?</p>
 </div>
 
-<div id="dialog-help" title="Cr8it Help">
-    <p>
-        <b>Create New Data Crate</b>
-        <ul>
-            <li>Enter the name of your crate and click <b><i>Submit</i></b></li>
-            <li>Select your crate name from the <b><i>default_crate</i></b> dropdown menu</li>
-        </ul>
-    </p>
+<div class="modal" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="publishModalLabel">Cr8it Help</h4>
+      </div>
 
-    <p>
-        <b>Describe Your Crate</b>
-        <ul>
-            <li>Click <b><i>Edit</i></b> to enter a description of the data in your crate. Include information about the research dataset and its characteristics and features</li>
-            <li>Click <b><i>Save</i></b></li>
-            <li>Search/add the grant ID/number associated with your data if relevant</li>
-            <li>Search/add names of Data Creator/s</li>
-        </ul>
-    </p>
+      <div class="modal-body">
+        <p>
+            <b>Create New Data Crate</b>
+            <ul>
+                <li>Enter the name of your crate and click <b><i>Submit</i></b></li>
+                <li>Select your crate name from the <b><i>default_crate</i></b> dropdown menu</li>
+            </ul>
+        </p>
 
-    <p>
-        <b>Add Files to Data Crate</b>
-        <ul>
-            <li>Select <b><i>Files</i></b></li>
-            <li>Navigate to the file or folder you wish to add</li>
-            <li>Hover your mouse over the file/folder and select <b><i>Add to Crate</i></b></li>
-            <li>Add all desired files to crate</li>
-            <li>Select <b><i>Cr8it</i></b> to view your crate</li>
-        </ul>
-    </p>
+        <p>
+            <b>Describe Your Crate</b>
+            <ul>
+                <li>Click <b><i>Edit</i></b> to enter a description of the data in your crate. Include information about the research dataset and its characteristics and features</li>
+                <li>Click <b><i>Save</i></b></li>
+                <li>Search/add the grant ID/number associated with your data if relevant</li>
+                <li>Search/add names of Data Creator/s</li>
+            </ul>
+        </p>
 
-    <p>
-        <b>Delete a Crate</b>
-        <ul>
-            <li>Select <b><i>Cr8it</i></b></li>
-            <li>Select crate from the <b><i>default_crate</i></b> dropdown menu</li>
-            <li>Select <b><i>Delete Crate</i></b></li>
-        </ul>
-    </p>
+        <p>
+            <b>Add Files to Data Crate</b>
+            <ul>
+                <li>Select <b><i>Files</i></b></li>
+                <li>Navigate to the file or folder you wish to add</li>
+                <li>Hover your mouse over the file/folder and select <b><i>Add to Crate</i></b></li>
+                <li>Add all desired files to crate</li>
+                <li>Select <b><i>Cr8it</i></b> to view your crate</li>
+            </ul>
+        </p>
+
+        <p>
+            <b>Delete a Crate</b>
+            <ul>
+                <li>Select <b><i>Cr8it</i></b></li>
+                <li>Select crate from the <b><i>default_crate</i></b> dropdown menu</li>
+                <li>Select <b><i>Delete Crate</i></b></li>
+            </ul>
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 

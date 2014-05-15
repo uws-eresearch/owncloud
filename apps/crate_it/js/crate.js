@@ -141,28 +141,31 @@ function updateCrateSize() {
     });    
 }
 
-function togglePostCrateToSWORD() {
-    $.ajax({
-        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-        type: 'post',
-        dataType: 'json',
-        data: {'action': 'validate_metadata'},
-        success: function(data) {
-	    if (data.status == "Success") {
-		$('#post').removeAttr("title");
-		$('#post').removeAttr("disabled");
-	    }
-	    else {
-		$('#post').attr("title", "You cannot post this crate until metadata(title, description, creator) are all set");
-		$('#post').attr("disabled", "disabled");
-	    }		
-        },
-        error: function(data) {
-            OC.Notification.show(data.statusText);
-	    hideNotification(3000);
-        }
-    });
-}
+// function togglePostCrateToSWORD() {
+//     $.ajax({
+//         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+//         type: 'post',
+//         dataType: 'json',
+//         data: {'action': 'validate_metadata'},
+//         success: function(data) {
+// 	    if (data.status == "Success") {
+// 		$('#post').removeAttr("title");
+// 		$('#post').removeAttr("disabled");
+// 	    }
+// 	    else {
+// 		$('#post').attr("title", "You cannot post this crate until metadata(title, description, creator) are all set");
+// 		$('#post').attr("disabled", "disabled");
+// 	    }		
+//         },
+//         error: function(data) {
+//             OC.Notification.show(data.statusText);
+// 	    hideNotification(3000);
+//         }
+//     });
+// }
+
+// MISC: Disable function until UI is fixed
+function togglePostCrateToSWORD() {}
 
 function makeCrateListEditable(){
 	$('#crateList .title').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php')+'?action=edit_title', {

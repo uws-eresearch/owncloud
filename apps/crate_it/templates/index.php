@@ -51,7 +51,11 @@
           <?php endforeach; ?>
         </select> -->
         <!-- <input id="post" type="button" value="Post Crate to SWORD" /> -->
-        <a id="post" class="button">
+
+        <!-- <a id="post" class="button"  data-toggle="modal" data-target="#publishModal">
+          <i class="fa fa-envelope"></i>
+        </a> -->
+        <a id="post" class="button"  data-toggle="modal" data-target="#publishModal">
           <i class="fa fa-envelope"></i>
         </a>
       <?php endif; ?>
@@ -255,3 +259,23 @@
     <span id="max_sword_mb"><?php echo $_['max_sword_mb'] ?></span>
     <span id="max_zip_mb"><?php echo $_['max_zip_mb'] ?></span>
 </div>
+
+<!-- Modal -->
+<div class="modal" id="publishModal" tabindex="-1" role="dialog" aria-labelledby="publishModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="publishModalLabel">Publish Cr8t</h4>
+      </div>
+      <div class="modal-body">
+        Test
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Publish</button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -44,6 +44,8 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
+
+        sleep(3); // allow the page to load
     }
 
     /**

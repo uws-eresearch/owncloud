@@ -25,11 +25,9 @@
 
     <img class="icon svg" src="/owncloud/apps/crate_it/img/milk-crate-grey.png">
 
-    <form id="crate_input" method="get">
-      <a id="subbutton" class="button">
-        <i class="fa fa-plus"></i>
-      </a>
-    </form>
+    <a id="subbutton" class="button" data-toggle="modal" data-target="#newCrateModal">
+      <i class="fa fa-plus"></i>
+    </a>
 
     <select id="crates">
       <?php foreach($_['crates'] as $crate):?>
@@ -43,7 +41,7 @@
 
       <?php if ($_['sword_status'] === "enabled" ):?>
 
-        <a id="post" class="button"  data-toggle="modal" data-target="#publishModal">
+        <a id="post" class="button" data-toggle="modal" data-target="#publishModal">
           <i class="fa fa-envelope"></i>
         </a>
       <?php endif; ?>
@@ -328,3 +326,21 @@
   </div>
 </div>
 
+<div class="modal" id="newCrateModal" tabindex="-1" role="dialog" aria-labelledby="newCrateModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="newCrateModalLabel">New Crate</h4>
+      </div>
+      <div class="modal-body">
+        <p>New Cr8 Name</p>
+        <input type="text"></input>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Create</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

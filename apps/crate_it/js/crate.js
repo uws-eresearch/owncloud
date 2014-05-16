@@ -436,27 +436,29 @@ $(document).ready(function() {
             saveTree($tree);
 	    hideMetadata();
 	});
-	
-	$('#subbutton').click(function(event) {
-	    $.ajax({
-	        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-	        type: 'get',
-	        dataType: 'html',
-	        data: {'action':'create', 'crate_name':$('#crate_input #create').val()},
-	        success: function(data){
-	        	$('#crate_input #create').val('');
-	        	$("#crates").append('<option id="'+data+'" value="'+data+'" >'+data+'</option>');
-	        	OC.Notification.show('Crate '+data+' successfully created');
-				hideNotification(3000);
-			},
-			error: function(data){
-				OC.Notification.show(data.statusText);
-				hideNotification(3000);
-				$('#crate_input #create').focus();
-			}
-	    });
-	    return false;
-	});
+
+  // NOTE: Disabled until to be reimplemented in modal
+  	
+	// $('#subbutton').click(function(event) {
+	//     $.ajax({
+	//         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+	//         type: 'get',
+	//         dataType: 'html',
+	//         data: {'action':'create', 'crate_name':$('#crate_input #create').val()},
+	//         success: function(data){
+	//         	$('#crate_input #create').val('');
+	//         	$("#crates").append('<option id="'+data+'" value="'+data+'" >'+data+'</option>');
+	//         	OC.Notification.show('Crate '+data+' successfully created');
+	// 			hideNotification(3000);
+	// 		},
+	// 		error: function(data){
+	// 			OC.Notification.show(data.statusText);
+	// 			hideNotification(3000);
+	// 			$('#crate_input #create').focus();
+	// 		}
+	//     });
+	//     return false;
+	// });
 	
 	$('#crateName').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php')+'?action=rename_crate', {
 		name : 'new_name',

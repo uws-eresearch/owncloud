@@ -6,7 +6,6 @@ use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
-
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Mink\WebAssert;
 
@@ -55,6 +54,22 @@ class FeatureContext extends MinkContext
     {
         $this->visit('/owncloud/index.php/apps/crate_it');
     }
+
+    /**
+     * @When /^I navigate to folder(\d+)$/
+     */
+    public function iNavigateToFolder($arg1)
+    {
+        $this->visit('/owncloud/index.php/apps/files?dir=/folder1');
+    }
+
+    /**
+     * @Given /^I go to the files page$/
+     */
+    public function iGoToTheFilesPage()
+	{
+		$this->visit('/owncloud/index.php/apps/files');
+	}
 
     /**
      * @Then /^I should see the default crate already created and selected$/
@@ -126,9 +141,9 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Then /^the default crate should contain "([^"]*)" in the root folder$/
+     * @Then /^the default crate should contain "([^"]*)" within the root folder$/
      */
-    public function theDefaultCrateShouldContainInTheRootFolder($arg1)
+    public function theDefaultCrateShouldContainWithinTheRootFolder($arg1)
     {
         $page = $this->getSession()->getPage();
 		$web_assert = new WebAssert($this->getSession());
@@ -136,11 +151,23 @@ class FeatureContext extends MinkContext
 		////div[@id="files"]/ul/li/ul/li//span[text()="file.txt"]
  	    $web_assert->elementExists('xpath', '/ul/li//span[text()="'. $arg1 .'"]', $root_folder);   	
 	}
-
-    /**
-     * @When /^I add "([^"]*)" within the root folder to the default crate$/
+	
+	/**
+     * @Then /^the default crate should not contain "([^"]*)" anywhere$/
      */
-    public function iAddWithinTheRootFolderToTheDefaultCrate($arg1)
+    public function theDefaultCrateShouldNotContainAnywhere($arg1)
+    {
+        $page = $this->getSession()->getPage();
+		$web_assert = new WebAssert($this->getSession());
+        $root_folder = $web_assert->elementExists('xpath', '//div[@id="files"]/ul/li', $page);
+		////div[@id="files"]/ul/li/ul/li//span[text()="file.txt"]
+ 	    $web_assert->elementNotExists('xpath', '//ul/li//span[text()="'. $arg1 .'"]', $root_folder);   	
+	}
+	
+    /**
+     * @When /^I add "([^"]*)" to the default crate$/
+     */
+    public function iAddToTheDefaultCrate($arg1)
     {
         $page = $this->getSession()->getPage();
         $page->find('xpath', '//tr[@data-file="' . $arg1. '"]//label')->click();
@@ -148,19 +175,15 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Then /^the default crate should contain "([^"]*)" within the root folder$/
-     */
-    public function theDefaultCrateShouldContainWithinTheRootFolder($arg1)
-    {
-        throw new PendingException();
-    }
-
-    /**
      * @Given /^the default crate should contain "([^"]*)" within "([^"]*)"$/
      */
     public function theDefaultCrateShouldContainWithin($arg1, $arg2)
     {
-        throw new PendingException();
+        $page = $this->getSession()->getPage();
+		$web_assert = new WebAssert($this->getSession());
+        $root_folder = $web_assert->elementExists('xpath', '//div[@id="files"]/ul/li', $page);
+		$parent_folder = $web_assert->elementExists('xpath', '//ul/li/div/span[text()="'.$arg2. '"]', $root_folder);
+		$web_assert->elementExists('xpath', '/../../ul/li/div/span[text()="'.$arg1. '"]', $parent_folder);
     }
 
     /**
@@ -168,56 +191,44 @@ class FeatureContext extends MinkContext
      */
     public function shouldNotBeVisibleInTheDefaultCrate($arg1)
     {
-        throw new PendingException();
-    }
+		$page = $this->getSession()->getPage();
+		$web_assert = new WebAssert($this->getSession());
+        $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
+		// The element will still exist even without being visible!
+        $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$arg1. '"]', $root_folder);	
+    	if ($element->isVisible())
+		{
+			throw new Exception('The element should be invisible.');
+		}
+	}
 
     /**
      * @When /^I expand the root folder in the default crate$/
      */
     public function iExpandTheRootFolderInTheDefaultCrate()
     {
-        throw new PendingException();
-    }
+        $page = $this->getSession()->getPage();
+		$web_assert = new WebAssert($this->getSession());
+        $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
+		$arrow_link = $web_assert->elementExists('xpath','/div/a[contains(@class,"jqtree-toggler")]', $root_folder);
+    	$arrow_link->click();
+	}
 
     /**
      * @Then /^"([^"]*)" should be visible in the default crate$/
      */
     public function shouldBeVisibleInTheDefaultCrate($arg1)
     {
-        throw new PendingException();
-    }
+        $page = $this->getSession()->getPage();
+		$web_assert = new WebAssert($this->getSession());
+        $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
+        $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$arg1. '"]', $root_folder);	
+    	if (!$element->isVisible())
+		{
+			throw new Exception('The element should be visible');
+		}
+	}
 
-    /**
-     * @When /^I add a "([^"]*)" to the default crate$/
-     */
-    public function iAddAToTheDefaultCrate($arg1)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @Then /^the default crate should contain "([^"]*)" within the root folder, in that order$/
-     */
-    public function theDefaultCrateShouldContainWithinTheRootFolderInThatOrder($arg1)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When /^I add folder "([^"]*)" within "([^"]*)" to the default crate$/
-     */
-    public function iAddFolderWithinToTheDefaultCrate($arg1, $arg2)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @Given /^the default crate should not contain "([^"]*)" within the root folder$/
-     */
-    public function theDefaultCrateShouldNotContainWithinTheRootFolder($arg1)
-    {
-        throw new PendingException();
-    }
 
     /**
      * @When /^I delete the default crate$/
@@ -228,6 +239,22 @@ class FeatureContext extends MinkContext
        $page->find('css', 'a[id=delete]')->click();
        $this->confirmPopup();
 	}
+	
+	/**
+     * @Then /^the default crate should contain "([^"]*)" within the root folder, in that order$/
+     */
+    public function theDefaultCrateShouldContainWithinTheRootFolderInThatOrder($arg1)
+    {
+        $page = $this->getSession()->getPage();
+    	$web_assert = new WebAssert($this->getSession());
+		$node_order = $page->findAll('xpath', '//div[@id="files"]/ul/li//ul/li/div/span/text()');
+		$expected_order = str_split($arg1);
+		$difference = array_diff($node_order, $expected_order);
+		if ( count($difference) > 0)
+		{
+			throw new Exception('The node order is "' .$node_order. '" instead of "' .$expected_order. '"');
+		}
+    }
 	
     /**
      * @when /^(?:|I )confirm the popup$/
@@ -263,5 +290,4 @@ class FeatureContext extends MinkContext
     {
         sleep($seconds);
     }
-
 }

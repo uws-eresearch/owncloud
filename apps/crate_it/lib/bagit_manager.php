@@ -215,7 +215,10 @@ class BagItManager{
 		} else {
 			$full_path = $this->getFullPath($path);
 			$id = md5($full_path);
-			$vfs_entry = array('id' => $id, 'name' => basename($path), 'filename' => $full_path);
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+      $mime = finfo_file($finfo, $full_path);
+      finfo_close($finfo);
+      $vfs_entry = array('id' => $id, 'name' => basename($path), 'filename' => $full_path, 'mime' => $mime);
 		}
 		array_push($vfs, $vfs_entry);
 	}

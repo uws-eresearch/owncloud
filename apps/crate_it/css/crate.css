@@ -165,7 +165,7 @@ height: 44px;
 	position: relative;
 	padding-left: 20px;
 	height: 50px;
-	background: #FFF url(/owncloud/core/img/filetypes/folder.png) no-repeat 40px center;
+	/*background: #FFF url(/owncloud/core/img/filetypes/folder.png) no-repeat 40px center;*/
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	display: block;
@@ -174,12 +174,12 @@ height: 44px;
 
 #files li li div.jqtree-element {
 	padding-left: 40px;
-	background: #FFF url(/owncloud/core/img/filetypes/folder.png) no-repeat 60px center;
+	/*background: #FFF url(/owncloud/core/img/filetypes/folder.png) no-repeat 60px center;*/
 }
 
 #files li li li div.jqtree-element {
 	padding-left: 60px;
-	background: #FFF url(/owncloud/core/img/filetypes/folder.png) no-repeat 80px center;
+	/*background: #FFF url(/owncloud/core/img/filetypes/folder.png) no-repeat 80px center;*/
 }
 
 #files ul.jqtree-tree li > div.jqtree-element span.jqtree-title {

@@ -63,6 +63,8 @@ class BagItManager{
 		if(!file_exists($this->crate_trash)){
 			mkdir($this->crate_trash);
 		}
+		\OCP\Util::writeLog("crate_it", "creating new crate ". $_SESSION['crate_id'], 3);
+
 		if(empty($_SESSION['crate_id'])){
 			$this->createCrate('default_crate');
 			$this->selected_crate = 'default_crate';
@@ -71,10 +73,11 @@ class BagItManager{
 		else {
 			$this->initBag($_SESSION['crate_id']);
 			$this->selected_crate = $_SESSION['crate_id'];
+			$this->createManifest();
 		}
 		
-	    $data_dir = $this->bag->getDataDirectory();
-	    $this->manifest = $data_dir.'/manifest.json';
+	    // $data_dir = $this->bag->getDataDirectory();
+	    // $this->manifest = $data_dir.'/manifest.json';
 	}
 	
 	public static function getInstance(){
@@ -92,15 +95,21 @@ class BagItManager{
 			return false;
 		}
 		$this->initBag($name);
-		$fp = fopen($this->manifest, 'x');
-		$entry = array('description' => '', 'creators' => array(), 'activities' => array(),
-			'vfs' => array(array('id' => 'rootfolder', 'name' => '/', 'folder' => true, 'children' => array())));
-		fwrite($fp, json_encode($entry));
-		fclose($fp);
-		$this->bag->update();
+		$this->createManifest();
 		return $name;
 	}
 	
+	private function createManifest() {
+		if(!file_exists($this->manifest)) {
+			$fp = fopen($this->manifest, 'x');
+			$entry = array('description' => '', 'creators' => array(), 'activities' => array(),
+			'vfs' => array(array('id' => 'rootfolder', 'name' => '/', 'folder' => true, 'children' => array())));
+			fwrite($fp, json_encode($entry));
+			fclose($fp);
+			$this->bag->update();
+		}
+	}
+
 	public function switchCrate($name){
 		if(empty($name)){
 			return false;
@@ -116,8 +125,8 @@ class BagItManager{
 	private function initBag($name){
 		$this->crate_dir = $this->crate_root.'/'.$name;
 		$this->bag = new \BagIt($this->crate_dir);
-	    $data_dir = $this->bag->getDataDirectory();
-	    $this->manifest = $data_dir.'/manifest.json';		
+    $data_dir = $this->bag->getDataDirectory();
+    $this->manifest = $data_dir.'/manifest.json';		
 	}
 	
 	public function getSelectedCrate(){
@@ -199,6 +208,7 @@ class BagItManager{
 	}
 
 	// TODO: There's currently no check for duplicates
+	// TODO: root folder has isFolder set, so should other files folders
 	private function addPath($path, &$vfs) {
 		if (\OC\Files\Filesystem::is_dir($path)) {
 			$vfs_entry = array('name' => basename($path), 'id' => 'folder', 'children' => array());

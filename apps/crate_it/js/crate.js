@@ -26,6 +26,14 @@ function hideNotification(delayTime) {
     }, delayTime);
 }
 
+function indentTree($tree) {
+  $tree.find('.jqtree-element').each(function() {
+      var indent = $(this).parents('li').length * 20;
+      $(this).css('padding-left', indent);
+      $(this).css('background-position', indent + 20 + 'px 50%');
+  });
+}
+
 function buildFileTree(data) {
     var createImgUrl = function(node) {
         var icon_set = ['application-epub+zip', 'application-pdf', 'application-rss+xml',
@@ -36,7 +44,7 @@ function buildFileTree(data) {
            'text-x-python', 'video', 'web', 'x-office-document',
            'x-office-presentation', 'x-office-spreadsheet'];
         var icon = 'file'
-        if (node.folder) {
+        if (node.folder || node.id == 'folder') {
           icon = 'folder';
         } else {
           var mime_base = node.mime.split('/')[0];
@@ -124,6 +132,7 @@ function buildFileTree(data) {
         // do the move first, and _then_ POST back.
         event.move_info.do_move();
         saveTree($tree);
+        indentTree($tree);
     });
 
     expandRoot();
@@ -725,6 +734,7 @@ $(document).ready(function() {
         data: {'action': 'get_items'},
         success: function(data){
             $tree = buildFileTree(data);
+            indentTree($tree);
         },
         error: function(data){
             var e = data.statusText;

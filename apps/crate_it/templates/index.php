@@ -23,7 +23,7 @@
 
   <div class="bar-actions">
 
-    <img class="icon svg" src="/owncloud/apps/crate_it/img/milk-crate-grey.png">
+    <img class="icon svg" src="/owncloud/apps/crate_it/img/milk-crate-dark.png">
 
     <a id="subbutton" class="button" data-toggle="modal" data-target="#newCrateModal">
       <i class="fa fa-plus"></i>

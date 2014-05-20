@@ -23,13 +23,11 @@
 
   <div class="bar-actions">
 
-    <img class="icon svg" src="/owncloud/apps/crate_it/img/milk-crate-grey.png">
+    <img class="icon svg" src="/owncloud/apps/crate_it/img/milk-crate-dark.png">
 
-    <form id="crate_input" method="get">
-      <a id="subbutton" class="button">
-        <i class="fa fa-plus"></i>
-      </a>
-    </form>
+    <a id="subbutton" class="button" data-toggle="modal" data-target="#newCrateModal">
+      <i class="fa fa-plus"></i>
+    </a>
 
     <select id="crates">
       <?php foreach($_['crates'] as $crate):?>
@@ -43,15 +41,7 @@
 
       <?php if ($_['sword_status'] === "enabled" ):?>
 
-<!--         <select id="sword_collection">
-          <?php foreach ($_['sword_collections'] as $collection => $href): ?>
-            <option value="<?php echo $href?>">
-              <?php echo $collection; ?>
-            </option>
-          <?php endforeach; ?>
-        </select> -->
-        <!-- <input id="post" type="button" value="Post Crate to SWORD" /> -->
-        <a id="post" class="button">
+        <a id="post" class="button" data-toggle="modal" data-target="#publishModal">
           <i class="fa fa-envelope"></i>
         </a>
       <?php endif; ?>
@@ -78,7 +68,7 @@
          Delete
       </a>
 
-      <a id="help_button" class="button">
+      <a id="help_button" class="button"   data-toggle="modal" data-target="#helpModal">
         <i class="fa fa-question"></i>
          Help
       </a>
@@ -120,63 +110,85 @@
 
             </div>
 
+
+
         <div id="files"></div>
 
         <div class="container-metadata">
 
-          <span>Crate size: </span><span id="crate_size_human"></span>
-          
-          <div id="creators_box">
-            <div>
-              <label for="creators">Add Data Creator/s</label>
-            </div>
+          <span id="crateName"><?php echo $_['selected_crate'] ?></span>
+
+          <div id='description_box'>
+            <label for="description">Description</label>
+            <input id="edit_description" class='pull-right' type="button" value="Edit" />
+            <div id="description"><?php echo htmlentities($_['description']) ?></div>
+          </div>
+
+          <div class='crate-size'>
+            <span>Crate size: </span>
+            <span id="crate_size_human"></span>
+          </div>
+
+          <div id="creators_box" class='data-creators'>
+            <label for="creators">Add Data Creator/s</label>
             <ul id="creators">
               <?php foreach($_['creators'] as $creator):?>
                 <li>
-                  <input id="creator_<?php echo $creator['creator_id'] ?>" type="button" value="Remove" />
+                  <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
+                    <i class="fa fa-times"></i>
+                  </button>
                   <span id="<?php echo $creator['creator_id'] ?>" class="full_name"><?php echo $creator['full_name'] ?></span>
                 </li>
               <?php endforeach;?>
             </ul>
-          </div>
 
-          <div id="search_people_box">
-            <input id="keyword" type="text" name="keyword" />
-            <input id="search_people" type="button" value="Search People" />
-          </div>
-
-          <div id="search_people_result_box">
-            <ul id="search_people_results">
-            </ul>
-          </div>
-
-          <div id="avtivities_box">
-            <div>
-              <label for="activities">Add Grant Number/s</label>
+            <div id="search_people_box" class="input-group">
+              <input id="keyword" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
+              <span class="input-group-btn">
+                <button id="search_people" class="btn btn-default" type="button" placeholder="Search Creators...">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
             </div>
+
+            <div id="search_people_result_box">
+              <ul id="search_people_results">
+              </ul>
+            </div>
+
+          </div>
+
+
+          <div id="avtivities_box" class="input-group grant-numbers">
+            <label for="activities">Add Grant Number/s</label>
             <ul id="activities">
               <?php foreach($_['activities'] as $activity):?>
                 <li>
-                  <input id="activity_<?php echo $activity['activity_id'] ?>" type="button" value="Remove" />
+                  <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
+                    <i class="fa fa-times"></i>
+                  </button>
                   <span id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></span>
                 </li>
               <?php endforeach;?>
-                  </ul>
-              </div>
+            </ul>
 
-              <div id="search_activity_box">
-                  <input id="keyword_activity" type="text" name="keyword_activity" />
-                  <input id="search_activity" type="button" value="Search Grant Number" />
-              </div>
-
-              <div id="search_activity_result_box">
-                  <ul id="search_activity_results">
-                  </ul>
-              </div>
-
-                <?php endif; ?>
-
+            <div id="search_activity_box" class="input-group">
+              <input id="keyword_activity" class="form-control" type="text" name="keyword_activity" placeholder="Search Grants..."/>
+              <span class="input-group-btn">
+                <button id="search_activity" class="btn btn-default" type="button" value="Search Grant Number">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
             </div>
+
+            <div id="search_activity_result_box">
+              <ul id="search_activity_results">
+              </ul>
+            </div>
+
+            <?php endif; ?>
+
+          </div>
 
         </div>
 
@@ -208,44 +220,51 @@
     <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Remove item from crate?</p>
 </div>
 
-<div id="dialog-help" title="Cr8it Help">
-    <p>
-        <b>Create New Data Crate</b>
-        <ul>
-            <li>Enter the name of your crate and click <b><i>Submit</i></b></li>
-            <li>Select your crate name from the <b><i>default_crate</i></b> dropdown menu</li>
-        </ul>
-    </p>
+<div class="modal" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h2 class="modal-title" id="publishModalLabel">Cr8it Help</h2>
+      </div>
 
-    <p>
-        <b>Describe Your Crate</b>
-        <ul>
-            <li>Click <b><i>Edit</i></b> to enter a description of the data in your crate. Include information about the research dataset and its characteristics and features</li>
-            <li>Click <b><i>Save</i></b></li>
-            <li>Search/add the grant ID/number associated with your data if relevant</li>
-            <li>Search/add names of Data Creator/s</li>
-        </ul>
-    </p>
+      <div class="modal-body">
+        <section>
+          <h3>Create New Data Crate</h3>
+          <p>Enter the name of your crate and click <b><i>Submit</i></b></p>
+          <p>Select your crate name from the <b><i>default_crate</i></b> dropdown menu</p>
+        </section>
 
-    <p>
-        <b>Add Files to Data Crate</b>
-        <ul>
-            <li>Select <b><i>Files</i></b></li>
-            <li>Navigate to the file or folder you wish to add</li>
-            <li>Hover your mouse over the file/folder and select <b><i>Add to Crate</i></b></li>
-            <li>Add all desired files to crate</li>
-            <li>Select <b><i>Cr8it</i></b> to view your crate</li>
-        </ul>
-    </p>
+        <section>
+          <h3>Describe Your Crate</h3>
+          <p>Click <b><i>Edit</i></b> to enter a description of the data in your crate. Include information about the research dataset and its characteristics and features</p>
+          <p>Click <b><i>Save</i></b></p>
+          <p>Search/add the grant ID/number associated with your data if relevant</p>
+          <p>Search/add names of Data Creator/s</p>
+        </section>
 
-    <p>
-        <b>Delete a Crate</b>
-        <ul>
-            <li>Select <b><i>Cr8it</i></b></li>
-            <li>Select crate from the <b><i>default_crate</i></b> dropdown menu</li>
-            <li>Select <b><i>Delete Crate</i></b></li>
-        </ul>
-    </p>
+        <section>
+          <h3>Add Files to Data Crate</h3>
+          <p>Select <b><i>Files</i></b></p>
+          <p>Navigate to the file or folder you wish to add</p>
+          <p>Hover your mouse over the file/folder and select <b><i>Add to Crate</i></b></p>
+          <p>Add all desired files to crate</p>
+          <p>Select <b><i>Cr8it</i></b> to view your crate</p>
+        </section>
+
+        <section>
+          <h3>Delete a Crate</h3>
+          <p>Select <b><i>Cr8it</i></b></p>
+          <p>Select crate from the <b><i>default_crate</i></b> dropdown menu</p>
+          <p>Select <b><i>Delete Crate</i></b></p>
+        </section>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
@@ -255,3 +274,77 @@
     <span id="max_sword_mb"><?php echo $_['max_sword_mb'] ?></span>
     <span id="max_zip_mb"><?php echo $_['max_zip_mb'] ?></span>
 </div>
+
+<div class="modal" id="publishModal" tabindex="-1" role="dialog" aria-labelledby="publishModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h2 class="modal-title" id="publishModalLabel">Publish Cr8t</h2>
+      </div>
+      <div class="modal-body">
+        <select id="sword_collection">
+          <?php foreach ($_['sword_collections'] as $collection => $href): ?>
+            <option value="<?php echo $href?>">
+              <?php echo $collection; ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+
+        <section>
+          <h3>Creators</h3>
+          <ul id="creators">
+            <?php foreach($_['creators'] as $creator):?>
+              <li>
+                <input id="creator_<?php echo $creator['creator_id'] ?>" type="button" value="Remove" />
+                <span id="<?php echo $creator['creator_id'] ?>" class="full_name"><?php echo $creator['full_name'] ?></span>
+              </li>
+            <?php endforeach;?>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Grant Numbers</h3>
+          <ul id="activities">
+            <?php foreach($_['activities'] as $activity):?>
+              <li>
+                <input id="activity_<?php echo $activity['activity_id'] ?>" type="button" value="Remove" />
+                <span id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></span>
+              </li>
+            <?php endforeach;?>
+          </ul>
+        </section>
+
+        <div id='#description_box'>
+          <label for="description">Description</label>
+          <input id="edit_description" type="button" value="Edit" />
+          <div id="description"><?php echo htmlentities($_['description']) ?></div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Publish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="newCrateModal" tabindex="-1" role="dialog" aria-labelledby="newCrateModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="newCrateModalLabel">New Crate</h4>
+      </div>
+      <div class="modal-body">
+        <p>New Cr8 Name</p>
+        <input type="text"></input>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Create</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

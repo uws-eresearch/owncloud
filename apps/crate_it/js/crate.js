@@ -64,7 +64,12 @@ function buildFileTree(data) {
         dragAndDrop: true,
         usecontextmenu: true,
         onCreateLi: function(node, $li) {
-          $li.find('.jqtree-element').css('background-image', createImgUrl(node));
+          $div = $li.find('.jqtree-element');
+          $div.css('background-image', createImgUrl(node));
+          $ul = $div.append('<ul></ul>').find('ul');
+          $ul.append('<a><i class="fa fa-plus"></i>Add</a>');
+          $ul.append('<a><i class="fa fa-pencil"></i>Rename</a>');
+          $ul.append('<a><i class="fa fa-trash-o"></i>Delete</a>');
         },
         onCanMoveTo: function(moved_node, target_node, position) {
         // Can move before or after any node.
@@ -78,54 +83,54 @@ function buildFileTree(data) {
         },
     });
 
-    $tree.jqTreeContextMenu($('#fileMenu'), {
-        "add": function (node) {
-            $("#dialog-add").dialog('option', 'buttons', [
-                {text: 'Cancel',
-                click: function() { $(this).dialog('close'); },
-                },
-                {text: 'Add',
-                click: function() {
-                    $tree.tree('addNodeAfter', {
-                        id: 'folder',
-                        label: $('#add-folder').val(),
-                    }, node);
-                    saveTree($tree);
-                    $(this).dialog('close');
-                }
-            }]);
-            $("#dialog-add").dialog('open');
-        },
-        "rename": function (node) {
-            $("#dialog-rename").dialog('option', 'buttons', [
-                {text: 'Cancel',
-                click: function() { $(this).dialog('close'); },
-                },
-                {text: 'Rename',
-                click: function() {
-                    $tree.tree('updateNode', node, $('#rename-item').val());
-                    saveTree($tree);
-                    $(this).dialog('close');
-                }
-            }]);
-            $("#dialog-rename").dialog('open');
-        },
-        "delete": function(node) {
-            $("#dialog-delete").dialog('option', 'buttons', [
-                {text: 'Cancel',
-                click: function() { $(this).dialog('close'); },
-                },
-                {text: 'Delete',
-                click: function() {
-                    $tree.tree('removeNode', node);
-                    saveTree($tree);
-                    $(this).dialog('close');
-                    // updateCrateSize();
-                }
-            }]);
-            $("#dialog-delete").dialog('open');
-        }, 
-    });
+    // $tree.jqTreeContextMenu($('#fileMenu'), {
+    //     "add": function (node) {
+    //         $("#dialog-add").dialog('option', 'buttons', [
+    //             {text: 'Cancel',
+    //             click: function() { $(this).dialog('close'); },
+    //             },
+    //             {text: 'Add',
+    //             click: function() {
+    //                 $tree.tree('addNodeAfter', {
+    //                     id: 'folder',
+    //                     label: $('#add-folder').val(),
+    //                 }, node);
+    //                 saveTree($tree);
+    //                 $(this).dialog('close');
+    //             }
+    //         }]);
+    //         $("#dialog-add").dialog('open');
+    //     },
+    //     "rename": function (node) {
+    //         $("#dialog-rename").dialog('option', 'buttons', [
+    //             {text: 'Cancel',
+    //             click: function() { $(this).dialog('close'); },
+    //             },
+    //             {text: 'Rename',
+    //             click: function() {
+    //                 $tree.tree('updateNode', node, $('#rename-item').val());
+    //                 saveTree($tree);
+    //                 $(this).dialog('close');
+    //             }
+    //         }]);
+    //         $("#dialog-rename").dialog('open');
+    //     },
+    //     "delete": function(node) {
+    //         $("#dialog-delete").dialog('option', 'buttons', [
+    //             {text: 'Cancel',
+    //             click: function() { $(this).dialog('close'); },
+    //             },
+    //             {text: 'Delete',
+    //             click: function() {
+    //                 $tree.tree('removeNode', node);
+    //                 saveTree($tree);
+    //                 $(this).dialog('close');
+    //                 // updateCrateSize();
+    //             }
+    //         }]);
+    //         $("#dialog-delete").dialog('open');
+    //     }, 
+    // });
 
     $tree.bind('tree.move', function(event) {
         event.preventDefault();

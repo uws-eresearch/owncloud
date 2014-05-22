@@ -165,20 +165,6 @@ height: 44px;
 	padding: 0;
 }
 
-#files li.jqtree-selected > div:after {
-	position: absolute;
-	right: 40px;
-	top: 42%;
-	display: inline-block;
-	font-family: FontAwesome;
-	font-style: normal;
-	font-weight: normal;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	content: "\f013";
-}
-
 #files li > div.jqtree-element {
 	position: relative;
 	height: 50px;
@@ -191,6 +177,17 @@ height: 44px;
 div.jqtree-element {
 	background-color: #FFF;
   background-repeat: no-repeat;
+}
+
+#files div.jqtree-element:hover {
+	background-color: rgb(240,240,240);
+}
+#files div.jqtree-element ul.crate-actions {
+	display: none;
+}
+
+#files div.jqtree-element:hover ul.crate-actions {
+	display: block;
 }
 
 #files ul.jqtree-tree li > div.jqtree-element span.jqtree-title {
@@ -206,9 +203,6 @@ max-width: 800px;
 	font-weight: bold;
 }
 
-#files ul li ul li {
-/*	padding-left: 12px;*/
-}
 
 #files li > div.jqtree-element .jqtree-toggler {
 	display: block;
@@ -243,7 +237,7 @@ max-width: 800px;
 }
 
 #files ul.jqtree-tree li.jqtree-selected > .jqtree-element, #files ul.jqtree-tree li.jqtree-selected > .jqtree-element:hover {
-	background-color: rgb(240,240,240);
+	/*background-color: rgb(240,240,240);*/
 }
 
 #files ul.jqtree-tree .jqtree-toggler {
@@ -256,6 +250,28 @@ line-height: 12px;
 font-family: arial;
 border-bottom: none;
 color: #333;
+}
+
+#files .crate-actions {
+	margin: 0 60px 0 0;
+}
+
+#files .crate-actions li {
+	display: inline-block;
+	margin: 0 30px 0 0;
+}
+
+#files .crate-actions a {
+	line-height: 50px;
+	opacity: .5;
+}
+
+#files .crate-actions a:hover {
+	opacity: 1;
+}
+
+#files .crate-actions i {
+	margin-right: 5px;
 }
 
 /*
@@ -328,7 +344,6 @@ border-top-right-radius: 0;
 	width: 100%;
 	margin: 0;
 	padding: 6px 12px;
-	/*height: 34px;*/
 	font-size: 14px;
 	line-height: 1.42857143;
 	color: #555;
@@ -343,7 +358,6 @@ border-top-right-radius: 0;
 }
 
 .input-group .form-control {
-	/*position: relative;*/
 	z-index: 2;
 	float: left;
 	width: 100%;
@@ -373,10 +387,6 @@ border-top-right-radius: 0;
 	border-left: 1px solid #CCC;
 	overflow-y: auto;
 }
-
-/*.container-metadata input[type="text"], .container-metadata button {*/
-	/*margin: 0;*/
-/*}*/
 
 .container-metadata #crateName {
 	display: block;

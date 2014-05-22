@@ -66,10 +66,10 @@ function buildFileTree(data) {
         onCreateLi: function(node, $li) {
           $div = $li.find('.jqtree-element');
           $div.css('background-image', createImgUrl(node));
-          $ul = $div.append('<ul></ul>').find('ul');
-          $ul.append('<a><i class="fa fa-plus"></i>Add</a>');
-          $ul.append('<a><i class="fa fa-pencil"></i>Rename</a>');
-          $ul.append('<a><i class="fa fa-trash-o"></i>Delete</a>');
+          $ul = $div.append('<ul class="crate-actions pull-right"></ul>').find('ul');
+          $ul.append('<li><a><i class="fa fa-plus"></i>Add</a></li>');
+          $ul.append('<li><a><i class="fa fa-pencil"></i>Rename</a></li>');
+          $ul.append('<li><a><i class="fa fa-trash-o"></i>Delete</a></li>');
         },
         onCanMoveTo: function(moved_node, target_node, position) {
         // Can move before or after any node.

@@ -13,6 +13,7 @@ Download Vagrant and Virtual Box
 
 ```
 $ git clone git@github.com:IntersectAustralia/owncloud.git
+$ cd owncloud
 $ git submodule init
 $ git submodule update
 $ vagrant up

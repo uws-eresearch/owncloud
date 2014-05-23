@@ -344,11 +344,11 @@
       </div>
       <div class="modal-body">
         <p>New Cr8 Name</p>
-        <input type="text"></input>
+        <input id="crate_input_name" type="text"></input>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Create</button>
+        <button id="create_crate_submit" type="button" class="btn btn-primary">Create</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

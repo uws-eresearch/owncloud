@@ -46,3 +46,4 @@ Feature: Create and select a new crate
     And I click "Cancel"
     Then I should not see "new crate"
     And I should not have crate "new crate"
+

@@ -79,10 +79,12 @@ switch ($action){
 		}
 		break;
 	case 'switch':
-		$ok = $bagit_manager->switchCrate($crate_id);
+		$ok = $bagit_manager->switchCrate($crate_id);			
+		//\OCP\Util::writeLog("crate_it", $_SESSION['crate_id'], \OCP\Util::DEBUG);
+		alert(''); //FIXME WHY DOES THIS WORK?!!?
 		if(!$ok){
 			header('HTTP/1.1 400 No name',400);
-		}
+		} 
 		break;
 	case 'get_crate':
 		$msg = $bagit_manager->getSelectedCrate();

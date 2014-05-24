@@ -7,7 +7,7 @@ This project is a plugin to OwnCloud that provides a way for researchers to pack
 
 #### Download Packages Required
 
-Download Vagrant and Virtual Boxn 4.2
+Download Vagrant and Virtual Box
 
 #### Set up environment
 

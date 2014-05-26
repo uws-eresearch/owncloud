@@ -33,17 +33,40 @@ var oldcontent = '';
 
 function showPreview(dir,filename, type){
 		
-	var viewer = getFilePath(dir, filename, type);
-		
-	$.fancybox({
-        'autoScale'     : false,
-        'transitionIn'  : 'none',
-        'transitionOut' : 'none',
-        'title'         : this.title,
-        'width'     : '75%',
-        'height'        : '75%',
-        'href'          : viewer,
-        'type'          : 'iframe'
+	var baseUrl = '';
+	if(dir === '/'){
+		baseUrl = dir + filename;
+	}
+	else{
+		baseUrl = dir + "/" + filename;
+	}
+	
+	//make an ajax call to get the path and then feed the path to the popup
+	$.ajax({
+        url: OC.Router.generate('preview_handler', { job: 'getName', fname: baseUrl}),
+        type: 'get',
+        dataType: 'text',
+        success: function(data) {
+        	var viewer = OC.Router.generate('preview_handler', { job: 'onClick', fname: data});
+        	//here, change the url
+        	var rootLink = OC.linkTo('file_previewer', 'preview_handler.php');
+        	rootLink = rootLink.substring( 0, rootLink.lastIndexOf( "/" ) + 1);
+        	window.history.pushState("","", rootLink + "preview" + baseUrl);
+        	$.fancybox({
+                'autoScale'     : false,
+                'transitionIn'  : 'none',
+                'transitionOut' : 'none',
+                'title'         : this.title,
+                'width'     : '75%',
+                'height'        : '75%',
+                'href'          : viewer,
+                'type'          : 'iframe'
+            });
+        },
+        error: function(data) {
+            OC.Notification.show(data.statusText);
+            hideNotification(3000);
+        }
     });
 		
 }
@@ -86,6 +109,22 @@ function getRequestURL(dir, filename, type) {
 }
 
 $(document).ready(function() {
+	
+	$.ajax({
+		url: OC.linkTo('file_previewer', 'preview_handler.php')+'?job=show_preview', 
+		type: 'get',
+		dataType: 'json',
+		success: function(data) {
+			if(data['preview'] === true){
+				showPreview(data['dir'], data['filename'], 'html');
+			}
+		},
+		error: function(data) {
+			OC.Notification.show(data.statusText);
+			hideNotification(3000);
+		}
+	});
+	
 	//if(location.href.indexOf("files")!=-1) {
 		if(typeof FileActions!=='undefined'){
 			var supportedMimes = new Array(

@@ -296,8 +296,7 @@ class FeatureContext extends MinkContext
      */
     public function iRemove($crateItem)
     {
-        $file_action = $this->getFileActionElByFAIcon($crateItem, 'fa-trash-o');
-        $file_action->click();
+        $this->performActionElByFAIcon($crateItem, 'fa-trash-o');
     }
 
     /**
@@ -337,14 +336,24 @@ class FeatureContext extends MinkContext
     }
 
 
+    // private function mouseOverCrateItem($crateItem) {
+    //     $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]';
+    //     $page = $this->getSession()->getPage();
+    //     $el = $page->find('xpath', $xpath);
+    //     $el->click();
+    // }
+
     /**
      * Gets a file action element by crate item name font-awesome icon class
      **/
-    private function getFileActionElByFAIcon($crateItem, $fa_icon_class) {
-        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "';
-        $xpath .= $crateItem.'"]/following-sibling::ul//i[@class="fa '.$fa_icon_class.'"]';
+    private function performActionElByFAIcon($crateItem, $fa_icon_class) {
+        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]';
         $page = $this->getSession()->getPage();
-        return $page->find('xpath', $xpath);
+        $el = $page->find('xpath', $xpath);
+        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+        $xpath = '/following-sibling::ul//i[@class="fa '.$fa_icon_class.'"]';
+        $el = $el->find('xpath', $xpath);
+        $el->click();
     }
 
 }

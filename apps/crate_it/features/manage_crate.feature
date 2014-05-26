@@ -32,7 +32,13 @@ Feature: Manage the items in a crate (CRUD)
     When I go to the files page
     And I have folder "folder1" within the root folder
     And I have file "file2.txt" within "/folder1"
+    Then I add "folder1" to the default crate
     And I go to the crate_it page
+    And I wait for 2 seconds
+    When I remove "folder1"
+    Then I press "Remove" on the popup dialog
+    Then "folder1" should not be in the crate
+    And "file2.txt" should not be in the crate
 
   #CRATEIT-106
   Scenario: A user can rename an item in their crate

@@ -98,7 +98,7 @@ function buildFileTree(data) {
           {text: 'Cancel',
           click: function() { $(this).dialog('close'); },
           },
-          {text: 'Delete',
+          {text: 'Remove',
           click: function() {
               $tree.tree('removeNode', node);
               saveTree($tree);

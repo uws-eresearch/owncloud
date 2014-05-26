@@ -290,4 +290,37 @@ class FeatureContext extends MinkContext
     {
         sleep($seconds);
     }
+
+    /**
+     * @When /^I remove "([^"]*)"$/
+     */
+    public function iRemove($crateItem)
+    {
+        $file_action = $this->getFileActionElByFAIcon($crateItem, 'fa-trash-o');
+        $file_action->click();
+    }
+
+        /**
+     * @Then /^"([^"]*)" should not be in the crate$/
+     */
+    public function shouldNotBeInTheCrate($crateItem)
+    {
+        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]';
+        $page = $this->getSession()->getPage();
+        $item = $page->find('xpath', $xpath);
+        if (!is_null($item)) {
+            throw new Exception($crateItem." is in the crate");
+        }
+    }
+
+    /**
+     * Gets a file action element by crate item name font-awesome icon class
+     **/
+    private function getFileActionElByFAIcon($crateItem, $fa_icon_class) {
+        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "';
+        $xpath .= $crateItem.'"]/following-sibling::ul//i[@class="fa '.$fa_icon_class.'"]';
+        $page = $this->getSession()->getPage();
+        return $page->find('xpath', $xpath);
+    }
+
 }

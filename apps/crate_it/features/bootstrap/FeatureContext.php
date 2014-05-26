@@ -300,6 +300,14 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @When /^I rename "([^"]*)"$/
+     */
+    public function iRename($crateItem)
+    {
+        $this->performActionElByFAIcon($crateItem, 'fa-pencil');
+    }
+
+    /**
      * @Then /^"([^"]*)" should be in the crate$/
      */
     public function shouldBeInTheCrate($crateItem)
@@ -334,14 +342,6 @@ class FeatureContext extends MinkContext
         $el = $page->find('css', '.ui-dialog-buttonset');
         $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
     }
-
-
-    // private function mouseOverCrateItem($crateItem) {
-    //     $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]';
-    //     $page = $this->getSession()->getPage();
-    //     $el = $page->find('xpath', $xpath);
-    //     $el->click();
-    // }
 
     /**
      * Gets a file action element by crate item name font-awesome icon class

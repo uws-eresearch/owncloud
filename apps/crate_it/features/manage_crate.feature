@@ -42,16 +42,16 @@ Feature: Manage the items in a crate (CRUD)
 
   #CRATEIT-106
   Scenario: A user can rename an item in their crate
-    When I rename file "file.txt"
-    Then I fill in "New name:" with "newname.txt"
-    And I click "Rename"
+    When I rename "file.txt"
+    Then I fill in "rename-item" with "newname.txt"
+    When I press "Rename" on the popup dialog
     Then "file.txt" should not be in the crate
     And "newname.txt" should be in the crate
 
   #CRATEIT-106
   Scenario: A user can cancel renaming an item in their crate
-    When I rename file "file.txt"
-    Then I click "Cancel"
+    When I rename "file.txt"
+    Then I press "Cancel" on the popup dialog
     Then "file.txt" should be in the crate
 
   #CRATEIT-106

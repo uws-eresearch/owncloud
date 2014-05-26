@@ -18,14 +18,13 @@ Feature: Manage the items in a crate (CRUD)
   Scenario: A user can remove an item from their crate
     When I remove "file.txt"
     Then I should see "Remove item from crate?"
-    When I press "Remove"
-    And I wait for 4 seconds
+    When I press "Remove" on the popup dialog
     Then "file.txt" should not be in the crate
 
   #CRATEIT-106
-  Scenario: A user can cancel the delete action
+  Scenario: A user can cancel the remove action
     When I remove "file.txt"
-    Then I click "Cancel"
+    Then I press "Cancel" on the popup dialog
     Then "file.txt" should be in the crate
 
   #CRATEIT-106

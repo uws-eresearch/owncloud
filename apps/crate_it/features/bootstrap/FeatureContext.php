@@ -300,7 +300,20 @@ class FeatureContext extends MinkContext
         $file_action->click();
     }
 
-        /**
+    /**
+     * @Then /^"([^"]*)" should be in the crate$/
+     */
+    public function shouldBeInTheCrate($crateItem)
+    {
+        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]';
+        $page = $this->getSession()->getPage();
+        $item = $page->find('xpath', $xpath);
+        if (is_null($item)) {
+            throw new Exception($crateItem." is in the crate");
+        }
+    }
+
+    /**
      * @Then /^"([^"]*)" should not be in the crate$/
      */
     public function shouldNotBeInTheCrate($crateItem)
@@ -312,6 +325,17 @@ class FeatureContext extends MinkContext
             throw new Exception($crateItem." is in the crate");
         }
     }
+
+    /**
+     * @Then /^I press "([^"]*)" on the popup dialog$/
+     */
+    public function iPressOnThePopupDialog($buttonText)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.ui-dialog-buttonset');
+        $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
+    }
+
 
     /**
      * Gets a file action element by crate item name font-awesome icon class

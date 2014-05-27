@@ -17,14 +17,14 @@ Feature: Manage the items in a crate (CRUD)
   #CRATEIT-106
   Scenario: A user can remove an item from their crate
     When I remove "file.txt"
-    Then I should see "Remove item from crate?"
-    When I press "Remove" on the popup dialog
+    Then I should see "Remove item 'file.txt' from crate?"
+    When I press "Remove"
     Then "file.txt" should not be in the crate
 
   #CRATEIT-106
   Scenario: A user can cancel the remove action
     When I remove "file.txt"
-    Then I press "Cancel" on the popup dialog
+    Then I press "Cancel"
     Then "file.txt" should be in the crate
 
   #CRATEIT-106
@@ -36,7 +36,7 @@ Feature: Manage the items in a crate (CRUD)
     And I go to the crate_it page
     And I wait for 2 seconds
     When I remove "folder1"
-    Then I press "Remove" on the popup dialog
+    Then I press "Remove"
     Then "folder1" should not be in the crate
     And "file2.txt" should not be in the crate
 
@@ -44,14 +44,14 @@ Feature: Manage the items in a crate (CRUD)
   Scenario: A user can rename an item in their crate
     When I rename "file.txt"
     Then I fill in "rename-item" with "newname.txt"
-    When I press "Rename" on the popup dialog
+    When I press "Rename"
     Then "file.txt" should not be in the crate
     And "newname.txt" should be in the crate
 
   #CRATEIT-106
   Scenario: A user can cancel renaming an item in their crate
     When I rename "file.txt"
-    Then I press "Cancel" on the popup dialog
+    Then I press "Cancel"
     Then "file.txt" should be in the crate
 
   #CRATEIT-106

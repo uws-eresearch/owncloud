@@ -94,19 +94,17 @@ function buildFileTree(data) {
     };
 
     var removeItem = function(node) {
-      $("#dialog-delete").dialog('option', 'buttons', [
-          {text: 'Cancel',
-          click: function() { $(this).dialog('close'); },
-          },
-          {text: 'Remove',
-          click: function() {
-              $tree.tree('removeNode', node);
-              saveTree($tree);
-              indentTree($tree);
-              $(this).dialog('close');
-          }
-      }]);
-      $("#dialog-delete").dialog('open');
+      var $modal = $('#removeCrateModal');
+      var msg = "Remove item '" + node.name + "' from crate?";
+      $modal.find('.modal-body > p').text(msg);
+      var $confirm = $modal.find('.btn-primary');
+      $confirm.click(function() {
+          $tree.tree('removeNode', node);
+          saveTree($tree);
+          indentTree($tree);
+          $modal.modal('hide');
+      });
+      $modal.modal('show');
     };
 
     $tree = $('#files').tree({

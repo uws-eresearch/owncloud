@@ -376,11 +376,11 @@
       </div>
       <div class="modal-body">
         <p>New Name:</p>
-        <input></input>
+        <input id="rename-item" type="text"></input>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Remove</button>
+        <button type="button" class="btn btn-primary">Rename</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

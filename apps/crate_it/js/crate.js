@@ -78,19 +78,15 @@ function buildFileTree(data) {
     };
 
     var renameItem = function(node) {
-      $("#dialog-rename").dialog('option', 'buttons', [
-          {text: 'Cancel',
-          click: function() { $(this).dialog('close'); },
-          },
-          {text: 'Rename',
-          click: function() {
-              $tree.tree('updateNode', node, $('#rename-item').val());
-              saveTree($tree);
-              indentTree($tree);
-              $(this).dialog('close');
-          }
-      }]);
-      $("#dialog-rename").dialog('open');
+      var $modal = $('#renameCrateModal');
+      var $confirm = $modal.find('.btn-primary');
+      $confirm.click(function() {
+          $tree.tree('updateNode', node, $('#rename-item').val());
+          saveTree($tree);
+          indentTree($tree);
+          $modal.modal('hide');
+      });
+      $modal.modal('show');
     };
 
     var removeItem = function(node) {

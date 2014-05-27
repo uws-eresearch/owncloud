@@ -339,7 +339,7 @@ class FeatureContext extends MinkContext
     public function iPressOnThePopupDialog($buttonText)
     {
         $page = $this->getSession()->getPage();
-        $el = $page->find('css', '.ui-dialog-buttonset');
+        $el = $page->find('css', '.modal.in');
         $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
     }
 

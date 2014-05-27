@@ -24,7 +24,7 @@ Feature: Manage the items in a crate (CRUD)
   #CRATEIT-106
   Scenario: A user can cancel the remove action
     When I remove "file.txt"
-    Then I press "Cancel"
+    Then I press "Cancel" on the popup dialog
     Then "file.txt" should be in the crate
 
   #CRATEIT-106
@@ -51,7 +51,7 @@ Feature: Manage the items in a crate (CRUD)
   #CRATEIT-106
   Scenario: A user can cancel renaming an item in their crate
     When I rename "file.txt"
-    Then I press "Cancel"
+    Then I press "Cancel" on the popup dialog
     Then "file.txt" should be in the crate
 
   #CRATEIT-106

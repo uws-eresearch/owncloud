@@ -107,7 +107,8 @@ function buildFileTree(data) {
         data: data.vfs,
         autoOpen: false,
         dragAndDrop: true,
-        usecontextmenu: true,
+        saveState: true,
+        useContextMenu: false,
         onCreateLi: function(node, $li) {
           $div = $li.find('.jqtree-element');
           $div.css('background-image', createImgUrl(node));
@@ -118,6 +119,11 @@ function buildFileTree(data) {
           $ul.find('.fa-pencil').parent().click(function() {renameItem(node);});
           $ul.append('<li><a><i class="fa fa-trash-o"></i>Delete</a></li>');
           $ul.find('.fa-trash-o').parent().click(function() {removeItem(node);});
+          // if(node.id == 'folder' && !node.is_open) {
+          //   console.log(node.name);
+          //   $li.addClass('jqtree-closed');
+          //   console.log($li);
+          // }
         },
         onCanMoveTo: function(moved_node, target_node, position) {
         // Can move before or after any node.

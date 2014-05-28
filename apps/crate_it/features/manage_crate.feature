@@ -55,10 +55,10 @@ Feature: Manage the items in a crate (CRUD)
     Then "file.txt" should be in the crate
 
   #CRATEIT-106
-  Scenario: A user can not rename an item in a crate unless the name is valid
-    When I rename file "file.txt"
-    Then the "Rename" button should be disabled
-    # TODO: Need rules of what constitutes a valid name
+  #Scenario: A user can not rename an item in a crate unless the name is valid
+  #  When I rename file "file.txt"
+  #  Then the "Rename" button should be disabled
+  # TODO: Need rules of what constitutes a valid name
 
 
 

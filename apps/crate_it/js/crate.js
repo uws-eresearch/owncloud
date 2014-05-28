@@ -107,7 +107,8 @@ function buildFileTree(data) {
         data: data.vfs,
         autoOpen: false,
         dragAndDrop: true,
-        saveState: true,
+        saveState: false,
+        selectable: false,
         useContextMenu: false,
         onCreateLi: function(node, $li) {
           $div = $li.find('.jqtree-element');
@@ -119,11 +120,6 @@ function buildFileTree(data) {
           $ul.find('.fa-pencil').parent().click(function() {renameItem(node);});
           $ul.append('<li><a><i class="fa fa-trash-o"></i>Delete</a></li>');
           $ul.find('.fa-trash-o').parent().click(function() {removeItem(node);});
-          // if(node.id == 'folder' && !node.is_open) {
-          //   console.log(node.name);
-          //   $li.addClass('jqtree-closed');
-          //   console.log($li);
-          // }
         },
         onCanMoveTo: function(moved_node, target_node, position) {
         // Can move before or after any node.
@@ -135,6 +131,14 @@ function buildFileTree(data) {
               return true;
            }
         },
+    });
+
+    $tree.bind('tree.open', function(event) {
+        saveTree($tree, false);
+    });
+    
+    $tree.bind('tree.close', function(event) {
+        saveTree($tree, false);
     });
 
     $tree.bind('tree.move', function(event) {
@@ -230,16 +234,18 @@ function expandRoot() {
 }
 
 
-function saveTree($tree) {
+function saveTree($tree, show_msg) {
     $.ajax({
         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
         type: 'post',
         dataType: 'html',
         data: {'action':'update_vfs', 'vfs': $tree.tree('toJson')},
         success: function(data){
+          if(show_msg || typeof show_msg === 'undefined') {
             OC.Notification.show('Crate updated');
             updateCrateSize();
             hideNotification(3000);
+           }
         },
         error: function(data){
             OC.Notification.show(data.statusText);

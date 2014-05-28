@@ -189,13 +189,13 @@ class FeatureContext extends MinkContext
     /**
      * @Then /^"([^"]*)" should not be visible in the default crate$/
      */
-    public function shouldNotBeVisibleInTheDefaultCrate($arg1)
+    public function shouldNotBeVisibleInTheDefaultCrate($crateItem)
     {
 		$page = $this->getSession()->getPage();
 		$web_assert = new WebAssert($this->getSession());
         $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
 		// The element will still exist even without being visible!
-        $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$arg1. '"]', $root_folder);	
+        $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$crateItem. '"]', $root_folder);	
     	if ($element->isVisible())
 		{
 			throw new Exception('The element should be invisible.');
@@ -341,6 +341,17 @@ class FeatureContext extends MinkContext
         $page = $this->getSession()->getPage();
         $el = $page->find('css', '.modal.in');
         $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
+    }
+
+    /**
+     * @When /^I toggle expand on "([^"]*)"$/
+     */
+    public function iToggleExpandOn($folder)
+    {
+        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$folder.'"]/preceding-sibling::a';
+        $page = $this->getSession()->getPage();
+        $el = $page->find('xpath', $xpath);
+        $el->click();
     }
 
     /**

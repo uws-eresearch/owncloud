@@ -36,10 +36,13 @@ Feature: Add files and folders to a crate
     When I add "folder1" to the default crate
     Then I go to the crate_it page
     Then I wait for 2 seconds
-    Then "folder1" should not be visible in the default crate
-    When I expand the root folder in the default crate
-    Then I wait for 2 seconds
-    Then "folder1" should be visible in the default crate
+    Then "folder2" should not be visible in the default crate
+    When I toggle expand on "folder1"
+    And I wait for 1 seconds
+    Then "folder2" should be visible in the default crate
+    When I toggle expand on "folder1"
+    And I wait for 1 seconds
+    Then "folder2" should not be visible in the default crate
 
   #CRATEIT-46
   Scenario: A user can add a file to a crate multiple times

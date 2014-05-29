@@ -799,4 +799,9 @@ $(document).ready(function() {
 
     activateRemoveActivityButtons();
 
+    $('#rename-item').change(function() {
+      console.log('change');
+    });
+
+
 });

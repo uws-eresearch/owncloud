@@ -193,7 +193,7 @@
         </div>
 
       <footer class="attribution">
-        Cr9it has been developed through a collaboration between the University of Newcastle, the University of Western Sydney, and Intersect Australia Ltd.
+        
       </footer>
     </div>
 
@@ -257,6 +257,11 @@
           <p>Select <b><i>Cr8it</i></b></p>
           <p>Select crate from the <b><i>default_crate</i></b> dropdown menu</p>
           <p>Select <b><i>Delete Crate</i></b></p>
+        </section>
+
+        <h2 class="modal-title">About Cr8it</h2>
+        <section>
+          <p>Cr8it has been developed through a collaboration between the University of Newcastle, the University of Western Sydney, and Intersect Australia Ltd.</p>
         </section>
       </div>
 

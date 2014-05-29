@@ -18,6 +18,7 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+alert = function() {};
 
 function hideNotification(delayTime) {
     setTimeout(function() {
@@ -497,11 +498,13 @@ $(document).ready(function() {
            url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
            type: 'get',
            dataType: 'html',
+           async: false,
            data: {'action':'create', 'crate_name':$('#crate_input_name').val()},
            success: function(data){
              $('#crate_input_name').val('');
              $('#newCrateModal').modal('hide');
              $("#crates").append('<option id="'+data+'" value="'+data+'" >'+data+'</option>');
+      		 $("#crates").val(data);
              OC.Notification.show('Crate '+data+' successfully created');
          hideNotification(3000);
        },
@@ -510,7 +513,8 @@ $(document).ready(function() {
          hideNotification(3000);
          //$('#crate_input #create').focus();
         }
-       });
+       });     
+       $('#crates').trigger('change');
        return false;
   });
   
@@ -529,7 +533,7 @@ $(document).ready(function() {
   });
   
   $('#crates').change(function(){
-    var id = $(this).find(':selected').attr("id");
+    var id = $(this).val();
     $.ajax({
       url: OC.linkTo('crate_it', 'ajax/bagit_handler.php')+'?action=switch&crate_id='+id,
       type: 'get',

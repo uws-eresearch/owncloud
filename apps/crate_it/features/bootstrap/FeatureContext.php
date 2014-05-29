@@ -8,6 +8,10 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Mink\WebAssert;
+require_once __DIR__.'/../../lib/bagit_manager.php';
+
+$dir = dirname(dirname(__FILE__)).'/3rdparty';
+set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
 
 //
 // Require 3rd-party libraries here:
@@ -399,5 +403,70 @@ class FeatureContext extends MinkContext
         $el = $el->find('xpath', $xpath);
         $el->click();
     }
+	
+	/**
+     * @Given /^I delete all existing crates$/
+     */
+    public function iDeleteAllExistingCrates()
+    {
+        //Get an instance of BagItManager
+		$bagit_manager = \OCA\crate_it\lib\BagItManager::getInstance();
+		$page = $this->getSession()->getPage();
+		$xpath = '//select[@id="crates"]//option/@id';
+		$existing_crate_name_els = $page->findAll('xpath', $xpath);
+		foreach ($existing_crate_name_els as $crate_name_el) {
+			$bagit_manager->switchCrate($crate_name_el.getText());
+			$result = $bagit_manager->deleteCrate();
+		}
+		
+    }
+	
+    /**
+     * @When /^I click the new crate button$/
+     */
+    public function iClickTheNewCrateButton()
+    {
+        $page = $this->getSession()->getPage();
+		$xpath = '//a[@id="subbutton"]';
+        $page->find('xpath', $xpath)->click();
+    }
 
+    /**
+     * @Then /^I click "([^"]*)" in the create crate modal$/
+     */
+    public function iClickInTheCreateCrateModal($buttonText)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+        $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
+    }
+    /**
+     * @Then /^I should see notice "([^"]*)"$/
+     */
+    public function iShouldSeeNotice($arg1)
+    {
+        //notification isVisible
+    }
+
+    /**
+     * @Given /^the selected crate should be "([^"]*)"$/
+     */
+    public function theSelectedCrateShouldBe($arg1)
+    {
+        $page = $this->getSession()->getPage();
+    	$optionElement = $page->find('xpath', '//select[@id="crates"]/option[@selected]');
+		$selectedDefaultValue = (string)$optionElement->getText();
+		if ($selectedDefaultValue != $arg1)
+		{
+			throw new Exception('Selected value is "' . $selectedDefaultValue . '" , not "'. $arg1 .'".');
+		}
+    }	
+
+    /**
+     * @Given /^I should not have crate "([^"]*)"$/
+     */
+    public function iShouldNotHaveCrate($arg1)
+    {
+        throw new PendingException();
+    }
 }

@@ -8,10 +8,6 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Mink\WebAssert;
-require_once __DIR__.'/../../lib/bagit_manager.php';
-
-$dir = dirname(dirname(__FILE__)).'/3rdparty';
-set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
 
 //
 // Require 3rd-party libraries here:
@@ -445,8 +441,16 @@ class FeatureContext extends MinkContext
      */
     public function iShouldSeeNotice($arg1)
     {
-        //notification isVisible
-    }
+        $page = $this->getSession()->getPage();
+		$notification = $page->find('xpath', '//div[@id="notification"]');
+    	$text = $notification->getText();
+		if ($text!=$arg1) {
+			throw new Exception('Notification should say "'.$arg1.'", but instead it says "'.$text.'"');
+		}
+    	if (!$notification->isVisible()) {
+    		throw new Exception('Notification is not visible');
+    	}
+	}
 
     /**
      * @Given /^the selected crate should be "([^"]*)"$/

@@ -14,6 +14,7 @@ Feature: Create and select a new crate
     And I fill in "New Cr8 Name" with "new crate"
     Then I click "Create" in the create crate modal
     Then I should see notice "Crate new crate successfully created"
+    Then I wait for 3 seconds
     And the selected crate should be "new crate"
     
   #CRATEIT-45

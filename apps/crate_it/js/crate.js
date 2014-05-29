@@ -778,30 +778,9 @@ $(document).ready(function() {
         autoOpen: false,
     });
 
-    $("#dialog-delete").dialog({
-        autoOpen: false,
-    });
-  
-    $("#dialog-help").dialog({
-        autoOpen: false,
-        minWidth: 600,
-        position: { my: "right top",
-                    at: "right top",
-                    of: '#help_button' },
-    });
-
-    $('#help_button').on('click', function() {
-        $("#dialog-help").dialog('open');
-    });
-
     activateRemoveCreatorButtons();
     makeCreatorsEditable();
 
     activateRemoveActivityButtons();
-
-    $('#rename-item').change(function() {
-      console.log('change');
-    });
-
 
 });

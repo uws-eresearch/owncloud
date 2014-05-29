@@ -192,33 +192,7 @@
 
         </div>
 
-      <footer class="attribution">
-        
-      </footer>
     </div>
-
-
-
-<div>
-    <ul id="fileMenu" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-        <li class="add"><a href="#add"><i class=".glyphicon .glyphicon-plus"></i> Add</a></li>
-        <li class="rename"><a href="#rename"><i class=".glyphicon .glyphicon-edit"></i> Rename</a></li>
-        <li class="divider"></li>
-        <li class="delete"><a href="#delete"><i class=".glyphicon .glyphicon-floppy-remove"></i> Delete</a></li>
-    </ul>
-</div>
-
-<div id="dialog-add" title="Add Folder">
-    <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>New folder name:</p>
-    <input id="add-folder" type="text"></input>
-</div>
-<div id="dialog-rename" title="Rename Item">
-    <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>New name:</p>
-    <input id="rename-item" type="text"></input>
-</div>
-<div id="dialog-delete" title="Remove Item">
-    <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Remove item from crate?</p>
-</div>
 
 <div class="modal" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
   <div class="modal-dialog">

@@ -526,3 +526,7 @@ filter: alpha(opacity=20);
 h4, .h4 {
 font-size: 18px;
 }
+
+#search_people_results button {
+	float: right;
+}

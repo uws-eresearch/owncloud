@@ -135,7 +135,7 @@
               <?php foreach($_['creators'] as $creator):?>
                 <li>
                   <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
-                    <i class="fa fa-times"></i>
+                    <i class="fa fa-minus"></i>
                   </button>
                   <span id="<?php echo $creator['creator_id'] ?>" class="full_name"><?php echo $creator['full_name'] ?></span>
                 </li>
@@ -165,7 +165,7 @@
               <?php foreach($_['activities'] as $activity):?>
                 <li>
                   <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
-                    <i class="fa fa-times"></i>
+                    <i class="fa fa-minus"></i>
                   </button>
                   <span id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></span>
                 </li>

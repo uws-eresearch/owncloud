@@ -114,12 +114,17 @@ function buildFileTree(data) {
           $div = $li.find('.jqtree-element');
           $div.css('background-image', createImgUrl(node));
           $ul = $div.append('<ul class="crate-actions pull-right"></ul>').find('ul');
-          $ul.append('<li><a><i class="fa fa-plus"></i>Add</a></li>');
-          $ul.find('.fa-plus').parent().click(function() {addFolder(node);});
+          var type = node.id;
+          if (type == 'rootfolder' || type == 'folder') {
+            $ul.append('<li><a><i class="fa fa-plus"></i>Add</a></li>');
+            $ul.find('.fa-plus').parent().click(function() {addFolder(node);});
+          }
           $ul.append('<li><a><i class="fa fa-pencil"></i>Rename</a></li>');
           $ul.find('.fa-pencil').parent().click(function() {renameItem(node);});
-          $ul.append('<li><a><i class="fa fa-trash-o"></i>Delete</a></li>');
-          $ul.find('.fa-trash-o').parent().click(function() {removeItem(node);});
+          if(type != 'rootfolder') {
+            $ul.append('<li><a><i class="fa fa-trash-o"></i>Delete</a></li>');
+            $ul.find('.fa-trash-o').parent().click(function() {removeItem(node);});  
+          }
         },
         onCanMoveTo: function(moved_node, target_node, position) {
         // Can move before or after any node.
@@ -594,14 +599,15 @@ $(document).ready(function() {
       if (family_name)
           full_name = full_name + family_name;
       if (email)
-          full_name = full_name + ' ' + email;
-      $('#search_people_results').append('<li><input id="'
+          // TODO: Fix this
+          full_name = full_name + '</p> <p>' + email;
+      $('#search_people_results').append('<li><button id="'
                  + 'search_people_result_' + id
-                 + '" type="button" value="Add to creators" />'
-                 + '<span id="' + id + '" class="full_name">'
-                 + full_name + '</span></li>');
+                 + '"><i class="fa fa-plus"></i></button>'
+                 + '<p id="' + id + '" class="full_name">'
+                 + full_name + '</p></li>');
         }
-        $("input[id^='search_people_result_']").click('click', function(event) {
+        $("button[id^='search_people_result_']").click('click', function(event) {
       // Add people to backend
       var input_element = $(this);
       var id = input_element.attr("id");
@@ -617,9 +623,9 @@ $(document).ready(function() {
         'full_name': input_element.parent().text()
           },
           success: function(data) {
-        $('#creators').append('<li><input id="'
+        $('#creators').append('<li><button id="'
                   + 'creator_' + creator_id
-                  + '" type="button" value="Remove" />'
+                  + ' />'
                   + '<span id="' + creator_id + '" class="full_name">'
                   + input_element.parent().text() + '</span></li>');
         input_element.parent().remove();

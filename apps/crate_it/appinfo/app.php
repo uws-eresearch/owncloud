@@ -46,7 +46,7 @@ OCP\Util::addStyle('crate_it', 'font-awesome.overrides');
 // Bootstrap
 OCP\Util::addStyle('crate_it/3rdparty', 'bootstrap/bootstrap');
 OCP\Util::addScript('crate_it/3rdparty', 'bootstrap/bootstrap.min');
-
+OCP\Util::addStyle('crate_it', 'bootstrap.overrides');
 
 OCP\Util::addStyle('crate_it', 'crate');
 OCP\Util::addStyle('crate_it/3rdparty', 'jqtree/jqtree');

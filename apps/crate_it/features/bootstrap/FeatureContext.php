@@ -355,6 +355,39 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @Then /^I should have crate actions "([^"]*)" for "([^"]*)"$/
+     */
+    public function iShouldHaveCrateActionsFor($actions, $crateItem)
+    {
+        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
+        $page = $this->getSession()->getPage();
+        $el = $page->find('xpath', $xpath);
+        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+        $actionItems = explode(', ', $actions);
+        $web_assert = new WebAssert($this->getSession());
+        foreach ($actionItems as $action) {
+            $web_assert->elementExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
+        }
+        
+    }
+
+    /**
+     * @Given /^I should not have crate actions "([^"]*)" for "([^"]*)"$/
+     */
+    public function iShouldNotHaveCrateActionsFor($actions, $crateItem)
+    {
+        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
+        $page = $this->getSession()->getPage();
+        $el = $page->find('xpath', $xpath);
+        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+        $actionItems = explode(', ', $actions);
+        $web_assert = new WebAssert($this->getSession());
+        foreach ($actionItems as $action) {
+            $web_assert->elementNotExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
+        }
+    }
+
+    /**
      * Gets a file action element by crate item name font-awesome icon class
      **/
     private function performActionElByFAIcon($crateItem, $fa_icon_class) {

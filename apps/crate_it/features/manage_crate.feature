@@ -14,6 +14,33 @@ Feature: Manage the items in a crate (CRUD)
     Then I go to the crate_it page
     And I wait for 2 seconds
 
+  #CRATEIT-48
+  Scenario: Crate items display the correct crate item actions
+    When I go to the files page
+    And I have folder "folder1" within the root folder
+    Then I add "folder1" to the default crate
+    And I go to the crate_it page
+    And I wait for 2 seconds
+    Then I should have crate actions "Rename, Delete" for "file.txt"
+    And I should not have crate actions "Add" for "file.txt"
+
+  #CRATEIT-48
+  Scenario: Crate state is maintained when navigating between file and crate views
+    When I go to the files page
+    Then I have folder "folder1" within the root folder
+    And I have folder "folder2" within "folder1"
+    Then I add "folder1" to the default crate
+    Then I go to the crate_it page
+    And I wait for 2 seconds
+    When I toggle expand on "folder1"
+    And I wait for 1 seconds
+    Then "folder2" should be visible in the default crate
+    When I go to the files page
+    Then I go to the crate_it page
+    And I wait for 2 seconds
+    Then "folder2" should be visible in the default crate
+
+
   #CRATEIT-106
   Scenario: A user can remove an item from their crate
     When I remove "file.txt"
@@ -54,7 +81,7 @@ Feature: Manage the items in a crate (CRUD)
     Then I press "Cancel" on the popup dialog
     Then "file.txt" should be in the crate
 
-  #CRATEIT-106
+  #CRATEIT-126
   #Scenario: A user can not rename an item in a crate unless the name is valid
   #  When I rename file "file.txt"
   #  Then the "Rename" button should be disabled

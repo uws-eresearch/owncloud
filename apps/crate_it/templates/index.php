@@ -340,20 +340,12 @@
         <h4 class="modal-title" id="removeCrateModalLabel">Remove Item</h4>
       </div>
       <div class="modal-body">
-<<<<<<< HEAD
+
         <p>Remove item from crate?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary">Remove</button>
-=======
-        <p>New Cr8 Name</p>
-        <input id="crate_input_name" type="text"></input>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button id="create_crate_submit" type="button" class="btn btn-primary">Create</button>
->>>>>>> 3f5d21a0033493381ab49f96912588285fd797ef
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

@@ -13,6 +13,7 @@ Feature: Create and select a new crate
     When I click the new crate button
     And I fill in "New Cr8 Name" with "new crate"
     Then I click "Create" in the create crate modal
+    Then I wait for 3 seconds
     Then I should see notice "Crate new crate successfully created"
     And the selected crate should be "new crate"
     

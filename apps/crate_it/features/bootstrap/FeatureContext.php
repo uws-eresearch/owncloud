@@ -8,10 +8,6 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Mink\WebAssert;
-require_once __DIR__.'/../../lib/bagit_manager.php';
-
-$dir = dirname(dirname(__FILE__)).'/3rdparty';
-set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
 
 //
 // Require 3rd-party libraries here:

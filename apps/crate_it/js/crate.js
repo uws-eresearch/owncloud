@@ -491,9 +491,39 @@ $(document).ready(function() {
             saveTree($tree);
       hideMetadata();
   });
-
+  
+   $('#crate_input_name').keyup(function () {
+	  if($(this).val().length > 128){
+	  	$("#crate_name_validation_error").text('Cr8 Name has reached the limit of 128 characters');	
+	  	$("#crate_name_validation_error").show();	
+        $(this).val($(this).val().substr(0, 128));
+	  }
+   });
+   
+   $('#crate_input_description').keyup(function () {
+	  if($(this).val().length > 10000){
+	  	$("#crate_description_validation_error").text('Cr8 Description has reached the limit of 10,000 characters');	
+	  	$("#crate_description_validation_error").show();	
+        $(this).val($(this).val().substr(0, 10000));
+	  }
+   });
+  
+  $('#subbutton').click(function(event) {
+      $('#create_crate_error').hide();
+  	  $("#crate_name_validation_error").hide();	
+  	  $('#crate_input_name').val('');
+  	  $('#crate_input_description').val('');
+  });
 
   $('#create_crate_submit').click(function(event) {
+  	   $('#create_crate_error').hide();
+  	   $("#crate_name_validation_error").hide();
+  	   if ($('#crate_input_name').val() == '')
+  	   {
+  	   		$("#crate_name_validation_error").text("This field is mandatory");
+  	   		$("#crate_name_validation_error").show();
+  	   		return false;
+  	   } 
        $.ajax({
            url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
            type: 'get',

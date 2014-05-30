@@ -471,7 +471,15 @@ class FeatureContext extends MinkContext
      */
     public function iShouldNotHaveCrate($arg1)
     {
-        throw new PendingException();
+        $page = $this->getSession()->getPage();
+		$xpath = '//select[@id="crates"]//option';
+		$existing_crate_name_els = $page->findAll('xpath', $xpath);
+		foreach ($existing_crate_name_els as $crate_name_el) {
+			if ($crate_name_el->getAttribute("id") == $arg1)
+			{
+				throw new Exception('The crate "' .$arg1.'" should not exist');
+			}
+		}
     }
 	
 	/**
@@ -491,6 +499,25 @@ class FeatureContext extends MinkContext
 		if ($msg != $arg1)
 		{
 			throw new Exception('Error message is "' . $msg . '" , not "'. $arg1 .'".');
+		}
+    }
+	
+	/**
+     * @Then /^I should see a "([^"]*)" validation error "([^"]*)"$/
+     */
+    public function iShouldSeeAValidationError($arg1, $arg2)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+		$validation_error_label = $el->find('xpath', '//label[@validates="'.$arg1.'"]');
+		if (!$validation_error_label->isVisible())
+		{
+			throw new Exception('Validation message not visible');
+		}
+		$msg = $validation_error_label->getText();
+		if ($msg != $arg2)
+		{
+			throw new Exception('Validation message is "' . $msg . '" , not "'. $arg2 .'".');
 		}
     }
 }

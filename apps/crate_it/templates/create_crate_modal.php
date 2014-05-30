@@ -7,12 +7,21 @@
       </div>
       <div class="modal-body">
       	<p>
-        New Cr8 Name
+        New Cr8 Name *
         </p>
-        <input id="crate_input_name" name = "New Cr8 Name" type="text"></input>
+        <input id="crate_input_name" name = "New Cr8 Name" style="width: 40%;" type="text"></input>
         <label id="crate_name_validation_error" validates="New Cr8 Name" style="color:red;display:none"></label>
+        
+        <p>
+        New Cr8 Description
+        </p>
+        
+        <textarea id="crate_input_description" name = "New Cr8 Description" maxlength="10000" style="width: 40%;"></textarea>
+        
+        <label id="crate_description_validation_error" validates="New Cr8 Description" style="color:red;display:none"></label>
+        
         <p></p>
-        <label id="create_crate_error" name = "Error Message" style="color:red;display:none"></label>
+        <label id="create_crate_error" name = "Error Message" style="display:none"></label>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

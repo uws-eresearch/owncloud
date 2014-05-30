@@ -506,15 +506,16 @@ $(document).ready(function() {
              $("#crates").append('<option id="'+data+'" value="'+data+'" >'+data+'</option>');
       		 $("#crates").val(data);
              OC.Notification.show('Crate '+data+' successfully created');
-         hideNotification(3000);
-       },
-       error: function(data){
-         OC.Notification.show(data.statusText);
-         hideNotification(3000);
-         //$('#crate_input #create').focus();
-        }
+             hideNotification(3000);       
+       		 $('#crates').trigger('change');     
+            },
+           error: function(data){
+           	 $('#create_crate_error').text(data.statusText);
+           	 $('#create_crate_error').show();
+	         //OC.Notification.show(data.statusText);
+	         hideNotification(3000);
+           }
        });     
-       $('#crates').trigger('change');
        return false;
   });
   

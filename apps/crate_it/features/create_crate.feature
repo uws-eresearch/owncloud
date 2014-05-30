@@ -26,13 +26,13 @@ Feature: Create and select a new crate
     And I click the new crate button
     And I fill in "New Cr8 Name" with "new crate"
     And I click "Create" in the create crate modal
-    Then I should see notice "Crate new crate already exists"
+    Then I should see error 'Crate with name "new crate" already exists' in the modal
 
   #CRATEIT-45
   Scenario: Ensure the crate name field is mandatory
     When I click the new crate button
     And I click "Create" in the create crate modal
-    Then I should see "This field is mandatory"
+    Then I should see a "New Cr8 Name" validation error "This field is mandatory" 
 
   #CRATEIT-45
   Scenario: Ensure the crate name field has a max length of 128

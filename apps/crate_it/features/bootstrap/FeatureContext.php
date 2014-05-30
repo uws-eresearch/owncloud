@@ -473,4 +473,25 @@ class FeatureContext extends MinkContext
     {
         throw new PendingException();
     }
+	
+	/**
+	 * @Then /^I should see error \'([^\']*)\' in the modal$/
+	 *
+     */
+    public function iShouldSeeErrorInTheModal($arg1)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+		$error_label = $el->find('xpath', '//label[@name="Error Message"]');
+		if (!$error_label->isVisible())
+		{
+			throw new Exception('Error message not visible');
+		}
+		$msg = $error_label->getText();
+		if ($msg != $arg1)
+		{
+			throw new Exception('Error message is "' . $msg . '" , not "'. $arg1 .'".');
+		}
+    }
 }
+

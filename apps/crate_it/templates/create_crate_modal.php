@@ -10,6 +10,9 @@
         New Cr8 Name
         </p>
         <input id="crate_input_name" name = "New Cr8 Name" type="text"></input>
+        <label id="crate_name_validation_error" validates="New Cr8 Name" style="color:red;display:none"></label>
+        <p></p>
+        <label id="create_crate_error" name = "Error Message" style="color:red;display:none"></label>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

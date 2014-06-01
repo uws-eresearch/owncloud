@@ -345,6 +345,7 @@
         <h4 class="modal-title" id="removeCrateModalLabel">Remove Item</h4>
       </div>
       <div class="modal-body">
+
         <p>Remove item from crate?</p>
       </div>
       <div class="modal-footer">

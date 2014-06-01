@@ -545,7 +545,7 @@ $(document).ready(function() {
 	         //OC.Notification.show(data.statusText);
 	         hideNotification(3000);
            }
-       });     
+       });   
        return false;
   });
   

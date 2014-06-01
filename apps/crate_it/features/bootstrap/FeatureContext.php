@@ -451,7 +451,6 @@ class FeatureContext extends MinkContext
     		throw new Exception('Notification is not visible');
     	}
 	}
-
     /**
      * @Given /^the selected crate should be "([^"]*)"$/
      */

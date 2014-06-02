@@ -1,7 +1,7 @@
 @javascript
 Feature: Manage the items in a crate (CRUD)
   As a user
-  I want to create virtual folders, rename items
+  I want to create virtual folders, rename and remove items
 
   Background:
     Given I'm logged in to ownCloud as "test"
@@ -80,6 +80,25 @@ Feature: Manage the items in a crate (CRUD)
     When I rename "file.txt"
     Then I press "Cancel" on the popup dialog
     Then "file.txt" should be in the crate
+
+  #CRATEIT-107
+  Scenario: A user can add virtual folders to their crate
+    When I add a virtual folder to "/"
+    Then I should see "Add Folder"
+    When I fill in "add-folder" with "Virtual Folder"
+    Then I press "Add"
+    And I wait for 1 seconds
+    Then "Virtual Folder" should be visible in the default crate
+
+  #CRATEIT-107
+  Scenario: A user can cancel adding virtual folder to their crate
+    When I add a virtual folder to "/"
+    Then I should see "Add Folder"
+    When I fill in "add-folder" with "Virtual Folder"
+    Then I press "Cancel" on the popup dialog
+    And I wait for 1 seconds
+    Then "Virtual Folder" should not be in the crate
+
 
   #CRATEIT-126
   #Scenario: A user can not rename an item in a crate unless the name is valid

@@ -308,6 +308,14 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @When /^I add a virtual folder to "([^"]*)"$/
+     */
+    public function iAddAVirtualFolderTo($crateItem)
+    {
+        $this->performActionElByFAIcon($crateItem, 'fa-plus');
+    }
+
+    /**
      * @Then /^"([^"]*)" should be in the crate$/
      */
     public function shouldBeInTheCrate($crateItem)

@@ -59,7 +59,11 @@ function buildFileTree(data) {
     return 'url(' + OC.imagePath('core', 'filetypes/' + icon + '.svg') + ')';
   };
 
+
+  // TODO: All these crate actions follow a similar pattern when they cleanup,
+  // should probably move this to a helper method to keep it DRY
   var addFolder = function(node) {
+    console.log(node);
     var $modal = $('#addFolderModal');
     var $confirm = $modal.find('.btn-primary');
     $confirm.click(function() {
@@ -67,6 +71,7 @@ function buildFileTree(data) {
         id: 'folder',
         label: $('#add-folder').val(),
       }, node);
+      $confirm.off('click');
       saveTree($tree);
       indentTree($tree);
       $modal.modal('hide');
@@ -79,6 +84,7 @@ function buildFileTree(data) {
     var $confirm = $modal.find('.btn-primary');
     $confirm.click(function() {
       $tree.tree('updateNode', node, $('#rename-item').val());
+      $confirm.off('click');
       saveTree($tree);
       indentTree($tree);
       $modal.modal('hide');
@@ -93,6 +99,7 @@ function buildFileTree(data) {
     var $confirm = $modal.find('.btn-primary');
     $confirm.click(function() {
       $tree.tree('removeNode', node);
+      $confirm.off('click');
       saveTree($tree);
       indentTree($tree);
       $modal.modal('hide');

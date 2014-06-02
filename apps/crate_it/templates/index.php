@@ -364,3 +364,6 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+
+<?php include 'folder_modal.php'; ?>

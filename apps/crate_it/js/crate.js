@@ -59,22 +59,18 @@ function buildFileTree(data) {
     };
 
     var addFolder = function(node) {
-      $("#dialog-add").dialog('option', 'buttons', [
-            {text: 'Cancel',
-            click: function() { $(this).dialog('close'); },
-            },
-            {text: 'Add',
-            click: function() {
-                $tree.tree('addNodeAfter', {
-                    id: 'folder',
-                    label: $('#add-folder').val(),
-                }, node);
-                saveTree($tree);
-                indentTree($tree);
-                $(this).dialog('close');
-            }
-        }]);
-      $("#dialog-add").dialog('open');
+      var $modal = $('#addFolderModal');
+      var $confirm = $modal.find('.btn-primary');
+      $confirm.click(function() {
+          $tree.tree('appendNode', {
+              id: 'folder',
+              label: $('#add-folder').val(),
+          }, node);
+          saveTree($tree);
+          indentTree($tree);
+          $modal.modal('hide');
+      });
+      $modal.modal('show');
     };
 
     var renameItem = function(node) {
@@ -770,13 +766,13 @@ $(document).ready(function() {
 
     updateCrateSize();    
 
-    $("#dialog-add").dialog({
-        autoOpen: false,
-    });
+    // $("#dialog-add").dialog({
+    //     autoOpen: false,
+    // });
 
-    $("#dialog-rename").dialog({
-        autoOpen: false,
-    });
+    // $("#dialog-rename").dialog({
+    //     autoOpen: false,
+    // });
 
     activateRemoveCreatorButtons();
     makeCreatorsEditable();

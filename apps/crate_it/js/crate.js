@@ -82,7 +82,7 @@ function buildFileTree(data) {
         label: $('#add-folder').val(),
       }, node);
       $confirm.off('click');
-      saveTree($tree);
+      saveTree($tree, $('#add-folder').val() + ' added');
       indentTree($tree);
       $modal.modal('hide');
     });
@@ -262,7 +262,10 @@ function expandRoot() {
 }
 
 
-function saveTree($tree, show_msg) {
+function saveTree($tree, successMessage) {
+  if(typeof(successMessage) === 'undefined') {
+    successMessage = 'Crate updated';
+  }
   $.ajax({
     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
     type: 'post',
@@ -272,8 +275,8 @@ function saveTree($tree, show_msg) {
       'vfs': $tree.tree('toJson')
     },
     success: function(data) {
-      if (show_msg || typeof show_msg === 'undefined') {
-        displayNotification('Crate updated');
+      if (successMessage) {
+        displayNotification(successMessage);
         updateCrateSize();
       }
     },

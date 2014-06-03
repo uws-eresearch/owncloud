@@ -88,6 +88,7 @@ Feature: Manage the items in a crate (CRUD)
     When I fill in "add-folder" with "Virtual Folder"
     Then I press "Add"
     And I wait for 1 seconds
+    Then I should see "Virtual Folder added"
     Then "Virtual Folder" should be visible in the default crate
 
   #CRATEIT-107

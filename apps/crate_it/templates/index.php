@@ -349,4 +349,4 @@
 </div><!-- /.modal -->
 
 
-<?php include 'folder_modal.php'; ?>
+<?php include 'add_folder_modal.php'; ?>

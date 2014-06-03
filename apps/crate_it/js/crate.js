@@ -76,6 +76,7 @@ function buildFileTree(data) {
     console.log(node);
     var $modal = $('#addFolderModal');
     var $confirm = $modal.find('.btn-primary');
+    var $cancel = $modal.find('.btn-default');
     $confirm.click(function() {
       $tree.tree('appendNode', {
         id: 'folder',
@@ -86,12 +87,17 @@ function buildFileTree(data) {
       indentTree($tree);
       $modal.modal('hide');
     });
+    $cancel.click(function() {
+      $confirm.off('click');
+      $cancel.off('click');
+    });
     $modal.modal('show');
   };
 
   var renameItem = function(node) {
     var $modal = $('#renameCrateModal');
     var $confirm = $modal.find('.btn-primary');
+    var $cancel = $modal.find('.btn-default');
     $confirm.click(function() {
       $tree.tree('updateNode', node, $('#rename-item').val());
       $confirm.off('click');
@@ -99,20 +105,29 @@ function buildFileTree(data) {
       indentTree($tree);
       $modal.modal('hide');
     });
+    $cancel.click(function() {
+      $confirm.off('click');
+      $cancel.off('click');
+    });
     $modal.modal('show');
   };
 
   var removeItem = function(node) {
     var $modal = $('#removeCrateModal');
+    var $cancel = $modal.find('.btn-default');
+    var $confirm = $modal.find('.btn-primary');
     var msg = "Remove item '" + node.name + "' from crate?";
     $modal.find('.modal-body > p').text(msg);
-    var $confirm = $modal.find('.btn-primary');
     $confirm.click(function() {
       $tree.tree('removeNode', node);
       $confirm.off('click');
       saveTree($tree);
       indentTree($tree);
       $modal.modal('hide');
+    });
+    $cancel.click(function() {
+      $confirm.off('click');
+      $cancel.off('click');
     });
     $modal.modal('show');
   };

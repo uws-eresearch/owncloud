@@ -69,67 +69,57 @@ function buildFileTree(data) {
     return 'url(' + OC.imagePath('core', 'filetypes/' + icon + '.svg') + ')';
   };
 
-
-  // TODO: All these crate actions follow a similar pattern when they cleanup,
-  // should probably move this to a helper method to keep it DRY
-  var addFolder = function(node) {
-    console.log(node);
-    var $modal = $('#addFolderModal');
+  var attachModalHandlers = function($modal, confirmCallback, successMessage) {
     var $confirm = $modal.find('.btn-primary');
     var $cancel = $modal.find('.btn-default');
     $confirm.click(function() {
+      confirmCallback();
+      $confirm.off('click');
+      $cancel.off('click');
+      if (typeof(successMessage) == 'function') {
+        successMessage = successMessage();
+      }
+      saveTree($tree, successMessage);
+      indentTree($tree);
+      $modal.modal('hide');
+    });
+    $cancel.click(function() {
+      $confirm.off('click');
+      $cancel.off('click');
+    });
+    $modal.modal('show');
+  };
+
+  var addFolder = function(node) {
+    var $modal = $('#addFolderModal');
+    var confirmCallback = function() {
       $tree.tree('appendNode', {
         id: 'folder',
         label: $('#add-folder').val(),
       }, node);
-      $confirm.off('click');
-      saveTree($tree, $('#add-folder').val() + ' added');
-      indentTree($tree);
-      $modal.modal('hide');
-    });
-    $cancel.click(function() {
-      $confirm.off('click');
-      $cancel.off('click');
-    });
-    $modal.modal('show');
+    };
+    var successMessage = function() {
+      return $('#add-folder').val() + ' added';
+    };
+    attachModalHandlers($modal, confirmCallback, successMessage);
   };
 
   var renameItem = function(node) {
     var $modal = $('#renameCrateModal');
-    var $confirm = $modal.find('.btn-primary');
-    var $cancel = $modal.find('.btn-default');
-    $confirm.click(function() {
+    var confirmCallback = function() {
       $tree.tree('updateNode', node, $('#rename-item').val());
-      $confirm.off('click');
-      saveTree($tree);
-      indentTree($tree);
-      $modal.modal('hide');
-    });
-    $cancel.click(function() {
-      $confirm.off('click');
-      $cancel.off('click');
-    });
-    $modal.modal('show');
+    };
+    attachModalHandlers($modal, confirmCallback);
   };
 
   var removeItem = function(node) {
     var $modal = $('#removeCrateModal');
-    var $cancel = $modal.find('.btn-default');
-    var $confirm = $modal.find('.btn-primary');
     var msg = "Remove item '" + node.name + "' from crate?";
     $modal.find('.modal-body > p').text(msg);
-    $confirm.click(function() {
+    var confirmCallback = function() {
       $tree.tree('removeNode', node);
-      $confirm.off('click');
-      saveTree($tree);
-      indentTree($tree);
-      $modal.modal('hide');
-    });
-    $cancel.click(function() {
-      $confirm.off('click');
-      $cancel.off('click');
-    });
-    $modal.modal('show');
+    };
+    attachModalHandlers($modal, confirmCallback);
   };
 
   $tree = $('#files').tree({

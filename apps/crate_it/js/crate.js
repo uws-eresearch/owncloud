@@ -20,11 +20,21 @@
  */
 alert = function() {};
 
-function hideNotification(delayTime) {
+function displayError(errorMessage) {
+  displayNotification('There was an error: ' + errorMessage);
+}
+
+
+function displayNotification(message, delayTime) {
+  if(typeof(delayTime) === 'undefined') {
+    delayTime = 3000;
+  }
+  OC.Notification.show(message);
   setTimeout(function() {
     OC.Notification.hide();
   }, delayTime);
 }
+
 
 function indentTree($tree) {
   $tree.find('.jqtree-element').each(function() {
@@ -195,10 +205,7 @@ function updateCrateSize() {
         $('#post').attr("disabled", "disabled");
       }
       if (msg) {
-        OC.Notification.show(msg);
-        setTimeout(function() {
-          OC.Notification.hide();
-        }, 6000);
+        displayNotification(msg, 6000);
       } else {
         $('#post').removeAttr("disabled");
         $('#download').removeAttr("disabled");
@@ -266,14 +273,12 @@ function saveTree($tree, show_msg) {
     },
     success: function(data) {
       if (show_msg || typeof show_msg === 'undefined') {
-        OC.Notification.show('Crate updated');
+        displayNotification('Crate updated');
         updateCrateSize();
-        hideNotification(3000);
       }
     },
     error: function(data) {
-      OC.Notification.show(data.statusText);
-      hideNotification(3000);
+      displayError(data.statusText);
     }
   });
 }
@@ -315,8 +320,7 @@ function activateRemoveCreatorButton(buttonObj) {
         togglePostCrateToSWORD();
       },
       error: function(data) {
-        OC.Notification.show('There was an error:' + data.statusText);
-        hideNotification(3000);
+        displayError(data.statusText);
       }
     });
   });
@@ -343,8 +347,7 @@ function activateRemoveCreatorButtons() {
         togglePostCrateToSWORD();
       },
       error: function(data) {
-        OC.Notification.show('There was an error:' + data.statusText);
-        hideNotification(3000);
+        displayError(data.statusText);
       }
     });
   });
@@ -390,8 +393,7 @@ function activateRemoveActivityButton(buttonObj) {
         buttonObj.parent().remove();
       },
       error: function(data) {
-        OC.Notification.show('There was an error:' + data.statusText);
-        hideNotification(3000);
+        displayError(data.statusText);
       }
     });
   });
@@ -416,8 +418,7 @@ function activateRemoveActivityButtons() {
         input_element.parent().remove();
       },
       error: function(data) {
-        OC.Notification.show('There was an error:' + data.statusText);
-        hideNotification(3000);
+        displayError(data.statusText);
       }
     });
   });
@@ -429,12 +430,11 @@ $(document).ready(function() {
 
   $('#download').click('click', function(event) {
     if (treeHasNoFiles()) {
-      OC.Notification.show('No items in the crate to package');
-      hideNotification(3000);
+      displayNotification('No items in the crate to package');
       return;
     }
-    OC.Notification.show('Your download is being prepared. This might take some time if the files are big');
-    hideNotification(3000);
+
+    displayNotification('Your download is being prepared. This might take some time if the files are big');
     window.location = OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=zip';
 
   });
@@ -442,8 +442,7 @@ $(document).ready(function() {
   $('#post').click('click', function(event) {
 
     if (treeHasNoFiles()) {
-      OC.Notification.show('No items in the crate to package');
-      hideNotification(3000);
+      displayNotification('No items in the crate to package');
       return;
     }
 
@@ -458,12 +457,10 @@ $(document).ready(function() {
         'sword_collection': sword_collection
       },
       success: function(data) {
-        OC.Notification.show('Crate posted successfully');
-        hideNotification(3000);
+        displayNotification('Crate posted successfully');
       },
       error: function(data) {
-        OC.Notification.show('There was an error:' + data.statusText);
-        hideNotification(3000);
+        displayError(data.statusText)
       }
     });
 
@@ -482,12 +479,10 @@ $(document).ready(function() {
         },
         success: function(data) {
           if (data.status == "Success") {
-            OC.Notification.show('Crate deleted');
-            hideNotification(3000);
+            displayNotification('Crate deleted')
             location.reload();
           } else {
-            OC.Notification.show('There was an error:' + data.msg);
-            hideNotification(3000);
+            displayError(data.msg);
           }
         }
       });
@@ -496,12 +491,10 @@ $(document).ready(function() {
 
   $('#epub').click(function(event) {
     if (treeHasNoFiles()) {
-      OC.Notification.show('No items in the crate to package');
-      hideNotification(3000);
+      displayNotification('No items in the crate to package');
     }
     //get all the html previews available, concatenate 'em all
-    OC.Notification.show('Your download is being prepared. This might take some time');
-    hideNotification(3000);
+    displayNotification('Your download is being prepared. This might take some time');
     window.location = OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=epub';
   });
 
@@ -557,15 +550,13 @@ $(document).ready(function() {
              $('#newCrateModal').modal('hide');
              $("#crates").append('<option id="'+data+'" value="'+data+'" >'+data+'</option>');
       		 $("#crates").val(data);
-             OC.Notification.show('Crate '+data+' successfully created');
-             hideNotification(3000);       
+             displayNotification('Crate '+data+' successfully created');
        		 $('#crates').trigger('change');     
             },
            error: function(data){
            	 $('#create_crate_error').text(data.statusText);
            	 $('#create_crate_error').show();
-	         //OC.Notification.show(data.statusText);
-	         hideNotification(3000);
+	           displayError(data.statusText);
            }
        });   
        return false;
@@ -688,15 +679,13 @@ $(document).ready(function() {
               togglePostCrateToSWORD();
             },
             error: function(data) {
-              OC.Notification.show('There was an error:' + data.statusText);
-              hideNotification(3000);
+              displayError(data.statusText);
             }
           });
         });
       },
       error: function(data) {
-        OC.Notification.show('There was an error:' + data.statusText);
-        hideNotification(3000);
+        displayError(data.statusText);
       }
     });
 
@@ -751,15 +740,13 @@ $(document).ready(function() {
               activateRemoveActivityButton($('#activity_' + activity_id));
             },
             error: function(data) {
-              OC.Notification.show('There was an error:' + data.statusText);
-              hideNotification(3000);
+              displayError(data.statusText);
             }
           });
         });
       },
       error: function(data) {
-        OC.Notification.show('There was an error:' + data.statusText);
-        hideNotification(3000);
+        displayError(data.statusText);
       }
     });
 
@@ -786,8 +773,7 @@ $(document).ready(function() {
           togglePostCrateToSWORD();
         },
         error: function(data) {
-          OC.Notification.show('There was an error:' + data.statusText);
-          hideNotification(3000);
+          displayError(data.statusText);
         }
       });
     });

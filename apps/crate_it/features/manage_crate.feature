@@ -21,7 +21,7 @@ Feature: Manage the items in a crate (CRUD)
     Then I add "folder1" to the default crate
     And I go to the crate_it page
     And I wait for 2 seconds
-    Then I should have crate actions "Rename, Delete" for "file.txt"
+    Then I should have crate actions "Rename Item, Remove Item" for "file.txt"
     And I should not have crate actions "Add" for "file.txt"
 
   #CRATEIT-48
@@ -46,7 +46,9 @@ Feature: Manage the items in a crate (CRUD)
     When I remove "file.txt"
     Then I should see "Remove item 'file.txt' from crate?"
     When I press "Remove"
-    Then "file.txt" should not be in the crate
+    And I wait for 1 seconds
+    Then I should see "file.txt removed"
+    And "file.txt" should not be in the crate
 
   #CRATEIT-106
   Scenario: A user can cancel the remove action
@@ -72,6 +74,8 @@ Feature: Manage the items in a crate (CRUD)
     When I rename "file.txt"
     Then I fill in "rename-item" with "newname.txt"
     When I press "Rename"
+    And I wait for 1 seconds
+    Then I should see "Renamed file.txt to newname.txt"
     Then "file.txt" should not be in the crate
     And "newname.txt" should be in the crate
 

@@ -45,6 +45,7 @@ function indentTree($tree) {
 }
 
 function buildFileTree(data) {
+
   var createImgUrl = function(node) {
     var icon_set = ['application-epub+zip', 'application-pdf', 'application-rss+xml',
       'application', 'audio', 'calendar', 'database', 'file', 'flash',
@@ -72,10 +73,17 @@ function buildFileTree(data) {
   var attachModalHandlers = function($modal, confirmCallback, successMessage) {
     var $confirm = $modal.find('.btn-primary');
     var $cancel = $modal.find('.btn-default');
-    $confirm.click(function() {
-      confirmCallback();
+    var $close = $modal.find('.close');
+
+    var removeHandlers = function() {
       $confirm.off('click');
       $cancel.off('click');
+      $close.off('click');
+    };
+
+    $confirm.click(function() {
+      confirmCallback();
+      removeHandlers();
       if (typeof(successMessage) == 'function') {
         successMessage = successMessage();
       }
@@ -83,10 +91,10 @@ function buildFileTree(data) {
       indentTree($tree);
       $modal.modal('hide');
     });
-    $cancel.click(function() {
-      $confirm.off('click');
-      $cancel.off('click');
-    });
+
+    $cancel.click(removeHandlers);
+    $close.click(removeHandlers);
+
     $modal.modal('show');
   };
 
@@ -109,7 +117,11 @@ function buildFileTree(data) {
     var confirmCallback = function() {
       $tree.tree('updateNode', node, $('#rename-item').val());
     };
-    attachModalHandlers($modal, confirmCallback);
+    var oldName = node.name; // the successMessage function gets called after the name has changed
+    var successMessage = function() {
+      return 'Renamed ' + oldName + ' to ' + $('#rename-item').val();
+    };
+    attachModalHandlers($modal, confirmCallback, successMessage);
   };
 
   var removeItem = function(node) {
@@ -119,7 +131,8 @@ function buildFileTree(data) {
     var confirmCallback = function() {
       $tree.tree('removeNode', node);
     };
-    attachModalHandlers($modal, confirmCallback);
+    var successMessage = node.name + ' removed';
+    attachModalHandlers($modal, confirmCallback, successMessage);
   };
 
   $tree = $('#files').tree({
@@ -135,17 +148,17 @@ function buildFileTree(data) {
       $ul = $div.append('<ul class="crate-actions pull-right"></ul>').find('ul');
       var type = node.id;
       if (type == 'rootfolder' || type == 'folder') {
-        $ul.append('<li><a><i class="fa fa-plus"></i>Add</a></li>');
+        $ul.append('<li><a><i class="fa fa-plus"></i>Add Folder Item</a></li>');
         $ul.find('.fa-plus').parent().click(function() {
           addFolder(node);
         });
       }
-      $ul.append('<li><a><i class="fa fa-pencil"></i>Rename</a></li>');
+      $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Item</a></li>');
       $ul.find('.fa-pencil').parent().click(function() {
         renameItem(node);
       });
       if (type != 'rootfolder') {
-        $ul.append('<li><a><i class="fa fa-trash-o"></i>Delete</a></li>');
+        $ul.append('<li><a><i class="fa fa-trash-o"></i>Remove Item</a></li>');
         $ul.find('.fa-trash-o').parent().click(function() {
           removeItem(node);
         });

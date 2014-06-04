@@ -72,8 +72,6 @@ function buildFileTree(data) {
 
   var attachModalHandlers = function($modal, confirmCallback, successMessage) {
     var $confirm = $modal.find('.btn-primary');
-    var $cancel = $modal.find('.btn-default');
-    var $close = $modal.find('.close');
 
     var clearInput = function() {
       var $input = $modal.find('input');
@@ -82,26 +80,21 @@ function buildFileTree(data) {
       }
     };
 
-    var removeHandlers = function() {
-      $confirm.off('click');
-      $cancel.off('click');
-      $close.off('click');
-      clearInput();
-    };
-
     $confirm.click(function() {
       confirmCallback();
       if (typeof(successMessage) == 'function') {
         successMessage = successMessage();
       }
-      removeHandlers();
+      // removeHandlers();
       saveTree($tree, successMessage);
       indentTree($tree);
       $modal.modal('hide');
     });
 
-    $cancel.click(removeHandlers);
-    $close.click(removeHandlers);
+    $modal.on('hide.bs.modal', function() {
+      $confirm.off('click');
+      clearInput();
+    });
 
     $modal.modal('show');
   };

@@ -75,18 +75,26 @@ function buildFileTree(data) {
     var $cancel = $modal.find('.btn-default');
     var $close = $modal.find('.close');
 
+    var clearInput = function() {
+      var $input = $modal.find('input');
+      if ($input) {
+        $input.val('');
+      }
+    };
+
     var removeHandlers = function() {
       $confirm.off('click');
       $cancel.off('click');
       $close.off('click');
+      clearInput();
     };
 
     $confirm.click(function() {
       confirmCallback();
-      removeHandlers();
       if (typeof(successMessage) == 'function') {
         successMessage = successMessage();
       }
+      removeHandlers();
       saveTree($tree, successMessage);
       indentTree($tree);
       $modal.modal('hide');
@@ -105,6 +113,7 @@ function buildFileTree(data) {
         id: 'folder',
         label: $('#add-folder').val(),
       }, node);
+      $tree.tree('openNode', node);
     };
     var successMessage = function() {
       return $('#add-folder').val() + ' added';

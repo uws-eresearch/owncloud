@@ -350,3 +350,5 @@
 
 
 <?php include 'folder_modal.php'; ?>
+
+<?php include 'clear_crate_modal.php'; ?>

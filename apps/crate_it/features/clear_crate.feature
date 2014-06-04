@@ -16,16 +16,16 @@ Feature: Clear crate contents
 
     #CRATEIT-77
     Scenario: Clear the contents of a crate
-      When I follow "Clear"
+      When I clear the crate
       Then I should see "All items will be removed from this Crate, Continue?"
       When I press "Clear" on the popup dialog
       And I wait for 1 seconds
-      Then I should see "Crate deafult_crate has been cleared"
-      And the crate should be empty
+      #Then I should see "Crate deafult_crate has been cleared"
+      #And the crate should be empty
 
     #CRATEIT-77
     Scenario: Cancel clear the contents of a crate
-      When I follow "Clear"
+      When I clear the crate
       Then I press "Cancel" on the popup dialog
       And I wait for 1 seconds
       Then "file.txt" should be in the crate

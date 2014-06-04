@@ -527,5 +527,15 @@ class FeatureContext extends MinkContext
 			throw new Exception('Validation message is "' . $msg . '" , not "'. $arg2 .'".');
 		}
     }
+
+        /**
+     * @When /^I clear the crate$/
+     */
+    public function iClearTheCrate()
+    {
+        $page = $this->getSession()->getPage();
+        $page->find('css', '#clear')->click();
+    }
+
 }
 

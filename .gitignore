@@ -1,0 +1,8 @@
+tmp/**/*
+.project
+log/*.log
+log
+*.log
+.vagrant
+.vagrant/**/*
+apps/crate_it/composer.phar

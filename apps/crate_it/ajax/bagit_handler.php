@@ -62,12 +62,19 @@ $config = $bagit_manager->getConfig();
 
 switch ($action){
 	case 'create':
-		$msg = $bagit_manager->createCrate($crate_name);
-		if(!$msg){
-			header('HTTP/1.1 400 No name given');
-		}
-		else {
-			print $msg;
+		// check if crate already exist
+		$crate_list = $bagit_manager->getCrateList();
+		$crate_already_exist = array_search($crate_name, $crate_list);
+		if ($crate_already_exist)
+		{
+			header('HTTP/1.1 401 Crate with name "' .$crate_name. '" already exists', 401);
+		} else {
+			$msg = $bagit_manager->createCrate($crate_name);
+			if(!$msg){
+				header('HTTP/1.1 400 No name given', 400);
+			} else {
+				print $msg;
+			}
 		}
 		break;
 	case 'describe':
@@ -79,10 +86,11 @@ switch ($action){
 		}
 		break;
 	case 'switch':
-		$ok = $bagit_manager->switchCrate($crate_id);
+		$ok = $bagit_manager->switchCrate($crate_id);			
+		alert(''); //FIXME WHY DOES THIS WORK?!!?
 		if(!$ok){
 			header('HTTP/1.1 400 No name',400);
-		}
+		} 
 		break;
 	case 'get_crate':
 		$msg = $bagit_manager->getSelectedCrate();

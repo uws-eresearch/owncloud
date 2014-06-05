@@ -58,7 +58,7 @@
          Download
       </a>
 
-      <a id="clear" class="button">
+      <a id="clear" class="button" data-toggle="modal" data-target="#clearCrateModal">
         <i class="fa fa-ban"></i>
          Clear
       </a>
@@ -206,5 +206,7 @@
 <?php include 'rename_crate_modal.php'; ?>
 
 <?php include 'add_folder_modal.php'; ?>
+
+<?php include 'clear_crate_modal.php'; ?>
 
 <?php include 'javascript_vars.php'; ?>

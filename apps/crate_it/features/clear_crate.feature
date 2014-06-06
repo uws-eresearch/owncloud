@@ -20,7 +20,7 @@ Feature: Clear crate contents
       Then I should see "All items will be removed from this Crate, Continue?"
       When I press "Clear" on the popup dialog
       And I wait for 1 seconds
-      Then I should see "Crate deafult_crate has been cleared"
+      Then I should see "default_crate has been cleared"
       Then "file.txt" should not be in the crate
 
     #CRATEIT-77

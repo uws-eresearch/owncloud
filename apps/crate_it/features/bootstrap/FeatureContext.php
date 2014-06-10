@@ -528,13 +528,26 @@ class FeatureContext extends MinkContext
 		}
     }
 
-        /**
+    /**
      * @When /^I clear the crate$/
      */
     public function iClearTheCrate()
     {
         $page = $this->getSession()->getPage();
         $page->find('css', '#clear')->click();
+    }
+
+    /**
+     * @When /^I drag "([^"]*)" and drop it on "([^"]*)"$/
+     */
+    public function iDragAndDropItOn($source, $target)
+    {
+        $sourceXpath = '//li//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$source.'"]';
+        $targetXpath = '//li//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$target.'"]';
+        $page = $this->getSession()->getPage();
+        $sourceItem = $page->find('xpath', $sourceXpath);
+        $targetItem = $page->find('xpath', $targetXpath);
+        $sourceItem->dragTo($targetItem);
     }
 
 }

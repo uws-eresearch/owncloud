@@ -166,12 +166,22 @@ function buildFileTree(data) {
         });
       }
     },
+    onCanMove: function(node) {
+      var result = true;
+      // Cannot move root node
+      if (!node.parent.parent) {
+        result = false;
+      }
+      return result;
+    },
     onCanMoveTo: function(moved_node, target_node, position) {
       // Can move before or after any node.
       // Can only move INSIDE of a node whose id ends with 'folder' 
       // console.log(target_node.id);
       if (target_node.id.indexOf('folder', target_node.id.length - 'folder'.length) == -1) {
         return (position != 'inside');
+      } else if (target_node.id == 'rootfolder') {
+        return (position != 'before');
       } else {
         return true;
       }
@@ -190,7 +200,8 @@ function buildFileTree(data) {
     event.preventDefault();
     // do the move first, and _then_ POST back.
     event.move_info.do_move();
-    saveTree($tree);
+    var msg = 'Item ' + event.move_info.moved_node.name + ' moved';
+    saveTree($tree, msg);
     indentTree($tree);
   });
 

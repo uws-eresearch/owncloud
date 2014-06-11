@@ -181,7 +181,7 @@ function buildFileTree(data) {
       if (target_node.id.indexOf('folder', target_node.id.length - 'folder'.length) == -1) {
         return (position != 'inside');
       } else if (target_node.id == 'rootfolder') {
-        return (position != 'before');
+        return (position != 'before' && position != 'after');
       } else {
         return true;
       }

@@ -63,7 +63,7 @@
          Clear
       </a>
 
-      <a id="delete" class="button">
+      <a id="delete" class="button" data-toggle="modal" data-target="#deleteCrateModal">
         <i class="fa fa-trash-o"></i>
          Delete
       </a>
@@ -208,5 +208,7 @@
 <?php include 'add_folder_modal.php'; ?>
 
 <?php include 'clear_crate_modal.php'; ?>
+
+<?php include 'delete_crate_modal.php'; ?>
 
 <?php include 'javascript_vars.php'; ?>

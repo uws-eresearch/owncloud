@@ -454,7 +454,7 @@ function activateRemoveActivityButtons() {
 
 function initCrateActions() {
 
-  $('#clearCrateModal').find('.btn-primary').click(function(){
+  $('#clearCrateModal').find('.btn-primary').click(function() {
     var children = $tree.tree('getNodeById', 'rootfolder').children;
     // NOTE: The while loop is a workaround to the forEach loop inexplicably skipping
     // the first element
@@ -467,6 +467,33 @@ function initCrateActions() {
     indentTree($tree);
     $('#clearCrateModal').modal('hide');
   });  
+
+  $('#deleteCrateModal').on('show.bs.modal', function() {
+    var currentCrate = $('#crates').val();
+    $('#deleteCrateMsg').text('Crate ' + currentCrate + ' is not empty, proceed with deletion?');
+  });
+
+  $('#deleteCrateModal').find('.btn-primary').click(function() {
+    var current_crate = $('#crates').val();
+      $.ajax({
+        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'action': 'delete_crate'
+        },
+        success: function(data) {
+          if (data.status == "Success") {
+            displayNotification('Crate ' + current_crate + ' deleted')
+            location.reload();
+          } else {
+            displayError(data.msg);
+          }
+        }
+      });
+      $('#deleteCrateModal').modal('hide');
+  });
+
 
 }
 
@@ -510,29 +537,6 @@ $(document).ready(function() {
       }
     });
 
-  });
-
-  $('#delete').click('click', function(event) {
-    var decision = confirm("All data of this crate will be lost, are you sure?");
-
-    if (decision == true) {
-      $.ajax({
-        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-        type: 'post',
-        dataType: 'json',
-        data: {
-          'action': 'delete_crate'
-        },
-        success: function(data) {
-          if (data.status == "Success") {
-            displayNotification('Crate deleted')
-            location.reload();
-          } else {
-            displayError(data.msg);
-          }
-        }
-      });
-    }
   });
 
   $('#epub').click(function(event) {

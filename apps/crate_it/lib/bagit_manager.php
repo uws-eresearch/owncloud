@@ -812,6 +812,7 @@ class BagItManager {
     try {
       rename($this->crate_dir, $trash_dir);
       $_SESSION['crate_id'] = '';
+      session_commit();
       return array(
         "status" => "Success"
       );

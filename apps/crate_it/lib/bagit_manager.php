@@ -29,6 +29,7 @@ class BagItManager {
   var $selected_crate;
   var $bag;
   var $user;
+  private static $instance = NULL;
   /**
    * Set the values to following variables
    *
@@ -58,13 +59,13 @@ class BagItManager {
       mkdir($this->crate_trash);
     }
 
+    // TODO: This msg will get printed 3 times with each page load, which shouldn't be happening
     \OCP\Util::writeLog("crate_it", "creating new crate " . $_SESSION['crate_id'], 3);
     if (empty($_SESSION['crate_id'])) {
       $this->createCrate('default_crate');
       $this->selected_crate = 'default_crate';
       $_SESSION['crate_id'] = 'default_crate';
-    }
-    else {
+    } else {
       $this->initBag($_SESSION['crate_id']);
       $this->selected_crate = $_SESSION['crate_id'];
       $this->createManifest();
@@ -75,8 +76,18 @@ class BagItManager {
 
   }
 
+  // Empty method to prevent copyting (Singleton pattern)
+  private function __clone() {}
+
+  // Singlton pattern
+  // TODO: It looks like multiple instances are created with each page load
+  // when there should only be one. Need to investigate
   public static function getInstance() {
-    return new BagItManager();
+    if(self::$instance == NULL) {
+      self::$instance = new BagItManager();
+      \OCP\Util::writeLog("crate_it", "Constructing new instance", 3);
+    }
+    return self::$instance;
   }
 
   public function showPreviews() {
@@ -436,6 +447,7 @@ class BagItManager {
     }
 
     \OCP\Util::writeLog("crate_it", $creator_list, \OCP\Util::DEBUG);
+    // TODO: Refactor this into a separate template file
     $metadata = '<html><head><title>' . $this->selected_crate . '</title></head><body><article>
 					<h1><u>"' . $this->selected_crate . '" Data Package README file</u></h1>
 					<section resource="creative work" typeof="http://schema.org/CreativeWork">
@@ -800,6 +812,7 @@ class BagItManager {
     try {
       rename($this->crate_dir, $trash_dir);
       $_SESSION['crate_id'] = '';
+      session_commit();
       return array(
         "status" => "Success"
       );

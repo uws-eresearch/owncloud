@@ -452,9 +452,46 @@ function activateRemoveActivityButtons() {
   });
 }
 
+
+
 function initCrateActions() {
 
-  $('#clearCrateModal').find('.btn-primary').click(function(){
+  var metadataEmpty = function() {
+    var result = false;
+    $('.metadata').each(function() {
+      if($(this).text() === '') {
+        result = true;
+      }
+    });
+    return result;
+  }
+
+  var crateEmpty = function() {
+    return $tree.tree('getNodeById', 'rootfolder').children.length == 0;
+  }
+
+  var deleteCrate = function () {
+    var current_crate = $('#crates').val();
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      dataType: 'json',
+      data: {
+        'action': 'delete_crate'
+      },
+      success: function(data) {
+        if (data.status == "Success") {
+          displayNotification('Crate ' + current_crate + ' deleted')
+          location.reload();
+        } else {
+          displayError(data.msg);
+        }
+      }
+    });
+    $('#deleteCrateModal').modal('hide');
+  }
+
+  $('#clearCrateModal').find('.btn-primary').click(function() {
     var children = $tree.tree('getNodeById', 'rootfolder').children;
     // NOTE: The while loop is a workaround to the forEach loop inexplicably skipping
     // the first element
@@ -468,7 +505,25 @@ function initCrateActions() {
     $('#clearCrateModal').modal('hide');
   });  
 
+
+  $('#deleteCrateModal').on('show.bs.modal', function() {
+    var currentCrate = $('#crates').val();
+    $('#deleteCrateMsg').text('Crate ' + currentCrate + ' is not empty, proceed with deletion?');
+  });
+
+  $('#deleteCrateModal').find('.btn-primary').click(deleteCrate);
+
+  $('#delete').click(function() {
+    if (metadataEmpty() && crateEmpty() ) {
+      deleteCrate()
+    } else {
+      $('#deleteCrateModal').modal('show');
+    }
+  });
+
 }
+
+
 
 $(document).ready(function() {
 
@@ -510,29 +565,6 @@ $(document).ready(function() {
       }
     });
 
-  });
-
-  $('#delete').click('click', function(event) {
-    var decision = confirm("All data of this crate will be lost, are you sure?");
-
-    if (decision == true) {
-      $.ajax({
-        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-        type: 'post',
-        dataType: 'json',
-        data: {
-          'action': 'delete_crate'
-        },
-        success: function(data) {
-          if (data.status == "Success") {
-            displayNotification('Crate deleted')
-            location.reload();
-          } else {
-            displayError(data.msg);
-          }
-        }
-      });
-    }
   });
 
   $('#epub').click(function(event) {
@@ -713,7 +745,9 @@ $(document).ready(function() {
               'full_name': input_element.parent().text()
             },
             success: function(data) {
+              //TODO: This no longer matches the template/index.php structure
               $('#creators').append('<li><button id="' + 'creator_' + creator_id + ' />' + '<span id="' + creator_id + '" class="full_name">' + input_element.parent().text() + '</span></li>');
+
               input_element.parent().remove();
 
               activateRemoveCreatorButton($('#creator_' + creator_id));
@@ -777,6 +811,7 @@ $(document).ready(function() {
               'dc_title': dc_title
             },
             success: function(data) {
+              //TODO: This no longer matches the template/index.php structure
               $('#activities').append('<li><input id="' + 'activity_' + activity_id + '" type="button" value="Remove" />' + '<span id="' + activity_id + '"title="' + dc_title + '">' + grant_number + '</span></li>');
               input_element.parent().remove();
               activateRemoveActivityButton($('#activity_' + activity_id));

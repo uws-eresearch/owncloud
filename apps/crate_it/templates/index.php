@@ -68,7 +68,7 @@
          Delete
       </a>
 
-      <a id="help_button" class="button"   data-toggle="modal" data-target="#helpModal">
+      <a id="help_button" class="button" data-toggle="modal" data-target="#helpModal">
         <i class="fa fa-question"></i>
          Help
       </a>
@@ -121,7 +121,7 @@
           <div id='description_box'>
             <label for="description">Description</label>
             <input id="edit_description" class='pull-right' type="button" value="Edit" />
-            <div id="description"><?php echo htmlentities($_['description']) ?></div>
+            <div id="description" class="metadata"><?php echo htmlentities($_['description']) ?></div>
           </div>
 
           <div class='crate-size'>
@@ -137,7 +137,7 @@
                   <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
                     <i class="fa fa-minus"></i>
                   </button>
-                  <span id="<?php echo $creator['creator_id'] ?>" class="full_name"><?php echo $creator['full_name'] ?></span>
+                  <span id="<?php echo $creator['creator_id'] ?>" class="full_name metadata"><?php echo $creator['full_name'] ?></span>
                 </li>
               <?php endforeach;?>
             </ul>
@@ -167,7 +167,7 @@
                   <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
                     <i class="fa fa-minus"></i>
                   </button>
-                  <span id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></span>
+                  <span id="<?php echo $activity['activity_id'] ?>" class="grant_number metadata"><?php echo $activity['grant_number'] ?></span>
                 </li>
               <?php endforeach;?>
             </ul>
@@ -208,5 +208,7 @@
 <?php include 'add_folder_modal.php'; ?>
 
 <?php include 'clear_crate_modal.php'; ?>
+
+<?php include 'delete_crate_modal.php'; ?>
 
 <?php include 'javascript_vars.php'; ?>

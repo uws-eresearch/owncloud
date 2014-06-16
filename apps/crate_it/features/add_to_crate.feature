@@ -4,12 +4,10 @@ Feature: Add files and folders to a crate
   I want to add files and folders to crate
 
   Background:
-    Given I'm logged in to ownCloud as "test"
-    And I go to the crate_it page
-    And I delete the default crate
-    Then I should see the default crate already created and selected
-    And I go to the files page
+    Given I have no crates
     And I have no files
+    And I'm logged in to ownCloud as "test"
+    And I go to the crate_it page    
     And I have file "file.txt" within the root folder
     And I have folder "folder1" within the root folder
     And I have folder "folder2" within "folder1"

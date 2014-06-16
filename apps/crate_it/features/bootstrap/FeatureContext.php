@@ -228,17 +228,6 @@ class FeatureContext extends MinkContext
 			throw new Exception('The element should be visible');
 		}
 	}
-
-
-    /**
-     * @When /^I delete the default crate$/
-     */
-    public function iDeleteTheDefaultCrate()
-    {
-       $page = $this->getSession()->getPage();
-       $page->find('css', 'a[id=delete]')->click();
-       $this->confirmPopup();
-	}
 	
 	/**
      * @Then /^the default crate should contain "([^"]*)" within the root folder, in that order$/
@@ -277,10 +266,8 @@ class FeatureContext extends MinkContext
      */
     public function iHaveNoFiles()
     {
-    	
-        $page = $this->getSession()->getPage();
-        $page->find('css', 'label[for=select_all]')->click();
-		$page->find('css', 'a[class=delete-selected]')->click();
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'rm -rf /var/www/html/owncloud/data/test/files/*\'';
+        exec($command);
     }
 
     /**
@@ -426,12 +413,30 @@ class FeatureContext extends MinkContext
     }
 	
     /**
+     * @Given /^I have no crates$/
+     */
+    public function iHaveNoCrates()
+    {
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'rm -rf /var/www/html/owncloud/data/test/crates/\'';
+        exec($command);
+    }
+
+
+    /**
+     * @When /^I click the delete crate button$/
+     */
+    public function iClickTheDeleteCrateButton() {
+        $page = $this->getSession()->getPage();
+        $page->find('css', 'a[id=delete]')->click();
+    }
+
+    /**
      * @When /^I click the new crate button$/
      */
     public function iClickTheNewCrateButton()
     {
         $page = $this->getSession()->getPage();
-		$xpath = '//a[@id="subbutton"]';
+        $xpath = '//a[@id="subbutton"]';
         $page->find('xpath', $xpath)->click();
     }
 
@@ -474,21 +479,49 @@ class FeatureContext extends MinkContext
     }	
 
     /**
-     * @Given /^I should not have crate "([^"]*)"$/
+     * @Given /^I have crate "([^"]*)"$/
      */
-    public function iShouldNotHaveCrate($arg1)
+    public function iHaveCrate($crateName)
+    {
+        $this->iClickTheNewCrateButton();
+        $this->fillField('crate_input_name', $crateName);
+        $this->iClickInTheCreateCrateModal('Create');
+        sleep(2);
+    }
+
+    /**
+     * @Given /^I should have crate "([^"]*)"$/
+     */
+    public function iShouldHaveCrate($crate)
     {
         $page = $this->getSession()->getPage();
-		$xpath = '//select[@id="crates"]//option';
-		$existing_crate_name_els = $page->findAll('xpath', $xpath);
-		foreach ($existing_crate_name_els as $crate_name_el) {
-			if ($crate_name_el->getAttribute("id") == $arg1)
-			{
-				throw new Exception('The crate "' .$arg1.'" should not exist');
-			}
-		}
+        $web_assert = new WebAssert($this->getSession());
+		$xpath = '//select[@id="crates"]//option[@id="'.$crate.'"]';
+        $web_assert->elementExists('xpath', $xpath, $page);
+		
     }
 	
+    /**
+     * @Given /^I should not have crate "([^"]*)"$/
+     */
+    public function iShouldNotHaveCrate($crate)
+    {
+        $page = $this->getSession()->getPage();
+        $web_assert = new WebAssert($this->getSession());
+        $xpath = '//select[@id="crates"]//option[@id="'.$crate.'"]';
+        $web_assert->elementNotExists('xpath', $xpath, $page);
+        // $page = $this->getSession()->getPage();
+        // $xpath = '//select[@id="crates"]//option';
+        // $existing_crate_name_els = $page->findAll('xpath', $xpath);
+        // foreach ($existing_crate_name_els as $crate_name_el) {
+        //     if ($crate_name_el->getAttribute("id") == $crate)
+        //     {
+        //         throw new Exception('The crate "' .$crate.'" should not exist');
+        //     }
+        // }
+    }
+
+
 	/**
 	 * @Then /^I should see error \'([^\']*)\' in the modal$/
 	 *

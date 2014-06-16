@@ -4,11 +4,9 @@ Feature: Clear crate contents
   I want clear the contents of my crate while preserving the metadata
 
     Background:
-    Given I'm logged in to ownCloud as "test"
-    And I go to the crate_it page
-    And I delete the default crate
-    And I go to the files page
+    Given I have no crates
     And I have no files
+    And I'm logged in to ownCloud as "test"
     And I have file "file.txt" within the root folder
     When I add "file.txt" to the default crate
     Then I go to the crate_it page

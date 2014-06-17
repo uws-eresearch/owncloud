@@ -44,35 +44,6 @@ function indentTree($tree) {
   });
 }
 
-var attachModalHandlers = function($modal, confirmCallback, successMessage) {
-  var $confirm = $modal.find('.btn-primary');
-
-  var clearInput = function() {
-    var $input = $modal.find('input');
-    if ($input) {
-      $input.val('');
-    }
-  };
-
-  $confirm.click(function() {
-    confirmCallback();
-    if (typeof(successMessage) == 'function') {
-      successMessage = successMessage();
-    }
-    // removeHandlers();
-    saveTree($tree, successMessage);
-    indentTree($tree);
-    $modal.modal('hide');
-  });
-
-  $modal.on('hide.bs.modal', function() {
-    $confirm.off('click');
-    clearInput();
-  });
-
-  $modal.modal('show');
-};
-
 function buildFileTree(data) {
 
   var createImgUrl = function(node) {
@@ -99,6 +70,35 @@ function buildFileTree(data) {
     return 'url(' + OC.imagePath('core', 'filetypes/' + icon + '.svg') + ')';
   };
 
+  var attachModalHandlers = function($modal, confirmCallback, successMessage) {
+    var $confirm = $modal.find('.btn-primary');
+
+    var clearInput = function() {
+      var $input = $modal.find('input');
+      if ($input) {
+        $input.val('');
+      }
+    };
+
+    $confirm.click(function() {
+      confirmCallback();
+      if (typeof(successMessage) == 'function') {
+        successMessage = successMessage();
+      }
+      // removeHandlers();
+      saveTree($tree, successMessage);
+      indentTree($tree);
+      $modal.modal('hide');
+    });
+
+    $modal.on('hide.bs.modal', function() {
+      $confirm.off('click');
+      clearInput();
+    });
+
+    $modal.modal('show');
+  };
+
   var addFolder = function(node) {
     var $modal = $('#addFolderModal');
     var confirmCallback = function() {
@@ -116,6 +116,7 @@ function buildFileTree(data) {
 
   var renameItem = function(node) {
     var $modal = $('#renameCrateModal');
+    $('#rename-item').val(node.name);
     var confirmCallback = function() {
       $tree.tree('updateNode', node, $('#rename-item').val());
     };

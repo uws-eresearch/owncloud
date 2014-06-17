@@ -71,6 +71,7 @@ Feature: Manage the items in a crate (CRUD)
   #CRATEIT-106
   Scenario: A user can rename an item in their crate
     When I rename "file.txt"
+    Then the "rename-item" field should contain "file.txt"
     Then I fill in "rename-item" with "newname.txt"
     When I press "Rename"
     And I wait for 1 seconds

@@ -56,14 +56,14 @@
         <ul class="dropdown-menu">
           <?php if ($_['previews']==="on" ):?>
             <li>
-              <a id="epub" class="button">
+              <a id="epub" class="dropdown-btn">
                 <i class="fa fa-book"></i>
                  ePub
               </a>
             </li>
           <?php endif; ?>
           <li>
-            <a id="download" class="button">
+            <a id="download" class="dropdown-btn">
               <i class="fa fa-archive"></i>
                Zip
             </a>

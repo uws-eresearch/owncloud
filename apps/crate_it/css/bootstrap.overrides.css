@@ -1,3 +1,17 @@
 .modal .modal-footer button {
   margin: 0;
 }
+
+.btn-group {
+  display: inline-block;
+  position: relative;  
+}
+
+.dropdown-menu > li > a.dropdown-btn {
+  padding: 8px 20px;
+}
+
+.dropdown-menu {
+  min-width: 0;
+  background-color: #eee;
+}

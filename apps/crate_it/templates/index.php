@@ -43,20 +43,33 @@
 
         <a id="post" class="button" data-toggle="modal" data-target="#publishModal">
           <i class="fa fa-envelope"></i>
+          Publish
         </a>
       <?php endif; ?>
 
-      <?php if ($_['previews']==="on" ):?>
-        <a id="epub" class="button">
-          <i class="fa fa-book"></i>
-           Publish
-        </a>
-      <?php endif; ?>
 
-      <a id="download" class="button">
-        <i class="fa fa-download"></i>
-         Download
-      </a>
+      <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <i class="fa fa-download"></i>
+          Download
+        </button>
+        <ul class="dropdown-menu">
+          <?php if ($_['previews']==="on" ):?>
+            <li>
+              <a id="epub" class="button">
+                <i class="fa fa-book"></i>
+                 ePub
+              </a>
+            </li>
+          <?php endif; ?>
+          <li>
+            <a id="download" class="button">
+              <i class="fa fa-archive"></i>
+               Zip
+            </a>
+          </li>
+        </ul>
+      </div>
 
       <a id="clear" class="button" data-toggle="modal" data-target="#clearCrateModal">
         <i class="fa fa-ban"></i>

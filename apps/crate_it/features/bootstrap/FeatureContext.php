@@ -23,6 +23,9 @@ use Behat\Mink\WebAssert;
  */
 class FeatureContext extends MinkContext
 {
+
+    private static $file_root = '/var/www/html/owncloud/data/test/files/';
+
     /**
      * Initializes context.
      * Every scenario gets it's own context object.
@@ -37,7 +40,7 @@ class FeatureContext extends MinkContext
     /**
      * @Given /^I\'m logged in to ownCloud as "([^"]*)"$/
      */
-    public function iMLoggedInToOwncloudAs2($user)
+    public function iMLoggedInToOwncloudAs($user)
     {
         $this->visit('/owncloud');
         $this->fillField('user', $user);
@@ -105,21 +108,13 @@ class FeatureContext extends MinkContext
         $this->iHaveFolderWithin($new_folder, "");
     }
 
-    /**
-     * @Given /^I have folder "([^"]*)" within "([^"]*)"$/
+        /**
+     * @Given /^I have folders? "([^"]*)"$/
      */
-    public function iHaveFolderWithin($new_folder, $folder)
+    public function iHaveFolders($folders)
     {
-        $this->visit('/owncloud/index.php/apps/files?dir='.$folder);
-        $page = $this->getSession()->getPage();
-        $page->find('css', '#new > a')->click();
-        $page->find('xpath', '//div[@id="new"]//li[@data-type="folder"]/p')->click();
-        try { // NOTE: The element disappears after setting the value causing an exception
-            $page->find('xpath', '//div[@id="new"]//li[@data-type="folder"]//input')->setValue($new_folder."\n");
-        } catch(Exception $e) {
-            // Do nothing
-        }
-        $this->visit('/owncloud/index.php/apps/files?dir=');
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'mkdir -p '.self::$file_root.$folders.'\'';
+        exec($command);
     }
 
     /**
@@ -127,17 +122,9 @@ class FeatureContext extends MinkContext
      */
     public function iHaveFileWithin($file, $folder)
     {
-        $this->visit('/owncloud/index.php/apps/files?dir='.$folder);
-        $page = $this->getSession()->getPage();
-        $page->find('css', '#new > a')->click();
-        $page->find('xpath', '//div[@id="new"]//li[@data-type="file"]/p')->click();
-        try { // NOTE: The element disappears after setting the value causing an exception
-        	$filename = strstr($file,'.',true); // ditch file suffix 
-            $page->find('xpath', '//div[@id="new"]//input')->setValue($filename."\n");
-        } catch(Exception $e) {
-            // Do nothing
-        }
-        $this->visit('/owncloud/index.php/apps/files?dir=');
+        $folder = (!empty($folder) ? $folder.'/' : $folder);
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'touch '.self::$file_root.$folder.$file.'\'';
+        exec($command);
     }
 
     /**
@@ -510,15 +497,6 @@ class FeatureContext extends MinkContext
         $web_assert = new WebAssert($this->getSession());
         $xpath = '//select[@id="crates"]//option[@id="'.$crate.'"]';
         $web_assert->elementNotExists('xpath', $xpath, $page);
-        // $page = $this->getSession()->getPage();
-        // $xpath = '//select[@id="crates"]//option';
-        // $existing_crate_name_els = $page->findAll('xpath', $xpath);
-        // foreach ($existing_crate_name_els as $crate_name_el) {
-        //     if ($crate_name_el->getAttribute("id") == $crate)
-        //     {
-        //         throw new Exception('The crate "' .$crate.'" should not exist');
-        //     }
-        // }
     }
 
 

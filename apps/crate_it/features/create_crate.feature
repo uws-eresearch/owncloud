@@ -4,9 +4,9 @@ Feature: Create and select a new crate
   I want to create and select a new crate as my current crate
 
   Background:
-    Given I'm logged in to ownCloud as "test"
+    Given I have no crates
+    And I'm logged in to ownCloud as "test"
     And I go to the crate_it page
-    #And I delete all existing crates
 
   #CRATEIT-45
   Scenario: When a user creates a new crate, it is selected by default

@@ -129,8 +129,6 @@
 
         <div class="container-metadata">
 
-          <span id="crateName"><?php echo $_['selected_crate'] ?></span>
-
           <div id='description_box'>
             <label for="description">Description</label>
             <input id="edit_description" class='pull-right' type="button" value="Edit" />

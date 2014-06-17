@@ -388,16 +388,6 @@ border-top-right-radius: 0;
 	overflow-y: auto;
 }
 
-.container-metadata #crateName {
-	display: block;
-	padding: 0 20px;
-	height: 49px;
-	border-bottom: 1px solid #eee;
-	font-size: 18px;
-	line-height: 50px;
-	font-weight: bold;
-}
-
 .container-metadata #description_box {
 	display: block;
 	padding: 20px;

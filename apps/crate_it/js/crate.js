@@ -501,7 +501,7 @@ function initCrateActions() {
         $tree.tree('removeNode', node);
       });
     }
-    saveTree($tree, $('#crateName').text() + ' has been cleared');
+    saveTree($tree, $('#crates').val() + ' has been cleared');
     indentTree($tree);
     $('#clearCrateModal').modal('hide');
   });  
@@ -635,20 +635,6 @@ $(document).ready(function() {
       }
     });
     return false;
-  });
-
-  $('#crateName').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=rename_crate', {
-    name: 'new_name',
-    indicator: '<img src=' + OC.imagePath('crate_it', 'indicator.gif') + '>',
-    tooltip: 'Double click to edit...',
-    event: 'dblclick',
-    style: 'inherit',
-    height: '15px',
-    callback: function(value, settings) {
-      $('#crates').find(':selected').text(value);
-      $('#crates').find(':selected').prop("id", value);
-      $('#crates').find(':selected').prop("value", value);
-    }
   });
 
   $('#crates').change(function() {

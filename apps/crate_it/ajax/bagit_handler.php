@@ -88,8 +88,7 @@ switch ($action){
 		}
 		break;
 	case 'switch':
-		$ok = $bagit_manager->switchCrate($crate_id);			
-		alert(''); //FIXME WHY DOES THIS WORK?!!?
+		$ok = $bagit_manager->switchCrate($crate_id);		
 		if(!$ok){
 			header('HTTP/1.1 400 No name',400);
 		} 

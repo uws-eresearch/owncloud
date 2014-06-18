@@ -229,7 +229,7 @@ class FeatureContext extends MinkContext
 		}
 	}
 	
-	/**
+    /**
      * @Then /^the default crate should contain "([^"]*)" within the root folder, in that order$/
      */
     public function theDefaultCrateShouldContainWithinTheRootFolderInThatOrder($arg1)
@@ -560,6 +560,20 @@ class FeatureContext extends MinkContext
 			throw new Exception('Validation message is "' . $msg . '" , not "'. $arg2 .'".');
 		}
     }
+	
+	/**
+     * @Given /^I should see the crate description "([^"]*)"$/
+     */
+    public function iShouldSeeTheCrateDescription($arg1)
+    {
+        $page = $this->getSession()->getPage();
+		$xpath = '//div[@id="description_box"]/div[@id="description"]';
+		$desc = $page->find('xpath', $xpath);
+		if ($desc->getText() != $arg1)
+		{
+			throw new Exception('The crate should have description "' .$arg1);
+		}	
+    }
 
     /**
      * @When /^I clear the crate$/
@@ -570,5 +584,48 @@ class FeatureContext extends MinkContext
         $page->find('css', '#clear')->click();
     }
 
+
+    /**
+     * @Then /^I fill in "([^"]*)" with a long string of (\d+) characters$/
+     */
+    public function iFillInWithALongStringOfCharacters($arg1, $arg2)
+    {
+        $value = str_repeat('a', $arg2 + 1);
+		$page = $this->getSession()->getPage();
+		$el = $page->find('css', '.modal.in');
+		
+		$web_assert = new WebAssert($this->getSession());
+		$xpath = '//input[@id="'.$arg1.'"]';
+		$desc = $web_assert->elementExists('xpath', $xpath);
+		$desc->setValue($value);	
+    }
+	
+    /**
+     * @Given /^the selected crate name should be a long string truncated to (\d+) characters$/
+     */
+    public function theSelectedCrateNameShouldBeALongStringTruncatedToCharacters($arg1)
+    {
+        $page = $this->getSession()->getPage();
+    	$optionElement = $page->find('xpath', '//select[@id="crates"]/option[@selected]');
+		$selectedDefaultValue = (string)$optionElement->getText();
+		if (strlen($selectedDefaultValue) != $arg1)
+		{
+			throw new Exception('Crate name is not "'. $arg1 .'" characters long.');
+		}
+    }
+	
+    /**
+     * @Given /^the selected crate description should be a long string truncated to (\d+) characters$/
+     */
+    public function theSelectedCrateDescriptionShouldBeALongStringTruncatedToCharacters($arg1)
+    {
+        $page = $this->getSession()->getPage();
+		$xpath = '//div[@id="description_box"]/div[@id="description"]';
+		$desc = $page->find('xpath', $xpath);
+		if (strlen($desc->getText()) != $arg1)
+		{
+			throw new Exception('Crate description is not "'. $arg1 .'" characters long.');
+		}
+    }
 }
 

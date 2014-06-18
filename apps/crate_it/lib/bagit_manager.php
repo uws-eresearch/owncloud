@@ -136,6 +136,7 @@ class BagItManager {
     $this->initBag($name);
     $this->selected_crate = $name;
     $_SESSION['crate_id'] = $name;
+	session_commit();
     return true;
   }
 

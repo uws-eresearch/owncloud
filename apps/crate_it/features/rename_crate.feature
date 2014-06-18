@@ -26,3 +26,14 @@ Feature: Rename a crate from the Item Management root
     When I rename "default_crate"
     Then I press "Cancel" on the popup dialog
     And the crate should have name "default_crate"
+
+  #CRATEIT-127
+  Scenario: Renaming a new crate that is not unique results in an error
+    When I click the new crate button
+    And I fill in "New Cr8 Name" with "new crate"
+    Then I click "Create" in the create crate modal
+    Then I wait for 4 seconds
+    When I rename "new crate"
+    Then I fill in "rename-item" with "default_crate"
+    When I press "Rename"
+    Then I should see error 'Crate with name "default_crate" already exists' in the modal

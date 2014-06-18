@@ -6,7 +6,7 @@ Feature: Create and select a new crate
   Background:
     Given I'm logged in to ownCloud as "test"
     And I go to the crate_it page
-    #And I delete all existing crates
+    And I have no crates
 
   #CRATEIT-45
   Scenario: When a user creates a new crate, it is selected by default
@@ -44,11 +44,13 @@ Feature: Create and select a new crate
     And the selected crate name should be a long string truncated to 128 characters
   
   #CRATEIT-45
-  Scenario: Ensure the crate description field has a max of 10000
+  Scenario: Ensure the crate description field has a max of 8000
     When I click the new crate button
-    Then I fill in "crate_input_description" with a long string of 10001 characters
+    And I fill in "New Cr8 Name" with "crate_with_long_desc"
+    Then I fill in "crate_input_description" with a long string of 8001 characters
     And I click "Create" in the create crate modal
-    And the selected crate description should have a description truncated to 10000 characters
+    Then I wait for 3 seconds
+    And the selected crate description should be a long string truncated to 8000 characters
 
   #CRATEIT-45
   Scenario: Cancel creating a crate
@@ -76,12 +78,11 @@ Feature: Create and select a new crate
     Then the create crate modal should be clear of input and errors
   
   #CRATEIT-45
-  #Scenario: Error message gets cleared after modal disappear
-    #When I click the new crate button
-    #And I fill in "New Cr8 Name" with "default_crate"
-    #And I click "Create" in the create crate modal
-    # FIXME
-	  #And I click the new crate button
-    #And I click "Cancel" in the create crate modal
-    #Then the create crate modal should be clear of input and errors
+  Scenario: Error message gets cleared after modal disappear
+    When I click the new crate button
+    And I fill in "New Cr8 Name" with "default_crate"
+    And I click "Create" in the create crate modal
+    And I click "Cancel" in the create crate modal
+	And I click the new crate button
+    Then the create crate modal should be clear of input and errors
   

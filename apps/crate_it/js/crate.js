@@ -589,10 +589,10 @@ $(document).ready(function() {
   });
 
   $('#crate_input_description').keyup(function() {
-    if ($(this).val().length > 10000) {
-      $("#crate_description_validation_error").text('Cr8 Description has reached the limit of 10,000 characters');
+    if ($(this).val().length > 8000) {
+      $("#crate_description_validation_error").text('Cr8 Description has reached the limit of 8,000 characters');
       $("#crate_description_validation_error").show();
-      $(this).val($(this).val().substr(0, 10000));
+      $(this).val($(this).val().substr(0, 8000));
     }
   });
 

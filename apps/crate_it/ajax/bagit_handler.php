@@ -66,7 +66,7 @@ switch ($action){
 		// check if crate already exist
 		$crate_list = $bagit_manager->getCrateList();
 		$crate_already_exist = array_search($crate_name, $crate_list);
-		if ($crate_already_exist)
+		if ($crate_already_exist or $crate_name==='default_crate')
 		{
 			header('HTTP/1.1 401 Crate with name "' .$crate_name. '" already exists', 401);
 		} else {

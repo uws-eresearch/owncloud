@@ -56,7 +56,9 @@ function buildFileTree(data) {
       'x-office-presentation', 'x-office-spreadsheet'
     ];
     var icon = 'file'
-    if (node.folder || node.id == 'folder') {
+    if(node.id == 'rootfolder') {
+      return 'url('+ OC.filePath('crate_it', 'img', 'crate.png') + ')';
+    } else if (node.folder || node.id == 'folder') {
       icon = 'folder';
     } else {
       var mime_base = node.mime.split('/')[0];
@@ -192,6 +194,7 @@ function buildFileTree(data) {
         });
       }
       if (type == 'rootfolder') {
+        $div.addClass('rootfolder');
         $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Crate</a></li>');  
       } else {
         $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Item</a></li>');

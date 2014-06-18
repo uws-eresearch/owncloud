@@ -29,6 +29,7 @@ $dir = isset($_GET['dir']) ? $_GET['dir'] : '';
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 $crate_id = isset($_GET['crate_id']) ? $_GET['crate_id'] : '';
 $crate_name = isset($_GET['crate_name']) ? $_GET['crate_name'] : '';
+$crate_description = isset($_GET['crate_description']) ? $_GET['crate_description'] : '';
 $neworder = isset($_GET['neworder']) ? $_GET['neworder'] : array();
 $element_id = isset($_POST['elementid']) ? $_POST['elementid'] : '';
 $new_title = isset($_POST['new_title']) ? $_POST['new_title'] : '';
@@ -65,11 +66,12 @@ switch ($action){
 		// check if crate already exist
 		$crate_list = $bagit_manager->getCrateList();
 		$crate_already_exist = array_search($crate_name, $crate_list);
-		if ($crate_already_exist)
+		if ($crate_already_exist or $crate_name==='default_crate')
 		{
 			header('HTTP/1.1 401 Crate with name "' .$crate_name. '" already exists', 401);
 		} else {
 			$msg = $bagit_manager->createCrate($crate_name);
+			$ok = $bagit_manager->setDescription($crate_description);
 			if(!$msg){
 				header('HTTP/1.1 400 No name given', 400);
 			} else {
@@ -91,6 +93,7 @@ switch ($action){
 		if(!$ok){
 			header('HTTP/1.1 400 No name',400);
 		} 
+		\OCP\Util::writeLog("crate_it", "Switched crate to: " . $_SESSION['crate_id'], 3); 
 		break;
 	case 'get_crate':
 		$msg = $bagit_manager->getSelectedCrate();

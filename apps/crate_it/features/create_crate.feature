@@ -4,9 +4,9 @@ Feature: Create and select a new crate
   I want to create and select a new crate as my current crate
 
   Background:
-    Given I'm logged in to ownCloud as "test"
+    Given I have no crates
+    And I'm logged in to ownCloud as "test"
     And I go to the crate_it page
-    And I have no crates
 
   #CRATEIT-45
   Scenario: When a user creates a new crate, it is selected by default
@@ -14,6 +14,7 @@ Feature: Create and select a new crate
     And I fill in "New Cr8 Name" with "new crate"
     And I fill in "New Cr8 Description" with "crate description"
     Then I click "Create" in the create crate modal
+    #Then I should see notice "Crate new crate successfully created"
     Then I wait for 3 seconds
     And the selected crate should be "new crate"
     And I should see the crate description "crate description"
@@ -21,13 +22,13 @@ Feature: Create and select a new crate
   #CRATEIT-45
   Scenario: Creating a new crate that is not unique results in an error
     When I click the new crate button
-    And I fill in "New Cr8 Name" with "crate1"
+    And I fill in "New Cr8 Name" with "new crate"
     Then I click "Create" in the create crate modal
     Then I wait for 4 seconds
     And I click the new crate button
-    And I fill in "New Cr8 Name" with "crate1"
+    And I fill in "New Cr8 Name" with "new crate"
     And I click "Create" in the create crate modal
-    Then I should see error 'Crate with name "crate1" already exists' in the modal
+    Then I should see error 'Crate with name "new crate" already exists' in the modal
 
   #CRATEIT-45
   Scenario: Ensure the crate name field is mandatory
@@ -71,7 +72,7 @@ Feature: Create and select a new crate
   #CRATEIT-45
   Scenario: Fields get cleared after modal disappear
     When I click the new crate button
-    And I fill in "New Cr8 Name" with "crate2"
+    And I fill in "New Cr8 Name" with "new crate"
     And I fill in "New Cr8 Description" with "some description"
     And I click "Cancel" in the create crate modal
     And I click the new crate button

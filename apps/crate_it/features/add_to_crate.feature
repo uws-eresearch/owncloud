@@ -6,12 +6,10 @@ Feature: Add files and folders to a crate
   Background:
     Given I have no crates
     And I have no files
-    And I'm logged in to ownCloud as "test"
-    And I go to the crate_it page    
+    And I have folders "folder1/folder2"
     And I have file "file.txt" within the root folder
-    And I have folder "folder1" within the root folder
-    And I have folder "folder2" within "folder1"
-    And I have file "file2.txt" within "/folder1/folder2"
+    And I have file "file2.txt" within "folder1/folder2"
+    And I'm logged in to ownCloud as "test"
 
   #CRATEIT-46
   Scenario: A user can add a file to a crate

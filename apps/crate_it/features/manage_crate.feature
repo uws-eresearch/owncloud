@@ -84,7 +84,7 @@ Feature: Manage the items in a crate (CRUD)
 
   #CRATEIT-107
   Scenario: A user can add virtual folders to their crate
-    When I add a virtual folder to "/"
+    When I add a virtual folder to "default_crate"
     Then I should see "Add Folder"
     When I fill in "add-folder" with "Virtual Folder"
     Then I press "Add"
@@ -94,7 +94,7 @@ Feature: Manage the items in a crate (CRUD)
 
   #CRATEIT-107
   Scenario: A user can cancel adding virtual folder to their crate
-    When I add a virtual folder to "/"
+    When I add a virtual folder to "default_crate"
     Then I should see "Add Folder"
     When I fill in "add-folder" with "Virtual Folder"
     Then I press "Cancel" on the popup dialog

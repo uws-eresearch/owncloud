@@ -108,17 +108,15 @@ switch ($action){
         $ok = $bagit_manager->updateVFS($vfs);
         if($ok){
 			echo $ok;
-		}
-		else {
+		}	else {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
         break;
 	case 'rename_crate':
 		$ok = $bagit_manager->renameCrate($new_name);
 		if($ok){
-			echo $new_name;
-		}
-		else {
+			json_encode($new_name);
+		} else {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
 		break;

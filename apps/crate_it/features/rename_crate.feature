@@ -16,14 +16,13 @@ Feature: Rename a crate from the Item Management root
     Then the "rename-item" field should contain "default_crate"
     Then I fill in "rename-item" with "new crate name"
     When I press "Rename"
-    And I wait for 1 seconds
-    Then I should see "Renamed default_crate to new crate name"
-    Then "file.txt" should not be in the crate
-    And "default_crate" should be in the crate
+    And I wait for 2 seconds
+    # Then I should see notice "Renamed default_crate to new crate name" // TODO: Fix notification tests
+    And the crate should have name "new crate name"
 
 
   #CRATEIT-127
   Scenario: A user can cancel renaming a crate  
     When I rename "default_crate"
     Then I press "Cancel" on the popup dialog
-    Then "default_crate" should be in the crate
+    And the crate should have name "default_crate"

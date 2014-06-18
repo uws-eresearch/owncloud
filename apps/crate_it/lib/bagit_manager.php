@@ -62,9 +62,9 @@ class BagItManager {
     // TODO: This msg will get printed 3 times with each page load, which shouldn't be happening
     \OCP\Util::writeLog("crate_it", "creating new crate " . $_SESSION['crate_id'], 3);
     if (empty($_SESSION['crate_id'])) {
-      $this->createCrate('default_crate');
       $this->selected_crate = 'default_crate';
       $_SESSION['crate_id'] = 'default_crate';
+      $this->createCrate('default_crate');
     } else {
       $this->initBag($_SESSION['crate_id']);
       $this->selected_crate = $_SESSION['crate_id'];
@@ -116,7 +116,7 @@ class BagItManager {
         'vfs' => array(
           array(
             'id' => 'rootfolder',
-            'name' => '/',
+            'name' => $this->selected_crate,
             'folder' => true,
             'children' => array()
           )
@@ -136,6 +136,7 @@ class BagItManager {
     $this->initBag($name);
     $this->selected_crate = $name;
     $_SESSION['crate_id'] = $name;
+    session_commit();
     return true;
   }
 

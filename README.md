@@ -32,6 +32,11 @@ You should see the directories crate_it and file_previewer
 #### Access owncloud
 
 The server should be started already, go to [http://localhost:8080/owncloud](http://localhost:8080/owncloud) and create an account by entering a username and password.
+
+NOTE
+
+If you go to the Crate It page and you cannot see any folders/files, or the metadata section on the right hand side, that the cr8it config file  (/var/www/html/owncloud/data/cr8it_config.json) is not set up properly. 
+Please contact the Intersect team for more information on how to configure this file.
     
 #### Installing Test Frameworks
 

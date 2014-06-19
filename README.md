@@ -47,3 +47,13 @@ Install components
 $ php -d detect_unicode=Off composer.phar install --prefer-source -v
 ```
 
+Start java selenium server
+
+```
+# Assuming you are inside the owncloud directory (where you cloned the project)
+$ cd apps/crate_it
+$ bin/selenium/start.sh
+
+# Now you can run tests as follows:
+$ bin/behat features/your_behat_test.feature
+```

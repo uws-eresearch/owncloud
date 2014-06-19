@@ -668,6 +668,9 @@ $(document).ready(function() {
       $("#crate_name_validation_error").show();
       $(this).val($(this).val().substr(0, 128));
     }
+    else {
+      $("#crate_name_validation_error").text('');	
+    }
   });
 
   $('#crate_input_description').keyup(function() {
@@ -675,6 +678,9 @@ $(document).ready(function() {
       $("#crate_description_validation_error").text('Cr8 Description has reached the limit of 8,000 characters');
       $("#crate_description_validation_error").show();
       $(this).val($(this).val().substr(0, 8000));
+    }
+    else {
+      $("#crate_description_validation_error").text('');
     }
   });
 

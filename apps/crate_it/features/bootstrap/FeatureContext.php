@@ -258,7 +258,7 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Given /^I wait for (\d+) seconds$/
+     * @Given /^I wait for (\d+) seconds?$/
      */
     public function iWaitForSeconds($seconds)
     {
@@ -287,6 +287,19 @@ class FeatureContext extends MinkContext
     public function iAddAVirtualFolderTo($crateItem)
     {
         $this->performActionElByFAIcon($crateItem, 'fa-plus');
+    }
+
+    /**
+     * @Given /^the crate should have name "([^"]*)"$/
+     */
+    public function theCrateShouldHaveName($name)
+    {
+        $xpath = '//div[@id="files"]//span[1]';
+        $page = $this->getSession()->getPage();
+        $item = $page->find('xpath', $xpath);
+        if (is_null($item)) {
+            throw new Exception($crateItem." is in the crate");
+        }
     }
 
     /**

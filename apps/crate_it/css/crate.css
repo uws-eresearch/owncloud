@@ -520,3 +520,10 @@ font-size: 18px;
 #search_people_results button {
 	float: right;
 }
+
+
+#files ul.jqtree-tree li > div.jqtree-element.rootfolder span.jqtree-title {
+	font-size: x-large;
+	padding-left: 20px;
+	overflow: visible;
+}

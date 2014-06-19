@@ -56,7 +56,9 @@ function buildFileTree(data) {
       'x-office-presentation', 'x-office-spreadsheet'
     ];
     var icon = 'file'
-    if (node.folder || node.id == 'folder') {
+    if(node.id == 'rootfolder') {
+      return 'url('+ OC.filePath('crate_it', 'img', 'crate.png') + ')';
+    } else if (node.folder || node.id == 'folder') {
       icon = 'folder';
     } else {
       var mime_base = node.mime.split('/')[0];
@@ -114,8 +116,61 @@ function buildFileTree(data) {
     attachModalHandlers($modal, confirmCallback, successMessage);
   };
 
-  var renameItem = function(node) {
+  var renameCrate = function(node) {
     var $modal = $('#renameCrateModal');
+    var oldName = node.name;
+    var crates = $.map($('#crates > option'), function(el, i) {
+      return $(el).attr('id');
+    });
+    $('#rename-crate').val(oldName);
+    $('#rename-crate').keyup(function() {
+      var inputName = $('#rename-crate').val();
+      var $confirm = $modal.find('.btn-primary');
+      var $error = $('#rename_crate_error');
+      if(crates.indexOf(inputName) > -1) {
+        $confirm.prop('disabled', true);
+        $('#rename_crate_error').text('Crate with name "' + inputName + '" already exists');
+        $error.show();
+      } else {
+        $confirm.prop('disabled', false);
+        $error.hide();
+      }
+    });
+
+    var confirmCallback = function() {
+      var newName = $('#rename-crate').val();
+      $tree.tree('updateNode', node, newName);
+      saveTree($tree, false);
+      indentTree($tree);
+      $.ajax({
+        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'action': 'rename_crate',
+          'new_name': newName
+        },
+        success: function() {
+          $('#crates > #' + oldName).val(newName).attr('id', newName).text(newName);
+          location.reload();
+        },
+        error: function(data) {
+          $tree.tree('updateNode', node, oldName);
+          saveTree($tree, false);
+          location.reload();
+          displayError(data.statusText);
+        }
+      });
+    }
+   // the successMessage function gets called after the name has changed
+    var successMessage = function() {
+      return 'Renamed ' + oldName + ' to ' + $('#rename-crate').val();
+    };
+    attachModalHandlers($modal, confirmCallback, successMessage);
+  }
+
+  var renameItem = function(node) {
+    var $modal = $('#renameItemModal');
     $('#rename-item').val(node.name);
     var confirmCallback = function() {
       $tree.tree('updateNode', node, $('#rename-item').val());
@@ -156,9 +211,18 @@ function buildFileTree(data) {
           addFolder(node);
         });
       }
-      $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Item</a></li>');
+      if (type == 'rootfolder') {
+        $div.addClass('rootfolder');
+        $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Crate</a></li>');  
+      } else {
+        $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Item</a></li>');
+      }
       $ul.find('.fa-pencil').parent().click(function() {
-        renameItem(node);
+        if (type == 'rootfolder') {
+          renameCrate(node);
+        } else {
+          renameItem(node);
+        }
       });
       if (type != 'rootfolder') {
         $ul.append('<li><a><i class="fa fa-trash-o"></i>Remove Item</a></li>');
@@ -515,8 +579,8 @@ function initCrateActions() {
   $('#deleteCrateModal').find('.btn-primary').click(deleteCrate);
 
   $('#delete').click(function() {
-    if (metadataEmpty() && crateEmpty() ) {
-      deleteCrate()
+    if (metadataEmpty() && crateEmpty()) {
+      deleteCrate();
     } else {
       $('#deleteCrateModal').modal('show');
     }
@@ -524,6 +588,24 @@ function initCrateActions() {
 
 }
 
+function drawCrateContents() {
+  $.ajax({
+    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      'action': 'get_items'
+    },
+    success: function(data) {
+      $tree = buildFileTree(data);
+      indentTree($tree);
+    },
+    error: function(data) {
+      var e = data.statusText;
+      alert(e);
+    }
+  });
+}
 
 
 $(document).ready(function() {
@@ -850,22 +932,7 @@ $(document).ready(function() {
     });
   });
 
-  $.ajax({
-    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      'action': 'get_items'
-    },
-    success: function(data) {
-      $tree = buildFileTree(data);
-      indentTree($tree);
-    },
-    error: function(data) {
-      var e = data.statusText;
-      alert(e);
-    }
-  });
+  drawCrateContents();
 
   max_sword_mb = parseInt($('#max_sword_mb').text());
   max_zip_mb = parseInt($('#max_zip_mb').text());

@@ -110,18 +110,23 @@ switch ($action){
         $ok = $bagit_manager->updateVFS($vfs);
         if($ok){
 			echo $ok;
-		}
-		else {
+		}	else {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
         break;
 	case 'rename_crate':
-		$ok = $bagit_manager->renameCrate($new_name);
-		if($ok){
-			echo $new_name;
-		}
-		else {
-			header('HTTP/1.1 500 Internal Server Error');
+		// check if crate already exist
+		$crate_list = $bagit_manager->getCrateList();
+		$crate_already_exist = array_search($new_name, $crate_list);
+		if ($crate_already_exist or $new_name==='default_crate') {
+			header('HTTP/1.1 401 Crate with name "'.$new_name.'" already exists', 401);
+		} else {
+			$ok = $bagit_manager->renameCrate($new_name);
+			if($ok){
+				echo json_encode($new_name);
+			}	else {
+				header('HTTP/1.1 500 Internal Server Error');
+			}
 		}
 		break;
 	case 'preview':

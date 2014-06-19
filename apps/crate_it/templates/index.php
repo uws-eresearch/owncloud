@@ -214,6 +214,8 @@
 
 <?php include 'remove_crate_modal.php'; ?>
 
+<?php include 'rename_item_modal.php'; ?>
+
 <?php include 'rename_crate_modal.php'; ?>
 
 <?php include 'add_folder_modal.php'; ?>

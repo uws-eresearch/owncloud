@@ -119,10 +119,26 @@ function buildFileTree(data) {
   var renameCrate = function(node) {
     var $modal = $('#renameCrateModal');
     var oldName = node.name;
-    $('#rename-item').val(oldName);
-    console.log(node);
+    var crates = $.map($('#crates > option'), function(el, i) {
+      return $(el).attr('id');
+    });
+    $('#rename-crate').val(oldName);
+    $('#rename-crate').keyup(function() {
+      var inputName = $('#rename-crate').val();
+      var $confirm = $modal.find('.btn-primary');
+      var $error = $('#rename_crate_error');
+      if(crates.indexOf(inputName) > -1) {
+        $confirm.prop('disabled', true);
+        $('#rename_crate_error').text('Crate with name "' + inputName + '" already exists');
+        $error.show();
+      } else {
+        $confirm.prop('disabled', false);
+        $error.hide();
+      }
+    });
+
     var confirmCallback = function() {
-      var newName = $('#rename-item').val();
+      var newName = $('#rename-crate').val();
       $tree.tree('updateNode', node, newName);
       saveTree($tree, false);
       indentTree($tree);
@@ -135,18 +151,20 @@ function buildFileTree(data) {
           'new_name': newName
         },
         success: function() {
-          console.log('Success:' + newName);
           $('#crates > #' + oldName).val(newName).attr('id', newName).text(newName);
           location.reload();
         },
         error: function(data) {
-          console.log(data.statusText);
+          $tree.tree('updateNode', node, oldName);
+          saveTree($tree, false);
+          location.reload();
+          displayError(data.statusText);
         }
       });
     }
    // the successMessage function gets called after the name has changed
     var successMessage = function() {
-      return 'Renamed ' + oldName + ' to ' + $('#rename-item').val();
+      return 'Renamed ' + oldName + ' to ' + $('#rename-crate').val();
     };
     attachModalHandlers($modal, confirmCallback, successMessage);
   }

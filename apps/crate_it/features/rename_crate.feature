@@ -13,8 +13,8 @@ Feature: Rename a crate from the Item Management root
   #CRATEIT-127
   Scenario: A user can rename a crate
     When I rename "default_crate"
-    Then the "rename-item" field should contain "default_crate"
-    Then I fill in "rename-item" with "new crate name"
+    Then the "rename-crate" field should contain "default_crate"
+    Then I fill in "rename-crate" with "new crate name"
     When I press "Rename"
     And I wait for 2 seconds
     # Then I should see notice "Renamed default_crate to new crate name" // TODO: Fix notification tests
@@ -34,6 +34,6 @@ Feature: Rename a crate from the Item Management root
     Then I click "Create" in the create crate modal
     Then I wait for 4 seconds
     When I rename "new crate"
-    Then I fill in "rename-item" with "default_crate"
+    Then I fill in "rename-crate" with "new crate"
     When I press "Rename"
     Then I should see error 'Crate with name "default_crate" already exists' in the modal

@@ -170,7 +170,7 @@ function buildFileTree(data) {
   }
 
   var renameItem = function(node) {
-    var $modal = $('#renameCrateModal');
+    var $modal = $('#renameItemModal');
     $('#rename-item').val(node.name);
     var confirmCallback = function() {
       $tree.tree('updateNode', node, $('#rename-item').val());

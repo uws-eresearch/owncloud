@@ -100,7 +100,7 @@ class BagItManager {
     if (empty($name)) {
       return false;
     }
-
+    $this->selected_crate = $name;
     $this->initBag($name);
     $this->createManifest();
     return $name;

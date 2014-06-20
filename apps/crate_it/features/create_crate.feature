@@ -13,9 +13,8 @@ Feature: Create and select a new crate
     When I click the new crate button
     And I fill in "New Cr8 Name" with "new crate"
     And I fill in "New Cr8 Description" with "crate description"
-    Then I click "Create" in the create crate modal
+    Then I press "Create" on the popup dialog
     #Then I should see notice "Crate new crate successfully created"
-    Then I wait for 3 seconds
     And the selected crate should be "new crate"
     And I should see the crate description "crate description"
     
@@ -23,25 +22,23 @@ Feature: Create and select a new crate
   Scenario: Creating a new crate that is not unique results in an error
     When I click the new crate button
     And I fill in "New Cr8 Name" with "new crate"
-    Then I click "Create" in the create crate modal
-    Then I wait for 4 seconds
+    Then I press "Create" on the popup dialog
     And I click the new crate button
     And I fill in "New Cr8 Name" with "new crate"
-    And I click "Create" in the create crate modal
+    And I press "Create" on the popup dialog
     Then I should see error 'Crate with name "new crate" already exists' in the modal
 
   #CRATEIT-45
   Scenario: Ensure the crate name field is mandatory
     When I click the new crate button
-    And I click "Create" in the create crate modal
+    And I press "Create" on the popup dialog
     Then I should see a "New Cr8 Name" validation error "This field is mandatory"
 
   #CRATEIT-45
   Scenario: Ensure the crate name field has a max length of 128
     When I click the new crate button
-    Then I wait for 2 seconds
     Then I fill in "crate_input_name" with a long string of 129 characters
-    And I click "Create" in the create crate modal
+    And I press "Create" on the popup dialog
     And the selected crate name should be a long string truncated to 128 characters
   
   #CRATEIT-45
@@ -49,23 +46,22 @@ Feature: Create and select a new crate
     When I click the new crate button
     And I fill in "New Cr8 Name" with "crate_with_long_desc"
     Then I fill in "crate_input_description" with a long string of 8001 characters
-    And I click "Create" in the create crate modal
-    Then I wait for 3 seconds
+    And I press "Create" on the popup dialog
     And the selected crate description should be a long string truncated to 8000 characters
 
   #CRATEIT-45
   Scenario: Cancel creating a crate
     When I click the new crate button
     Then I fill in "New Cr8 Name" with "another crate"
-    And I click "Cancel" in the create crate modal
+    And I press "Cancel" on the popup dialog
     Then I should not see "another crate"
     And I should not have crate "another crate"
    
   #CRATEIT-45
   Scenario: Validation Errors get cleared after modal disappear
     When I click the new crate button
-    And I click "Create" in the create crate modal
-    And I click "Cancel" in the create crate modal
+    And I press "Create" on the popup dialog
+    And I press "Cancel" on the popup dialog
     And I click the new crate button
     Then the create crate modal should be clear of input and errors
     
@@ -74,7 +70,7 @@ Feature: Create and select a new crate
     When I click the new crate button
     And I fill in "New Cr8 Name" with "new crate"
     And I fill in "New Cr8 Description" with "some description"
-    And I click "Cancel" in the create crate modal
+    And I press "Cancel" on the popup dialog
     And I click the new crate button
     Then the create crate modal should be clear of input and errors
   
@@ -82,8 +78,8 @@ Feature: Create and select a new crate
   Scenario: Error message gets cleared after modal disappear
     When I click the new crate button
     And I fill in "New Cr8 Name" with "default_crate"
-    And I click "Create" in the create crate modal
-    And I click "Cancel" in the create crate modal
-	And I click the new crate button
+    And I press "Create" on the popup dialog
+    And I press "Cancel" on the popup dialog
+	  And I click the new crate button
     Then the create crate modal should be clear of input and errors
   

@@ -443,16 +443,6 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Then /^I click "([^"]*)" in the create crate modal$/
-     */
-    public function iClickInTheCreateCrateModal($buttonText)
-    {
-        // TODO: This will work with any model, genericise and remove duplicate functions
-        $page = $this->getSession()->getPage();
-        $el = $page->find('css', '.modal.in');
-        $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
-    }
-    /**
      * @Then /^I should see notice "([^"]*)"$/
      */
     public function iShouldSeeNotice($arg1)
@@ -590,12 +580,9 @@ class FeatureContext extends MinkContext
 			throw new Exception('Repeat characters fail');
 		}
 		$page = $this->getSession()->getPage();
-		$el = $page->find('css', '.modal.in');
-		
-		$web_assert = new WebAssert($this->getSession());
 		$xpath = '//*[@id="'.$arg1.'"]';
-		$desc = $web_assert->elementExists('xpath', $xpath);
-		$desc->setValue($value);	
+        $desc = $page->find('xpath', $xpath);
+		$desc->setValue($value);
     }
 	
     /**

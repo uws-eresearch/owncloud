@@ -337,6 +337,7 @@ class FeatureContext extends MinkContext
         $page = $this->getSession()->getPage();
         $el = $page->find('css', '.modal.in');
         $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -446,6 +447,7 @@ class FeatureContext extends MinkContext
      */
     public function iClickInTheCreateCrateModal($buttonText)
     {
+        // TODO: This will work with any model, genericise and remove duplicate functions
         $page = $this->getSession()->getPage();
         $el = $page->find('css', '.modal.in');
         $el->find('xpath', '//button[text() = "'.$buttonText.'"]')->click();
@@ -693,7 +695,7 @@ class FeatureContext extends MinkContext
 
     public function waitForPageToLoad($timeout=10) {
         $timeout = $timeout * 1000000; // convert seconds to microseconds
-        $increment = 250000; // 250ms
+        $increment = 50000; // 50ms
         $session = $this->getSession();
         for($i = 0; $i <= $timeout; $i += $increment) {
             $ready = $session->evaluateScript('return window.document.readyState == "complete"');

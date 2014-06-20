@@ -7,3 +7,4 @@ log
 .vagrant/**/*
 apps/crate_it/composer.phar
 cr8it.sublime*
+*.orig

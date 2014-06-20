@@ -46,8 +46,6 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
-
-        sleep(3); // allow the page to load
     }
 
     /**
@@ -56,6 +54,7 @@ class FeatureContext extends MinkContext
     public function iGoToTheCrateItPage()
     {
         $this->visit('/owncloud/index.php/apps/crate_it');
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -64,6 +63,7 @@ class FeatureContext extends MinkContext
     public function iNavigateToFolder($arg1)
     {
         $this->visit('/owncloud/index.php/apps/files?dir=/folder1');
+        waitForPageToLoad();
     }
 
     /**
@@ -72,6 +72,7 @@ class FeatureContext extends MinkContext
     public function iGoToTheFilesPage()
 	{
 		$this->visit('/owncloud/index.php/apps/files');
+        waitForPageToLoad();
 	}
 
     /**
@@ -658,5 +659,52 @@ class FeatureContext extends MinkContext
 			throw new Exception('General error message is not empty');
 		}
     }
+
+    public function spin ($lambda, $wait = 15) {
+        for ($i = 0; $i < $wait; $i++) {
+            try {
+                if ($lambda($this)) {
+                    return true;
+                }
+            } catch (Exception $e) {
+                // do nothing
+            }
+            sleep(1);
+        }
+        $backtrace = debug_backtrace();
+
+        throw new Exception(
+            "Timeout thrown by " . $backtrace[1]['class'] . "::" . $backtrace[1]['function'] . " (" . implode(',', $backtrace[1]['args']) .") \n" .
+                (isset($backtrace[1]['file']) ? $backtrace[1]['file'] : '<unknown>') . ", line " .
+                (isset($backtrace[1]['line']) ? $backtrace[1]['line'] : '<unknown>')
+        );
+    }
+
+    /**
+     * @Then /^I click by id "([^"]*)" using spin$/
+     */
+    public function iClickByIdUsingSpin($id) {
+        $this->spin(function($context) use ($id) {
+            $context->getSession()->getPage()->findById($id)->click();
+            return true;
+        });
+    }
+
+
+    public function waitForPageToLoad($timeout=10) {
+        $timeout = $timeout * 1000000; // convert seconds to microseconds
+        $increment = 250000; // 250ms
+        $session = $this->getSession();
+        for($i = 0; $i <= $timeout; $i += $increment) {
+            $ready = $session->evaluateScript('return window.document.readyState == "complete"');
+            $jquery = $session->evaluateScript('return 0 === $.active');
+            if ($ready  and $jquery) {
+                return;
+            }
+            usleep($increment);
+        }
+        throw new Exception('Page not ready after '.$timeout.' seconds');
+    }
+
 }
 

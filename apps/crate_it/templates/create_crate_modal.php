@@ -8,16 +8,16 @@
       <div class="modal-body">
       	<p>
         New Cr8 Name *
-        </p>
-        <input id="crate_input_name" name = "New Cr8 Name" style="width: 40%;" type="text"></input>
+        </p>	
+        <input id="crate_input_name" name="New Cr8 Name" type="text" class="modal-input"></input>
+        <p/>
         <label id="crate_name_validation_error" validates="New Cr8 Name" style="color:red;display:none"></label>
         
         <p>
         New Cr8 Description
         </p>
-        
-        <textarea id="crate_input_description" name = "New Cr8 Description" maxlength="10000" style="width: 40%;"></textarea>
-        
+          <textarea id="crate_input_description" name = "New Cr8 Description" maxlength="8001" class="modal-input"></textarea>
+        <p/>
         <label id="crate_description_validation_error" validates="New Cr8 Description" style="color:red;display:none"></label>
         
         <p></p>

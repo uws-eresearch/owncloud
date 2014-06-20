@@ -689,6 +689,7 @@ $(document).ready(function() {
     $("#crate_name_validation_error").hide();
     $('#crate_input_name').val('');
     $('#crate_input_description').val('');
+    $("#crate_description_validation_error").hide();
   });
 
   $('#create_crate_submit').click(function(event) {

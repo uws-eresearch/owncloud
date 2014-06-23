@@ -16,6 +16,5 @@ Feature: Default crate always exists
   #CRATEIT-49
   Scenario: When I delete the default crate, a new one is created
     When I click the delete crate button
-    And I wait for 1 seconds
     Then I should see the default crate already created and selected
 

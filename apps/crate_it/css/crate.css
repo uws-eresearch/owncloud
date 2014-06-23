@@ -93,6 +93,10 @@ border-top:1px solid #dedede;
 // BUTTONS /////////////////////////////////////////////////////////////////////
 */
 
+.modal textarea.modal-input, .modal input[type="text"].modal-input{
+	width: 80%;
+} 
+
 .crateit input[type="text"], .crateit input[type="password"], .crateit input[type="search"], .crateit input[type="number"], .crateit input[type="email"], .crateit input[type="url"], .crateit input[type="time"], .crateit textarea, .crateit select, .crateit button, .crateit input[type="button"], .crateit .button, .crateit #quota, .crateit .pager li a, .container-metadata input[type="button"] {
 /*	width: 10em;*/
 	margin: .3em;

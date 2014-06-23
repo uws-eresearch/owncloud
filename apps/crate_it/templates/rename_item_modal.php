@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body">
         <p>New Name:</p>
-        <input id="rename-item" type="text"></input>
+        <input id="rename-item" type="text" class="modal-input"></input>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

@@ -8,7 +8,7 @@ Feature: Clear crate contents
     And I have no files
     And I have file "file.txt" within the root folder
     And I'm logged in to ownCloud as "test"
-    When I add "file.txt" to the default crate
+    When I add "file.txt" to the current crate
     Then I go to the crate_it page
     And I wait for 2 seconds
 

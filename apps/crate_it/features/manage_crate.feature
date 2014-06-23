@@ -8,7 +8,7 @@ Feature: Manage the items in a crate (CRUD)
     And I have no files
     And I have file "file.txt" within the root folder
     And I'm logged in to ownCloud as "test"
-    When I add "file.txt" to the default crate
+    When I add "file.txt" to the current crate
     Then I go to the crate_it page
     And I wait for 2 seconds
 
@@ -16,7 +16,7 @@ Feature: Manage the items in a crate (CRUD)
   Scenario: Crate items display the correct crate item actions
     Given I have folder "folder1"
     When I go to the files page
-    Then I add "folder1" to the default crate
+    Then I add "folder1" to the current crate
     And I go to the crate_it page
     And I wait for 2 seconds
     Then I should have crate actions "Rename Item, Remove Item" for "file.txt"
@@ -26,16 +26,16 @@ Feature: Manage the items in a crate (CRUD)
   Scenario: Crate state is maintained when navigating between file and crate views
     Given I have folders "folder1/folder2"
     And I go to the files page
-    When I add "folder1" to the default crate
+    When I add "folder1" to the current crate
     Then I go to the crate_it page
     And I wait for 2 seconds
     When I toggle expand on "folder1"
     And I wait for 1 seconds
-    Then "folder2" should be visible in the default crate
+    Then "folder2" should be visible in the current crate
     When I go to the files page
     Then I go to the crate_it page
     And I wait for 2 seconds
-    Then "folder2" should be visible in the default crate
+    Then "folder2" should be visible in the current crate
 
   #CRATEIT-106
   Scenario: A user can remove an item from their crate
@@ -57,7 +57,7 @@ Feature: Manage the items in a crate (CRUD)
     Given I have folder "folder1"
     And I have file "file2.txt" within "/folder1"
     When I go to the files page
-    And I add "folder1" to the default crate
+    And I add "folder1" to the current crate
     Then I go to the crate_it page
     And I wait for 2 seconds
     When I remove "folder1"
@@ -90,7 +90,7 @@ Feature: Manage the items in a crate (CRUD)
     Then I press "Add"
     And I wait for 1 seconds
     Then I should see "Virtual Folder added"
-    Then "Virtual Folder" should be visible in the default crate
+    Then "Virtual Folder" should be visible in the current crate
 
   #CRATEIT-107
   Scenario: A user can cancel adding virtual folder to their crate

@@ -17,7 +17,7 @@ Feature: Delete an existing crate
 
     # CRATEIT-78
     Scenario: A user can delete a crate
-      And I add "file.txt" to the default crate
+      And I add "file.txt" to the current crate
       Then I go to the crate_it page
       When I click the delete crate button
       Then I should see "Crate crate1 is not empty, proceed with deletion?"
@@ -27,7 +27,7 @@ Feature: Delete an existing crate
 
     # CRATEIT-78
     Scenario: A user can cancel deleting a crate
-      And I add "file.txt" to the default crate
+      And I add "file.txt" to the current crate
       Then I go to the crate_it page
       When I click the delete crate button
       And I press "Cancel" on the popup dialog

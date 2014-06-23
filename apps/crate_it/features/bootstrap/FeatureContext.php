@@ -59,12 +59,12 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @When /^I navigate to folder(\d+)$/
+     * @When /^I navigate to "([^"]*)"$/
      */
-    public function iNavigateToFolder($arg1)
+    public function iNavigateToFolder($folder)
     {
-        $this->visit('/owncloud/index.php/apps/files?dir=/folder1');
-        waitForPageToLoad();
+        $this->visit('/owncloud/index.php/apps/files?dir=/'.$folder);
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -154,13 +154,13 @@ class FeatureContext extends MinkContext
 	}
 	
     /**
-     * @When /^I add "([^"]*)" to the default crate$/
+     * @When /^I add "([^"]*)" to the current crate$/
      */
-    public function iAddToTheDefaultCrate($arg1)
+    public function iAddToTheCurrentCrate($item)
     {
         $page = $this->getSession()->getPage();
-        $page->find('xpath', '//tr[@data-file="' . $arg1. '"]//label')->click();
-		$page->find('xpath', '//tr[@data-file="' . $arg1. '"]//a[@data-action="Add to crate"]')->click();
+        $page->find('xpath', '//tr[@data-file="' . $item. '"]//label')->click();
+		$page->find('xpath', '//tr[@data-file="' . $item. '"]//a[@data-action="Add to crate"]')->click();
     }
 
     /**
@@ -176,19 +176,19 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Then /^"([^"]*)" should not be visible in the default crate$/
+     * @Then /^"([^"]*)" should not be visible in the current crate$/
      */
-    public function shouldNotBeVisibleInTheDefaultCrate($crateItem)
-    {
-		$page = $this->getSession()->getPage();
-		$web_assert = new WebAssert($this->getSession());
-        $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
-		// The element will still exist even without being visible!
-        $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$crateItem. '"]', $root_folder);	
-    	if ($element->isVisible())
-		{
-			throw new Exception('The element should be invisible.');
-		}
+    public function shouldNotBeVisibleInTheCurrentCrate($itemName) {
+        $this->spin(function($context) use ($itemName) {
+            $page = $context->getSession()->getPage();
+            $web_assert = new WebAssert($context->getSession());
+            $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
+            $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$itemName. '"]', $root_folder);   
+            if ($element->isVisible()) {
+                throw new Exception('The element should be visible');
+            }
+            return true;
+        });
 	}
 
     /**
@@ -204,18 +204,19 @@ class FeatureContext extends MinkContext
 	}
 
     /**
-     * @Then /^"([^"]*)" should be visible in the default crate$/
+     * @Then /^"([^"]*)" should be visible in the current crate$/
      */
-    public function shouldBeVisibleInTheDefaultCrate($arg1)
-    {
-        $page = $this->getSession()->getPage();
-		$web_assert = new WebAssert($this->getSession());
-        $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
-        $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$arg1. '"]', $root_folder);	
-    	if (!$element->isVisible())
-		{
-			throw new Exception('The element should be visible');
-		}
+    public function shouldBeVisibleInTheCurrentCrate($itemName) {
+        $this->spin(function($context) use ($itemName) {
+            $page = $context->getSession()->getPage();
+    		$web_assert = new WebAssert($context->getSession());
+            $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
+            $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$itemName. '"]', $root_folder);	
+        	if (!$element->isVisible())	{
+    			throw new Exception('The element should be visible');
+    		}
+            return true;
+        });
 	}
 	
     /**
@@ -640,8 +641,10 @@ class FeatureContext extends MinkContext
 		}
     }
 
-    public function spin ($lambda, $wait = 15) {
-        for ($i = 0; $i < $wait; $i++) {
+    public function spin($lambda, $timeout=10) {
+        $timeout = $timeout * 1000000; // convert seconds to microseconds
+        $increment = 50000; // 50ms
+        for ($i = 0; $i < $timeout; $i += $increment) {
             try {
                 if ($lambda($this)) {
                     return true;
@@ -649,7 +652,7 @@ class FeatureContext extends MinkContext
             } catch (Exception $e) {
                 // do nothing
             }
-            sleep(1);
+            usleep($increment);
         }
         $backtrace = debug_backtrace();
 
@@ -663,12 +666,12 @@ class FeatureContext extends MinkContext
     /**
      * @Then /^I click by id "([^"]*)" using spin$/
      */
-    public function iClickByIdUsingSpin($id) {
-        $this->spin(function($context) use ($id) {
-            $context->getSession()->getPage()->findById($id)->click();
-            return true;
-        });
-    }
+    // public function iClickByIdUsingSpin($id) {
+    //     $this->spin(function($context) use ($id) {
+    //         $context->getSession()->getPage()->findById($id)->click();
+    //         return true;
+    //     });
+    // }
 
 
     public function waitForPageToLoad($timeout=10) {

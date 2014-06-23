@@ -10,14 +10,12 @@ Feature: Clear crate contents
     And I'm logged in to ownCloud as "test"
     When I add "file.txt" to the current crate
     Then I go to the crate_it page
-    And I wait for 2 seconds
 
     #CRATEIT-77
     Scenario: Clear the contents of a crate
       When I clear the crate
       Then I should see "All items will be removed from this Crate, Continue?"
       When I press "Clear" on the popup dialog
-      And I wait for 1 seconds
       Then I should see "default_crate has been cleared"
       Then "file.txt" should not be in the crate
 
@@ -25,7 +23,6 @@ Feature: Clear crate contents
     Scenario: Cancel clear the contents of a crate
       When I clear the crate
       Then I press "Cancel" on the popup dialog
-      And I wait for 1 seconds
       Then "file.txt" should be in the crate
 
 

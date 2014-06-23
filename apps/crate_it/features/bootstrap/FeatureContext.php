@@ -25,6 +25,7 @@ class FeatureContext extends MinkContext
 {
 
     private static $file_root = '/var/www/html/owncloud/data/test/files/';
+    private static $crate_root = '/var/www/html/owncloud/data/test/crates/';
 
     /**
      * Initializes context.
@@ -72,7 +73,7 @@ class FeatureContext extends MinkContext
     public function iGoToTheFilesPage()
 	{
 		$this->visit('/owncloud/index.php/apps/files');
-        waitForPageToLoad();
+        $this->waitForPageToLoad();
 	}
 
     /**
@@ -397,29 +398,30 @@ class FeatureContext extends MinkContext
         $el->click();
     }
 	
-	/**
-     * @Given /^I delete all existing crates$/
+
+    /**
+     * @Given /^I have crate "([^"]*)"$/
      */
-    public function iDeleteAllExistingCrates()
-    {
-        //Get an instance of BagItManager
-		$bagit_manager = \OCA\crate_it\lib\BagItManager::getInstance();
-		$page = $this->getSession()->getPage();
-		$xpath = '//select[@id="crates"]//option/@id';
-		$existing_crate_name_els = $page->findAll('xpath', $xpath);
-		foreach ($existing_crate_name_els as $crate_name_el) {
-			$bagit_manager->switchCrate($crate_name_el.getText());
-			$result = $bagit_manager->deleteCrate();
-		}
-		
+    public function iHaveCrate($crateName) {
+        // $mainfest = '{"description":"","creators":[],"activities":[],"vfs":[{"id":"rootfolder","name":"'.$crateName.'","folder":true,"children":[]}]}';
+        $mainfest = '"{\"description\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
+        $data_path = self::$crate_root.$crateName.'/data';
+        // $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'mkdir -p '.$data_path.' | echo '.$mainfest.' > '.$data_path.'/manifest.json\'';
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'mkdir -p '.$data_path.'\'';
+        // $this->printDebug($command);
+        exec($command);
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \' cd '.$data_path.' | echo '.$mainfest.' > '.$data_path.'/manifest.json\'';
+        exec($command);
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \' chown -R apache:apache '.self::$crate_root.'\'';
+        exec($command);
     }
-	
+
     /**
      * @Given /^I have no crates$/
      */
     public function iHaveNoCrates()
     {
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'rm -rf /var/www/html/owncloud/data/test/crates/\'';
+        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'rm -rf '.self::$crate_root.'\'';
         exec($command);
     }
 
@@ -470,17 +472,6 @@ class FeatureContext extends MinkContext
 			throw new Exception('Selected value is "' . $selectedDefaultValue . '" , not "'. $arg1 .'".');
 		}
     }	
-
-    /**
-     * @Given /^I have crate "([^"]*)"$/
-     */
-    public function iHaveCrate($crateName)
-    {
-        $this->iClickTheNewCrateButton();
-        $this->fillField('crate_input_name', $crateName);
-        $this->iClickInTheCreateCrateModal('Create');
-        sleep(2);
-    }
 
     /**
      * @Given /^I should have crate "([^"]*)"$/
@@ -692,7 +683,7 @@ class FeatureContext extends MinkContext
             }
             usleep($increment);
         }
-        throw new Exception('Page not ready after '.$timeout.' seconds');
+        throw new Exception('Page not ready after '.($timeout/1000000).' seconds');
     }
 
 }

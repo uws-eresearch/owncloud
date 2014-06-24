@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body">
         <p>Folder Name:</p>
-        <input id="add-folder" type="text"></input>
+        <input id="add-folder" type="text" class="modal-input"></input>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

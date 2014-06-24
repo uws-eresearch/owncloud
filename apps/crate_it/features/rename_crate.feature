@@ -33,3 +33,12 @@ Feature: Rename a crate from the Item Management root
     When I rename "new crate"
     Then I fill in "rename-crate" with "new crate"
     Then I should see error 'Crate with name "new crate" already exists' in the modal
+
+  #CRATEIT-127
+  Scenario: A crate can not have a blank name
+    When I click the new crate button
+    And I fill in "New Cr8 Name" with "new crate"
+    When I press "Create" on the popup dialog
+    When I rename "new crate"
+    Then I fill in "rename-crate" with "   "
+    Then I should see error 'Crate name cannot be blank' in the modal

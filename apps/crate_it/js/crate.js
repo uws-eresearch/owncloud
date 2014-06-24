@@ -119,32 +119,12 @@ function buildFileTree(data) {
   var renameCrate = function(node) {
     var $modal = $('#renameCrateModal');
     var oldName = node.name;
-    var crates = $.map($('#crates > option'), function(el, i) {
-      return $(el).attr('id');
-    });
     $('#rename-crate').val(oldName);
     $('#rename-crate').keyup(function() {
-      var inputName = $('#rename-crate').val();
-      var $confirm = $modal.find('.btn-primary');
+      var $input = $('#rename-crate');
       var $error = $('#rename_crate_error');
-      var emptyName = function() {
-        return (!inputName || /^\s*$/.test(inputName));
-      };
-      var existingName = function() {
-        return crates.indexOf(inputName) > -1;
-      };
-      if(existingName() || emptyName()) {
-        $confirm.prop('disabled', true);
-        if (emptyName()) {
-          $('#rename_crate_error').text('Crate name cannot be blank');
-        } else {
-          $('#rename_crate_error').text('Crate with name "' + inputName + '" already exists');
-        }
-        $error.show();
-      } else {
-        $confirm.prop('disabled', false);
-        $error.hide();
-      }
+      var $confirm = $modal.find('.btn-primary');
+      validateCrateName($input, $error, $confirm);
     });
 
     var confirmCallback = function() {
@@ -527,7 +507,33 @@ function activateRemoveActivityButtons() {
   });
 }
 
-
+function validateCrateName($input, $error, $confirm) {
+  var inputName = $input.val();
+    var crates = $.map($('#crates > option'), function(el, i) {
+    return $(el).attr('id');
+  });
+  var emptyName = function() {
+    return (!inputName || /^\s*$/.test(inputName));
+  };
+  var existingName = function() {
+    return crates.indexOf(inputName) > -1;
+  };
+  if(existingName() || emptyName() || inputName.length > 128) {
+    $confirm.prop('disabled', true);
+    if (emptyName()) {
+      $error.text('Crate name cannot be blank');
+    } else if (existingName()) {
+      $error.text('Crate with name "' + inputName + '" already exists');
+    } else {
+      $error.text('Crate name has reached the limit of 128 characters');
+      $input.val(inputName.substr(0, 128));
+    }
+    $error.show();
+  } else {
+    $confirm.prop('disabled', false);
+    $error.hide();
+  }
+}
 
 function initCrateActions() {
 

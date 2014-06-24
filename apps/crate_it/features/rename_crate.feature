@@ -18,7 +18,6 @@ Feature: Rename a crate from the Item Management root
     # Then I should see notice "Renamed default_crate to new crate name" // TODO: Fix notification tests
     And the crate should have name "new crate name"
 
-
   #CRATEIT-127
   Scenario: A user can cancel renaming a crate  
     When I rename "default_crate"
@@ -28,7 +27,7 @@ Feature: Rename a crate from the Item Management root
   #CRATEIT-127
   Scenario: Renaming a new crate that is not unique results in an error
     When I click the new crate button
-    And I fill in "New Cr8 Name" with "new crate"
+    Then I fill in "New Crate Name" with "new crate"
     When I press "Create" on the popup dialog
     When I rename "new crate"
     Then I fill in "rename-crate" with "new crate"
@@ -37,7 +36,7 @@ Feature: Rename a crate from the Item Management root
   #CRATEIT-127
   Scenario: A crate can not have a blank name
     When I click the new crate button
-    And I fill in "New Cr8 Name" with "new crate"
+    Then I fill in "New Crate Name" with "new crate"
     When I press "Create" on the popup dialog
     When I rename "new crate"
     Then I fill in "rename-crate" with "   "
@@ -46,7 +45,7 @@ Feature: Rename a crate from the Item Management root
   #CRATEIT-127
   Scenario: A crate can not have a blank name
     When I click the new crate button
-    And I fill in "New Cr8 Name" with "new crate"
+    Then I fill in "New Crate Name" with "new crate"
     When I press "Create" on the popup dialog
     When I rename "new crate"
     Then I fill in "rename-crate" with a long string of 129 characters

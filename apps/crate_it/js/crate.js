@@ -20,8 +20,8 @@
  */
 alert = function() {};
 
-function displayError(errorMessage) {
-  displayNotification('There was an error: ' + errorMessage);
+function displayError(errorMessage, delayTime) {
+  displayNotification('There was an error: ' + errorMessage, delayTime);
 }
 
 
@@ -518,18 +518,20 @@ function validateCrateName($input, $error, $confirm) {
   var existingName = function() {
     return crates.indexOf(inputName) > -1;
   };
-  if(existingName() || emptyName() || inputName.length > 128) {
+  if(existingName() || emptyName()) {
     $confirm.prop('disabled', true);
     if (emptyName()) {
       $error.text('Crate name cannot be blank');
-    } else if (existingName()) {
-      $error.text('Crate with name "' + inputName + '" already exists');
     } else {
-      $error.text('Crate name has reached the limit of 128 characters');
-      $input.val(inputName.substr(0, 128));
+      $error.text('Crate with name "' + inputName + '" already exists');
     }
     $error.show();
-  } else {
+  } else if (inputName.length > 128) {
+      $error.text('Crate name has reached the limit of 128 characters');
+      $input.val(inputName.substr(0, 128));
+      $error.show();
+      $confirm.prop('disabled', false);
+   } else {
     $confirm.prop('disabled', false);
     $error.hide();
   }
@@ -549,6 +551,34 @@ function initCrateActions() {
 
   var crateEmpty = function() {
     return $tree.tree('getNodeById', 'rootfolder').children.length == 0;
+  }
+
+  var createCrate = function() {
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'get',
+      dataType: 'html',
+      async: false,
+      data: {
+        'action': 'create',
+        'crate_name': $('#crate_input_name').val(),
+        'crate_description': $('#crate_input_description').val(),
+      },
+      success: function(data) {
+        $('#crate_input_name').val('');
+        $('#crate_input_description').val('');
+        $('#createCrateModal').modal('hide');
+        $("#crates").append('<option id="' + data + '" value="' + data + '" >' + data + '</option>');
+        $("#crates").val(data);
+        $('#crates').trigger('change');
+        displayNotification('Crate ' + data + ' successfully created', 6000);
+      },
+      error: function(data) {
+        // $('#create_crate_error').text(data.statusText);
+        // $('#create_crate_error').show();
+        displayError(data.statusText);
+      }
+    });
   }
 
   var deleteCrate = function () {
@@ -572,6 +602,22 @@ function initCrateActions() {
     $('#deleteCrateModal').modal('hide');
   }
 
+  $('#crate_input_name').keyup(function() {
+      var $input = $(this);
+      var $error = $('#crate_name_validation_error');
+      var $confirm = $('#createCrateModal').find('.btn-primary');
+      validateCrateName($input, $error, $confirm);
+  });
+
+  $('#createCrateModal').find('.btn-primary').click(createCrate);
+
+  $('#createCrateModal').on('show.bs.modal', function() {
+    $('#crate_input_name').val('');
+    $('#crate_input_description').val('');
+    $("#crate_name_validation_error").hide();
+    $("#crate_description_validation_error").hide();
+  });
+
   $('#clearCrateModal').find('.btn-primary').click(function() {
     var children = $tree.tree('getNodeById', 'rootfolder').children;
     // NOTE: The while loop is a workaround to the forEach loop inexplicably skipping
@@ -586,7 +632,6 @@ function initCrateActions() {
     $('#clearCrateModal').modal('hide');
   });  
 
-
   $('#deleteCrateModal').on('show.bs.modal', function() {
     var currentCrate = $('#crates').val();
     $('#deleteCrateMsg').text('Crate ' + currentCrate + ' is not empty, proceed with deletion?');
@@ -600,6 +645,23 @@ function initCrateActions() {
     } else {
       $('#deleteCrateModal').modal('show');
     }
+  });
+
+  $('#crates').change(function() {
+    var id = $(this).val();
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=switch&crate_id=' + id,
+      type: 'get',
+      dataType: 'html',
+      async: false,
+      success: function(data) {
+        location.reload();
+      },
+      error: function(data) {
+        var e = data.statusText;
+        alert(e);
+      }
+    });
   });
 
 }
@@ -677,18 +739,6 @@ $(document).ready(function() {
 
   initCrateActions();
 
-
-  $('#crate_input_name').keyup(function() {
-    if ($(this).val().length > 128) {
-      $("#crate_name_validation_error").text('Cr8 Name has reached the limit of 128 characters');
-      $("#crate_name_validation_error").show();
-      $(this).val($(this).val().substr(0, 128));
-    }
-    else {
-      $("#crate_name_validation_error").text('');	
-    }
-  });
-
   $('#crate_input_description').keyup(function() {
     if ($(this).val().length > 8000) {
       $("#crate_description_validation_error").text('Cr8 Description has reached the limit of 8,000 characters');
@@ -698,67 +748,6 @@ $(document).ready(function() {
     else {
       $("#crate_description_validation_error").text('');
     }
-  });
-
-  $('#subbutton').click(function(event) {
-    $('#create_crate_error').hide();
-    $("#crate_name_validation_error").hide();
-    $('#crate_input_name').val('');
-    $('#crate_input_description').val('');
-    $("#crate_description_validation_error").hide();
-  });
-
-  $('#create_crate_submit').click(function(event) {
-    $('#create_crate_error').hide();
-    $("#crate_name_validation_error").hide();
-    if ($('#crate_input_name').val() == '') {
-      $("#crate_name_validation_error").text("This field is mandatory");
-      $("#crate_name_validation_error").show();
-      return false;
-    }
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'get',
-      dataType: 'html',
-      async: false,
-      data: {
-        'action': 'create',
-        'crate_name': $('#crate_input_name').val(),
-        'crate_description': $('#crate_input_description').val(),
-      },
-      success: function(data) {
-        $('#crate_input_name').val('');
-        $('#crate_input_description').val('');
-        $('#newCrateModal').modal('hide');
-        $("#crates").append('<option id="' + data + '" value="' + data + '" >' + data + '</option>');
-        $("#crates").val(data);
-        $('#crates').trigger('change');
-        displayNotification('Crate ' + data + ' successfully created', 6000);
-      },
-      error: function(data) {
-        $('#create_crate_error').text(data.statusText);
-        $('#create_crate_error').show();
-        displayError(data.statusText);
-      }
-    });
-    return false;
-  });
-
-  $('#crates').change(function() {
-    var id = $(this).val();
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=switch&crate_id=' + id,
-      type: 'get',
-      dataType: 'html',
-      async: false,
-      success: function(data) {
-        location.reload();
-      },
-      error: function(data) {
-        var e = data.statusText;
-        alert(e);
-      }
-    });
   });
 
   $('#for_top_level').change(function() {

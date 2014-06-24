@@ -10,7 +10,7 @@ Feature: Delete an existing crate
     And I'm logged in to ownCloud as "test"
     And I go to the crate_it page
     When I click the new crate button
-    And I fill in "New Cr8 Name" with "crate1"
+    And I fill in "New Crate Name" with "crate1"
     And I press "Create" on the popup dialog
     And I go to the files page
     

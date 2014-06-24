@@ -127,9 +127,19 @@ function buildFileTree(data) {
       var inputName = $('#rename-crate').val();
       var $confirm = $modal.find('.btn-primary');
       var $error = $('#rename_crate_error');
-      if(crates.indexOf(inputName) > -1) {
+      var emptyName = function() {
+        return (!inputName || /^\s*$/.test(inputName));
+      };
+      var existingName = function() {
+        return crates.indexOf(inputName) > -1;
+      };
+      if(existingName() || emptyName()) {
         $confirm.prop('disabled', true);
-        $('#rename_crate_error').text('Crate with name "' + inputName + '" already exists');
+        if (emptyName()) {
+          $('#rename_crate_error').text('Crate name cannot be blank');
+        } else {
+          $('#rename_crate_error').text('Crate with name "' + inputName + '" already exists');
+        }
         $error.show();
       } else {
         $confirm.prop('disabled', false);

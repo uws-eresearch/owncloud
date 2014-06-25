@@ -16,7 +16,7 @@
         <p>
         New Cr8 Description
         </p>
-          <textarea id="crate_input_description" name = "New Cr8 Description" maxlength="8001" class="modal-input"></textarea>
+          <textarea id="crate_input_description" name = "New Cr8 Description" class="modal-input"></textarea>
         <p/>
         <label id="crate_description_validation_error" validates="New Cr8 Description" style="color:red;display:none"></label>
         

@@ -566,8 +566,8 @@ class FeatureContext extends MinkContext
      */
     public function iFillInWithALongStringOfCharacters($arg1, $arg2)
     {
-        $value = str_repeat('a', $arg2 + 1);
-		if (strlen($value) != $arg2+1)
+        $value = str_repeat('a', $arg2);
+		if (strlen($value) != $arg2)
 		{
 			throw new Exception('Repeat characters fail');
 		}
@@ -583,11 +583,12 @@ class FeatureContext extends MinkContext
     public function theSelectedCrateNameShouldBeALongStringTruncatedToCharacters($arg1)
     {
         $page = $this->getSession()->getPage();
-    	$optionElement = $page->find('xpath', '//select[@id="crates"]/option[@selected]');
-		$selectedDefaultValue = (string)$optionElement->getText();
-		if (strlen($selectedDefaultValue) != $arg1)
+    	$optionElement = $page->find('xpath', '//select[@id="crates"]/option[@selected]');		
+    	$name_text =  (string)$optionElement->getText();
+		$name_len = strlen($name_text);
+		if ($name_len != $arg1)
 		{
-			throw new Exception('Crate name is not "'. $arg1 .'" characters long.');
+			throw new Exception('Crate name is not "'. $arg1 .'" characters long. It is ' .$name_len);
 		}
     }
 	

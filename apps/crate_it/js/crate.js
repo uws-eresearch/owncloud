@@ -679,7 +679,7 @@ $(document).ready(function() {
   $('#crate_input_description').keyup(function() {  	
     var description_length = parseInt($('#description_length').text());
     if ($(this).val().length > description_length) {
-      $("#crate_description_validation_error").text('Cr8 Description has reached the limit of 8,000 characters');
+      $("#crate_description_validation_error").text('Cr8 Description has reached the limit of 6000 characters');
       $("#crate_description_validation_error").show();
       $(this).val($(this).val().substr(0, description_length));
     }

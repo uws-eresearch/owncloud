@@ -42,12 +42,12 @@ Feature: Create and select a new crate
     And the selected crate name should be a long string truncated to 128 characters
   
   #CRATEIT-45
-  Scenario: Ensure the crate description field has a max of 8000
+  Scenario: Ensure the crate description field has a max of 6000
     When I click the new crate button
     And I fill in "New Cr8 Name" with "crate_with_long_desc"
-    Then I fill in "crate_input_description" with a long string of 8001 characters
+    Then I fill in "crate_input_description" with a long string of 6001 characters
     And I press "Create" on the popup dialog
-    And the selected crate description should be a long string truncated to 8000 characters
+    And the selected crate description should be a long string truncated to 6000 characters
 
   #CRATEIT-45
   Scenario: Cancel creating a crate

@@ -19,6 +19,15 @@ $ git submodule update
 $ vagrant up
 ```
 
+NOTE 
+
+If you get an error after 'vagrant up' command (VBoxManage: error: Failed to create the host-only adapter), then run this command:
+
+```
+$ sudo launchctl load /Library/LaunchDaemons/org.virtualbox.startup.plist
+```
+then try 'vagrant up' again.
+
 #### Check your setup
 
 ```

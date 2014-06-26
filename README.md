@@ -37,6 +37,13 @@ NOTE
 
 If you go to the Crate It page and you cannot see any folders/files, or the metadata section on the right hand side, that the cr8it config file  (/var/www/html/owncloud/data/cr8it_config.json) is not set up properly. 
 Please contact the Intersect team for more information on how to configure this file.
+
+Once you have changed the cr8it_config.json file, be sure the restart the server:
+```
+$ vagrant ssh
+$ sudo su -
+$ service httpd restart
+```
     
 #### Installing Test Frameworks
 

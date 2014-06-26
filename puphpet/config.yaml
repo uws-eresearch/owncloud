@@ -31,12 +31,14 @@ vagrantfile-local:
             #     target: /vagrant
             #     nfs: 'false'
             J9VLuKvKekWO:
+                id: 'crate_it'
                 source: ./apps/crate_it/
                 target: /var/www/html/owncloud/apps/crate_it/
                 nfs: 'false'
                 owner: 'vagrant'
                 group: 'vagrant'
             Fw54BFecYw33:
+                id: 'file_previewer'
                 source: ./apps/file_previewer/
                 target: /var/www/html/owncloud/apps/file_previewer/
                 nfs: 'false'

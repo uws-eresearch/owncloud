@@ -10,7 +10,6 @@ Feature: Manage the items in a crate (CRUD)
     And I'm logged in to ownCloud as "test"
     When I add "file.txt" to the current crate
     Then I go to the crate_it page
-    And I wait for 2 seconds
 
   #CRATEIT-48
   Scenario: Crate items display the correct crate item actions
@@ -18,7 +17,6 @@ Feature: Manage the items in a crate (CRUD)
     When I go to the files page
     Then I add "folder1" to the current crate
     And I go to the crate_it page
-    And I wait for 2 seconds
     Then I should have crate actions "Rename Item, Remove Item" for "file.txt"
     And I should not have crate actions "Add" for "file.txt"
 
@@ -28,21 +26,17 @@ Feature: Manage the items in a crate (CRUD)
     And I go to the files page
     When I add "folder1" to the current crate
     Then I go to the crate_it page
-    And I wait for 2 seconds
     When I toggle expand on "folder1"
-    And I wait for 1 seconds
     Then "folder2" should be visible in the current crate
     When I go to the files page
     Then I go to the crate_it page
-    And I wait for 2 seconds
     Then "folder2" should be visible in the current crate
 
   #CRATEIT-106
   Scenario: A user can remove an item from their crate
     When I remove "file.txt"
     Then I should see "Remove item 'file.txt' from crate?"
-    When I press "Remove"
-    And I wait for 1 seconds
+    When I press "Remove" on the popup dialog
     Then I should see "file.txt removed"
     And "file.txt" should not be in the crate
 
@@ -59,9 +53,8 @@ Feature: Manage the items in a crate (CRUD)
     When I go to the files page
     And I add "folder1" to the current crate
     Then I go to the crate_it page
-    And I wait for 2 seconds
     When I remove "folder1"
-    Then I press "Remove"
+    Then I press "Remove" on the popup dialog
     Then "folder1" should not be in the crate
     And "file2.txt" should not be in the crate
 
@@ -70,8 +63,7 @@ Feature: Manage the items in a crate (CRUD)
     When I rename "file.txt"
     Then the "rename-item" field should contain "file.txt"
     Then I fill in "rename-item" with "newname.txt"
-    When I press "Rename"
-    And I wait for 1 seconds
+    When I press "Rename" on the popup dialog
     Then I should see "Renamed file.txt to newname.txt"
     Then "file.txt" should not be in the crate
     And "newname.txt" should be in the crate
@@ -87,8 +79,7 @@ Feature: Manage the items in a crate (CRUD)
     When I add a virtual folder to "default_crate"
     Then I should see "Add Folder"
     When I fill in "add-folder" with "Virtual Folder"
-    Then I press "Add"
-    And I wait for 1 seconds
+    Then I press "Add" on the popup dialog
     Then I should see "Virtual Folder added"
     Then "Virtual Folder" should be visible in the current crate
 
@@ -98,7 +89,6 @@ Feature: Manage the items in a crate (CRUD)
     Then I should see "Add Folder"
     When I fill in "add-folder" with "Virtual Folder"
     Then I press "Cancel" on the popup dialog
-    And I wait for 1 seconds
     Then "Virtual Folder" should not be in the crate
 
 

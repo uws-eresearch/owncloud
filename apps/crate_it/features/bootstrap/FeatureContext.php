@@ -441,7 +441,7 @@ class FeatureContext extends MinkContext
     public function iClickTheNewCrateButton()
     {
         $page = $this->getSession()->getPage();
-        $xpath = '//a[@id="subbutton"]';
+        $xpath = '//a[@id="create"]';
         $page->find('xpath', $xpath)->click();
     }
 
@@ -635,11 +635,18 @@ class FeatureContext extends MinkContext
 		{
 			throw new Exception('Description validation error message is not empty');
 		}
-		$error = $el->find('xpath', '//*[@id="create_crate_error"]');
-		if (strlen($error->getText()) > 0)
-		{
-			throw new Exception('General error message is not empty');
-		}
+    }
+
+    /**
+     * @Given /^"([^"]*)" in the popup dialog should be diasbled$/
+     */
+    public function inThePopupDialogShouldBeDiasbled($buttonText)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+        // $el->find('xpath', '//button[text() = "'.$buttonText.'" and @disabled]');
+        $web_assert = new WebAssert($this->getSession());
+        $web_assert->elementExists('xpath', '//button[text() = "'.$buttonText.'" and @disabled]', $el);
     }
 
     public function spin($lambda, $timeout=10) {
@@ -663,17 +670,6 @@ class FeatureContext extends MinkContext
                 (isset($backtrace[1]['line']) ? $backtrace[1]['line'] : '<unknown>')
         );
     }
-
-    /**
-     * @Then /^I click by id "([^"]*)" using spin$/
-     */
-    // public function iClickByIdUsingSpin($id) {
-    //     $this->spin(function($context) use ($id) {
-    //         $context->getSession()->getPage()->findById($id)->click();
-    //         return true;
-    //     });
-    // }
-
 
     public function waitForPageToLoad($timeout=10) {
         $timeout = $timeout * 1000000; // convert seconds to microseconds

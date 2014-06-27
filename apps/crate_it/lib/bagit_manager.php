@@ -289,7 +289,8 @@ class BagItManager {
     }
   }
 
-  public function renameCrate($new_name) {
+  public function renameCrate($new_name, $vfs) {
+    $this->updateVFS($vfs);
     rename($this->crate_dir, $this->crate_root . '/' . $new_name);
     $this->switchCrate($new_name);
     return true;
@@ -411,26 +412,28 @@ class BagItManager {
 
   public function flatList() {
     $data = $this->getManifestData();
-    $vfs = & $data['vfs'][0]['children'];
+    $vfs = &$data['vfs'][0]['children'];
     $flat = array();
-    $ref = & $flat;
+    $ref = &$flat;
     $this->flat_r($vfs, $ref, $data['vfs'][0]['name']);
     return $flat;
   }
 
   private function flat_r(&$vfs, &$flat, $path) {
-    foreach($vfs as $entry) {
-      if (array_key_exists('filename', $entry)) {
-        $flat_entry = array(
-          'id' => $entry['id'],
-          'path' => $path,
-          'name' => $entry['name'],
-          'filename' => $entry['filename']
-        );
-        array_push($flat, $flat_entry);
-      }
-      elseif (array_key_exists('children', $entry)) {
-        $this->flat_r($entry['children'], $flat, $path . $entry['name'] . '/');
+    if (count($vfs) > 0) {
+      foreach($vfs as $entry) {
+        if (array_key_exists('filename', $entry)) {
+          $flat_entry = array(
+            'id' => $entry['id'],
+            'path' => $path,
+            'name' => $entry['name'],
+            'filename' => $entry['filename']
+          );
+          array_push($flat, $flat_entry);
+        }
+        elseif (array_key_exists('children', $entry)) {
+          $this->flat_r($entry['children'], $flat, $path . $entry['name'] . '/');
+        }
       }
     }
   }

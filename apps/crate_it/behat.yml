@@ -1,4 +1,6 @@
 default:
+  filters:
+    tags: ~@wip
   extensions:
     Behat\MinkExtension\Extension:
       base_url: 'http://localhost:8080'

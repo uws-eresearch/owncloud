@@ -930,6 +930,7 @@ $(document).ready(function() {
     var old_description = $('#description').text();
     $('#description').text('');
     $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');
+    $('#edit_description').addClass('hidden');
     $('#save_description').click(function(event) {
       $.ajax({
         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
@@ -943,6 +944,7 @@ $(document).ready(function() {
           $('#description').html('');
           $('#description').text(data.description);
           togglePostCrateToSWORD();
+          $('#edit_description').removeClass('hidden');
         },
         error: function(data) {
           displayError(data.statusText);
@@ -952,6 +954,7 @@ $(document).ready(function() {
     $('#cancel_description').click(function(event) {
       $('#description').html('');
       $('#description').text(old_description);
+      $('#edit_description').removeClass('hidden');
     });
   });
 
@@ -968,4 +971,19 @@ $(document).ready(function() {
 
   activateRemoveActivityButtons();
 
+  calulate_heights();
+
+  $('#meta-data').on('show.bs.collapse', function () {
+      calulate_heights();
+  });
+
 });
+$( window ).resize(function() {
+  calulate_heights();
+});
+function calulate_heights() {
+  var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1 )) + $('.collapse.info.in .panel-body').outerHeight();
+  alert(tabsHeight)
+  var height = $('#meta-data').innerHeight() - tabsHeight;
+  $('.collapse.standard .panel-body').height(height + 12);
+}

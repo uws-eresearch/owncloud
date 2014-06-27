@@ -127,78 +127,127 @@
 
         <div id="files"></div>
 
-        <div class="container-metadata">
+                <div class="container-metadata">
 
-          <div id='description_box'>
-            <label for="description">Description</label>
-            <input id="edit_description" class='pull-right' type="button" value="Edit" />
-            <div id="description" class="metadata"><?php echo htmlentities($_['description']) ?></div>
-          </div>
 
-          <div class='crate-size'>
-            <span>Crate size: </span>
-            <span id="crate_size_human"></span>
-          </div>
-
-          <div id="creators_box" class='data-creators'>
-            <label for="creators">Add Data Creator/s</label>
-            <ul id="creators">
-              <?php foreach($_['creators'] as $creator):?>
-                <li>
-                  <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
-                    <i class="fa fa-minus"></i>
-                  </button>
-                  <span id="<?php echo $creator['creator_id'] ?>" class="full_name metadata"><?php echo $creator['full_name'] ?></span>
-                </li>
-              <?php endforeach;?>
-            </ul>
-
-            <div id="search_people_box" class="input-group">
-              <input id="keyword" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
-              <span class="input-group-btn">
-                <button id="search_people" class="btn btn-default" type="button" placeholder="Search Creators...">
-                  <i class="fa fa-search"></i>
-                </button>
-              </span>
+          <div class="panel-group" id="meta-data">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#meta-data" href="#crate-information">
+                    Crate Information
+                  </a>
+                </h4>
+              </div>
+              <div id="crate-information" class="panel-collapse collapse in info">
+                <div class="panel-body">
+                  <div id='description_box'>
+                    <h6>Description</h6>
+                    <button id="edit_description" class="pull-right edit-button" type="button" placeholder="Edit">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                    <div id="description" class="metadata"><?php echo htmlentities($_['description']) ?></div>
+                  </div>
+                  <div class='crate-size'>
+                    <h6 class="info">Crate Size: <span id="crate_size_human" class="standard"></span></h6>
+                    
+                  </div>
+                </div>
+              </div>
             </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#meta-data" href="#data-creators">
+                    Data Creators
+                  </a>
+                </h4>
+              </div>
+              <div id="data-creators" class="panel-collapse collapse in standard">
+                <div class="panel-body">
 
-            <div id="search_people_result_box">
-              <ul id="search_people_results">
-              </ul>
+                  
+                  <div id="creators_box" class="data-creators">
+                    <?php if($_['creators']): ?>
+                      <h6>Selected Data Creators</h6>
+                      <ul id="creators">
+                        <?php foreach($_['creators'] as $creator):?>
+                          <li>
+                            <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
+                              <i class="fa fa-minus"></i>
+                            </button>
+                            <p id="<?php echo $creator['creator_id'] ?>" class="full_name_email"><?php echo $creator['full_name'] ?></p>
+                          </li>
+                        <?php endforeach;?>
+                      </ul>
+                    <?php endif; ?>
+                    <h6>Add New Data Creators</h6>
+                    <div id="search_people_box" class="input-group">
+                      <input id="keyword" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
+                      <span class="input-group-btn">
+                        <button id="search_people" class="btn btn-default" type="button" placeholder="Search Creators...">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </span>
+                    </div>
+
+                    <div id="search_people_result_box">
+                      <ul id="search_people_results">
+                      </ul>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
             </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#meta-data" href="#grant-numbers">
+                    Grant Numbers
+                  </a>
+                </h4>
+              </div>
+              <div id="grant-numbers" class="panel-collapse collapse standard">
+                <div class="panel-body">
+                  
+                  <div id="avtivities_box" class="grant-numbers">
+                      <h6>Selected Grant Numbers</h6>
+                      <ul id="activities">
+                        <?php foreach($_['activities'] as $activity):?>
+                          <li>
+                            <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
+                              <i class="fa fa-minus"></i>
+                            </button>
+                            <p id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></p>
+                          </li>
+                        <?php endforeach;?>
+                      </ul>
 
-          </div>
+                    <h6>Add New Grant Numbers</h6>
+                    <div id="search_activity_box" class="input-group">
+                      <input id="keyword_activity" class="form-control" type="text" name="keyword_activity" placeholder="Search Grants..."/>
+                      <span class="input-group-btn">
+                        <button id="search_activity" class="btn btn-default" type="button" value="Search Grant Number">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </span>
+                    </div>
+
+                    <div id="search_activity_result_box">
+                      <ul id="search_activity_results">
+                      </ul>
+                    </div>
+
+                    <?php endif; ?>
+
+                  </div>
 
 
-          <div id="avtivities_box" class="input-group grant-numbers">
-            <label for="activities">Add Grant Number/s</label>
-            <ul id="activities">
-              <?php foreach($_['activities'] as $activity):?>
-                <li>
-                  <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
-                    <i class="fa fa-minus"></i>
-                  </button>
-                  <span id="<?php echo $activity['activity_id'] ?>" class="grant_number metadata"><?php echo $activity['grant_number'] ?></span>
-                </li>
-              <?php endforeach;?>
-            </ul>
-
-            <div id="search_activity_box" class="input-group">
-              <input id="keyword_activity" class="form-control" type="text" name="keyword_activity" placeholder="Search Grants..."/>
-              <span class="input-group-btn">
-                <button id="search_activity" class="btn btn-default" type="button" value="Search Grant Number">
-                  <i class="fa fa-search"></i>
-                </button>
-              </span>
+                </div>
+              </div>
             </div>
-
-            <div id="search_activity_result_box">
-              <ul id="search_activity_results">
-              </ul>
-            </div>
-
-            <?php endif; ?>
-
           </div>
 
         </div>

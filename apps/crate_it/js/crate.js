@@ -421,7 +421,7 @@ function activateRemoveCreatorButton(buttonObj) {
 }
 
 function activateRemoveCreatorButtons() {
-  $("input[id^='creator_']").click('click', function(event) {
+  $("button[id^='creator_']").click('click', function(event) {
     // Remove people from backend
     var input_element = $(this);
     var id = input_element.attr("id");
@@ -494,7 +494,7 @@ function activateRemoveActivityButton(buttonObj) {
 }
 
 function activateRemoveActivityButtons() {
-  $("input[id^='activity_']").click('click', function(event) {
+  $("button[id^='activity_']").click('click', function(event) {
     // Remove activity from backend
     var input_element = $(this);
     var id = input_element.attr("id");
@@ -885,9 +885,9 @@ $(document).ready(function() {
           var dc_title = $.trim(data[i]['dc:title']);
           var grant_number = $.trim(data[i]['grant_number']);
           var full_grant_code = grant_number + ": " + dc_title;
-          $('#search_activity_results').append('<li><input id="' + 'search_activity_result_' + id + '" type="button" value="Add" />' + '<span id="' + id + '"title="' + dc_title + '">' + grant_number + '</span></li>');
+          $('#search_activity_results').append('<li><button id="' + 'search_activity_result_' + id + '" class="pull-right"><i class="fa fa-plus"></i></button>' + '<p id="' + id + '"title="' + dc_title + '"><strong>' + grant_number + '</strong> ' + dc_title + '</p></li>');
         }
-        $("input[id^='search_activity_result_']").click('click', function(event) {
+        $("button[id^='search_activity_result_']").click('click', function(event) {
           // Add grant code to backend
           var input_element = $(this);
           var id = input_element.attr("id");

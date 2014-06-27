@@ -220,7 +220,7 @@
                             <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
                               <i class="fa fa-minus"></i>
                             </button>
-                            <p id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></p>
+                            <p class="grant_number"><strong><?php echo $activity['grant_number'] ?></strong> <?php echo $activity['dc_title'] ?></p>
                           </li>
                         <?php endforeach;?>
                       </ul>

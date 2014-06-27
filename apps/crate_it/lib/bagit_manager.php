@@ -20,6 +20,7 @@
  *
  */
 namespace OCA\crate_it\lib;
+require 'mint_connector.php';
 
 class BagItManager {
   var $base_dir;
@@ -45,6 +46,7 @@ class BagItManager {
    */
   private function __construct() {
     $this->user = \OCP\User::getUser();
+    self::$searchProvider = new MintConnector();
     $config_file = \OC::$SERVERROOT . '/data/cr8it_config.json';
     if (!file_exists($config_file)) {
       echo "No configuration file";
@@ -571,35 +573,9 @@ class BagItManager {
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
   }
 
-  public function lookUpMint($for_code, $level) {
-    try {
-      $config = $this->getConfig();
-      $url = $config['mint']['url'] . '/ANZSRC_FOR/opensearch/lookup?count=999&level=' . $level;
-
-      // now call the mint
-
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      $content = curl_exec($ch);
-
-      // You get a json file as content. process this and show the result
-
-      $result = curl_getinfo($ch);
-      curl_close($ch);
-      if (empty($content)) {
-        return array();
-      }
-      else {
-        $content_array = json_decode($content);
-        $results = $content_array->results;
-        return $results;
-      }
-    }
-
-    catch(Exception $e) {
-      header('HTTP/1.1 400 ' . $e->getMessage());
-    }
+  // TODO: What does $for_code do? It doesn't get used
+  public function lookUpMint($for_code, $keywords) {
+    return self::$searchProvider->search('FOR', $keywords);
   }
 
   public function getManifestData() {
@@ -613,33 +589,8 @@ class BagItManager {
     return $cont_array;
   }
 
-  public function lookUpPeople($keyword) {
-    try {
-      $config = $this->getConfig();
-      $url = $config['mint']['url'] . '/Parties_People/opensearch/lookup?searchTerms=' . urlencode($keyword);
-      \OCP\Util::writeLog("crate_it::lookUpPeople", $url, \OCP\Util::DEBUG);
-
-      // Now call the mint
-
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      $content = curl_exec($ch);
-      $result = curl_getinfo($ch);
-      curl_close($ch);
-      if (empty($content)) {
-        return array();
-      }
-      else {
-        $content_array = json_decode($content);
-        $results = $content_array->results;
-        return $results;
-      }
-    }
-
-    catch(Exception $e) {
-      header('HTTP/1.1 400 ' . $e->getMessage());
-    }
+  public function lookUpPeople($keywords) {
+    return self::$searchProvider->search('people', $keywords);
   }
 
   public function savePeople($creator_id, $full_name) {
@@ -833,32 +784,8 @@ class BagItManager {
     }
   }
 
-  public function lookUpActivity($keyword) {
-    try {
-      $config = $this->getConfig();
-      $url = $config['mint']['url'] . '/Activities/opensearch/lookup?searchTerms=' . urlencode($keyword);
-
-      // Now call the mint
-
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      $content = curl_exec($ch);
-      $result = curl_getinfo($ch);
-      curl_close($ch);
-      if (empty($content)) {
-        return array();
-      }
-      else {
-        $content_array = json_decode($content);
-        $results = $content_array->results;
-        return $results;
-      }
-    }
-
-    catch(Exception $e) {
-      header('HTTP/1.1 400 ' . $e->getMessage());
-    }
+  public function lookUpActivity($keywords) {
+    return self::$searchProvider->search('activity', $keywords);
   }
 
   public function saveActivity($activity_id, $grant_number, $dc_title) {

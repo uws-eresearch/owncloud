@@ -10,9 +10,10 @@ Feature: Search, add and remove grant number
     
   #CRATEIT-161
   Scenario: Grant number lookup
-    Given I fill in "keyword_activity" with "123"
+    Given I expand the grant number metadata section
+    And I fill in "keyword_activity" with "123"
     And I click the search grant number button 
-    Then I should see these entries
+    Then I should see these entries in the result list
       | activity_number |
       | 111123          |            
       | 123123          | 
@@ -21,7 +22,7 @@ Feature: Search, add and remove grant number
   #CRATEIT-161
   @wip
   Scenario: Add and Remove Grant Numbers
-    Given I fill in 'keyword_activity' with '123'
+    Given I fill in "keyword_activity" with "123"
     And I click the search grant number button 
     And I add grant number "123345" to the list
     And I add grant number "111123" to the list
@@ -42,7 +43,7 @@ Feature: Search, add and remove grant number
    #CRATEIT-162
    @wip
    Scenario: Grant number lookup result should exclude selected numbers
-     Given I fill in 'keyword_activity' with '123'
+     Given I fill in "keyword_activity" with "123"
      And I click the search grant number button 
      And I add grant number '123123' to the list
      And I click the 'Search Grant Number' button

@@ -650,6 +650,17 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @Given /^I expand the grant number metadata section$/
+     */
+    public function iExpandTheGrantNumberMetadataSection()
+    {
+    	$page = $this->getSession()->getPage();
+        $xpath = '//*[@id="meta-data"]/div[3]/div[1]/h4/a/i';
+        $expand_trigger = $page->find('xpath', $xpath);
+		$expand_trigger->click();
+    }
+
+    /**
      * @Given /^I click the search grant number button$/
      */
     public function iClickTheSearchGrantNumberButton()
@@ -659,17 +670,17 @@ class FeatureContext extends MinkContext
         
         // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is!	
         $js = <<<JS
-$('#search_activity_results').append('<li><input id="search_activity_result_01" type="button" value="Add" /><span id="01" title="Title for 01">111123</span></li>');        
-$('#search_activity_results').append('<li><input id="search_activity_result_02" type="button" value="Add" /><span id="01" title="Title for 01">123123</span></li>');        
-$('#search_activity_results').append('<li><input id="search_activity_result_03" type="button" value="Add" /><span id="01" title="Title for 01">123345</span></li>');        
+$('#search_activity_results').append('<li><input id="search_activity_result_111123" type="button" value="Add" /><span id="01" title="Title for 111123">111123</span></li>');        
+$('#search_activity_results').append('<li><input id="search_activity_result_123123" type="button" value="Add" /><span id="01" title="Title for 123123">123123</span></li>');        
+$('#search_activity_results').append('<li><input id="search_activity_result_123345" type="button" value="Add" /><span id="01" title="Title for 123345">123345</span></li>');        
 JS;
 		$session->executeScript($js);
     }
     
     /**
-     * @Then /^I should see these entries$/
+     * @Then /^I should see these entries in the result list$/
      */
-    public function iShouldSeeTheseEntries(TableNode $table)
+    public function iShouldSeeTheseEntriesInTheResultList(TableNode $table)
     {
 		$page = $this->getSession()->getPage();
 		$xpath = '//ul[@id="search_activity_results"]//span';
@@ -686,6 +697,38 @@ JS;
 		   $count++;
 		}
     }
+
+    /**
+     * @Given /^I add grant number "([^"]*)" to the list$/
+     */
+    public function iAddGrantNumberToTheList($arg1)
+    {
+        $page = $this->getSession()->getPage();
+		$xpath = '//input[@id="search_activity_results_'.$arg1.'" and @value="Add"]';
+		$button = $page->find('xpath', $xpath);
+		$button->click();
+    }
+
+    /**
+     * @Then /^I should see these entries in the selected grant number list$/
+     */
+    public function iShouldSeeTheseEntriesInTheSelectedGrantNumberList(TableNode $table)
+    {
+        $page = $this->getSession()->getPage();
+		$xpath = '//ul[@id="activities"]//span';
+		$el_array = $page->findAll('xpath', $xpath);
+        $hash = $table->getHash();
+		$count = 0;
+		foreach ($el_array as $el) {
+		   $actual_val = $el->getText();
+		   $expected_val = $hash[$count]['activity_number'];
+           if ($actual_val != $expected_val)
+		   {
+			   throw new Exception('Mismatch result ('.$count.'). Expected: '.$expected_val.', actual: '.$actual_val);
+		   }
+		   $count++;
+		}
+    }	
 
     public function spin($lambda, $timeout=10) {
         $timeout = $timeout * 1000000; // convert seconds to microseconds

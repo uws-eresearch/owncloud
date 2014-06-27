@@ -649,6 +649,44 @@ class FeatureContext extends MinkContext
         $web_assert->elementExists('xpath', '//button[text() = "'.$buttonText.'" and @disabled]', $el);
     }
 
+    /**
+     * @Given /^I click the search grant number button$/
+     */
+    public function iClickTheSearchGrantNumberButton()
+    {
+    	$session = $this->getSession();
+        $page = $session->getPage();
+        
+        // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is!	
+        $js = <<<JS
+$('#search_activity_results').append('<li><input id="search_activity_result_01" type="button" value="Add" /><span id="01" title="Title for 01">111123</span></li>');        
+$('#search_activity_results').append('<li><input id="search_activity_result_02" type="button" value="Add" /><span id="01" title="Title for 01">123123</span></li>');        
+$('#search_activity_results').append('<li><input id="search_activity_result_03" type="button" value="Add" /><span id="01" title="Title for 01">123345</span></li>');        
+JS;
+		$session->executeScript($js);
+    }
+    
+    /**
+     * @Then /^I should see these entries$/
+     */
+    public function iShouldSeeTheseEntries(TableNode $table)
+    {
+		$page = $this->getSession()->getPage();
+		$xpath = '//ul[@id="search_activity_results"]//span';
+		$el_array = $page->findAll('xpath', $xpath);
+        $hash = $table->getHash();
+		$count = 0;
+		foreach ($el_array as $el) {
+		   $actual_val = $el->getText();
+		   $expected_val = $hash[$count]['activity_number'];
+           if ($actual_val != $expected_val)
+		   {
+			   throw new Exception('Mismatch result ('.$count.'). Expected: '.$expected_val.', actual: '.$actual_val);
+		   }
+		   $count++;
+		}
+    }
+
     public function spin($lambda, $timeout=10) {
         $timeout = $timeout * 1000000; // convert seconds to microseconds
         $increment = 50000; // 50ms
@@ -670,7 +708,7 @@ class FeatureContext extends MinkContext
                 (isset($backtrace[1]['line']) ? $backtrace[1]['line'] : '<unknown>')
         );
     }
-
+	
     public function waitForPageToLoad($timeout=10) {
         $timeout = $timeout * 1000000; // convert seconds to microseconds
         $increment = 50000; // 50ms

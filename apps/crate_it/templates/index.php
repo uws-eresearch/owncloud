@@ -136,16 +136,17 @@
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#meta-data" href="#crate-information">
                     Crate Information
+                    <i class="pull-right fa fa-caret-down"></i>
                   </a>
                 </h4>
               </div>
               <div id="crate-information" class="panel-collapse collapse in info">
                 <div class="panel-body">
                   <div id='description_box'>
-                    <h6>Description</h6>
-                    <button id="edit_description" class="pull-right edit-button" type="button" placeholder="Edit">
-                      <i class="fa fa-edit"></i>
-                    </button>
+                    <h6>
+                      Description
+                      <button id="edit_description" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-edit"></i></button>
+                    </h6>
                     <div id="description" class="metadata"><?php echo htmlentities($_['description']) ?></div>
                   </div>
                   <div class='crate-size'>
@@ -160,6 +161,7 @@
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#meta-data" href="#data-creators">
                     Data Creators
+                    <i class="pull-right fa fa-caret-down"></i>
                   </a>
                 </h4>
               </div>
@@ -168,20 +170,24 @@
 
                   
                   <div id="creators_box" class="data-creators">
-                    <?php if($_['creators']): ?>
-                      <h6>Selected Data Creators</h6>
+
+                      <h6>Selected Data Creators (<?php echo count($_['creators']); ?>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
                       <ul id="creators">
-                        <?php foreach($_['creators'] as $creator):?>
-                          <li>
-                            <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
-                              <i class="fa fa-minus"></i>
-                            </button>
-                            <p id="<?php echo $creator['creator_id'] ?>" class="full_name_email"><?php echo $creator['full_name'] ?></p>
-                          </li>
-                        <?php endforeach;?>
+                        <?php if($_['creators']): ?>
+                          <?php foreach($_['creators'] as $creator):?>
+                            <li>
+                              <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
+                                <i class="fa fa-minus"></i>
+                              </button>
+                              <p id="<?php echo $creator['creator_id'] ?>" class="full_name_email"><?php echo $creator['full_name'] ?></p>
+                            </li>
+                          <?php endforeach;?>
+                        <?php else: ?>
+                          <p class="nothing-selected">No Data Creators selected</p>  
+                        <?php endif; ?>
                       </ul>
-                    <?php endif; ?>
-                    <h6>Add New Data Creators</h6>
+
+                    <h6>Select New Data Creators</h6>
                     <div id="search_people_box" class="input-group">
                       <input id="keyword" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
                       <span class="input-group-btn">
@@ -206,6 +212,7 @@
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#meta-data" href="#grant-numbers">
                     Grant Numbers
+                    <i class="pull-right fa fa-caret-up"></i>
                   </a>
                 </h4>
               </div>
@@ -213,16 +220,23 @@
                 <div class="panel-body">
                   
                   <div id="avtivities_box" class="grant-numbers">
-                      <h6>Selected Grant Numbers</h6>
+                      <h6>
+                        Selected Grant Numbers (<?php echo count($_['activities']); ?>)
+                       <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button>
+                     </h6>
                       <ul id="activities">
-                        <?php foreach($_['activities'] as $activity):?>
-                          <li>
-                            <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
-                              <i class="fa fa-minus"></i>
-                            </button>
-                            <p class="grant_number"><strong><?php echo $activity['grant_number'] ?></strong> <?php echo $activity['dc_title'] ?></p>
-                          </li>
-                        <?php endforeach;?>
+                        <?php if($_['activities']): ?>
+                          <?php foreach($_['activities'] as $activity):?>
+                            <li>
+                              <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
+                                <i class="fa fa-minus"></i>
+                              </button>
+                              <p class="grant_number"><strong><?php echo $activity['grant_number'] ?></strong> <?php echo $activity['dc_title'] ?></p>
+                            </li>
+                          <?php endforeach;?>
+                        <?php else: ?>
+                          <p class="nothing-selected">No Grant Numbers selected</p>  
+                        <?php endif; ?>
                       </ul>
 
                     <h6>Add New Grant Numbers</h6>

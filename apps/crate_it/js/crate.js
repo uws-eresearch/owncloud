@@ -973,10 +973,14 @@ $(document).ready(function() {
 
   calulate_heights();
 
-  $('#meta-data').on('show.bs.collapse', function () {
+  $('#meta-data').on('show.bs.collapse', function (e) {
+      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');
       calulate_heights();
   });
-
+  $('#meta-data').on('hide.bs.collapse', function (e) {
+      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-down').addClass('fa-caret-up');
+      calulate_heights();
+  });
 });
 $( window ).resize(function() {
   calulate_heights();

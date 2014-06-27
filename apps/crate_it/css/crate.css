@@ -424,10 +424,16 @@ border-top-right-radius: 0;
 .container-metadata .data-creators li .full_name_email:first-line {
 	font-weight:bold;
 }
-.container-metadata .edit-button {
-	margin-top:16px;
+.container-metadata .trans-button {
+	font-size:14px;
+	background:none;
+	border:none;
+	padding:0;
+	margin:0;
 }
-
+.container-metadata .trans-button i.muted {
+	color:#ccc;
+}
 .container-metadata .input-group {
 	margin:15px 0 10px 0;
 }
@@ -447,7 +453,10 @@ border-top-right-radius: 0;
 .container-metadata .grant-numbers label, .container-metadata .data-creators label, .container-metadata .crate-size label {
 	font-weight: bold;	
 }
-
+.container-metadata .nothing-selected {
+	color:#777;
+	margin-top:15px;
+}
 
 
 /*
@@ -473,6 +482,9 @@ border-top-right-radius: 0;
   .panel-heading h4.panel-title {
     font-size:14px;
     font-weight:bold;
+  }
+  .panel-heading h4.panel-title i {
+    margin-top:2px;
   }
   .panel-group .panel-heading+.panel-collapse .panel-body {
     border:none;

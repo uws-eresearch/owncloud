@@ -123,7 +123,7 @@ switch ($action){
 		} elseif (empty($new_name)) {
 			header('HTTP/1.1 401 Crate name cannot be blank', 401);
 		} else {
-			$ok = $bagit_manager->renameCrate($new_name);
+			$ok = $bagit_manager->renameCrate($new_name, $vfs);
 			if($ok){
 				echo json_encode($new_name);
 			}	else {

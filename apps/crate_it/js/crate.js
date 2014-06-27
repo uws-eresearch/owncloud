@@ -36,7 +36,7 @@ function displayNotification(message, delayTime) {
 }
 
 
-function indentTree($tree) {
+function indentTree() {
   $tree.find('.jqtree-element').each(function() {
     var indent = $(this).parents('li').length * 20;
     $(this).css('padding-left', indent);
@@ -72,7 +72,7 @@ function buildFileTree(data) {
     return 'url(' + OC.imagePath('core', 'filetypes/' + icon + '.svg') + ')';
   };
 
-  var attachModalHandlers = function($modal, confirmCallback, successMessage) {
+  var attachModalHandlers = function($modal, confirmCallback) {
     var $confirm = $modal.find('.btn-primary');
 
     var clearInput = function() {
@@ -84,12 +84,6 @@ function buildFileTree(data) {
 
     $confirm.click(function() {
       confirmCallback();
-      if (typeof(successMessage) == 'function') {
-        successMessage = successMessage();
-      }
-      // removeHandlers();
-      saveTree($tree, successMessage);
-      indentTree($tree);
       $modal.modal('hide');
     });
 
@@ -104,16 +98,18 @@ function buildFileTree(data) {
   var addFolder = function(node) {
     var $modal = $('#addFolderModal');
     var confirmCallback = function() {
+      var folder = $('#add-folder').val();
       $tree.tree('appendNode', {
         id: 'folder',
-        label: $('#add-folder').val(),
+        label: folder,
       }, node);
       $tree.tree('openNode', node);
+      indentTree();
+      var successMessage = folder + ' added';
+      var errorMessage = folder + 'not added';
+      saveTree(successMessage, errorMessage);
     };
-    var successMessage = function() {
-      return $('#add-folder').val() + ' added';
-    };
-    attachModalHandlers($modal, confirmCallback, successMessage);
+    attachModalHandlers($modal, confirmCallback);
   };
 
   var renameCrate = function(node) {
@@ -130,46 +126,47 @@ function buildFileTree(data) {
     var confirmCallback = function() {
       var newName = $('#rename-crate').val();
       $tree.tree('updateNode', node, newName);
-      saveTree($tree, false);
-      indentTree($tree);
+      var vfs = $tree.tree('toJson');
       $.ajax({
         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
         type: 'post',
         dataType: 'json',
         data: {
           'action': 'rename_crate',
-          'new_name': newName
+          'new_name': newName,
+          'vfs': vfs
         },
         success: function() {
           $('#crates > #' + oldName).val(newName).attr('id', newName).text(newName);
-          location.reload();
+          var successMessage = 'Renamed ' + oldName + ' to ' + newName;
+          var errorMessage = oldName + ' not renamed';
+          saveTree(successMessage, errorMessage, true);
+          
         },
         error: function(data) {
           $tree.tree('updateNode', node, oldName);
-          saveTree($tree, false);
+          displayError(oldName + ' not renamed');
           location.reload();
-          displayError(data.statusText);
         }
       });
     }
    // the successMessage function gets called after the name has changed
-    var successMessage = function() {
-      return 'Renamed ' + oldName + ' to ' + $('#rename-crate').val();
-    };
-    attachModalHandlers($modal, confirmCallback, successMessage);
+    attachModalHandlers($modal, confirmCallback);
   }
 
   var renameItem = function(node) {
     var $modal = $('#renameItemModal');
+    var oldName = node.name; // the successMessage function gets called after the name has changed
     $('#rename-item').val(node.name);
     var confirmCallback = function() {
-      $tree.tree('updateNode', node, $('#rename-item').val());
+      var newName = $('#rename-item').val();
+      $tree.tree('updateNode', node, newName);
+      indentTree();
+      var successMessage = 'Renamed ' + oldName + ' to ' + newName;
+      var errorMessage = 'error renaming' +  oldName;
+      saveTree(successMessage, errorMessage);
     };
-    var oldName = node.name; // the successMessage function gets called after the name has changed
-    var successMessage = function() {
-      return 'Renamed ' + oldName + ' to ' + $('#rename-item').val();
-    };
-    attachModalHandlers($modal, confirmCallback, successMessage);
+    attachModalHandlers($modal, confirmCallback);
   };
 
   var removeItem = function(node) {
@@ -178,9 +175,12 @@ function buildFileTree(data) {
     $modal.find('.modal-body > p').text(msg);
     var confirmCallback = function() {
       $tree.tree('removeNode', node);
+      indentTree();
+      var successMessage = node.name + ' removed';
+      var errorMessage = node.name + ' not removed';
+      saveTree(successMessage, errorMessage);
     };
-    var successMessage = node.name + ' removed';
-    attachModalHandlers($modal, confirmCallback, successMessage);
+    attachModalHandlers($modal, confirmCallback);
   };
 
   $tree = $('#files').tree({
@@ -244,11 +244,11 @@ function buildFileTree(data) {
   });
 
   $tree.bind('tree.open', function(event) {
-    saveTree($tree, false);
+    saveTree(false);
   });
 
   $tree.bind('tree.close', function(event) {
-    saveTree($tree, false);
+    saveTree(false);
   });
 
   $tree.bind('tree.move', function(event) {
@@ -256,8 +256,8 @@ function buildFileTree(data) {
     // do the move first, and _then_ POST back.
     event.move_info.do_move();
     var msg = 'Item ' + event.move_info.moved_node.name + ' moved';
-    saveTree($tree, msg);
-    indentTree($tree);
+    saveTree(msg);
+    indentTree();
   });
 
   expandRoot();
@@ -348,9 +348,12 @@ function expandRoot() {
 }
 
 
-function saveTree($tree, successMessage) {
+function saveTree(successMessage, errorMessage, reload) {
   if (typeof(successMessage) === 'undefined') {
     successMessage = 'Crate updated';
+  }
+  if (typeof(errorMessage) === 'undefined') {
+    errorMessage = 'Crate not updated';
   }
   $.ajax({
     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
@@ -365,9 +368,17 @@ function saveTree($tree, successMessage) {
         displayNotification(successMessage);
         updateCrateSize();
       }
+      if (reload) {
+        location.reload();
+      }
     },
     error: function(data) {
-      displayError(data.statusText);
+      if (errorMessage) {
+        displayError(errorMessage);
+      }
+      if (reload) {
+        location.reload();
+      }
     }
   });
 }
@@ -627,8 +638,8 @@ function initCrateActions() {
         $tree.tree('removeNode', node);
       });
     }
-    saveTree($tree, $('#crates').val() + ' has been cleared');
-    indentTree($tree);
+    saveTree($('#crates').val() + ' has been cleared');
+    indentTree();
     $('#clearCrateModal').modal('hide');
   });  
 
@@ -676,7 +687,7 @@ function drawCrateContents() {
     },
     success: function(data) {
       $tree = buildFileTree(data);
-      indentTree($tree);
+      indentTree();
     },
     error: function(data) {
       var e = data.statusText;

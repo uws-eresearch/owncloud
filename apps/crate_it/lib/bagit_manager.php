@@ -289,7 +289,8 @@ class BagItManager {
     }
   }
 
-  public function renameCrate($new_name) {
+  public function renameCrate($new_name, $vfs) {
+    $this->updateVFS($vfs);
     rename($this->crate_dir, $this->crate_root . '/' . $new_name);
     $this->switchCrate($new_name);
     return true;

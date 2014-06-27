@@ -29,7 +29,10 @@ class BagItManager {
   var $selected_crate;
   var $bag;
   var $user;
+
   private static $instance = NULL;
+  private static $searchProvider = NULL;
+
   /**
    * Set the values to following variables
    *
@@ -764,7 +767,7 @@ class BagItManager {
     return $collections;
   }
 
-  public function getConfig() {
+  public static function getConfig() {
     $config = null;
     $config_file = \OC::$SERVERROOT . '/data/cr8it_config.json';
     if (file_exists($config_file)) {

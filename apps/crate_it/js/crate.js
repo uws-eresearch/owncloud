@@ -301,32 +301,6 @@ function updateCrateSize() {
   });
 }
 
-// function togglePostCrateToSWORD() {
-//     $.ajax({
-//         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-//         type: 'post',
-//         dataType: 'json',
-//         data: {'action': 'validate_metadata'},
-//         success: function(data) {
-//       if (data.status == "Success") {
-//     $('#post').removeAttr("title");
-//     $('#post').removeAttr("disabled");
-//       }
-//       else {
-//     $('#post').attr("title", "You cannot post this crate until metadata(title, description, creator) are all set");
-//     $('#post').attr("disabled", "disabled");
-//       }    
-//         },
-//         error: function(data) {
-//             OC.Notification.show(data.statusText);
-//       hideNotification(3000);
-//         }
-//     });
-// }
-
-// MISC: Disable function until UI is fixed
-function togglePostCrateToSWORD() {}
-
 function makeCrateListEditable() {
   $('#crateList .title').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=edit_title', {
     name: 'new_title',
@@ -411,7 +385,6 @@ function activateRemoveCreatorButton(buttonObj) {
       },
       success: function(data) {
         buttonObj.parent().remove();
-        togglePostCrateToSWORD();
       },
       error: function(data) {
         displayError(data.statusText);
@@ -438,7 +411,6 @@ function activateRemoveCreatorButtons() {
       },
       success: function(data) {
         input_element.parent().remove();
-        togglePostCrateToSWORD();
       },
       error: function(data) {
         displayError(data.statusText);
@@ -699,8 +671,6 @@ function drawCrateContents() {
 
 $(document).ready(function() {
 
-  togglePostCrateToSWORD();
-
   $('#download').click('click', function(event) {
     if (treeHasNoFiles()) {
       displayNotification('No items in the crate to package');
@@ -812,44 +782,71 @@ $(document).ready(function() {
           });
           return {'name': result.slice(0,3).join(' '), 'email': result[3], 'id': result[4]};
         };
+
+        var addResult = function(person, element, callback) {
+          var result = function() {
+            $.ajax({
+              url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+              type: 'post',
+              dataType: 'json',
+              data: {
+                'action': 'save_people',
+                'creator_id': person.id,
+                'full_name': person.name
+              },
+              success: function(data) {
+                $('#search_people_results').find('#'+person.id).parent().remove();
+                $('#creators').append(element);
+                $('#creators').find('#'+person.id).click(callback);
+              },
+              error: function(data) {
+                displayError(data.statusText);
+              }
+            });
+          };
+          return result;
+        };
+
+        var removeResult = function(person) {
+          var result = function() {
+            $.ajax({
+              url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+              type: 'post',
+              dataType: 'json',
+              data: {
+                'action': 'remove_people',
+                'creator_id': person.id,
+                'full_name': person.name
+              },
+              success: function(data) {
+                $('#creators').find('#'+person.id).parent().remove();
+              },
+              error: function(data) {
+                displayError(data.statusText);
+              }
+            });
+          };
+          return result;
+        }
+
+        var createResult = function(person, faIcon) {
+          var button = '<button class="pull-right" id="' + person.id + '"><i class="fa ' + faIcon + '"></i></button>';
+          var name = '<p id="' + person.id + '" class="full_name">' + person.name + '</p>';
+          var email = '<p>'  + person.email + '</p>';
+          return '<li>' + button + name + email + '</li>';
+        };
+
         $('#search_people_results').empty();
+
         var people = data.map(formatNames);
+
         people.forEach(function(person) {
-            var button = '<button id="' + 'search_people_result_' + person.id + '"><i class="fa fa-plus"></i></button>';
-            var name = '<p id="' + person.id + '" class="full_name">' + person.name + '</p>';
-            var email = '<p>'  + person.email + '</p>';
-            $('#search_people_results').append('<li>' + button + name + email + '</li>');
-        });
-
-        $("button[id^='search_people_result_']").click('click', function(event) {
-          // Add people to backend
-          var input_element = $(this);
-          var id = input_element.attr("id");
-          creator_id = id.replace("search_people_result_", "");
-
-          $.ajax({
-            url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-            type: 'post',
-            dataType: 'json',
-            data: {
-              'action': 'save_people',
-              'creator_id': creator_id,
-              'full_name': input_element.parent().text()
-            },
-            success: function(data) {
-              //TODO: This no longer matches the template/index.php structure
-              $('#creators').append('<li><button id="' + 'creator_' + creator_id + ' />' + '<span id="' + creator_id + '" class="full_name">' + input_element.parent().text() + '</span></li>');
-
-              input_element.parent().remove();
-
-              activateRemoveCreatorButton($('#creator_' + creator_id));
-              makeCreatorEditable($('#' + creator_id));
-              togglePostCrateToSWORD();
-            },
-            error: function(data) {
-              displayError(data.statusText);
-            }
-          });
+          var removeCreator = createResult(person, 'fa-minus');
+          var addCreator = createResult(person, 'fa-plus');
+          var removeCallback = removeResult(person);
+          var addCallback = addResult(person, removeCreator, removeCallback);
+          $('#search_people_results').append(addCreator);
+          $('#search_people_results').find('#' + person.id).click(addCallback);
         });
       },
       error: function(data) {
@@ -940,7 +937,6 @@ $(document).ready(function() {
         success: function(data) {
           $('#description').html('');
           $('#description').text(data.description);
-          togglePostCrateToSWORD();
           $('#edit_description').removeClass('hidden');
         },
         error: function(data) {

@@ -803,27 +803,24 @@ $(document).ready(function() {
         'keyword': $.trim($('#keyword').val())
       },
       success: function(data) {
-        // populate list of results
+
+        var formatNames = function(nameObject) {
+          var fields = ['Honorific', 'Given_Name', 'Family_Name', 'Email', 'id'];
+          result = [];
+          fields.forEach(function(field){
+            result.push(nameObject['result-metadata']['all'][field][0]);
+          });
+          return {'name': result.slice(0,3).join(' '), 'email': result[3], 'id': result[4]};
+        };
         $('#search_people_results').empty();
-        for (var i = 0; i < data.length; i++) {
-          var all_data = data[i]['result-metadata']['all'];
-          var id = all_data['id'];
-          var honorific = $.trim(all_data['Honorific'][0]);
-          var given_name = $.trim(all_data['Given_Name'][0]);
-          var family_name = $.trim(all_data['Family_Name'][0]);
-          var email = $.trim(all_data['Email'][0]);
-          var full_name = "";
-          if (honorific)
-            full_name = full_name + honorific + ' ';
-          if (given_name)
-            full_name = full_name + given_name + ' ';
-          if (family_name)
-            full_name = full_name + family_name;
-          if (email)
-          // TODO: Fix this
-            full_name = full_name + '</p> <p>' + email;
-          $('#search_people_results').append('<li><button id="' + 'search_people_result_' + id + '"><i class="fa fa-plus"></i></button>' + '<p id="' + id + '" class="full_name">' + full_name + '</p></li>');
-        }
+        var people = data.map(formatNames);
+        people.forEach(function(person) {
+            var button = '<button id="' + 'search_people_result_' + person.id + '"><i class="fa fa-plus"></i></button>';
+            var name = '<p id="' + person.id + '" class="full_name">' + person.name + '</p>';
+            var email = '<p>'  + person.email + '</p>';
+            $('#search_people_results').append('<li>' + button + name + email + '</li>');
+        });
+
         $("button[id^='search_people_result_']").click('click', function(event) {
           // Add people to backend
           var input_element = $(this);

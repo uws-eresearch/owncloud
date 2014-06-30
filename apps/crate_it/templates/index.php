@@ -89,7 +89,8 @@
 
   </div>
 
-<!--     <div id="metadata" style="float:right;">
+<?php /*
+    <div id="metadata" style="float:right;">
       <?php if ($_['mint_status'] === "enabled" ):?>
 
 
@@ -114,14 +115,15 @@
 <option id="select_third" value="for_third_choose">Choose a code</option>
 </select>
 </div>
-</div> -->
+</div>
+<?php endif; ?>
+*/ ?>
 
 
 
 
 
-
-            </div>
+  </div>
 
 
 
@@ -196,8 +198,6 @@
               <ul id="search_activity_results">
               </ul>
             </div>
-
-            <?php endif; ?>
 
           </div>
 

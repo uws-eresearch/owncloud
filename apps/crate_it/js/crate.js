@@ -761,32 +761,32 @@ $(document).ready(function() {
     }
   });
 
-  $('#for_top_level').change(function() {
-    var id = $(this).find(':selected').attr("id");
-    if (id === "select_top") {
-      //remove all the child selects
-      removeFORCodes();
-      return;
-    }
-    //make a call to the backend, get next level codes, populate option
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=get_for_codes&level=' + id,
-      type: 'get',
-      dataType: 'json',
-      success: function(data) {
-        if (data != null) {
-          removeFORCodes();
-          for (var i = 0; i < data.length; i++) {
-            $("#for_second_level").append('<option id="' + data[i] + '" value="' + data[i] + '" >' + data[i] + '</option>');
-          }
-        }
-      },
-      error: function(data) {
-        var e = data.statusText;
-        alert(e);
-      }
-    });
-  });
+  // $('#for_top_level').change(function() {
+  //   var id = $(this).find(':selected').attr("id");
+  //   if (id === "select_top") {
+  //     //remove all the child selects
+  //     removeFORCodes();
+  //     return;
+  //   }
+  //   //make a call to the backend, get next level codes, populate option
+  //   $.ajax({
+  //     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=get_for_codes&level=' + id,
+  //     type: 'get',
+  //     dataType: 'json',
+  //     success: function(data) {
+  //       if (data != null) {
+  //         removeFORCodes();
+  //         for (var i = 0; i < data.length; i++) {
+  //           $("#for_second_level").append('<option id="' + data[i] + '" value="' + data[i] + '" >' + data[i] + '</option>');
+  //         }
+  //       }
+  //     },
+  //     error: function(data) {
+  //       var e = data.statusText;
+  //       alert(e);
+  //     }
+  //   });
+  // });
 
   $('#search_people').click('click', function(event) {
     if ($.trim($('#keyword').val()).length == 0) {
@@ -799,8 +799,9 @@ $(document).ready(function() {
       type: 'post',
       dataType: 'json',
       data: {
-        'action': 'search_people',
-        'keyword': $.trim($('#keyword').val())
+        'action': 'search',
+        'type': 'people',
+        'keywords': $.trim($('#keyword').val())
       },
       success: function(data) {
         // populate list of results
@@ -873,8 +874,9 @@ $(document).ready(function() {
       type: 'post',
       dataType: 'json',
       data: {
-        'action': 'search_activity',
-        'keyword_activity': $.trim($('#keyword_activity').val())
+        'action': 'search',
+        'type': 'activity',
+        'keywords': $.trim($('#keyword_activity').val())
       },
       success: function(data) {
         // populate list of results

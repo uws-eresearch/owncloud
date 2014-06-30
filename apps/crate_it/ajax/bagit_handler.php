@@ -37,7 +37,7 @@ $new_name = isset($_POST['new_name']) ? $_POST['new_name'] : '';
 $file_id = isset($_GET['file_id']) ? $_GET['file_id'] : '';
 $level = isset($_GET['level']) ? $_GET['level'] : '';
 $description = isset($_POST['crate_description']) ? $_POST['crate_description'] : '';
-$keyword = isset($_POST['keyword']) ? $_POST['keyword'] : '';
+$keywords = isset($_POST['keywords']) ? $_POST['keywords'] : '';
 $creator_id = isset($_POST['creator_id']) ? $_POST['creator_id'] : '';
 $full_name = isset($_POST['full_name']) ? $_POST['full_name'] : '';
 $new_full_name = isset($_POST['new_full_name']) ? $_POST['new_full_name'] : '';
@@ -47,6 +47,7 @@ $activity_id = isset($_POST['activity_id']) ? $_POST['activity_id'] : '';
 $grant_number = isset($_POST['grant_number']) ? $_POST['grant_number'] : '';
 $dc_title = isset($_POST['dc_title']) ? $_POST['dc_title'] : '';
 $keyword_activity = isset($_POST['keyword_activity']) ? $_POST['keyword_activity'] : '';
+$type = isset($_POST['type']) ? $_POST['type'] : '';
 
 $action = '';
 if (isset($_GET['action'])) {
@@ -218,21 +219,6 @@ switch ($action){
 		OCP\Util::writeLog("crate_it", $dr->sac_status." ".$dr->sac_statusmessage, OCP\Util::DEBUG);
 		header("HTTP/1.1 ".$dr->sac_status." ".$dr->sac_statusmessage);
 		break;
-	case 'get_for_codes':
-		//need to access the tmpl var
-		$results = $bagit_manager->lookUpMint("", 'top');
-		foreach ($results as $item) {
-			$vars = get_object_vars($item);
-			if($vars["rdf:about"] === $level){
-				//send skos:narrower array
-				echo json_encode(array_values($vars['skos:narrower']));
-			}
-		}
-		break;
-	case 'search_people':
-		$results = $bagit_manager->lookUpPeople($keyword);
-		echo json_encode($results);
-		break;
 	case 'save_people':
 		$success = $bagit_manager->savePeople($creator_id, $full_name);
 
@@ -282,9 +268,19 @@ switch ($action){
 		$result = $bagit_manager->deleteCrate();
 		echo json_encode($result);
 		break;
-	case 'search_activity':
-		$results = $bagit_manager->lookUpActivity($keyword_activity);
-		echo json_encode($results);
+	case 'search':
+		echo $bagit_manager->search($type, $keyword);
+		break;
+	case 'get_for_codes':
+		//need to access the tmpl var
+		$results = $bagit_manager->lookUpMint("", 'top');
+		foreach ($results as $item) {
+			$vars = get_object_vars($item);
+			if($vars["rdf:about"] === $level){
+				//send skos:narrower array
+				echo json_encode(array_values($vars['skos:narrower']));
+			}
+		}
 		break;
 	case 'save_activity':
 		$success = $bagit_manager->saveActivity($activity_id, $grant_number, $dc_title);

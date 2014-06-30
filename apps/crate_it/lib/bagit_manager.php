@@ -573,15 +573,12 @@ class BagItManager {
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
   }
 
-  // TODO: What does $for_code do? It doesn't get used
-  public function lookUpMint($for_code, $keywords) {
-    return self::$searchProvider->search('FOR', $keywords);
+  public function search($type, $keywords) {
+    return self::$searchProvider->search($type, $keywords); 
   }
 
   public function getManifestData() {
-
     // read from manifest
-
     $fp = fopen($this->manifest, 'r');
     $contents = file_get_contents($this->manifest);
     $cont_array = json_decode($contents, true);
@@ -589,9 +586,7 @@ class BagItManager {
     return $cont_array;
   }
 
-  public function lookUpPeople($keywords) {
-    return self::$searchProvider->search('people', $keywords);
-  }
+
 
   public function savePeople($creator_id, $full_name) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
@@ -782,10 +777,6 @@ class BagItManager {
         "msg" => $e->getMessage()
       );
     }
-  }
-
-  public function lookUpActivity($keywords) {
-    return self::$searchProvider->search('activity', $keywords);
   }
 
   public function saveActivity($activity_id, $grant_number, $dc_title) {

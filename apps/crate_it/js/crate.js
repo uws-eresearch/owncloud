@@ -393,102 +393,6 @@ function activateRemoveCreatorButton(buttonObj) {
   });
 }
 
-function activateRemoveCreatorButtons() {
-  $("button[id^='creator_']").click('click', function(event) {
-    // Remove people from backend
-    var input_element = $(this);
-    var id = input_element.attr("id");
-    creator_id = id.replace("creator_", "");
-
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'remove_people',
-        'creator_id': creator_id,
-        'full_name': input_element.parent().text()
-      },
-      success: function(data) {
-        input_element.parent().remove();
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-  });
-}
-
-function makeCreatorsEditable() {
-  $('#creators .full_name').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=edit_creator', {
-    id: 'creator_id',
-    name: 'new_full_name',
-    indicator: '<img src=' + OC.imagePath('crate_it', 'indicator.gif') + '>',
-    tooltip: 'Double click to edit...',
-    event: 'dblclick',
-    style: 'inherit'
-  });
-}
-
-function makeCreatorEditable(creatorObj) {
-  creatorObj.editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=edit_creator', {
-    id: 'creator_id',
-    name: 'new_full_name',
-    indicator: '<img src=' + OC.imagePath('crate_it', 'indicator.gif') + '>',
-    tooltip: 'Double click to edit...',
-    event: 'dblclick',
-    style: 'inherit'
-  });
-}
-
-function activateRemoveActivityButton(buttonObj) {
-  buttonObj.click('click', function(event) {
-    // Remove activity from backend
-    var id = $(this).attr("id");
-    activity_id = id.replace("activity_", "");
-
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'remove_activity',
-        'activity_id': activity_id,
-      },
-      success: function(data) {
-        buttonObj.parent().remove();
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-  });
-}
-
-function activateRemoveActivityButtons() {
-  $("button[id^='activity_']").click('click', function(event) {
-    // Remove activity from backend
-    var input_element = $(this);
-    var id = input_element.attr("id");
-    activity_id = id.replace("activity_", "");
-
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'remove_activity',
-        'activity_id': activity_id,
-      },
-      success: function(data) {
-        input_element.parent().remove();
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-  });
-}
 
 function validateCrateName($input, $error, $confirm) {
   var inputName = $input.val();
@@ -669,6 +573,200 @@ function drawCrateContents() {
 }
 
 
+function initSearchHandlers() {
+  var formatNames = function(mintObject) {
+    var fields = ['Honorific', 'Given_Name', 'Family_Name', 'Email', 'id'];
+    var result = [];
+    fields.forEach(function(field){
+      result.push(mintObject['result-metadata']['all'][field][0]);
+    });
+    return {'name': result.slice(0,3).join(' '), 'email': result[3], 'id': result[4]};
+  };
+
+  var formatActivities = function(mintObject) {
+    var metadata = mintObject['result-metadata']['all']; 
+    return {'id': metadata['id'], 'title': metadata['dc_title'], 'grant_number': metadata['grant_number'][0]};
+  }
+
+  var addResult = function(person, element, callback) {
+    var result = function() {
+      $.ajax({
+        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'action': 'save_people',
+          'creator_id': person.id,
+          'full_name': person.name
+        },
+        success: function(data) {
+          $('#search_people_results').find('#'+person.id).parent().remove();
+          $('#creators').append(element);
+          $('#creators').find('#'+person.id).click(callback);
+        },
+        error: function(data) {
+          displayError(data.statusText);
+        }
+      });
+    };
+    return result;
+  };
+
+  var addActivityResult = function(activity, element, callback) {
+    var result = function() {
+      $.ajax({
+        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'action': 'save_activity',
+          'activity_id': activity.id,
+          'grant_number': activity.grant_number,
+          'dc_title': activity.title
+        },
+        success: function(data) {
+          $('#search_activity_results').find('#'+activity.id).parent().remove();
+          $('#activities').append(element);
+          $('#activities').find('#'+activity.id).click(callback);
+        },
+        error: function(data) {
+          displayError(data.statusText);
+        }
+      });
+    };
+    return result;
+  };
+
+
+  var removeResult = function(person) {
+    var result = function() {
+      $.ajax({
+        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'action': 'remove_people',
+          'creator_id': person.id,
+          'full_name': person.name
+        },
+        success: function(data) {
+          $('#creators').find('#'+person.id).parent().remove();
+        },
+        error: function(data) {
+          displayError(data.statusText);
+        }
+      });
+    };
+    return result;
+  }
+
+  var removeActivityResult = function(activity) {
+    var result = function() {
+      $.ajax({
+        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'action': 'remove_activity',
+          'activity_id': activity.id,
+        },
+        success: function(data) {
+          $('#activities').find('#'+activity.id).parent().remove();
+        },
+        error: function(data) {
+          displayError(data.statusText);
+        }
+      });
+    }
+    return result;
+  };
+
+
+  var createResult = function(person, faIcon) {
+    var button = '<button class="pull-right" id="' + person.id + '"><i class="fa ' + faIcon + '"></i></button>';
+    var name = '<p class="full_name">' + person.name + '</p>';
+    var email = '<p>'  + person.email + '</p>';
+    return '<li>' + button + name + email + '</li>';
+  };
+
+  var createActivityResult = function(activity, faIcon) {
+    // $('#search_activity_results').append('<li><button id="' + 'search_activity_result_' + id + '" class="pull-right"><i class="fa fa-plus"></i></button>' + '<p id="' + id + '"title="' + dc_title + '"><strong>' + grant_number + '</strong> ' + dc_title + '</p></li>');
+    var button = '<button class="pull-right" id="' + activity.id + '"><i class="fa ' + faIcon + '"></i></button>';
+    var grant_number = '<p class="full_name">' + activity.grant_number + '</p>';
+    var title = '<p>'  + activity.title + '</p>';
+    return '<li>' + button + grant_number + title + '</li>';
+  };
+
+
+
+
+  $('#search_people').click('click', function(event) {
+    // TODO: Fix this
+    if ($.trim($('#keyword').val()).length == 0) {
+      $('#search_people_results').empty();
+      return;
+    }
+
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      dataType: 'json',
+      data: {
+        'action': 'search_people',
+        'keyword': $.trim($('#keyword').val())
+      },
+      success: function(data) {
+        $('#search_people_results').empty();
+        var people = data.map(formatNames);
+        people.forEach(function(person) {
+          var removeCreator = createResult(person, 'fa-minus');
+          var addCreator = createResult(person, 'fa-plus');
+          var removeCallback = removeResult(person);
+          var addCallback = addResult(person, removeCreator, removeCallback);
+          $('#search_people_results').append(addCreator);
+          $('#search_people_results').find('#' + person.id).click(addCallback);
+        });
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  });
+
+  
+  $('#search_activity').click('click', function(event) {
+    if ($.trim($('#keyword_activity').val()).length == 0) {
+      $('#search_activity_results').empty();
+      return;
+    }
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      dataType: 'json',
+      data: {
+        'action': 'search_activity',
+        'keyword_activity': $.trim($('#keyword_activity').val())
+      },
+      success: function(data) {
+        $('#search_activity_results').empty();
+        var activities = data.map(formatActivities);
+        activities.forEach(function(activity) {
+          var removeActivity = createActivityResult(activity, 'fa-minus');
+          var addActivity = createActivityResult(activity, 'fa-plus');
+          var removeCallback = removeActivityResult(activity);
+          var addCallback = addActivityResult(activity, removeActivity, removeCallback);
+          $('#search_activity_results').append(addActivity);
+          $('#search_activity_results').find('#' + activity.id).click(addCallback);
+        });
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  });
+
+}
+
 $(document).ready(function() {
 
   $('#download').click('click', function(event) {
@@ -703,7 +801,7 @@ $(document).ready(function() {
         displayNotification('Crate posted successfully');
       },
       error: function(data) {
-        displayError(data.statusText)
+        displayError(data.statusText);
       }
     });
 
@@ -758,166 +856,6 @@ $(document).ready(function() {
     });
   });
 
-  $('#search_people').click('click', function(event) {
-    if ($.trim($('#keyword').val()).length == 0) {
-      $('#search_people_results').empty();
-      return;
-    }
-
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'search_people',
-        'keyword': $.trim($('#keyword').val())
-      },
-      success: function(data) {
-
-        var formatNames = function(nameObject) {
-          var fields = ['Honorific', 'Given_Name', 'Family_Name', 'Email', 'id'];
-          result = [];
-          fields.forEach(function(field){
-            result.push(nameObject['result-metadata']['all'][field][0]);
-          });
-          return {'name': result.slice(0,3).join(' '), 'email': result[3], 'id': result[4]};
-        };
-
-        var addResult = function(person, element, callback) {
-          var result = function() {
-            $.ajax({
-              url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-              type: 'post',
-              dataType: 'json',
-              data: {
-                'action': 'save_people',
-                'creator_id': person.id,
-                'full_name': person.name
-              },
-              success: function(data) {
-                $('#search_people_results').find('#'+person.id).parent().remove();
-                $('#creators').append(element);
-                $('#creators').find('#'+person.id).click(callback);
-              },
-              error: function(data) {
-                displayError(data.statusText);
-              }
-            });
-          };
-          return result;
-        };
-
-        var removeResult = function(person) {
-          var result = function() {
-            $.ajax({
-              url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-              type: 'post',
-              dataType: 'json',
-              data: {
-                'action': 'remove_people',
-                'creator_id': person.id,
-                'full_name': person.name
-              },
-              success: function(data) {
-                $('#creators').find('#'+person.id).parent().remove();
-              },
-              error: function(data) {
-                displayError(data.statusText);
-              }
-            });
-          };
-          return result;
-        }
-
-        var createResult = function(person, faIcon) {
-          var button = '<button class="pull-right" id="' + person.id + '"><i class="fa ' + faIcon + '"></i></button>';
-          var name = '<p id="' + person.id + '" class="full_name">' + person.name + '</p>';
-          var email = '<p>'  + person.email + '</p>';
-          return '<li>' + button + name + email + '</li>';
-        };
-
-        $('#search_people_results').empty();
-
-        var people = data.map(formatNames);
-
-        people.forEach(function(person) {
-          var removeCreator = createResult(person, 'fa-minus');
-          var addCreator = createResult(person, 'fa-plus');
-          var removeCallback = removeResult(person);
-          var addCallback = addResult(person, removeCreator, removeCallback);
-          $('#search_people_results').append(addCreator);
-          $('#search_people_results').find('#' + person.id).click(addCallback);
-        });
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-
-  });
-
-  $('#search_activity').click('click', function(event) {
-    if ($.trim($('#keyword_activity').val()).length == 0) {
-      $('#search_activity_results').empty();
-      return;
-    }
-
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'search_activity',
-        'keyword_activity': $.trim($('#keyword_activity').val())
-      },
-      success: function(data) {
-        // populate list of results
-        $('#search_activity_results').empty();
-        for (var i = 0; i < data.length; i++) {
-          var all_data = data[i]['result-metadata']['all'];
-          var id = all_data['id'];
-          var dc_title = $.trim(data[i]['dc:title']);
-          var grant_number = $.trim(data[i]['grant_number']);
-          var full_grant_code = grant_number + ": " + dc_title;
-          $('#search_activity_results').append('<li><button id="' + 'search_activity_result_' + id + '" class="pull-right"><i class="fa fa-plus"></i></button>' + '<p id="' + id + '"title="' + dc_title + '"><strong>' + grant_number + '</strong> ' + dc_title + '</p></li>');
-        }
-        $("button[id^='search_activity_result_']").click('click', function(event) {
-          // Add grant code to backend
-          var input_element = $(this);
-          var id = input_element.attr("id");
-          var activity_id = id.replace("search_activity_result_", "");
-          var grant_number = input_element.parent().text();
-          var dc_title = $("span[id=" + activity_id + "]").attr('title');
-
-          $.ajax({
-            url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-            type: 'post',
-            dataType: 'json',
-            data: {
-              'action': 'save_activity',
-              'activity_id': activity_id,
-              'grant_number': grant_number,
-              'dc_title': dc_title
-            },
-            success: function(data) {
-              //TODO: This no longer matches the template/index.php structure
-              $('#activities').append('<li><input id="' + 'activity_' + activity_id + '" type="button" value="Remove" />' + '<span id="' + activity_id + '"title="' + dc_title + '">' + grant_number + '</span></li>');
-              input_element.parent().remove();
-              activateRemoveActivityButton($('#activity_' + activity_id));
-            },
-            error: function(data) {
-              displayError(data.statusText);
-            }
-          });
-        });
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-
-  });
-
   var description_length = $('#description_length').text();
 
   $('#edit_description').click(function(event) {
@@ -959,10 +897,7 @@ $(document).ready(function() {
 
   updateCrateSize();
 
-  activateRemoveCreatorButtons();
-  makeCreatorsEditable();
-
-  activateRemoveActivityButtons();
+  initSearchHandlers();
 
   calulate_heights();
 

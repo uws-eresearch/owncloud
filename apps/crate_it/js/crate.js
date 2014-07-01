@@ -574,19 +574,34 @@ function drawCrateContents() {
 
 
 function initSearchHandlers() {
-  var formatNames = function(mintObject) {
-    var fields = ['Honorific', 'Given_Name', 'Family_Name', 'Email', 'id'];
-    var result = [];
-    fields.forEach(function(field){
-      result.push(mintObject['result-metadata']['all'][field][0]);
-    });
-    return {'name': result.slice(0,3).join(' '), 'email': result[3], 'id': result[4]};
+
+  // mapping object is has {dest: source} format
+  // source can be an array of fields that will be merge into the dest
+  var parseMintResult = function(mintObject, mapping) {
+    var metadata = mintObject['result-metadata']['all'];
+    var result = {};
+    for(var destField in mapping) {
+      var sourceField = mapping[destField];
+      if($.isArray(sourceField)) {
+        var fieldElements = [];
+        sourceField.forEach(function(field) {
+          fieldElements.push(parseField(metadata[field]));
+        });
+        result[destField] = fieldElements.join(' ');
+      } else {
+        result[destField] = parseField(metadata[sourceField]);
+      }
+    }
+    return result;
   };
 
-  var formatActivities = function(mintObject) {
-    var metadata = mintObject['result-metadata']['all']; 
-    return {'id': metadata['id'], 'title': metadata['dc_title'], 'grant_number': metadata['grant_number'][0]};
-  }
+  var parseField = function(field) {
+    var result = field;
+    if($.isArray(field)) {
+      result = field[0];
+    }
+    return result;
+  };
 
   var addResult = function(person, element, callback) {
     var result = function() {
@@ -682,22 +697,15 @@ function initSearchHandlers() {
   };
 
 
-  var createResult = function(person, faIcon) {
-    var button = '<button class="pull-right" id="' + person.id + '"><i class="fa ' + faIcon + '"></i></button>';
-    var name = '<p class="full_name">' + person.name + '</p>';
-    var email = '<p>'  + person.email + '</p>';
-    return '<li>' + button + name + email + '</li>';
+  // fields is an ordered list of fields to render, with the first being used as the title
+  var renderRecord = function(record, fields, faIcon) {
+    var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
+    html += '<p class="full_name">' + record[fields[0]] + '</p>';
+    for (var i = 1; i < fields.length ; i++) {
+      html += '<p class=>' + record[fields[i]] + '</p>';
+    }
+    return '<li>' + html + '</li>';
   };
-
-  var createActivityResult = function(activity, faIcon) {
-    // $('#search_activity_results').append('<li><button id="' + 'search_activity_result_' + id + '" class="pull-right"><i class="fa fa-plus"></i></button>' + '<p id="' + id + '"title="' + dc_title + '"><strong>' + grant_number + '</strong> ' + dc_title + '</p></li>');
-    var button = '<button class="pull-right" id="' + activity.id + '"><i class="fa ' + faIcon + '"></i></button>';
-    var grant_number = '<p class="full_name">' + activity.grant_number + '</p>';
-    var title = '<p>'  + activity.title + '</p>';
-    return '<li>' + button + grant_number + title + '</li>';
-  };
-
-
 
 
   $('#search_people').click('click', function(event) {
@@ -716,11 +724,14 @@ function initSearchHandlers() {
         'keyword': $.trim($('#keyword').val())
       },
       success: function(data) {
+        x = data;
         $('#search_people_results').empty();
-        var people = data.map(formatNames);
+        var mapping = {'name' : ['Honorific', 'Given_Name', 'Family_Name'], 'email': 'Email', 'id': 'id'}
+        var people = data.map(function(person) { return parseMintResult(person, mapping)});
+        var fields = ['name', 'email'];
         people.forEach(function(person) {
-          var removeCreator = createResult(person, 'fa-minus');
-          var addCreator = createResult(person, 'fa-plus');
+          var removeCreator = renderRecord(person, fields, 'fa-minus');
+          var addCreator = renderRecord(person, fields, 'fa-plus');
           var removeCallback = removeResult(person);
           var addCallback = addResult(person, removeCreator, removeCallback);
           $('#search_people_results').append(addCreator);
@@ -748,11 +759,15 @@ function initSearchHandlers() {
         'keyword_activity': $.trim($('#keyword_activity').val())
       },
       success: function(data) {
+        x = data;
         $('#search_activity_results').empty();
-        var activities = data.map(formatActivities);
+        // return {'id': metadata['id'], 'title': metadata['dc_title'], 'grant_number': metadata['grant_number'][0], 'date': metadata['dc_date'][0]};
+        var mapping = {'id': 'id', 'title': 'dc_title', 'date': 'dc_date', 'grant_number': 'grant_number'};
+        var activities = data.map(function(activity) { return parseMintResult(activity, mapping) });
+        var fields = ['grant_number', 'date', 'title'];
         activities.forEach(function(activity) {
-          var removeActivity = createActivityResult(activity, 'fa-minus');
-          var addActivity = createActivityResult(activity, 'fa-plus');
+          var removeActivity = renderRecord(activity, fields,'fa-minus');
+          var addActivity = renderRecord(activity, fields,'fa-plus');
           var removeCallback = removeActivityResult(activity);
           var addCallback = addActivityResult(activity, removeActivity, removeCallback);
           $('#search_activity_results').append(addActivity);

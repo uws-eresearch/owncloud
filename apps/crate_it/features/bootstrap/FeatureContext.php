@@ -156,11 +156,22 @@ class FeatureContext extends MinkContext
     /**
      * @When /^I add "([^"]*)" to the current crate$/
      */
-    public function iAddToTheCurrentCrate($item)
-    {
-        $page = $this->getSession()->getPage();
-        $page->find('xpath', '//tr[@data-file="' . $item. '"]//label')->click();
-		$page->find('xpath', '//tr[@data-file="' . $item. '"]//a[@data-action="Add to crate"]')->click();
+    public function iAddToTheCurrentCrate($item) {
+        $this->spin(function($context) use ($item) {
+            $page = $context->getSession()->getPage();
+            // $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//label')->click();
+            $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//label');
+            if (!$el->isVisible()) {
+                throw new Exception('The element should be visible');
+            }
+            $el->click();
+            $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//a[@data-action="Add to crate"]');
+            if (!$el->isVisible()) {
+                throw new Exception('The element should be visible');
+            }
+            $el->click();
+            return true;	
+        });
     }
 
     /**
@@ -185,7 +196,7 @@ class FeatureContext extends MinkContext
             $root_folder = $page->find('xpath', '//div[@id="files"]/ul/li');
             $element = $web_assert->elementExists('xpath','//ul/li/div/span[text()="'.$itemName. '"]', $root_folder);   
             if ($element->isVisible()) {
-                throw new Exception('The element should be visible');
+                throw new Exception('The element should not be visible');
             }
             return true;
         });

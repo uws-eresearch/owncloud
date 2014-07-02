@@ -603,46 +603,18 @@ function initSearchHandlers() {
     return result;
   };
 
-  var addResult = function(person, element, callback) {
-    var result = function() {
-      $.ajax({
-        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-        type: 'post',
-        dataType: 'json',
-        data: {
-          'action': 'save_people',
-          'creator_id': person.id,
-          'full_name': person.name
-        },
-        success: function(data) {
-          $('#search_people_results').find('#'+person.id).parent().remove();
-          $('#creators').append(element);
-          $('#creators').find('#'+person.id).click(callback);
-        },
-        error: function(data) {
-          displayError(data.statusText);
-        }
-      });
-    };
-    return result;
-  };
 
-  var addActivityResult = function(activity, element, callback) {
+  var addResult = function(record, html, callback, payload, $sourceLi, $destLi) {
     var result = function() {
       $.ajax({
         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
         type: 'post',
         dataType: 'json',
-        data: {
-          'action': 'save_activity',
-          'activity_id': activity.id,
-          'grant_number': activity.grant_number,
-          'dc_title': activity.title
-        },
+        data: payload,
         success: function(data) {
-          $('#search_activity_results').find('#'+activity.id).parent().remove();
-          $('#activities').append(element);
-          $('#activities').find('#'+activity.id).click(callback);
+          $sourceLi.find('#'+record.id).parent().remove();
+          $destLi.append(html);
+          $destLi.find('#'+record.id).click(callback);
         },
         error: function(data) {
           displayError(data.statusText);
@@ -653,6 +625,7 @@ function initSearchHandlers() {
   };
 
   // TODO: can get id form payload
+  // TODO: add back on search results
   var removeResult = function(record, payload, $destLi) {
     var result = function() {
       $.ajax({
@@ -704,14 +677,15 @@ function initSearchHandlers() {
         var people = data.map(function(person) { return parseMintResult(person, mapping); });
         var fields = ['name', 'email'];
         var $sourceLi = $('#search_people_results');
-        var $destLi = $('#search_people_results');
+        var $destLi = $('#creators');
         $sourceLi.empty();
         people.forEach(function(person) {
           var removeCreator = renderRecord(person, fields, 'fa-minus');
           var addCreator = renderRecord(person, fields, 'fa-plus');
-          var payload = {'action': 'remove_people', 'creator_id': person.id};
-          var removeCallback = removeResult(person, payload, $destLi);
-          var addCallback = addResult(person, removeCreator, removeCallback);
+          var removePayload = {'action': 'remove_people', 'id': person.id};
+          var removeCallback = removeResult(person, removePayload, $destLi);
+          var addPayload = {'action' : 'save_people', 'id': person.id, 'name': person.name};
+          var addCallback = addResult(person, removeCreator, removeCallback, addPayload, $sourceLi, $destLi);
           $sourceLi.append(addCreator);
           $sourceLi.find('#' + person.id).click(addCallback);
         });
@@ -749,9 +723,11 @@ function initSearchHandlers() {
         activities.forEach(function(activity) {
           var removeActivity = renderRecord(activity, fields,'fa-minus');
           var addActivity = renderRecord(activity, fields,'fa-plus');
-          var payload = {'action': 'remove_activity', 'id': activity.id};
-          var removeCallback = removeResult(activity,  payload, $destLi);
-          var addCallback = addActivityResult(activity, removeActivity, removeCallback);
+          var removePayload = {'action': 'remove_activity', 'id': activity.id};
+          var removeCallback = removeResult(activity,  removePayload, $destLi);
+          console.log(activity);
+          var addPayload = {'action' : 'save_activity', 'id': activity.id, 'grant_number': activity.grant_number, 'title': activity.title };
+          var addCallback = addResult(activity, removeActivity, removeCallback, addPayload, $sourceLi, $destLi);
           $sourceLi.append(addActivity);
           $sourceLi.find('#' + activity.id).click(addCallback);
         });

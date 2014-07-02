@@ -176,10 +176,11 @@
                         <?php if($_['creators']): ?>
                           <?php foreach($_['creators'] as $creator):?>
                             <li>
-                              <button id="creator_<?php echo $creator['creator_id'] ?>" class ="pull-right" type="button" value="Remove">
+                              <button id="creator_<?php echo $creator['id'] ?>" class ="pull-right" type="button" value="Remove">
                                 <i class="fa fa-minus"></i>
                               </button>
-                              <p id="<?php echo $creator['creator_id'] ?>" class="full_name_email"><?php echo $creator['full_name'] ?></p>
+                              <p class="full_name_email"><?php echo $creator['name'] ?></p>
+                              <p><?php echo $creator['email'] ?></p>
                             </li>
                           <?php endforeach;?>
                         <?php else: ?>
@@ -228,10 +229,12 @@
                         <?php if($_['activities']): ?>
                           <?php foreach($_['activities'] as $activity):?>
                             <li>
-                              <button id="activity_<?php echo $activity['activity_id'] ?>" class="pull-right" type="button" value="Remove">
+                              <button id="activity_<?php echo $activity['id'] ?>" class="pull-right" type="button" value="Remove">
                                 <i class="fa fa-minus"></i>
                               </button>
-                              <p class="grant_number"><strong><?php echo $activity['grant_number'] ?></strong> <?php echo $activity['dc_title'] ?></p>
+                              <p class="grant_number"><?php echo $activity['grant_number'] ?></p>
+                              <p><?php echo $activity['date'] ?></p>
+                              <p><?php echo $activity['title'] ?></p>
                             </li>
                           <?php endforeach;?>
                         <?php else: ?>

@@ -446,7 +446,7 @@ class BagItManager {
     $creator_list = "";
     if ($manifest_data['creators']) {
       foreach($manifest_data['creators'] as $creator) {
-        $creator_list = $creator_list . $creator['full_name'] . '<br/>';
+        $creator_list = $creator_list . $creator['name'] . '<br/>';
       }
     }
 
@@ -639,31 +639,19 @@ class BagItManager {
     }
   }
 
-  public function savePeople($creator_id, $full_name) {
+  public function savePeople($id, $name) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
+    $new_creator = array(array('id' => $id, 'name' => $name));
     if ($contents['creators']) {
-      $creators = & $contents['creators'];
+      $creators = &$contents['creators'];
       for ($i = 0; $i < count($creators); $i++) {
-        if ($creators[$i]['creator_id'] == $creator_id) {
-
-          // duplicate error
-
+        if ($creators[$i]['id'] == $id) {
           return false;
         }
       }
-
-      array_push($creators, array(
-        'creator_id' => $creator_id,
-        'full_name' => $full_name
-      ));
-    }
-    else {
-      $contents['creators'] = array(
-        array(
-          'creator_id' => $creator_id,
-          'full_name' => $full_name
-        )
-      );
+      array_push($creators, $new_creator);
+    } else {
+      $contents['creators'] = array($new_creator);
     }
 
     $fp = fopen($this->manifest, 'w+');
@@ -673,11 +661,11 @@ class BagItManager {
     return true;
   }
 
-  public function removePeople($creator_id) {
+  public function removePeople($id) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $creators = & $contents['creators'];
     for ($i = 0; $i < count($creators); $i++) {
-      if ($creators[$i]['creator_id'] == $creator_id) {
+      if ($creators[$i]['id'] == $id) {
         array_splice($creators, $i, 1);
       }
     }
@@ -689,12 +677,12 @@ class BagItManager {
     return true;
   }
 
-  public function editCreator($creator_id, $new_full_name) {
+  public function editCreator($id, $new_name) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $creators = & $contents['creators'];
     for ($i = 0; $i < count($creators); $i++) {
-      if ($creators[$i]['creator_id'] == $creator_id) {
-        $creators[$i]['full_name'] = $new_full_name;
+      if ($creators[$i]['id'] == $id) {
+        $creators[$i]['name'] = $new_name;
       }
     }
 
@@ -858,35 +846,22 @@ class BagItManager {
     }
   }
 
-  public function saveActivity($activity_id, $grant_number, $dc_title) {
+  // TODO: the save/remove activity and people methods are very similar
+  // and should probably be merged
+  public function saveActivity($id, $grant_number, $title, $date) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
+    $new_activity = array('id' => $id, 'grant_number' => $grant_number, 'title' => $title, 'date' => $date);
     if ($contents['activities']) {
       $activities = & $contents['activities'];
       for ($i = 0; $i < count($activities); $i++) {
-        if ($activities[$i]['activity_id'] == $activity_id) {
-
-          // duplicate error
-
+        if ($activities[$i]['id'] == $id) {
           return false;
         }
       }
-
-      array_push($activities, array(
-        'activity_id' => $activity_id,
-        'grant_number' => $grant_number,
-        'dc_title' => $dc_title
-      ));
+      array_push($activities, $new_activity);
+    } else {
+      $contents['activities'] = array($new_activity);
     }
-    else {
-      $contents['activities'] = array(
-        array(
-          'activity_id' => $activity_id,
-          'grant_number' => $grant_number,
-          'dc_title' => $dc_title
-        )
-      );
-    }
-
     $fp = fopen($this->manifest, 'w+');
     fwrite($fp, json_encode($contents));
     fclose($fp);
@@ -894,11 +869,11 @@ class BagItManager {
     return true;
   }
 
-  public function removeActivity($activity_id) {
+  public function removeActivity($id) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $activities = & $contents['activities'];
     for ($i = 0; $i < count($activities); $i++) {
-      if ($activities[$i]['activity_id'] == $activity_id) {
+      if ($activities[$i]['id'] == $id) {
         array_splice($activities, $i, 1);
       }
     }

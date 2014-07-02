@@ -38,14 +38,15 @@ $file_id = isset($_GET['file_id']) ? $_GET['file_id'] : '';
 $level = isset($_GET['level']) ? $_GET['level'] : '';
 $description = isset($_POST['crate_description']) ? $_POST['crate_description'] : '';
 $keyword = isset($_POST['keyword']) ? $_POST['keyword'] : '';
-$creator_id = isset($_POST['creator_id']) ? $_POST['creator_id'] : '';
-$full_name = isset($_POST['full_name']) ? $_POST['full_name'] : '';
+$id = isset($_POST['id']) ? $_POST['id'] : '';
+$name = isset($_POST['name']) ? $_POST['name'] : '';
 $new_full_name = isset($_POST['new_full_name']) ? $_POST['new_full_name'] : '';
 $vfs = isset($_POST['vfs']) ? $_POST['vfs'] : '';
 $sword_collection = isset($_POST['sword_collection']) ? $_POST['sword_collection'] : '';
-$activity_id = isset($_POST['activity_id']) ? $_POST['activity_id'] : '';
+// $activity_id = isset($_POST['activity_id']) ? $_POST['activity_id'] : '';
 $grant_number = isset($_POST['grant_number']) ? $_POST['grant_number'] : '';
-$dc_title = isset($_POST['dc_title']) ? $_POST['dc_title'] : '';
+$date = isset($_POST['date']) ? $_POST['date'] : '';
+$title = isset($_POST['title']) ? $_POST['title'] : '';
 $keyword_activity = isset($_POST['keyword_activity']) ? $_POST['keyword_activity'] : '';
 
 $action = '';
@@ -234,10 +235,9 @@ switch ($action){
 		echo json_encode($results);
 		break;
 	case 'save_people':
-		$success = $bagit_manager->savePeople($creator_id, $full_name);
-
+		$success = $bagit_manager->savePeople($id, $name);
 		if($success){
-			echo json_encode($full_name);
+			echo json_encode($name);
 		}
 		else {
 			header('HTTP/1.1 400 people exists');
@@ -287,7 +287,7 @@ switch ($action){
 		echo json_encode($results);
 		break;
 	case 'save_activity':
-		$success = $bagit_manager->saveActivity($activity_id, $grant_number, $dc_title);
+		$success = $bagit_manager->saveActivity($id, $grant_number, $title, $date);
 
 		if($success){
 			echo json_encode($activity_id);

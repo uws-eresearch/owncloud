@@ -673,7 +673,7 @@ class BagItManager {
     return true;
   }
 
-  public function removePeople($creator_id, $full_name) {
+  public function removePeople($creator_id) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $creators = & $contents['creators'];
     for ($i = 0; $i < count($creators); $i++) {

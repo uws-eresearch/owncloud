@@ -652,20 +652,16 @@ function initSearchHandlers() {
     return result;
   };
 
-
-  var removeResult = function(person) {
+  // TODO: can get id form payload
+  var removeResult = function(record, payload, $destLi) {
     var result = function() {
       $.ajax({
         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
         type: 'post',
         dataType: 'json',
-        data: {
-          'action': 'remove_people',
-          'creator_id': person.id,
-          'full_name': person.name
-        },
+        data: payload,
         success: function(data) {
-          $('#creators').find('#'+person.id).parent().remove();
+          $destLi.find('#'+record.id).parent().remove();
         },
         error: function(data) {
           displayError(data.statusText);
@@ -674,27 +670,6 @@ function initSearchHandlers() {
     };
     return result;
   }
-
-  var removeActivityResult = function(activity) {
-    var result = function() {
-      $.ajax({
-        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-        type: 'post',
-        dataType: 'json',
-        data: {
-          'action': 'remove_activity',
-          'activity_id': activity.id,
-        },
-        success: function(data) {
-          $('#activities').find('#'+activity.id).parent().remove();
-        },
-        error: function(data) {
-          displayError(data.statusText);
-        }
-      });
-    }
-    return result;
-  };
 
 
   // fields is an ordered list of fields to render, with the first being used as the title
@@ -725,17 +700,20 @@ function initSearchHandlers() {
       },
       success: function(data) {
         x = data;
-        $('#search_people_results').empty();
         var mapping = {'name' : ['Honorific', 'Given_Name', 'Family_Name'], 'email': 'Email', 'id': 'id'}
-        var people = data.map(function(person) { return parseMintResult(person, mapping)});
+        var people = data.map(function(person) { return parseMintResult(person, mapping); });
         var fields = ['name', 'email'];
+        var $sourceLi = $('#search_people_results');
+        var $destLi = $('#search_people_results');
+        $sourceLi.empty();
         people.forEach(function(person) {
           var removeCreator = renderRecord(person, fields, 'fa-minus');
           var addCreator = renderRecord(person, fields, 'fa-plus');
-          var removeCallback = removeResult(person);
+          var payload = {'action': 'remove_people', 'creator_id': person.id};
+          var removeCallback = removeResult(person, payload, $destLi);
           var addCallback = addResult(person, removeCreator, removeCallback);
-          $('#search_people_results').append(addCreator);
-          $('#search_people_results').find('#' + person.id).click(addCallback);
+          $sourceLi.append(addCreator);
+          $sourceLi.find('#' + person.id).click(addCallback);
         });
       },
       error: function(data) {
@@ -763,15 +741,19 @@ function initSearchHandlers() {
         $('#search_activity_results').empty();
         // return {'id': metadata['id'], 'title': metadata['dc_title'], 'grant_number': metadata['grant_number'][0], 'date': metadata['dc_date'][0]};
         var mapping = {'id': 'id', 'title': 'dc_title', 'date': 'dc_date', 'grant_number': 'grant_number'};
-        var activities = data.map(function(activity) { return parseMintResult(activity, mapping) });
+        var activities = data.map(function(activity) { return parseMintResult(activity, mapping); });
         var fields = ['grant_number', 'date', 'title'];
+        var $sourceLi = $('#search_activity_results');
+        var $destLi = $('#activities');
+        $sourceLi.empty();
         activities.forEach(function(activity) {
           var removeActivity = renderRecord(activity, fields,'fa-minus');
           var addActivity = renderRecord(activity, fields,'fa-plus');
-          var removeCallback = removeActivityResult(activity);
+          var payload = {'action': 'remove_activity', 'id': activity.id};
+          var removeCallback = removeResult(activity,  payload, $destLi);
           var addCallback = addActivityResult(activity, removeActivity, removeCallback);
-          $('#search_activity_results').append(addActivity);
-          $('#search_activity_results').find('#' + activity.id).click(addCallback);
+          $sourceLi.append(addActivity);
+          $sourceLi.find('#' + activity.id).click(addCallback);
         });
       },
       error: function(data) {

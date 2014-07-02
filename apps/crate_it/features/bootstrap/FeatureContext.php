@@ -401,13 +401,22 @@ class FeatureContext extends MinkContext
      * Gets a file action element by crate item name font-awesome icon class
      **/
     private function performActionElByFAIcon($crateItem, $fa_icon_class) {
-        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]';
-        $page = $this->getSession()->getPage();
-        $el = $page->find('xpath', $xpath);
-        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
-        $xpath = '/following-sibling::ul//i[@class="fa '.$fa_icon_class.'"]';
-        $el = $el->find('xpath', $xpath);
-        $el->click();
+        $this->spin(function($context) use ($crateItem, $fa_icon_class) {
+            $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]';
+            $page = $context->getSession()->getPage();
+            $el = $page->find('xpath', $xpath);
+            if (!$el->isVisible()) {
+                throw new Exception('The element should be visible');
+            }
+            $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+            $xpath = '/following-sibling::ul//i[@class="fa '.$fa_icon_class.'"]';
+            $el = $el->find('xpath', $xpath);
+            if (!$el->isVisible()) {
+                throw new Exception('The element should be visible');
+            }
+            $el->click();
+            return true;
+        });
     }
 	
 

@@ -37,7 +37,7 @@ $new_name = isset($_POST['new_name']) ? $_POST['new_name'] : '';
 $file_id = isset($_GET['file_id']) ? $_GET['file_id'] : '';
 $level = isset($_GET['level']) ? $_GET['level'] : '';
 $description = isset($_POST['crate_description']) ? $_POST['crate_description'] : '';
-$keyword = isset($_POST['keyword']) ? $_POST['keyword'] : '';
+$keywords = isset($_POST['keywords']) ? $_POST['keywords'] : '';
 $id = isset($_POST['id']) ? $_POST['id'] : '';
 $name = isset($_POST['name']) ? $_POST['name'] : '';
 $new_full_name = isset($_POST['new_full_name']) ? $_POST['new_full_name'] : '';
@@ -47,7 +47,7 @@ $sword_collection = isset($_POST['sword_collection']) ? $_POST['sword_collection
 $grant_number = isset($_POST['grant_number']) ? $_POST['grant_number'] : '';
 $date = isset($_POST['date']) ? $_POST['date'] : '';
 $title = isset($_POST['title']) ? $_POST['title'] : '';
-$keyword_activity = isset($_POST['keyword_activity']) ? $_POST['keyword_activity'] : '';
+// $keyword_activity = isset($_POST['keyword_activity']) ? $_POST['keyword_activity'] : '';
 
 $action = '';
 if (isset($_GET['action'])) {
@@ -231,7 +231,7 @@ switch ($action){
 		}
 		break;
 	case 'search_people':
-		$results = $bagit_manager->lookUpPeople($keyword);
+		$results = $bagit_manager->lookUpPeople($keywords);
 		echo json_encode($results);
 		break;
 	case 'save_people':
@@ -283,7 +283,7 @@ switch ($action){
 		echo json_encode($result);
 		break;
 	case 'search_activity':
-		$results = $bagit_manager->lookUpActivity($keyword_activity);
+		$results = $bagit_manager->lookUpActivity($keywords);
 		echo json_encode($results);
 		break;
 	case 'save_activity':

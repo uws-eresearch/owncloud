@@ -639,9 +639,9 @@ class BagItManager {
     }
   }
 
-  public function savePeople($id, $name) {
+  public function savePeople($id, $name, $email) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
-    $new_creator = array(array('id' => $id, 'name' => $name));
+    $new_creator = array('id' => $id, 'name' => $name, 'email' => $email);
     if ($contents['creators']) {
       $creators = &$contents['creators'];
       for ($i = 0; $i < count($creators); $i++) {

@@ -25,6 +25,7 @@ OCP\User::checkLoggedIn();
 OCP\App::checkAppEnabled('crate_it');
 $user = OCP\User::getUser();
 
+$dir = isset($_POST['email']) ? $_POST['email'] : '';
 $dir = isset($_GET['dir']) ? $_GET['dir'] : '';
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 $crate_id = isset($_GET['crate_id']) ? $_GET['crate_id'] : '';
@@ -235,7 +236,7 @@ switch ($action){
 		echo json_encode($results);
 		break;
 	case 'save_people':
-		$success = $bagit_manager->savePeople($id, $name);
+		$success = $bagit_manager->savePeople($id, $name, $email);
 		if($success){
 			echo json_encode($name);
 		}
@@ -304,6 +305,14 @@ switch ($action){
 		}
 		else {
 			header('HTTP/1.1 500 Internal Server Error');
+		}
+		break;
+	case 'get_manifest':
+		$success = $bagit_manager->getManifestData();
+		if($success){
+			echo json_encode($success);
+		}	else {
+			header('HTTP/1.1 500 Could not load manifest data');
 		}
 		break;
 }

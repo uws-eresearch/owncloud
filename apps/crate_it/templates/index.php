@@ -173,7 +173,7 @@
 
                       <h6>Selected Data Creators (<?php echo count($_['creators']); ?>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
                       <ul id="creators">
-                        <?php if($_['creators']): ?>
+<?php /*                         <?php if($_['creators']): ?>
                           <?php foreach($_['creators'] as $creator):?>
                             <li>
                               <button id="creator_<?php echo $creator['id'] ?>" class ="pull-right" type="button" value="Remove">
@@ -186,6 +186,7 @@
                         <?php else: ?>
                           <p class="nothing-selected">No Data Creators selected</p>  
                         <?php endif; ?>
+                        */ ?>
                       </ul>
 
                     <h6>Select New Data Creators</h6>
@@ -226,7 +227,7 @@
                        <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button>
                      </h6>
                       <ul id="activities">
-                        <?php if($_['activities']): ?>
+<?php /*                        <?php if($_['activities']): ?>
                           <?php foreach($_['activities'] as $activity):?>
                             <li>
                               <button id="activity_<?php echo $activity['id'] ?>" class="pull-right" type="button" value="Remove">
@@ -240,6 +241,7 @@
                         <?php else: ?>
                           <p class="nothing-selected">No Grant Numbers selected</p>  
                         <?php endif; ?>
+                        */ ?>
                       </ul>
 
                     <h6>Add New Grant Numbers</h6>

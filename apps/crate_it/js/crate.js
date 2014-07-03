@@ -573,17 +573,14 @@ function drawCrateContents() {
 }
 
 
-function SearchManager(actions, mapping, fields, selectedList, $resultsLi, $selectedLi) {
+function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
 
   var _self = this;
   this.searchResultsList = [];
   this.selectedList = selectedList;
-  this.mapping = mapping;
-  this.fields = fields;
-  this.actions = actions;
+  this.definition = definition;
   this.$resultsLi = $resultsLi;
   this.$selectedLi = $selectedLi;
-  
 
   this.search = function(keywords) {
     $.ajax({
@@ -591,14 +588,14 @@ function SearchManager(actions, mapping, fields, selectedList, $resultsLi, $sele
       type: 'post',
       dataType: 'json',
       data: {
-        'action': _self.actions['search'],
+        'action': _self.definition.actions.search,
         'keywords': keywords
       },
       success: function(data) {
         _self.searchResultsList = [];
-        var records = data.map(function(record) { return parseMintResult(record, _self.mapping); });
+        var records = data.map(function(record) { return parseMintResult(record); });
         _self.searchResultsList = records.filter(function(record) { return !isSelected(record.id); });
-        _self.redrawSearchResults();
+        _self.drawList(_self.$resultsLi, _self.searchResultsList, 'fa-plus');
       },
       error: function(data) {
         displayError(data.statusText);
@@ -606,25 +603,35 @@ function SearchManager(actions, mapping, fields, selectedList, $resultsLi, $sele
     });
   };
 
-  this.redrawSearchResults = function() {
-    _self.$resultsLi.empty();
-    _self.searchResultsList.forEach(function(record) {
-      var html = renderRecord(record, 'fa-plus');
-      $resultsLi.append(html);
-      $resultsLi.find('#'+record.id).click(function(){
+  this.drawList = function ($li, list, faIcon) {
+    $li.empty();
+    list.forEach(function(record) {
+      var html = renderRecord(record, faIcon);
+      $li.append(html);
+      $li.find('#'+record.id).click(function(){
         _self.toggle(record.id);
       });
     });
   }
 
+  var resultComparitor = function(a, b) {
+    var result = 0;
+    if(a[_self.definition.sortField] > b[_self.definition.sortField]) {
+      result = 1;
+    } else if (a[_self.definition.sortField] < b[_self.definition.sortField]) {
+      result = -1;
+    }
+    return result;
+  }
+
   this.toggle = function(id) {
-    var action = _self.actions['add'];
+    var action = _self.definition.actions.add;
     var faIcon = 'fa-minus';
     var $sourceLi = $resultsLi;
     var $destLi = $selectedLi;
     var record = getRecord(id);
     if (isSelected(id)) {
-      action = _self.actions['remove'];
+      action = _self.definition.actions.remove;
       faIcon = 'fa-plus';
       $sourceLi = $selectedLi;
       $destLi = $resultsLi;
@@ -690,11 +697,11 @@ function SearchManager(actions, mapping, fields, selectedList, $resultsLi, $sele
 
     // mapping object is has {dest: source} format
   // source can be an array of fields that will be merge into the dest
-  var parseMintResult = function(mintObject, mapping) {
+  var parseMintResult = function(mintObject) {
     var metadata = mintObject['result-metadata']['all'];
     var result = {};
-    for(var destField in _self.mapping) {
-      var sourceField = _self.mapping[destField];
+    for(var destField in _self.definition.mapping) {
+      var sourceField = _self.definition.mapping[destField];
       if($.isArray(sourceField)) {
         var fieldElements = [];
         sourceField.forEach(function(field) {
@@ -719,41 +726,89 @@ function SearchManager(actions, mapping, fields, selectedList, $resultsLi, $sele
     // fields is an ordered list of fields to render, with the first being used as the title
   var renderRecord = function(record, faIcon) {
     var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
-    html += '<p class="full_name">' + record[_self.fields[0]] + '</p>';
-    for (var i = 1; i < _self.fields.length ; i++) {
-      html += '<p class=>' + record[_self.fields[i]] + '</p>';
+    html += '<p class="full_name">' + record[_self.definition.displayFields[0]] + '</p>';
+    for (var i = 1; i < _self.definition.displayFields.length ; i++) {
+      html += '<p class=>' + record[_self.definition.displayFields[i]] + '</p>';
     }
     return '<li>' + html + '</li>';
   };
 
-
+  _self.drawList($selectedLi, selectedList, 'fa-minus');
 }
 
 
 
 function initSearchHandlers() {
 
-  var creatorActions = {'search': 'search_people', 'add': 'save_people', 'remove': 'remove_people'};
-  var creatorMapping = {'id': 'id', 'name' : ['Honorific', 'Given_Name', 'Family_Name'], 'email': 'Email'}
-  var creatorFields = ['name', 'email'];
-  var creatorSelectedList = []; // TODO: load this from manifest on page load
+  manifest = getMaifest();
+
+  var creatorDefinition = {
+    actions: {
+      search: 'search_people',
+      add: 'save_people',
+      remove: 'remove_people'
+    },
+    mapping: {
+      'id': 'id',
+      'name' : ['Honorific', 'Given_Name', 'Family_Name'],
+      'email': 'Email'
+    },
+    displayFields: ['name', 'email'],
+    sortField: 'name'
+  };
+
+  var creatorSelectedList = manifest.creators;
   var creator$resultsLi = $('#search_people_results');
   var creator$selectedLi = $('#creators');
-  var CreatorSearchManager = new SearchManager(creatorActions, creatorMapping, creatorFields, creatorSelectedList, creator$resultsLi, creator$selectedLi);
+  var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsLi, creator$selectedLi);
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword').val()));
   });
 
-  var activityActions = {'search' : 'search_activity', 'add': 'save_activity', 'remove': 'remove_activity'};
-  var activityMapping = {'id': 'id', 'title': 'dc_title', 'date': 'dc_date', 'grant_number': 'grant_number'};
-  var activityFields = ['grant_number', 'date', 'title'];
-  var activitySelectedList = []; // TODO: load this from manifest on page load
+
+  var activityDefinition = {
+    actions: {
+      search: 'search_activity',
+      add: 'save_activity',
+      remove: 'remove_activity'
+    },
+    mapping: {
+      'id':'id',
+      'title': 'dc_title',
+      'date': 'dc_date',
+      'grant_number': 'grant_number'
+    },
+    displayFields: ['grant_number', 'date', 'title'],
+    sortField: 'title'
+  };
+  
+  var activitySelectedList = manifest.activities;
   var activity$resultsLi = $('#search_activity_results');
   var activity$selectedLi = $('#activities');
-  var ActivitySearchManager = new SearchManager(activityActions, activityMapping, activityFields, activitySelectedList, activity$resultsLi, activity$selectedLi);
+  var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsLi, activity$selectedLi);
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
   });
+}
+
+// TODO: Super hacky synchronous call
+// There are many of async calls on page load that could probably all be reduced to this one
+function getMaifest() {
+  var result =[];
+  $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      async: false,
+      dataType: 'json',
+      data: {'action': 'get_manifest'},
+      success: function(data) {
+        result = data;
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  return result;
 }
 
 $(document).ready(function() {

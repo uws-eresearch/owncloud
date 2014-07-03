@@ -297,7 +297,7 @@ switch ($action){
 		}
 		break;
 	case 'remove_activity':
-		$success = $bagit_manager->removeActivity($activity_id);
+		$success = $bagit_manager->removeActivity($id);
 
 		if($success){
 			echo json_encode($activity_id);

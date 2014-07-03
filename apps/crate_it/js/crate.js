@@ -573,7 +573,163 @@ function drawCrateContents() {
 }
 
 
+function SearchManager(actions, mapping, fields, selectedList, $resultsLi, $selectedLi) {
+
+  var _self = this;
+  this.searchResultsList = [];
+  this.selectedList = selectedList;
+  this.mapping = mapping;
+  this.fields = fields;
+  this.actions = actions;
+  this.$resultsLi = $resultsLi;
+  this.$selectedLi = $selectedLi;
+  
+
+  this.search = function(keywords) {
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      dataType: 'json',
+      data: {
+        'action': actions['search'],
+        'keyword': keywords
+      },
+      success: function(data) {
+        searchResultsList = [];
+        var records = data.map(function(record) { return parseMintResult(record, _self.mapping); });
+        records.forEach(function(record) {
+          _self.searchResultsList.push(record);
+          var html = renderRecord(record, _self.fields, 'fa-plus');
+          $resultsLi.append(html);
+          $resultsLi.find('#'+record.id).click(function(){
+            _self.toggle(record.id);
+          });
+        });
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  };
+
+  this.toggle = function(id) {
+    var action = _self.actions['add'];
+    var faIcon = 'fa-minus';
+    var $sourceLi = $resultsLi;
+    var $destLi = $selectedLi;
+    var record = getRecord(id);
+    if (isSelected(id)) {
+      action = _self.actions['remove'];
+      faIcon = 'fa-plus';
+      $sourceLi = $selectedLi;
+      $destLi = $resultsLi;
+      // TODO: This array switching should be called in update:success
+      remove(record, _self.selectedList);
+      _self.searchResultsList.push(record);
+    } else {
+      remove(record, _self.searchResultsList);
+      _self.selectedList.push(record);
+    }
+    var payload = {'action': action};
+    var html = renderRecord(record, _self.fields, faIcon);
+    $.extend(payload, record);
+    update(payload, html, $sourceLi, $destLi);
+  };
+
+  var remove = function(record, array) {
+    var index = array.indexOf(record);
+    if(index > -1) {
+      array = array.splice(index, 1);
+    }
+  };
+
+  var update = function(payload, html, $sourceLi, $destLi) {
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      dataType: 'json',
+      data: payload,
+      success: function(data) {
+        $sourceLi.find('#'+payload.id).parent().remove();
+        $destLi.append(html);
+        $destLi.find('#'+payload.id).click(function(){
+          _self.toggle(payload.id);
+        });
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  };
+
+  var isSelected = function(id) {
+    var result = false;
+    _self.selectedList.forEach(function(searchResult) {
+      if (searchResult.id == id) {
+        result = true;
+      }
+    });
+    return result;
+  };
+
+  var getRecord = function(id) {
+    var records = _self.searchResultsList.concat(_self.selectedList);
+    var result = null;
+    records.forEach(function(record){
+      if (record.id == id) {
+        result = record;
+      }
+    });
+    return result;
+  };
+
+    // mapping object is has {dest: source} format
+  // source can be an array of fields that will be merge into the dest
+  var parseMintResult = function(mintObject, mapping) {
+    var metadata = mintObject['result-metadata']['all'];
+    var result = {};
+    for(var destField in _self.mapping) {
+      var sourceField = _self.mapping[destField];
+      if($.isArray(sourceField)) {
+        var fieldElements = [];
+        sourceField.forEach(function(field) {
+          fieldElements.push(parseField(metadata[field]));
+        });
+        result[destField] = fieldElements.join(' ');
+      } else {
+        result[destField] = parseField(metadata[sourceField]);
+      }
+    }
+    return result;
+  };
+
+  var parseField = function(field) {
+    var result = field;
+    if($.isArray(field)) {
+      result = field[0];
+    }
+    return $.trim(result);
+  };
+
+    // fields is an ordered list of fields to render, with the first being used as the title
+  var renderRecord = function(record, fields, faIcon) {
+    var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
+    html += '<p class="full_name">' + record[fields[0]] + '</p>';
+    for (var i = 1; i < fields.length ; i++) {
+      html += '<p class=>' + record[fields[i]] + '</p>';
+    }
+    return '<li>' + html + '</li>';
+  };
+
+
+}
+
+
+
 function initSearchHandlers() {
+
+
+
 
   // mapping object is has {dest: source} format
   // source can be an array of fields that will be merge into the dest
@@ -602,6 +758,26 @@ function initSearchHandlers() {
     }
     return result;
   };
+
+  // var createCallback = function(record, html, payload, $sourceLi, $destLi) {
+  //   return function() {
+  //     var callback = function();
+  //     $.ajax({
+  //       url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+  //       type: 'post',
+  //       dataType: 'json',
+  //       data: payload,
+  //       success: function(data) {
+  //         $sourceLi.find('#'+record.id).parent().remove();
+  //         $destLi.append(html);
+  //         $destLi.find('#'+record.id).click(callback);
+  //       },
+  //       error: function(data) {
+  //         displayError(data.statusText);
+  //       }
+  //     });
+  //   }
+  // };
 
 
   var addResult = function(record, html, callback, payload, $sourceLi, $destLi) {
@@ -656,6 +832,23 @@ function initSearchHandlers() {
   };
 
 
+  // var processRecords = function(records, fields, addPayload, removePayload, $resultsLi, $selectedLi) {
+  //   // var records = data.map(function(activity) { return parseMintResult(activity, mapping); });
+  //   // var addPayload = {'action' : 'save_activity', 'id': record.id, 'grant_number': record.grant_number, 'title': record.title };
+  //   // $resultsLi.empty();
+  //   records.forEach(function(record) {
+  //     var removeRecordHtml = renderRecord(record, fields,'fa-minus');
+  //     var addRecordHtml = renderRecord(record, fields,'fa-plus');
+  //     record.removeCallback = createCallback(record, removeRecordHtml, removePayload, $resultsLi, $selectedLi);
+  //     record.addCallback = createCallback(record, removeRecordHtml, addPayload, $resultsLi, $selectedLi);
+  //     record.addCallback.callback = removeCallback;
+  //     record.removeCallback.callback = addCallback;
+  //     console.log(record);
+  //     // $resultsLi.append(addRecordHtml);
+  //     // $resultsLi.find('#' + record.id).click(record.addCallback);
+  //   });
+  // }
+
   $('#search_people').click('click', function(event) {
     // TODO: Fix this
     if ($.trim($('#keyword').val()).length == 0) {
@@ -672,7 +865,6 @@ function initSearchHandlers() {
         'keyword': $.trim($('#keyword').val())
       },
       success: function(data) {
-        x = data;
         var mapping = {'name' : ['Honorific', 'Given_Name', 'Family_Name'], 'email': 'Email', 'id': 'id'}
         var people = data.map(function(person) { return parseMintResult(person, mapping); });
         var fields = ['name', 'email'];
@@ -697,47 +889,57 @@ function initSearchHandlers() {
   });
 
   
-  $('#search_activity').click('click', function(event) {
-    if ($.trim($('#keyword_activity').val()).length == 0) {
-      $('#search_activity_results').empty();
-      return;
-    }
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'search_activity',
-        'keyword_activity': $.trim($('#keyword_activity').val())
-      },
-      success: function(data) {
-        x = data;
-        $('#search_activity_results').empty();
-        // return {'id': metadata['id'], 'title': metadata['dc_title'], 'grant_number': metadata['grant_number'][0], 'date': metadata['dc_date'][0]};
-        var mapping = {'id': 'id', 'title': 'dc_title', 'date': 'dc_date', 'grant_number': 'grant_number'};
-        var activities = data.map(function(activity) { return parseMintResult(activity, mapping); });
-        var fields = ['grant_number', 'date', 'title'];
-        var $sourceLi = $('#search_activity_results');
-        var $destLi = $('#activities');
-        $sourceLi.empty();
-        activities.forEach(function(activity) {
-          var removeActivity = renderRecord(activity, fields,'fa-minus');
-          var addActivity = renderRecord(activity, fields,'fa-plus');
-          var removePayload = {'action': 'remove_activity', 'id': activity.id};
-          var removeCallback = removeResult(activity,  removePayload, $destLi);
-          console.log(activity);
-          var addPayload = {'action' : 'save_activity', 'id': activity.id, 'grant_number': activity.grant_number, 'title': activity.title };
-          var addCallback = addResult(activity, removeActivity, removeCallback, addPayload, $sourceLi, $destLi);
-          $sourceLi.append(addActivity);
-          $sourceLi.find('#' + activity.id).click(addCallback);
-        });
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-  });
+  // $('#search_activity').click('click', function(event) {
+  //   if ($.trim($('#keyword_activity').val()).length == 0) {
+  //     $('#search_activity_results').empty();
+  //     return;
+  //   }
+  //   $.ajax({
+  //     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+  //     type: 'post',
+  //     dataType: 'json',
+  //     data: {
+  //       'action': 'search_activity',
+  //       'keyword_activity': $.trim($('#keyword_activity').val())
+  //     },
+  //     success: function(data) {
+  //       $('#search_activity_results').empty();
+  //       var mapping = {'id': 'id', 'title': 'dc_title', 'date': 'dc_date', 'grant_number': 'grant_number'};
+  //       var activities = data.map(function(activity) { return parseMintResult(activity, mapping); });
+  //       var fields = ['grant_number', 'date', 'title'];
+  //       var $sourceLi = $('#search_activity_results');
+  //       var $destLi = $('#activities');
+  //       $sourceLi.empty();
+  //       activities.forEach(function(activity) {
+  //         var removeActivity = renderRecord(activity, fields,'fa-minus');
+  //         var addActivity = renderRecord(activity, fields,'fa-plus');
+  //         var removePayload = {'action': 'remove_activity', 'id': activity.id};
+  //         var removeCallback = removeResult(activity,  removePayload, $destLi);
+  //         console.log(activity);
+  //         var addPayload = {'action' : 'save_activity', 'id': activity.id, 'grant_number': activity.grant_number, 'title': activity.title };
+  //         var addCallback = addResult(activity, removeActivity, removeCallback, addPayload, $sourceLi, $destLi);
+  //         $sourceLi.append(addActivity);
+  //         $sourceLi.find('#' + activity.id).click(addCallback);
+  //       });
+  //     },
+  //     error: function(data) {
+  //       displayError(data.statusText);
+  //     }
+  //   });
+  // });
+  
 
+  // actions, mapping, fields, selectedList, $resultsLi, $selectedLi
+  var activityActions = {'search' : 'search_activity', 'add': 'save_activity', 'remove': 'remove_activity'};
+  var activityMapping = {'id': 'id', 'title': 'dc_title', 'date': 'dc_date', 'grant_number': 'grant_number'};
+  var activityFields = ['grant_number', 'date', 'title'];
+  var activitySelectedList = []; // TODO: load this from manifest on page load
+  var activity$resultsLi = $('#search_activity_results');
+  var activity$selectedLi = $('#activities');
+  ActivitySearchManager = new SearchManager(activityActions, activityMapping, activityFields, activitySelectedList, activity$resultsLi, activity$selectedLi);
+  $('#search_activity').click(function () {
+    ActivitySearchManager.search($.trim($('#keyword_activity').val()));
+  });
 }
 
 $(document).ready(function() {

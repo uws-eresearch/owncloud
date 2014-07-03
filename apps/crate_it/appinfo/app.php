@@ -52,6 +52,9 @@ OCP\Util::addStyle('crate_it', 'bootstrap.overrides');
 OCP\Util::addStyle('crate_it', 'crate');
 OCP\Util::addStyle('crate_it/3rdparty', 'jqtree/jqtree');
 
+// For tests
+
+OCP\Util::addscript('crate_it/3rdparty', 'mockjax/jquery.mockjax');
 
 
 

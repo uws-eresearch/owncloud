@@ -36,8 +36,9 @@ Feature: Create and select a new crate
 
   #CRATEIT-45
   Scenario: Ensure the crate name field has a max length of 128
-    When I click the new crate button
-    Then I fill in "crate_input_name" with a long string of 129 characters
+    Given I click the new crate button
+    And I fill in "crate_input_name" with a long string of 129 characters
+    Then I should see "Crate name has reached the limit of 128 characters"
     And I press "Create" on the popup dialog
     And the selected crate name should be a long string truncated to 128 characters
   
@@ -45,7 +46,8 @@ Feature: Create and select a new crate
   Scenario: Ensure the crate description field has a max of 6000
     When I click the new crate button
     And I fill in "New Crate Name" with "crate_with_long_desc"
-    Then I fill in "crate_input_description" with a long string of 8001 characters
+    And I fill in "crate_input_description" with a long string of 6001 characters
+    Then I should see "Crate Description has reached the limit of 6,000 characters"
     And I press "Create" on the popup dialog
     And the selected crate description should be a long string truncated to 6000 characters
 

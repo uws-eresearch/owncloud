@@ -669,32 +669,74 @@ class FeatureContext extends MinkContext
         $web_assert->elementExists('xpath', '//button[text() = "'.$buttonText.'" and @disabled]', $el);
     }
 
+	
+	public function grantNumberSectionCollapsed()
+	{
+		$page = $this->getSession()->getPage();
+		$xpath = '//div[@id="grant-numbers"]';
+		$el = $page->find('xpath', $xpath);
+		return !$el->isVisible();
+	}
+
+    private function mockActivityLookup()
+	{
+        // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is! 	
+        $js = <<<JS
+var result = '[' + 
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"001\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}'
+  			       + ',' +
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"002\"], \"grant_number\": [\"123123\"], \"dc_title\": [\"Title B\"], \"dc_date\": [\"2010\"]}}}'
+  			       + ',' +
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"003\"], \"grant_number\": [\"123456\"], \"dc_title\": [\"Title C\"], \"dc_date\": [\"198\"]}}}'
+  			    +']';			    
+$.mockjax({
+    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+    type: 'post',
+    dataType: 'json',
+    data: {
+        'action': 'search_activity',
+        'keyword_activity': '123'
+      },
+    responseText : result
+  });
+JS;
+	   $this->getSession()->executeScript($js);
+	   		
+	}
+	
+
     /**
      * @Given /^I expand the grant number metadata section$/
      */
     public function iExpandTheGrantNumberMetadataSection()
     {
-    	$page = $this->getSession()->getPage();
-        $xpath = '//*[@id="meta-data"]/div[3]/div[1]/h4/a/i';
-        $expand_trigger = $page->find('xpath', $xpath);
-		$expand_trigger->click();
+		$this->spin(function($context) {
+		    if ($context->grantNumberSectionCollapsed())
+			{
+	    		$page = $context->getSession()->getPage();
+				$xpath = '//a[@href="#grant-numbers"]/i';
+		        $expand_trigger = $page->find('xpath', $xpath);
+				$expand_trigger->click();
+				//usleep(70000);
+			}
+			return true;
+		});
     }
-
+	
     /**
      * @Given /^I click the search grant number button$/
      */
     public function iClickTheSearchGrantNumberButton()
     {
-    	$session = $this->getSession();
-        $page = $session->getPage();
-        
-        // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is!	
-        $js = <<<JS
-$('#search_activity_results').append('<li><input id="search_activity_result_111123" type="button" value="Add" /><span id="01" title="Title for 111123">111123</span></li>');        
-$('#search_activity_results').append('<li><input id="search_activity_result_123123" type="button" value="Add" /><span id="01" title="Title for 123123">123123</span></li>');        
-$('#search_activity_results').append('<li><input id="search_activity_result_123345" type="button" value="Add" /><span id="01" title="Title for 123345">123345</span></li>');        
-JS;
-		$session->executeScript($js);
+		$this->mockActivityLookup();		
+		$this->spin(function($context) {			
+	    	$session = $context->getSession();
+	        $page = $session->getPage();
+	        $xpath = '//button[@id="search_activity"]';
+			$el = $page->find('xpath', $xpath);
+			$el->click();
+			return true;
+		});
     }
     
     /**
@@ -703,10 +745,15 @@ JS;
     public function iShouldSeeTheseEntriesInTheResultList(TableNode $table)
     {
 		$page = $this->getSession()->getPage();
-		$xpath = '//ul[@id="search_activity_results"]//span';
+		$xpath = '//ul[@id="activities"]//p[@class="grant_number"]/*/text()';
 		$el_array = $page->findAll('xpath', $xpath);
+		if (empty($el_array))
+		{
+			throw new Exception('No results are returned.');
+		}
         $hash = $table->getHash();
 		$count = 0;
+		
 		foreach ($el_array as $el) {
 		   $actual_val = $el->getText();
 		   $expected_val = $hash[$count]['activity_number'];
@@ -724,10 +771,34 @@ JS;
     public function iAddGrantNumberToTheList($arg1)
     {
         $page = $this->getSession()->getPage();
-		$xpath = '//input[@id="search_activity_results_'.$arg1.'" and @value="Add"]';
+		$xpath = '//ul[@id="search_activity_results"]//p[@class="full_name" and text()="'.$arg1.'"]/../button';
 		$button = $page->find('xpath', $xpath);
 		$button->click();
     }
+
+	/**
+     * @Given /^I remove grant number "([^"]*)" in the list$/
+     */
+    public function iRemoveGrantNumberInTheList($arg1)
+    {
+        $page = $this->getSession()->getPage();
+		$xpath = '//input[@id="search_activity_results_'.$arg1.'" and @value="Remove"]';
+		$button = $page->find('xpath', $xpath);
+		$button->click();
+    }
+
+	/**
+     * @Given /^I select crate "([^"]*)"$/
+     */
+    public function iSelectCrate($arg1)
+    {
+    	$this->spin(function($context) use ($arg1) {
+	        $page = $context->getSession()->getPage();
+	    	$optionElement = $page->find('xpath', '//select[@id="crates"]');
+			$optionElement->selectOption($arg1, false);	
+			return true;
+		});
+	}
 
     /**
      * @Then /^I should see these entries in the selected grant number list$/

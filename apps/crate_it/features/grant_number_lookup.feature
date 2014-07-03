@@ -4,32 +4,35 @@ Feature: Search, add and remove grant number
   I want to add grant number related to the crate
   
   Background:
-    GivenI have crate "new crate"
+    Given I have crate "crate1"
     And I'm logged in to ownCloud as "test"
     And I go to the crate_it page
+    And I select crate "crate1"
+    And I clear the crate
+    And I press "Clear" on the popup dialog
+    And I expand the grant number metadata section
     
   #CRATEIT-161
   Scenario: Grant number lookup
-    Given I expand the grant number metadata section
-    And I fill in "keyword_activity" with "123"
+    Given I fill in "keyword_activity" with "123"
     And I click the search grant number button 
     Then I should see these entries in the result list
-      | activity_number |
+      | activity_number | 
       | 111123          |            
       | 123123          | 
-      | 123345          | 
+      | 123456          | 
       
   #CRATEIT-161
   @wip
   Scenario: Add and Remove Grant Numbers
     Given I fill in "keyword_activity" with "123"
     And I click the search grant number button 
-    And I add grant number "123345" to the list
     And I add grant number "111123" to the list
+    And I add grant number "123456" to the list
     Then I should see these entries in the selected grant number list
-      | activity_number | 
-      | 123345          | 
-      | 111123          | 
+      | activity_number |
+      | 111123          |  
+      | 123456          | 
     And I remove grant number "123345" in the list
     Then I should see these entries in the selected grant number list
       | activity_number | 

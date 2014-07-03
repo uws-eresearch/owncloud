@@ -219,7 +219,7 @@
               <div id="grant-numbers" class="panel-collapse collapse standard">
                 <div class="panel-body">
                   
-                  <div id="avtivities_box" class="grant-numbers">
+                  <div id="activities_box" class="grant-numbers">
                       <h6>
                         Selected Grant Numbers (<?php echo count($_['activities']); ?>)
                        <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button>

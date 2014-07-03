@@ -743,13 +743,14 @@ function initSearchHandlers() {
       }
     });
   });
-
   
+
   $('#search_activity').click('click', function(event) {
     if ($.trim($('#keyword_activity').val()).length == 0) {
       $('#search_activity_results').empty();
       return;
-    }
+    }    
+    
     $.ajax({
       url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
       type: 'post',
@@ -782,8 +783,8 @@ function initSearchHandlers() {
 
 }
 
-$(document).ready(function() {
-
+$(document).ready(function() {	
+	
   $('#download').click('click', function(event) {
     if (treeHasNoFiles()) {
       displayNotification('No items in the crate to package');

@@ -726,7 +726,7 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
     // fields is an ordered list of fields to render, with the first being used as the title
   var renderRecord = function(record, faIcon) {
     var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
-    html += '<p class="full_name">' + record[_self.definition.displayFields[0]] + '</p>';
+    html += '<p class="metadata_heading">' + record[_self.definition.displayFields[0]] + '</p>';
     for (var i = 1; i < _self.definition.displayFields.length ; i++) {
       html += '<p class=>' + record[_self.definition.displayFields[i]] + '</p>';
     }

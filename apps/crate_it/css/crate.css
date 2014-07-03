@@ -414,16 +414,12 @@ border-top-right-radius: 0;
 	padding: 14px 0;
 	border-bottom: 1px solid #EEE;
 }
-.container-metadata .data-creators li .full_name {
-	padding-right:34px;
-	font-weight:bold;
+
+.container-metadata li .metadata_heading {
+  padding-right:34px;
+  font-weight:bold;
 }
-.container-metadata .data-creators li .full_name_email {
-	padding-right:34px;
-}
-.container-metadata .data-creators li .full_name_email:first-line {
-	font-weight:bold;
-}
+
 .container-metadata .trans-button {
 	font-size:14px;
 	background:none;

@@ -595,24 +595,27 @@ function SearchManager(actions, mapping, fields, selectedList, $resultsLi, $sele
         'keywords': keywords
       },
       success: function(data) {
-        x = data;
         _self.searchResultsList = [];
-        _self.$resultsLi.empty();
         var records = data.map(function(record) { return parseMintResult(record, _self.mapping); });
-        records.forEach(function(record) {
-          _self.searchResultsList.push(record);
-          var html = renderRecord(record, 'fa-plus');
-          $resultsLi.append(html);
-          $resultsLi.find('#'+record.id).click(function(){
-            _self.toggle(record.id);
-          });
-        });
+        _self.searchResultsList = records.filter(function(record) { return !isSelected(record.id); });
+        _self.redrawSearchResults();
       },
       error: function(data) {
         displayError(data.statusText);
       }
     });
   };
+
+  this.redrawSearchResults = function() {
+    _self.$resultsLi.empty();
+    _self.searchResultsList.forEach(function(record) {
+      var html = renderRecord(record, 'fa-plus');
+      $resultsLi.append(html);
+      $resultsLi.find('#'+record.id).click(function(){
+        _self.toggle(record.id);
+      });
+    });
+  }
 
   this.toggle = function(id) {
     var action = _self.actions['add'];

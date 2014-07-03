@@ -171,7 +171,7 @@
                   
                   <div id="creators_box" class="data-creators">
 
-                      <h6>Selected Data Creators (<?php echo count($_['creators']); ?>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
+                      <h6>Selected Data Creators (<span id="creators_count"></span>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
                       <ul id="creators">
 <?php /*                         <?php if($_['creators']): ?>
                           <?php foreach($_['creators'] as $creator):?>
@@ -223,7 +223,7 @@
                   
                   <div id="activities_box" class="grant-numbers">
                       <h6>
-                        Selected Grant Numbers (<?php echo count($_['activities']); ?>)
+                        Selected Grant Numbers (<span id="activities_count"></span>)
                        <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button>
                      </h6>
                       <ul id="activities">

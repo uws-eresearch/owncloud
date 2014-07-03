@@ -581,6 +581,7 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
   this.definition = definition;
   this.$resultsLi = $resultsLi;
   this.$selectedLi = $selectedLi;
+  this.eventListeners = [];
 
   this.search = function(keywords) {
     $.ajax({
@@ -611,6 +612,19 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
       $li.find('#'+record.id).click(function(){
         _self.toggle(record.id);
       });
+    });
+  }
+
+
+  this.addEventListener = function(callback) {
+    _self.eventListeners.push(callback);
+  }
+
+
+  this.notifyListeners = function() {
+    var e = { selected: _self.selectedList.length  };
+    _self.eventListeners.forEach(function(listener) {
+      listener(e);
     });
   }
 
@@ -667,6 +681,7 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
         $destLi.find('#'+payload.id).click(function(){
           _self.toggle(payload.id);
         });
+        _self.notifyListeners();
       },
       error: function(data) {
         displayError(data.statusText);
@@ -764,7 +779,11 @@ function initSearchHandlers() {
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword').val()));
   });
-
+  var creatorsCount = function(e) {
+    $('#creators_count').text(e.selected);
+  };
+  CreatorSearchManager.addEventListener(creatorsCount);
+  CreatorSearchManager.notifyListeners();
 
   var activityDefinition = {
     actions: {
@@ -789,6 +808,11 @@ function initSearchHandlers() {
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
   });
+  var activitiesCount = function(e) {
+    $('#activities_count').text(e.selected);
+  };
+  ActivitySearchManager.addEventListener(activitiesCount);
+  ActivitySearchManager.notifyListeners();
 }
 
 // TODO: Super hacky synchronous call

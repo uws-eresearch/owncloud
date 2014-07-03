@@ -25,7 +25,7 @@ OCP\User::checkLoggedIn();
 OCP\App::checkAppEnabled('crate_it');
 $user = OCP\User::getUser();
 
-$dir = isset($_POST['email']) ? $_POST['email'] : '';
+$email = isset($_POST['email']) ? $_POST['email'] : '';
 $dir = isset($_GET['dir']) ? $_GET['dir'] : '';
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 $crate_id = isset($_GET['crate_id']) ? $_GET['crate_id'] : '';

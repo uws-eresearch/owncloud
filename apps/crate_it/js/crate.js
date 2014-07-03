@@ -754,7 +754,7 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
 
 
 function initSearchHandlers() {
-
+  // TODO: prefix this with var to close scope when not dubugging
   manifest = getMaifest();
 
   var creatorDefinition = {

@@ -173,20 +173,7 @@
 
                       <h6>Selected Data Creators (<span id="creators_count"></span>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
                       <ul id="creators">
-<?php /*                         <?php if($_['creators']): ?>
-                          <?php foreach($_['creators'] as $creator):?>
-                            <li>
-                              <button id="creator_<?php echo $creator['id'] ?>" class ="pull-right" type="button" value="Remove">
-                                <i class="fa fa-minus"></i>
-                              </button>
-                              <p class="full_name_email"><?php echo $creator['name'] ?></p>
-                              <p><?php echo $creator['email'] ?></p>
-                            </li>
-                          <?php endforeach;?>
-                        <?php else: ?>
-                          <p class="nothing-selected">No Data Creators selected</p>  
-                        <?php endif; ?>
-                        */ ?>
+
                       </ul>
 
                     <h6>Select New Data Creators</h6>
@@ -198,7 +185,7 @@
                         </button>
                       </span>
                     </div>
-
+                    <span id="creators_search_notification"></span>
                     <div id="search_people_result_box">
                       <ul id="search_people_results">
                       </ul>
@@ -227,21 +214,7 @@
                        <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button>
                      </h6>
                       <ul id="activities">
-<?php /*                        <?php if($_['activities']): ?>
-                          <?php foreach($_['activities'] as $activity):?>
-                            <li>
-                              <button id="activity_<?php echo $activity['id'] ?>" class="pull-right" type="button" value="Remove">
-                                <i class="fa fa-minus"></i>
-                              </button>
-                              <p class="grant_number"><?php echo $activity['grant_number'] ?></p>
-                              <p><?php echo $activity['date'] ?></p>
-                              <p><?php echo $activity['title'] ?></p>
-                            </li>
-                          <?php endforeach;?>
-                        <?php else: ?>
-                          <p class="nothing-selected">No Grant Numbers selected</p>  
-                        <?php endif; ?>
-                        */ ?>
+
                       </ul>
 
                     <h6>Add New Grant Numbers</h6>
@@ -253,6 +226,8 @@
                         </button>
                       </span>
                     </div>
+
+                    <span id="activites_search_notification"></span>
 
                     <div id="search_activity_result_box">
                       <ul id="search_activity_results">

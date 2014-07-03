@@ -596,6 +596,7 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
         _self.searchResultsList = [];
         var records = data.map(function(record) { return parseMintResult(record); });
         _self.searchResultsList = records.filter(function(record) { return !isSelected(record.id); });
+        _self.notifyListeners();
         _self.drawList(_self.$resultsLi, _self.searchResultsList, 'fa-plus');
       },
       error: function(data) {
@@ -622,7 +623,10 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
 
 
   this.notifyListeners = function() {
-    var e = { selected: _self.selectedList.length  };
+    var e = {
+      selected: _self.selectedList.length,
+      results: _self.searchResultsList.length
+      };
     _self.eventListeners.forEach(function(listener) {
       listener(e);
     });
@@ -784,6 +788,14 @@ function initSearchHandlers() {
   };
   CreatorSearchManager.addEventListener(creatorsCount);
   CreatorSearchManager.notifyListeners();
+  var creatorsResultsCount = function(e) {
+    var msg = '';
+    if(e.results == 0) {
+      msg = e.results + ' new results returned';
+    }
+    $('#creators_search_notification').text(msg);
+  };
+  CreatorSearchManager.addEventListener(creatorsResultsCount);
 
   var activityDefinition = {
     actions: {
@@ -808,11 +820,19 @@ function initSearchHandlers() {
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
   });
-  var activitiesCount = function(e) {
+  var activitiesSelectedCount = function(e) {
     $('#activities_count').text(e.selected);
   };
-  ActivitySearchManager.addEventListener(activitiesCount);
+  ActivitySearchManager.addEventListener(activitiesSelectedCount);
   ActivitySearchManager.notifyListeners();
+  var activiesResultsCount = function(e) {
+    var msg = '';
+    if(e.results == 0) {
+      msg = e.results + ' new results returned';
+    }
+    $('#activites_search_notification').text(msg);
+  };
+  ActivitySearchManager.addEventListener(activiesResultsCount);
 }
 
 // TODO: Super hacky synchronous call

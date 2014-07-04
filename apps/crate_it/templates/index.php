@@ -137,8 +137,10 @@
                   <div id="creators_box" class="data-creators">
 
                       <h6>Selected Data Creators (<span id="creators_count"></span>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
-                      
-                      <ul id="creators"></ul>
+
+                      <ul id="selected_creators">
+
+                      </ul>
 
                     <h6>Select New Data Creators</h6>
                     <div id="search_people_box" class="input-group">
@@ -173,12 +175,16 @@
                 <div class="panel-body">
                   
                   <div id="activities_box" class="grant-numbers">
+
                     <h6>Selected Grant Numbers (<span id="activities_count"></span>)
                       <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit">
                         <i class="fa fa-times muted"></i>
                       </button>
                     </h6>
-                    <ul id="activities"></ul>
+                    <ul id="selected_activities"></ul>
+
+                    </ul>
+
 
                     <h6>Add New Grant Numbers</h6>
                     <div id="search_activity_box" class="input-group">

@@ -626,6 +626,16 @@ class BagItManager {
     return true;
   }
 
+  public function clearMetadataField($field) {
+    $contents = json_decode(file_get_contents($this->manifest) , true);
+    $contents[$field] = array();
+    $fp = fopen($this->manifest, 'w+');
+    fwrite($fp, json_encode($contents));
+    fclose($fp);
+    $this->bag->update();
+    return true;
+  }
+
   public function editCreator($id, $new_name) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $creators = & $contents['creators'];

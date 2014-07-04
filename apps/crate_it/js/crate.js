@@ -44,6 +44,30 @@ function indentTree() {
   });
 }
 
+function attachModalHandlers($modal, confirmCallback) {
+  var $confirm = $modal.find('.btn-primary');
+
+  var clearInput = function() {
+    var $input = $modal.find('input');
+    if ($input) {
+      $input.val('');
+    }
+  };
+
+  $confirm.click(function() {
+    confirmCallback();
+    $modal.modal('hide');
+  });
+
+  $modal.on('hide.bs.modal', function() {
+    $confirm.off('click');
+    clearInput();
+  });
+
+  $modal.modal('show');
+};
+
+
 function buildFileTree(data) {
 
   var createImgUrl = function(node) {
@@ -70,29 +94,6 @@ function buildFileTree(data) {
       }
     }
     return 'url(' + OC.imagePath('core', 'filetypes/' + icon + '.svg') + ')';
-  };
-
-  var attachModalHandlers = function($modal, confirmCallback) {
-    var $confirm = $modal.find('.btn-primary');
-
-    var clearInput = function() {
-      var $input = $modal.find('input');
-      if ($input) {
-        $input.val('');
-      }
-    };
-
-    $confirm.click(function() {
-      confirmCallback();
-      $modal.modal('hide');
-    });
-
-    $modal.on('hide.bs.modal', function() {
-      $confirm.off('click');
-      clearInput();
-    });
-
-    $modal.modal('show');
   };
 
   var addFolder = function(node) {
@@ -617,6 +618,27 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl) {
     eventListeners.push(callback);
   }
 
+  this.clearSelected = function() {
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      dataType: 'json',
+      data: {
+        action: 'clear_field',
+        field: definition.manifestField
+      },
+      success: function(data) {
+        searchResultsList = searchResultsList.concat(selectedList);
+        selectedList = [];
+        $selectedUl.empty();
+        drawList($resultsUl, searchResultsList, 'fa-plus');
+        _self.notifyListeners();
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  }
 
   this.notifyListeners = function() {
     var e = {
@@ -761,8 +783,10 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl) {
 function initSearchHandlers() {
   // TODO: prefix this with var to close scope when not dubugging
   manifest = getMaifest();
+  $clearMetadataModal = $('#clearMetadataModal');
 
   var creatorDefinition = {
+    manifestField: 'creators',
     actions: {
       search: 'people',
       add: 'save_people',
@@ -797,8 +821,13 @@ function initSearchHandlers() {
     $('#creators_search_notification').text(msg);
   };
   CreatorSearchManager.addEventListener(creatorsResultsCount);
+  $('#clear_creators').click(function() {
+    $('#clearMetadataField').text('Creators');
+    attachModalHandlers($clearMetadataModal, CreatorSearchManager.clearSelected);
+  });
 
   var activityDefinition = {
+    manifestField: 'activities',
     actions: {
       search: 'activities',
       add: 'save_activity',
@@ -834,6 +863,10 @@ function initSearchHandlers() {
     $('#activites_search_notification').text(msg);
   };
   ActivitySearchManager.addEventListener(activiesResultsCount);
+  $('#clear_grant_numbers').click(function() {
+    $('#clearMetadataField').text('Grants');
+    attachModalHandlers($clearMetadataModal, ActivitySearchManager.clearSelected);
+  });
 }
 
 // TODO: Super hacky synchronous call

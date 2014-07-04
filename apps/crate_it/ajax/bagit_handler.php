@@ -25,6 +25,7 @@ OCP\User::checkLoggedIn();
 OCP\App::checkAppEnabled('crate_it');
 $user = OCP\User::getUser();
 
+$field = isset($_POST['field']) ? $_POST['field'] : '';
 $email = isset($_POST['email']) ? $_POST['email'] : '';
 $dir = isset($_GET['dir']) ? $_GET['dir'] : '';
 $file = isset($_GET['file']) ? $_GET['file'] : '';
@@ -314,6 +315,17 @@ switch ($action){
 			echo json_encode($success);
 		}	else {
 			header('HTTP/1.1 500 Could not load manifest data');
+		}
+		break;
+	case 'clear_field':
+		// TODO: A lot of these actions could be removed if
+	  // the payload would just specify the content it wanted to
+	  // insert into the manifest.
+		$success = $bagit_manager->clearMetadataField($field);
+		if($success){
+			echo json_encode($success);
+		}	else {
+			header('HTTP/1.1 500 Could not clear field');
 		}
 		break;
 }

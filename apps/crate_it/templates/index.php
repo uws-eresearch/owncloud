@@ -137,9 +137,8 @@
                   <div id="creators_box" class="data-creators">
 
                       <h6>Selected Data Creators (<span id="creators_count"></span>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
-                      <ul id="creators">
-
-                      </ul>
+                      
+                      <ul id="creators"></ul>
 
                     <h6>Select New Data Creators</h6>
                     <div id="search_people_box" class="input-group">
@@ -227,5 +226,7 @@
 <?php include 'clear_crate_modal.php'; ?>
 
 <?php include 'delete_crate_modal.php'; ?>
+
+<?php include 'clear_metadata_modal.php'; ?>
 
 <?php include 'javascript_vars.php'; ?>

@@ -89,47 +89,13 @@
 
   </div>
 
-<!--     <div id="metadata" style="float:right;">
-      <?php if ($_['mint_status'] === "enabled" ):?>
-
-
-        <div id="anzsrc_for">
-        <div>
-        <select id="for_top_level" class="for_codes">
-        <option id="select_top" value="for_top_choose">Choose a code</option>
-        <?php foreach($_['top_for'] as $item): $vars=get_object_vars($item); //$prefLabel=$ vars[ 'skos:prefLabel']; ?>
-        <option id="<?php echo $vars['rdf:about'];?>" value="<?php echo $vars['rdf:about'];?>">
-        <?php echo $vars[ 'skos:prefLabel']?>
-      </option>
-    <?php endforeach;?>
-  </select>
-</div>
-<div>
-<select id="for_second_level" class="for_codes">
-<option id="select_second" value="for_second_choose">Choose a code</option>
-</select>
-</div>
-<div>
-<select id="for_third_level" class="for_codes">
-<option id="select_third" value="for_third_choose">Choose a code</option>
-</select>
-</div>
-</div> -->
-
-
-
-
-
-
-            </div>
+  </div>
 
 
 
         <div id="files"></div>
 
-                <div class="container-metadata">
-
-
+        <div class="container-metadata">
           <div class="panel-group" id="meta-data">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -151,7 +117,6 @@
                   </div>
                   <div class='crate-size'>
                     <h6 class="info">Crate Size: <span id="crate_size_human" class="standard"></span></h6>
-                    
                   </div>
                 </div>
               </div>
@@ -209,13 +174,12 @@
                 <div class="panel-body">
                   
                   <div id="activities_box" class="grant-numbers">
-                      <h6>
-                        Selected Grant Numbers (<span id="activities_count"></span>)
-                       <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button>
-                     </h6>
-                      <ul id="activities">
-
-                      </ul>
+                    <h6>Selected Grant Numbers (<span id="activities_count"></span>)
+                      <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit">
+                        <i class="fa fa-times muted"></i>
+                      </button>
+                    </h6>
+                    <ul id="activities"></ul>
 
                     <h6>Add New Grant Numbers</h6>
                     <div id="search_activity_box" class="input-group">
@@ -230,11 +194,8 @@
                     <span id="activites_search_notification"></span>
 
                     <div id="search_activity_result_box">
-                      <ul id="search_activity_results">
-                      </ul>
+                      <ul id="search_activity_results"></ul>
                     </div>
-
-                    <?php endif; ?>
 
                   </div>
 

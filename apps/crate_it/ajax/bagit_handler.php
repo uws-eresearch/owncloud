@@ -57,6 +57,12 @@ if (isset($_GET['action'])) {
 	$action = $_POST['action'];
 }
 
+$type = '';
+if (isset($_GET['type'])) {
+	$type = $_GET['type'];
+} elseif (isset($_POST['type'])){
+	$type = $_POST['type'];
+}
 
 //Get an instance of BagItManager
 $bagit_manager = \OCA\crate_it\lib\BagItManager::getInstance();
@@ -220,21 +226,6 @@ switch ($action){
 		OCP\Util::writeLog("crate_it", $dr->sac_status." ".$dr->sac_statusmessage, OCP\Util::DEBUG);
 		header("HTTP/1.1 ".$dr->sac_status." ".$dr->sac_statusmessage);
 		break;
-	case 'get_for_codes':
-		//need to access the tmpl var
-		$results = $bagit_manager->lookUpMint("", 'top');
-		foreach ($results as $item) {
-			$vars = get_object_vars($item);
-			if($vars["rdf:about"] === $level){
-				//send skos:narrower array
-				echo json_encode(array_values($vars['skos:narrower']));
-			}
-		}
-		break;
-	case 'search_people':
-		$results = $bagit_manager->lookUpPeople($keywords);
-		echo json_encode($results);
-		break;
 	case 'save_people':
 		$success = $bagit_manager->savePeople($id, $name, $email);
 		if($success){
@@ -283,9 +274,19 @@ switch ($action){
 		$result = $bagit_manager->deleteCrate();
 		echo json_encode($result);
 		break;
-	case 'search_activity':
-		$results = $bagit_manager->lookUpActivity($keywords);
-		echo json_encode($results);
+	case 'search':
+		echo $bagit_manager->search($type, $keywords);
+		break;
+	case 'get_for_codes':
+		//need to access the tmpl var
+		$results = $bagit_manager->lookUpMint("", 'top');
+		foreach ($results as $item) {
+			$vars = get_object_vars($item);
+			if($vars["rdf:about"] === $level){
+				//send skos:narrower array
+				echo json_encode(array_values($vars['skos:narrower']));
+			}
+		}
 		break;
 	case 'save_activity':
 		$success = $bagit_manager->saveActivity($id, $grant_number, $title, $date);

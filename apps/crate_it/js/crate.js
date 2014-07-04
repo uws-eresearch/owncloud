@@ -589,7 +589,8 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
       type: 'post',
       dataType: 'json',
       data: {
-        'action': _self.definition.actions.search,
+        'action': 'search',
+        'type': _self.definition.actions.search,
         'keywords': keywords
       },
       success: function(data) {
@@ -763,7 +764,7 @@ function initSearchHandlers() {
 
   var creatorDefinition = {
     actions: {
-      search: 'search_people',
+      search: 'people',
       add: 'save_people',
       remove: 'remove_people'
     },
@@ -799,7 +800,7 @@ function initSearchHandlers() {
 
   var activityDefinition = {
     actions: {
-      search: 'search_activity',
+      search: 'activities',
       add: 'save_activity',
       remove: 'remove_activity'
     },
@@ -917,32 +918,32 @@ $(document).ready(function() {
     }
   });
 
-  $('#for_top_level').change(function() {
-    var id = $(this).find(':selected').attr("id");
-    if (id === "select_top") {
-      //remove all the child selects
-      removeFORCodes();
-      return;
-    }
-    //make a call to the backend, get next level codes, populate option
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=get_for_codes&level=' + id,
-      type: 'get',
-      dataType: 'json',
-      success: function(data) {
-        if (data != null) {
-          removeFORCodes();
-          for (var i = 0; i < data.length; i++) {
-            $("#for_second_level").append('<option id="' + data[i] + '" value="' + data[i] + '" >' + data[i] + '</option>');
-          }
-        }
-      },
-      error: function(data) {
-        var e = data.statusText;
-        alert(e);
-      }
-    });
-  });
+  // $('#for_top_level').change(function() {
+  //   var id = $(this).find(':selected').attr("id");
+  //   if (id === "select_top") {
+  //     //remove all the child selects
+  //     removeFORCodes();
+  //     return;
+  //   }
+  //   //make a call to the backend, get next level codes, populate option
+  //   $.ajax({
+  //     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=get_for_codes&level=' + id,
+  //     type: 'get',
+  //     dataType: 'json',
+  //     success: function(data) {
+  //       if (data != null) {
+  //         removeFORCodes();
+  //         for (var i = 0; i < data.length; i++) {
+  //           $("#for_second_level").append('<option id="' + data[i] + '" value="' + data[i] + '" >' + data[i] + '</option>');
+  //         }
+  //       }
+  //     },
+  //     error: function(data) {
+  //       var e = data.statusText;
+  //       alert(e);
+  //     }
+  //   });
+  // });
 
   var description_length = $('#description_length').text();
 

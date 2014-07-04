@@ -20,6 +20,7 @@
  *
  */
 namespace OCA\crate_it\lib;
+require 'mint_connector.php';
 
 class BagItManager {
   var $base_dir;
@@ -29,7 +30,10 @@ class BagItManager {
   var $selected_crate;
   var $bag;
   var $user;
+
   private static $instance = NULL;
+  private static $searchProvider = NULL;
+
   /**
    * Set the values to following variables
    *
@@ -42,6 +46,7 @@ class BagItManager {
    */
   private function __construct() {
     $this->user = \OCP\User::getUser();
+    self::$searchProvider = new MintConnector();
     $config_file = \OC::$SERVERROOT . '/data/cr8it_config.json';
     if (!file_exists($config_file)) {
       echo "No configuration file";
@@ -568,41 +573,12 @@ class BagItManager {
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
   }
 
-  public function lookUpMint($for_code, $level) {
-    try {
-      $config = $this->getConfig();
-      $url = $config['mint']['url'] . '/ANZSRC_FOR/opensearch/lookup?count=999&level=' . $level;
-
-      // now call the mint
-
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      $content = curl_exec($ch);
-
-      // You get a json file as content. process this and show the result
-
-      $result = curl_getinfo($ch);
-      curl_close($ch);
-      if (empty($content)) {
-        return array();
-      }
-      else {
-        $content_array = json_decode($content);
-        $results = $content_array->results;
-        return $results;
-      }
-    }
-
-    catch(Exception $e) {
-      header('HTTP/1.1 400 ' . $e->getMessage());
-    }
+  public function search($type, $keywords) {
+    return self::$searchProvider->search($type, $keywords); 
   }
 
   public function getManifestData() {
-
     // read from manifest
-
     $fp = fopen($this->manifest, 'r');
     $contents = file_get_contents($this->manifest);
     $cont_array = json_decode($contents, true);
@@ -610,34 +586,7 @@ class BagItManager {
     return $cont_array;
   }
 
-  public function lookUpPeople($keyword) {
-    try {
-      $config = $this->getConfig();
-      $url = $config['mint']['url'] . '/Parties_People/opensearch/lookup?searchTerms=' . urlencode($keyword);
-      \OCP\Util::writeLog("crate_it::lookUpPeople", $url, \OCP\Util::DEBUG);
 
-      // Now call the mint
-
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      $content = curl_exec($ch);
-      $result = curl_getinfo($ch);
-      curl_close($ch);
-      if (empty($content)) {
-        return array();
-      }
-      else {
-        $content_array = json_decode($content);
-        $results = $content_array->results;
-        return $results;
-      }
-    }
-
-    catch(Exception $e) {
-      header('HTTP/1.1 400 ' . $e->getMessage());
-    }
-  }
 
   public function savePeople($id, $name, $email) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
@@ -752,7 +701,7 @@ class BagItManager {
     return $collections;
   }
 
-  public function getConfig() {
+  public static function getConfig() {
     $config = null;
     $config_file = \OC::$SERVERROOT . '/data/cr8it_config.json';
     if (file_exists($config_file)) {
@@ -818,36 +767,6 @@ class BagItManager {
     }
   }
 
-  public function lookUpActivity($keyword) {
-    try {
-      $config = $this->getConfig();
-      $url = $config['mint']['url'] . '/Activities/opensearch/lookup?searchTerms=' . urlencode($keyword);
-
-      // Now call the mint
-
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      $content = curl_exec($ch);
-      $result = curl_getinfo($ch);
-      curl_close($ch);
-      if (empty($content)) {
-        return array();
-      }
-      else {
-        $content_array = json_decode($content);
-        $results = $content_array->results;
-        return $results;
-      }
-    }
-
-    catch(Exception $e) {
-      header('HTTP/1.1 400 ' . $e->getMessage());
-    }
-  }
-
-  // TODO: the save/remove activity and people methods are very similar
-  // and should probably be merged
   public function saveActivity($id, $grant_number, $title, $date) {
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $new_activity = array('id' => $id, 'grant_number' => $grant_number, 'title' => $title, 'date' => $date);

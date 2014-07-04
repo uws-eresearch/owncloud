@@ -236,10 +236,10 @@ switch ($action){
 		}
 		break;
 	case 'remove_people':
-		$success = $bagit_manager->removePeople($creator_id);
+		$success = $bagit_manager->removePeople($id);
 
 		if($success){
-			echo json_encode($creator_id);
+			echo json_encode($id);
 		}
 		else {
 			header('HTTP/1.1 500 Internal Server Error');

@@ -573,15 +573,11 @@ function drawCrateContents() {
 }
 
 
-function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
+function SearchManager(definition, selectedList, $resultsUl, $selectedUl) {
 
   var _self = this;
-  this.searchResultsList = [];
-  this.selectedList = selectedList;
-  this.definition = definition;
-  this.$resultsLi = $resultsLi;
-  this.$selectedLi = $selectedLi;
-  this.eventListeners = [];
+  var searchResultsList = [];
+  var eventListeners = [];
 
   this.search = function(keywords) {
     $.ajax({
@@ -590,15 +586,15 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
       dataType: 'json',
       data: {
         'action': 'search',
-        'type': _self.definition.actions.search,
+        'type': definition.actions.search,
         'keywords': keywords
       },
       success: function(data) {
-        _self.searchResultsList = [];
+        searchResultsList = [];
         var records = data.map(function(record) { return parseMintResult(record); });
-        _self.searchResultsList = records.filter(function(record) { return !isSelected(record.id); });
+        searchResultsList = records.filter(function(record) { return !isSelected(record.id); });
         _self.notifyListeners();
-        _self.drawList(_self.$resultsLi, _self.searchResultsList, 'fa-plus');
+        drawList($resultsUl, searchResultsList, 'fa-plus');
       },
       error: function(data) {
         displayError(data.statusText);
@@ -606,60 +602,61 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
     });
   };
 
-  this.drawList = function ($li, list, faIcon) {
+  var drawList = function ($li, list, faIcon) {
     $li.empty();
     list.forEach(function(record) {
       var html = renderRecord(record, faIcon);
       $li.append(html);
       $li.find('#'+record.id).click(function(){
-        _self.toggle(record.id);
+        toggle(record.id);
       });
     });
   }
 
-
   this.addEventListener = function(callback) {
-    _self.eventListeners.push(callback);
+    eventListeners.push(callback);
   }
 
 
   this.notifyListeners = function() {
     var e = {
-      selected: _self.selectedList.length,
-      results: _self.searchResultsList.length
+      selected: selectedList.length,
+      results: searchResultsList.length
       };
-    _self.eventListeners.forEach(function(listener) {
+    eventListeners.forEach(function(listener) {
       listener(e);
     });
   }
 
-  var resultComparitor = function(a, b) {
-    var result = 0;
-    if(a[_self.definition.sortField] > b[_self.definition.sortField]) {
-      result = 1;
-    } else if (a[_self.definition.sortField] < b[_self.definition.sortField]) {
-      result = -1;
-    }
-    return result;
-  }
+  // NOTE: not currently used
+  // var resultComparitor = function(a, b) {
+  //   var result = 0;
+  //   if(a[definition.sortField] > b[definition.sortField]) {
+  //     result = 1;
+  //   } else if (a[definition.sortField] < b[definition.sortField]) {
+  //     result = -1;
+  //   }
+  //   return result;
+  // }
 
-  this.toggle = function(id) {
-    var action = _self.definition.actions.add;
+  // this.toggle = function(id) {
+  function toggle(id) {
+    var action = definition.actions.add;
     var faIcon = 'fa-minus';
-    var $sourceLi = $resultsLi;
-    var $destLi = $selectedLi;
+    var $sourceLi = $resultsUl;
+    var $destLi = $selectedUl;
     var record = getRecord(id);
     if (isSelected(id)) {
-      action = _self.definition.actions.remove;
+      action = definition.actions.remove;
       faIcon = 'fa-plus';
-      $sourceLi = $selectedLi;
-      $destLi = $resultsLi;
+      $sourceLi = $selectedUl;
+      $destLi = $resultsUl;
       // TODO: This array switching should be called in update:success
-      remove(record, _self.selectedList);
-      _self.searchResultsList.push(record);
+      remove(record, selectedList);
+      searchResultsList.push(record);
     } else {
-      remove(record, _self.searchResultsList);
-      _self.selectedList.push(record);
+      remove(record, searchResultsList);
+      selectedList.push(record);
     }
     var payload = {'action': action};
     var html = renderRecord(record, faIcon);
@@ -684,7 +681,7 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
         $sourceLi.find('#'+payload.id).parent().remove();
         $destLi.append(html);
         $destLi.find('#'+payload.id).click(function(){
-          _self.toggle(payload.id);
+          toggle(payload.id);
         });
         _self.notifyListeners();
       },
@@ -694,9 +691,9 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
     });
   };
 
-  var isSelected = function(id) {
+  function isSelected(id) {
     var result = false;
-    _self.selectedList.forEach(function(searchResult) {
+    selectedList.forEach(function(searchResult) {
       if (searchResult.id == id) {
         result = true;
       }
@@ -704,8 +701,8 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
     return result;
   };
 
-  var getRecord = function(id) {
-    var records = _self.searchResultsList.concat(_self.selectedList);
+  function getRecord(id) {
+    var records = searchResultsList.concat(selectedList);
     var result = null;
     records.forEach(function(record){
       if (record.id == id) {
@@ -717,11 +714,12 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
 
     // mapping object is has {dest: source} format
   // source can be an array of fields that will be merge into the dest
-  var parseMintResult = function(mintObject) {
+  // var parseMintResult = function(mintObject) {
+  function parseMintResult(mintObject) {
     var metadata = mintObject['result-metadata']['all'];
     var result = {};
-    for(var destField in _self.definition.mapping) {
-      var sourceField = _self.definition.mapping[destField];
+    for(var destField in definition.mapping) {
+      var sourceField = definition.mapping[destField];
       if($.isArray(sourceField)) {
         var fieldElements = [];
         sourceField.forEach(function(field) {
@@ -735,7 +733,8 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
     return result;
   };
 
-  var parseField = function(field) {
+  // var parseField = function(field) {
+  function parseField(field) {
     var result = field;
     if($.isArray(field)) {
       result = field[0];
@@ -744,16 +743,17 @@ function SearchManager(definition, selectedList, $resultsLi, $selectedLi) {
   };
 
     // fields is an ordered list of fields to render, with the first being used as the title
-  var renderRecord = function(record, faIcon) {
+  // var renderRecord = function(record, faIcon) {
+  function renderRecord(record, faIcon) {
     var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
-    html += '<p class="metadata_heading">' + record[_self.definition.displayFields[0]] + '</p>';
-    for (var i = 1; i < _self.definition.displayFields.length ; i++) {
-      html += '<p class=>' + record[_self.definition.displayFields[i]] + '</p>';
+    html += '<p class="metadata_heading">' + record[definition.displayFields[0]] + '</p>';
+    for (var i = 1; i < definition.displayFields.length ; i++) {
+      html += '<p class=>' + record[definition.displayFields[i]] + '</p>';
     }
     return '<li>' + html + '</li>';
   };
 
-  _self.drawList($selectedLi, selectedList, 'fa-minus');
+  drawList($selectedUl, selectedList, 'fa-minus');
 }
 
 
@@ -778,9 +778,9 @@ function initSearchHandlers() {
   };
 
   var creatorSelectedList = manifest.creators;
-  var creator$resultsLi = $('#search_people_results');
-  var creator$selectedLi = $('#creators');
-  var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsLi, creator$selectedLi);
+  var creator$resultsUl = $('#search_people_results');
+  var creator$selectedUl = $('#creators');
+  var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl);
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword').val()));
   });
@@ -815,9 +815,9 @@ function initSearchHandlers() {
   };
   
   var activitySelectedList = manifest.activities;
-  var activity$resultsLi = $('#search_activity_results');
-  var activity$selectedLi = $('#activities');
-  var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsLi, activity$selectedLi);
+  var activity$resultsUl = $('#search_activity_results');
+  var activity$selectedUl = $('#activities');
+  var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl);
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
   });
@@ -917,33 +917,6 @@ $(document).ready(function() {
       $("#crate_description_validation_error").text('');
     }
   });
-
-  // $('#for_top_level').change(function() {
-  //   var id = $(this).find(':selected').attr("id");
-  //   if (id === "select_top") {
-  //     //remove all the child selects
-  //     removeFORCodes();
-  //     return;
-  //   }
-  //   //make a call to the backend, get next level codes, populate option
-  //   $.ajax({
-  //     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=get_for_codes&level=' + id,
-  //     type: 'get',
-  //     dataType: 'json',
-  //     success: function(data) {
-  //       if (data != null) {
-  //         removeFORCodes();
-  //         for (var i = 0; i < data.length; i++) {
-  //           $("#for_second_level").append('<option id="' + data[i] + '" value="' + data[i] + '" >' + data[i] + '</option>');
-  //         }
-  //       }
-  //     },
-  //     error: function(data) {
-  //       var e = data.statusText;
-  //       alert(e);
-  //     }
-  //   });
-  // });
 
   var description_length = $('#description_length').text();
 

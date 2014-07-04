@@ -172,7 +172,7 @@
                   <div id="creators_box" class="data-creators">
 
                       <h6>Selected Data Creators (<span id="creators_count"></span>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
-                      <ul id="creators">
+                      <ul id="selected_creators">
 
                       </ul>
 
@@ -213,7 +213,7 @@
                         Selected Grant Numbers (<span id="activities_count"></span>)
                        <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button>
                      </h6>
-                      <ul id="activities">
+                      <ul id="selected_activities">
 
                       </ul>
 

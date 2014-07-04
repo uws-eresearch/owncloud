@@ -778,7 +778,7 @@ function initSearchHandlers() {
 
   var creatorSelectedList = manifest.creators;
   var creator$resultsLi = $('#search_people_results');
-  var creator$selectedLi = $('#creators');
+  var creator$selectedLi = $('#selected_creators');
   var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsLi, creator$selectedLi);
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword').val()));
@@ -815,7 +815,7 @@ function initSearchHandlers() {
   
   var activitySelectedList = manifest.activities;
   var activity$resultsLi = $('#search_activity_results');
-  var activity$selectedLi = $('#activities');
+  var activity$selectedLi = $('#selected_activities');
   var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsLi, activity$selectedLi);
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
@@ -855,8 +855,7 @@ function getMaifest() {
   return result;
 }
 
-$(document).ready(function() {
-
+$(document).ready(function() {  		
   $('#download').click('click', function(event) {
     if (treeHasNoFiles()) {
       displayNotification('No items in the crate to package');

@@ -683,11 +683,11 @@ class FeatureContext extends MinkContext
         // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is! 	
         $js = <<<JS
 var result = '[' + 
-  			      '{\"result-metadata\":{\"all\": {\"id\": [\"001\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}'
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"111123\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}'
   			       + ',' +
-  			      '{\"result-metadata\":{\"all\": {\"id\": [\"002\"], \"grant_number\": [\"123123\"], \"dc_title\": [\"Title B\"], \"dc_date\": [\"2010\"]}}}'
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"123123\"], \"grant_number\": [\"123123\"], \"dc_title\": [\"Title B\"], \"dc_date\": [\"2010\"]}}}'
   			       + ',' +
-  			      '{\"result-metadata\":{\"all\": {\"id\": [\"003\"], \"grant_number\": [\"123456\"], \"dc_title\": [\"Title C\"], \"dc_date\": [\"198\"]}}}'
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"123456\"], \"grant_number\": [\"123456\"], \"dc_title\": [\"Title C\"], \"dc_date\": [\"1988\"]}}}'
   			    +']';			    
 $.mockjax({
     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
@@ -695,7 +695,7 @@ $.mockjax({
     dataType: 'json',
     data: {
         'action': 'search_activity',
-        'keyword_activity': '123'
+        'keywords': '123'
       },
     responseText : result
   });
@@ -717,7 +717,6 @@ JS;
 				$xpath = '//a[@href="#grant-numbers"]/i';
 		        $expand_trigger = $page->find('xpath', $xpath);
 				$expand_trigger->click();
-				//usleep(70000);
 			}
 			return true;
 		});
@@ -728,8 +727,9 @@ JS;
      */
     public function iClickTheSearchGrantNumberButton()
     {
-		$this->mockActivityLookup();		
-		$this->spin(function($context) {			
+    	$this->getSession()->executeScript('$.mockjaxClear();');	
+	    $this->mockActivityLookup();			
+		$this->spin(function($context) {	
 	    	$session = $context->getSession();
 	        $page = $session->getPage();
 	        $xpath = '//button[@id="search_activity"]';
@@ -737,6 +737,9 @@ JS;
 			$el->click();
 			return true;
 		});
+		sleep(1);
+		// clear mockjax
+		$this->getSession()->executeScript('$.mockjaxClear();');
     }
     
     /**
@@ -744,36 +747,56 @@ JS;
      */
     public function iShouldSeeTheseEntriesInTheResultList(TableNode $table)
     {
-		$page = $this->getSession()->getPage();
-		$xpath = '//ul[@id="activities"]//p[@class="grant_number"]/*/text()';
+
+		$page = $this->getSession()->getPage();		$xpath = '//ul[@id="search_activity_results"]//p[@class="metadata_heading"]';
+		$grants = $this->checkSearchResult($xpath, $page);
+		
+		$xpath = '//ul[@id="search_activity_results"]//p[2]';
+		$years = $this->checkSearchResult($xpath, $page);
+		
+		$xpath = '//ul[@id="search_activity_results"]//p[3]';
+		$titles = $this->checkSearchResult($xpath, $page);
+		
+        $hash = $table->getHash();
+		for ($count = 0; $count < count($hash); $count++ ){
+		   $this->matchTableValue($hash[$count]['grant'], $grants[$count], $count);
+		   $this->matchTableValue($hash[$count]['year'], $years[$count], $count);
+		   $this->matchTableValue($hash[$count]['title'], $titles[$count], $count);
+		}
+    }
+    
+	private function checkSearchResult($xpath, $page)
+	{
 		$el_array = $page->findAll('xpath', $xpath);
 		if (empty($el_array))
 		{
-			throw new Exception('No results are returned.');
+			throw new Exception('No results are returned: '.$xpath);
 		}
-        $hash = $table->getHash();
-		$count = 0;
-		
-		foreach ($el_array as $el) {
-		   $actual_val = $el->getText();
-		   $expected_val = $hash[$count]['activity_number'];
-           if ($actual_val != $expected_val)
-		   {
-			   throw new Exception('Mismatch result ('.$count.'). Expected: '.$expected_val.', actual: '.$actual_val);
-		   }
-		   $count++;
-		}
-    }
+		return $el_array;
+	}
+	
+	private function matchTableValue($hashval, $el, $count)
+	{
+		$actual_val = $el->getText();
+	    $expected_val = $hashval;
+        if ($actual_val != $expected_val)
+	    {
+	 	   throw new Exception('Mismatch result ('.$count.'). Expected: '.$expected_val.', actual: '.$actual_val);
+	    }
+	}
 
     /**
      * @Given /^I add grant number "([^"]*)" to the list$/
      */
     public function iAddGrantNumberToTheList($arg1)
     {
-        $page = $this->getSession()->getPage();
-		$xpath = '//ul[@id="search_activity_results"]//p[@class="full_name" and text()="'.$arg1.'"]/../button';
-		$button = $page->find('xpath', $xpath);
-		$button->click();
+    	$this->spin(function($context) use ($arg1) {
+	        $page = $context->getSession()->getPage();
+			$xpath = '//ul[@id="search_activity_results"]//button[@id="'.$arg1.'"]';
+			$button = $page->find('xpath', $xpath);
+			$button->click();
+			return true;
+		});
     }
 
 	/**
@@ -781,10 +804,13 @@ JS;
      */
     public function iRemoveGrantNumberInTheList($arg1)
     {
-        $page = $this->getSession()->getPage();
-		$xpath = '//input[@id="search_activity_results_'.$arg1.'" and @value="Remove"]';
-		$button = $page->find('xpath', $xpath);
-		$button->click();
+    	$this->spin(function($context) use ($arg1) {
+	        $page = $context->getSession()->getPage();
+			$xpath = '//ul[@id="selected_activities"]//button[@id="'.$arg1.'"]';
+			$button = $page->find('xpath', $xpath);
+			$button->click();
+			return true;
+		});
     }
 
 	/**
@@ -805,19 +831,22 @@ JS;
      */
     public function iShouldSeeTheseEntriesInTheSelectedGrantNumberList(TableNode $table)
     {
-        $page = $this->getSession()->getPage();
-		$xpath = '//ul[@id="activities"]//span';
-		$el_array = $page->findAll('xpath', $xpath);
+    	sleep(1);
+		$page = $this->getSession()->getPage();
+		$xpath = '//ul[@id="selected_activities"]//p[@class="metadata_heading"]';
+		$grants = $this->checkSearchResult($xpath, $page);
+		
+		$xpath = '//ul[@id="selected_activities"]//p[2]';
+		$years = $this->checkSearchResult($xpath, $page);
+		
+		$xpath = '//ul[@id="selected_activities"]//p[3]';
+		$titles = $this->checkSearchResult($xpath, $page);
+		
         $hash = $table->getHash();
-		$count = 0;
-		foreach ($el_array as $el) {
-		   $actual_val = $el->getText();
-		   $expected_val = $hash[$count]['activity_number'];
-           if ($actual_val != $expected_val)
-		   {
-			   throw new Exception('Mismatch result ('.$count.'). Expected: '.$expected_val.', actual: '.$actual_val);
-		   }
-		   $count++;
+		for ($count = 0; $count < count($hash); $count++ ){
+		   $this->matchTableValue($hash[$count]['grant'], $grants[$count], $count);
+		   $this->matchTableValue($hash[$count]['year'], $years[$count], $count);
+		   $this->matchTableValue($hash[$count]['title'], $titles[$count], $count);
 		}
     }	
 

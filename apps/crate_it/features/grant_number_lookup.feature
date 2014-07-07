@@ -66,16 +66,16 @@ Feature: Search, add and remove grant number
      When I click the search grant number button and get no results
      Then I should see "0 new results returned"
      
-     
    #CRATEIT-162
-   @wip
    Scenario: Click on 'Clear All' should remove all selected grant numbers
-     Given I fill in 'keyword_activity' with 'abc'
-     And I click the 'Search Grant Number' button
-     And I add grant number "123345" to the list
+     Given I fill in "keyword_activity" with "123"
+     And I click the search grant number button 
+     And I add grant number "123123" to the list
      And I add grant number "111123" to the list
-     Then I click the 'Clear All' button
-     Then I should see no entries in the selected grant number list
+     When I clear all activities
+     Then I should see "Clear all grants?"
+     When I press "Clear" on the popup dialog
+     Then I should no selected grants
     
     
     

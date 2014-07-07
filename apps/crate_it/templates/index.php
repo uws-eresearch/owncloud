@@ -182,7 +182,7 @@
                       </button>
                     </h6>
                     <ul id="selected_activities"></ul>
-
+                    <!-- TODO: Be more consistent with naming, are they "grants" or "activities"? -->
                     </ul>
 
 

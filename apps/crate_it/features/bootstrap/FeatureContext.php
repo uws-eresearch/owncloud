@@ -12,11 +12,12 @@ use Behat\Mink\WebAssert;
 //
 // Require 3rd-party libraries here:
 //
-//   require_once 'PHPUnit/Autoload.php';
-//   require_once 'PHPUnit/Framework/Assert/Functions.php';
+// require_once 'PHPUnit/Autoload.php';
+// require_once 'PHPUnit/Framework/Assert/Functions.php';
 
 // require_once '../../vendor/autoload.php';
-// require_once 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
+require_once 'vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
 
 /**
  * Features context.
@@ -680,6 +681,7 @@ class FeatureContext extends MinkContext
 
     private function mockActivityLookup()
 	{
+        // TODO: Look at way to load mockjax dynamically so that is isn't loaded in production
         // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is! 	
         $js = <<<JS
 var result = '[' + 
@@ -781,6 +783,21 @@ JS;
 
 
     /**
+     * @When /^I clear all activities$/
+     */
+    public function iClearAllActivities()
+    {
+        // TODO: A lot of these methods just search by xpath and click and element,
+        // The can probably be refactored and remove to be a lot DRYer
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $button = $page->find('css', '#clear_grant_numbers');
+            $button->click();
+            return true;
+        });
+    }
+
+    /**
      * @Then /^I should see these entries in the result list$/
      */
     public function iShouldSeeTheseEntriesInTheResultList(TableNode $table)
@@ -863,6 +880,19 @@ JS;
 			return true;
 		});
 	}
+
+        /**
+     * @Then /^I should no selected grants$/
+     */
+    public function iShouldNoSelectedGrants()
+    {
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $grants = $page->findAll('css', '#selected_activities > li');
+            assertEquals(0, count($grants));
+            return true;
+        });
+    }
 
     /**
      * @Then /^I should see these entries in the selected grant number list$/

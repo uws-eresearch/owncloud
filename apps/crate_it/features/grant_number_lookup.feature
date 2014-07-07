@@ -61,17 +61,16 @@ Feature: Search, add and remove grant number
      Then I should see 'Server unreachable. Please try again later.'
      
    #CRATEIT-162
-   @wip
    Scenario: Server returns no results should trigger a notification
-     Given I fill in 'keyword_activity' with 'abc'   
-     And I click the search grant number button 
-     Then I should see 'Sorry, your search returned no results. Please check and try again later'
+     Given I fill in "keyword_activity" with "123"
+     When I click the search grant number button and get no results
+     Then I should see "0 new results returned"
      
      
    #CRATEIT-162
    @wip
    Scenario: Click on 'Clear All' should remove all selected grant numbers
-     Given I fill in 'keyword_activity' with '123'
+     Given I fill in 'keyword_activity' with 'abc'
      And I click the 'Search Grant Number' button
      And I add grant number "123345" to the list
      And I add grant number "111123" to the list

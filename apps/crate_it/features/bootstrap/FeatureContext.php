@@ -705,6 +705,22 @@ JS;
 	}
 	
 
+    private function resultlessMockActivityLookup() {
+                $js = <<<JS
+$.mockjax({
+    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+    type: 'post',
+    dataType: 'json',
+    data: {
+        'action': 'search',
+        'keywords': 'abc'
+      },
+    responseText: '[{\"result-metadata\":{\"all\": {\"id\": [\"111123\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}]'
+  });
+JS;
+        $this->getSession()->executeScript($js);
+    }
+
     /**
      * @Given /^I expand the grant number metadata section$/
      */
@@ -728,7 +744,7 @@ JS;
     public function iClickTheSearchGrantNumberButton()
     {
     	$this->getSession()->executeScript('$.mockjaxClear();');	
-	    $this->mockActivityLookup();			
+	    $this->mockActivityLookup();		
 		$this->spin(function($context) {	
 	    	$session = $context->getSession();
 	        $page = $session->getPage();
@@ -741,7 +757,29 @@ JS;
 		// clear mockjax
 		$this->getSession()->executeScript('$.mockjaxClear();');
     }
-    
+ 
+
+    /**
+     * @Given /^I click the search grant number button and get no results$/
+     */
+    public function iClickTheSearchGrantNumberButtonAndGetNoResults()
+    {
+        $this->getSession()->executeScript('$.mockjaxClear();');
+        $this->resultlessMockActivityLookup();
+        $this->spin(function($context) {    
+            $session = $context->getSession();
+            $page = $session->getPage();
+            $xpath = '//button[@id="search_activity"]';
+            $el = $page->find('xpath', $xpath);
+            $el->click();
+            return true;
+        });
+        sleep(1);
+        // clear mockjax
+        $this->getSession()->executeScript('$.mockjaxClear();');
+    }
+
+
     /**
      * @Then /^I should see these entries in the result list$/
      */

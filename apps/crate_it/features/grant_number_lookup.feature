@@ -77,7 +77,20 @@ Feature: Search, add and remove grant number
      When I press "Clear" on the popup dialog
      Then I should no selected grants
     
-    
+   #CRATEIT-162
+   Scenario: A user can cancel clearing all grant numbers
+     Given I fill in "keyword_activity" with "123"
+     And I click the search grant number button 
+     And I add grant number "123123" to the list
+     And I add grant number "111123" to the list
+     When I clear all activities
+     Then I should see "Clear all grants?"
+     When I press "Cancel" on the popup dialog
+     Then I should see these entries in the selected grant number list
+      | grant    | year | title   |
+      | 123123   | 2010 | Title B |
+      | 111123   | 1999 | Title A |
+      
     
     
       

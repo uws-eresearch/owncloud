@@ -803,7 +803,8 @@ JS;
     public function iShouldSeeTheseEntriesInTheResultList(TableNode $table)
     {
 
-		$page = $this->getSession()->getPage();		$xpath = '//ul[@id="search_activity_results"]//p[@class="metadata_heading"]';
+		$page = $this->getSession()->getPage();
+        $xpath = '//ul[@id="search_activity_results"]//p[@class="metadata_heading"]';
 		$grants = $this->checkSearchResult($xpath, $page);
 		
 		$xpath = '//ul[@id="search_activity_results"]//p[2]';

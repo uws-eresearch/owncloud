@@ -25,11 +25,15 @@ class MintConnector implements SearchProvider {
     curl_setopt($ch, CURLOPT_URL, $query);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $content = curl_exec($ch);
+    if(curl_errno($ch)) {
+      throw new \Exception("Grant / Author lookups are not available at this time, try again later. (cURL error: ".curl_error($ch).")");
+    }
     curl_close($ch);
     if (!empty($content)) {
       $content_array = json_decode($content);
       $result = $content_array->results;
     }
+
     return json_encode($result);
   }
 

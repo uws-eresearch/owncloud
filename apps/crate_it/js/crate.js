@@ -363,12 +363,6 @@ function treeHasNoFiles() {
   return children.length == 0;
 }
 
-function removeFORCodes() {
-  var first = $('#for_second_level option:first').detach();
-  $('#for_second_level').children().remove();
-  $('#for_second_level').append(first);
-}
-
 function activateRemoveCreatorButton(buttonObj) {
   buttonObj.click('click', function(event) {
     // Remove people from backend
@@ -567,6 +561,7 @@ function drawCrateContents() {
       indentTree();
     },
     error: function(data) {
+      // TODO: why alert? It's overwritten anyway
       var e = data.statusText;
       alert(e);
     }
@@ -574,7 +569,7 @@ function drawCrateContents() {
 }
 
 
-function SearchManager(definition, selectedList, $resultsUl, $selectedUl) {
+function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notification) {
 
   var _self = this;
   var searchResultsList = [];
@@ -595,10 +590,15 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl) {
         var records = data.map(function(record) { return parseMintResult(record); });
         searchResultsList = records.filter(function(record) { return !isSelected(record.id); });
         _self.notifyListeners();
+        if(searchResultsList == 0) {
+          $notification.text('0 new results returned')
+        } else {
+          $notification.text('');
+        }
         drawList($resultsUl, searchResultsList, 'fa-plus');
       },
       error: function(data) {
-        displayError(data.statusText);
+        $notification.text(data.statusText);
       }
     });
   };
@@ -804,7 +804,8 @@ function initSearchHandlers() {
   var creatorSelectedList = manifest.creators;
   var creator$resultsUl = $('#search_people_results');
   var creator$selectedUl = $('#selected_creators');
-  var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl);
+  var creator$notification = $('#creators_search_notification');
+  var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification);
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword').val()));
   });
@@ -813,14 +814,6 @@ function initSearchHandlers() {
   };
   CreatorSearchManager.addEventListener(creatorsCount);
   CreatorSearchManager.notifyListeners();
-  var creatorsResultsCount = function(e) {
-    var msg = '';
-    if(e.results == 0) {
-      msg = e.results + ' new results returned';
-    }
-    $('#creators_search_notification').text(msg);
-  };
-  CreatorSearchManager.addEventListener(creatorsResultsCount);
   $('#clear_creators').click(function() {
     $('#clearMetadataField').text('Creators');
     attachModalHandlers($clearMetadataModal, CreatorSearchManager.clearSelected);
@@ -846,7 +839,8 @@ function initSearchHandlers() {
   var activitySelectedList = manifest.activities;
   var activity$resultsUl = $('#search_activity_results');
   var activity$selectedUl = $('#selected_activities');
-  var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl);
+  var activity$notification = $('#activites_search_notification');
+  var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification);
 
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
@@ -856,14 +850,6 @@ function initSearchHandlers() {
   };
   ActivitySearchManager.addEventListener(activitiesSelectedCount);
   ActivitySearchManager.notifyListeners();
-  var activiesResultsCount = function(e) {
-    var msg = '';
-    if(e.results == 0) {
-      msg = e.results + ' new results returned';
-    }
-    $('#activites_search_notification').text(msg);
-  };
-  ActivitySearchManager.addEventListener(activiesResultsCount);
   $('#clear_grant_numbers').click(function() {
     $('#clearMetadataField').text('Grants');
     attachModalHandlers($clearMetadataModal, ActivitySearchManager.clearSelected);

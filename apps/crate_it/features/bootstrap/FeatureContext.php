@@ -776,7 +776,7 @@ JS;
             $el->click();
             return true;
         });
-        sleep(1);
+        sleep(2);
         // clear mockjax
         $this->getSession()->executeScript('$.mockjaxClear();');
     }

@@ -52,7 +52,7 @@ Feature: Search, add and remove grant number
       | 111123   | 1999 | Title A |    
       | 123456   | 1988 | Title C |
    
-   #CRATEIT-162
+   #CRATEIT-155
    @wip
    Scenario: Mint server unavailable should trigger a notification
      Given the mint server became unavailable

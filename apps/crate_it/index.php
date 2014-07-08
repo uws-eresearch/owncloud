@@ -42,7 +42,6 @@ $tmpl->assign('bagged_files', $bagit_manager->getBaggedFiles());
 $tmpl->assign('description', $manifestData['description']);
 $tmpl->assign('description_length', $description_length);
 $tmpl->assign('crates', $bagit_manager->getCrateList());
-$tmpl->assign('top_for', $bagit_manager->search('FOR', 'top'));
 $tmpl->assign('selected_crate', $bagit_manager->getSelectedCrate());
 
 if ($manifestData['creators']) {

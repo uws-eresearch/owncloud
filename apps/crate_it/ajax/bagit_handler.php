@@ -276,7 +276,11 @@ switch ($action){
 		echo json_encode($result);
 		break;
 	case 'search':
-		echo $bagit_manager->search($type, $keywords);
+		try {
+			echo $bagit_manager->search($type, $keywords);
+		} catch (Exception $e) {
+			header('HTTP/1.1 500 '.$e->getMessage());
+		}
 		break;
 	case 'get_for_codes':
 		//need to access the tmpl var

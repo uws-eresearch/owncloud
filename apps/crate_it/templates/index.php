@@ -166,7 +166,7 @@
               <div class="panel-heading">
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#meta-data" href="#grant-numbers">
-                    Grant Numbers
+                    Grants
                     <i class="pull-right fa fa-caret-up"></i>
                   </a>
                 </h4>
@@ -176,7 +176,7 @@
                   
                   <div id="activities_box" class="grant-numbers">
 
-                    <h6>Selected Grant Numbers (<span id="activities_count"></span>)
+                    <h6>Selected Grants (<span id="activities_count"></span>)
                       <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit">
                         <i class="fa fa-times muted"></i>
                       </button>
@@ -186,7 +186,7 @@
                     </ul>
 
 
-                    <h6>Add New Grant Numbers</h6>
+                    <h6>Add New Grants</h6>
                     <div id="search_activity_box" class="input-group">
                       <input id="keyword_activity" class="form-control" type="text" name="keyword_activity" placeholder="Search Grants..."/>
                       <span class="input-group-btn">

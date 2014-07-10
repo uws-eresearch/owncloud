@@ -31,10 +31,13 @@
 
     <select id="crates">
       <?php foreach($_['crates'] as $crate):?>
-        <option id="<?php echo $crate; ?>" value="<?php echo $crate; ?>" <?php if($_['selected_crate']==$crate){echo 'selected';}?>>
-          <?php echo $crate;?>
+        <option id="<?php echo $crate; ?>" value="<?php echo $crate; ?>" <?php
+        if ($_['selected_crate'] == $crate) {echo 'selected';
+        }
+    ?>>
+          <?php echo $crate; ?>
         </option>
-      <?php endforeach;?>
+      <?php endforeach; ?>
     </select>
 
     <div class="pull-right">

@@ -20,13 +20,13 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-namespace OCA\Cr8it;
+ 
+namespace OCA\crate_it;
 
 use \OCA\AppFramework\App;
-use \OCA\Cr8it\DependencyInjection\DIContainer;
+use \OCA\crate_it\DependencyInjection\DIContainer;
 
-$this->create('myapp_index', '/')->action(
+$this->create('crate_it_index', '/')->get()->action(
 		function($params){
 			// call the index method on the class PageController
 			App::main('PageController', 'index', $params, new DIContainer());

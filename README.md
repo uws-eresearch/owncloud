@@ -19,6 +19,15 @@ $ git submodule update
 $ vagrant up
 ```
 
+NOTE 
+
+If you get an error after 'vagrant up' command (VBoxManage: error: Failed to create the host-only adapter), then run this command:
+
+```
+$ sudo launchctl load /Library/LaunchDaemons/org.virtualbox.startup.plist
+```
+then try 'vagrant up' again.
+
 #### Check your setup
 
 ```
@@ -32,6 +41,18 @@ You should see the directories crate_it and file_previewer
 #### Access owncloud
 
 The server should be started already, go to [http://localhost:8080/owncloud](http://localhost:8080/owncloud) and create an account by entering a username and password.
+
+NOTE
+
+If you go to the Crate It page and you cannot see any folders/files, or the metadata section on the right hand side, that the cr8it config file  (/var/www/html/owncloud/data/cr8it_config.json) is not set up properly. 
+Please contact the Intersect team for more information on how to configure this file.
+
+Once you have changed the cr8it_config.json file, be sure the restart the server:
+```
+$ vagrant ssh
+$ sudo su -
+$ service httpd restart
+```
     
 #### Installing Test Frameworks
 
@@ -47,3 +68,13 @@ Install components
 $ php -d detect_unicode=Off composer.phar install --prefer-source -v
 ```
 
+Start java selenium server
+
+```
+# Assuming you are inside the owncloud directory (where you cloned the project)
+$ cd apps/crate_it
+$ bin/selenium/start.sh
+
+# Now you can run tests as follows:
+$ bin/behat features/your_behat_test.feature
+```

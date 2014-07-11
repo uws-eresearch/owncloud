@@ -20,13 +20,13 @@
  */
 alert = function() {};
 
-function displayError(errorMessage) {
-  displayNotification('There was an error: ' + errorMessage);
+function displayError(errorMessage, delayTime) {
+  displayNotification('There was an error: ' + errorMessage, delayTime);
 }
 
 
 function displayNotification(message, delayTime) {
-  if(typeof(delayTime) === 'undefined') {
+  if (typeof(delayTime) === 'undefined') {
     delayTime = 3000;
   }
   OC.Notification.show(message);
@@ -36,13 +36,37 @@ function displayNotification(message, delayTime) {
 }
 
 
-function indentTree($tree) {
+function indentTree() {
   $tree.find('.jqtree-element').each(function() {
     var indent = $(this).parents('li').length * 20;
     $(this).css('padding-left', indent);
     $(this).css('background-position', indent + 20 + 'px 50%');
   });
 }
+
+function attachModalHandlers($modal, confirmCallback) {
+  var $confirm = $modal.find('.btn-primary');
+
+  var clearInput = function() {
+    var $input = $modal.find('input');
+    if ($input) {
+      $input.val('');
+    }
+  };
+
+  $confirm.click(function() {
+    confirmCallback();
+    $modal.modal('hide');
+  });
+
+  $modal.on('hide.bs.modal', function() {
+    $confirm.off('click');
+    clearInput();
+  });
+
+  $modal.modal('show');
+};
+
 
 function buildFileTree(data) {
 
@@ -56,7 +80,9 @@ function buildFileTree(data) {
       'x-office-presentation', 'x-office-spreadsheet'
     ];
     var icon = 'file'
-    if (node.folder || node.id == 'folder') {
+    if(node.id == 'rootfolder') {
+      return 'url('+ OC.filePath('crate_it', 'img', 'crate.png') + ')';
+    } else if (node.folder || node.id == 'folder') {
       icon = 'folder';
     } else {
       var mime_base = node.mime.split('/')[0];
@@ -70,60 +96,78 @@ function buildFileTree(data) {
     return 'url(' + OC.imagePath('core', 'filetypes/' + icon + '.svg') + ')';
   };
 
-  var attachModalHandlers = function($modal, confirmCallback, successMessage) {
-    var $confirm = $modal.find('.btn-primary');
-
-    var clearInput = function() {
-      var $input = $modal.find('input');
-      if ($input) {
-        $input.val('');
-      }
-    };
-
-    $confirm.click(function() {
-      confirmCallback();
-      if (typeof(successMessage) == 'function') {
-        successMessage = successMessage();
-      }
-      // removeHandlers();
-      saveTree($tree, successMessage);
-      indentTree($tree);
-      $modal.modal('hide');
-    });
-
-    $modal.on('hide.bs.modal', function() {
-      $confirm.off('click');
-      clearInput();
-    });
-
-    $modal.modal('show');
-  };
-
   var addFolder = function(node) {
     var $modal = $('#addFolderModal');
     var confirmCallback = function() {
+      var folder = $('#add-folder').val();
       $tree.tree('appendNode', {
         id: 'folder',
-        label: $('#add-folder').val(),
+        label: folder,
       }, node);
       $tree.tree('openNode', node);
+      indentTree();
+      var successMessage = folder + ' added';
+      var errorMessage = folder + 'not added';
+      saveTree(successMessage, errorMessage);
     };
-    var successMessage = function() {
-      return $('#add-folder').val() + ' added';
-    };
-    attachModalHandlers($modal, confirmCallback, successMessage);
+    attachModalHandlers($modal, confirmCallback);
   };
 
-  var renameItem = function(node) {
+  var renameCrate = function(node) {
     var $modal = $('#renameCrateModal');
+    var oldName = node.name;
+    $('#rename-crate').val(oldName);
+    $('#rename-crate').keyup(function() {
+      var $input = $('#rename-crate');
+      var $error = $('#rename_crate_error');
+      var $confirm = $modal.find('.btn-primary');
+      validateCrateName($input, $error, $confirm);
+    });
+
     var confirmCallback = function() {
-      $tree.tree('updateNode', node, $('#rename-item').val());
-    };
+      var newName = $('#rename-crate').val();
+      $tree.tree('updateNode', node, newName);
+      var vfs = $tree.tree('toJson');
+      $.ajax({
+        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'action': 'rename_crate',
+          'new_name': newName,
+          'vfs': vfs
+        },
+        success: function() {
+          $('#crates > #' + oldName).val(newName).attr('id', newName).text(newName);
+          var successMessage = 'Renamed ' + oldName + ' to ' + newName;
+          var errorMessage = oldName + ' not renamed';
+          saveTree(successMessage, errorMessage, true);
+          
+        },
+        error: function(data) {
+          $tree.tree('updateNode', node, oldName);
+          displayError(oldName + ' not renamed');
+          location.reload();
+        }
+      });
+    }
+   // the successMessage function gets called after the name has changed
+    attachModalHandlers($modal, confirmCallback);
+  }
+
+  var renameItem = function(node) {
+    var $modal = $('#renameItemModal');
     var oldName = node.name; // the successMessage function gets called after the name has changed
-    var successMessage = function() {
-      return 'Renamed ' + oldName + ' to ' + $('#rename-item').val();
+    $('#rename-item').val(node.name);
+    var confirmCallback = function() {
+      var newName = $('#rename-item').val();
+      $tree.tree('updateNode', node, newName);
+      indentTree();
+      var successMessage = 'Renamed ' + oldName + ' to ' + newName;
+      var errorMessage = 'error renaming' +  oldName;
+      saveTree(successMessage, errorMessage);
     };
-    attachModalHandlers($modal, confirmCallback, successMessage);
+    attachModalHandlers($modal, confirmCallback);
   };
 
   var removeItem = function(node) {
@@ -132,9 +176,12 @@ function buildFileTree(data) {
     $modal.find('.modal-body > p').text(msg);
     var confirmCallback = function() {
       $tree.tree('removeNode', node);
+      indentTree();
+      var successMessage = node.name + ' removed';
+      var errorMessage = node.name + ' not removed';
+      saveTree(successMessage, errorMessage);
     };
-    var successMessage = node.name + ' removed';
-    attachModalHandlers($modal, confirmCallback, successMessage);
+    attachModalHandlers($modal, confirmCallback);
   };
 
   $tree = $('#files').tree({
@@ -155,9 +202,18 @@ function buildFileTree(data) {
           addFolder(node);
         });
       }
-      $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Item</a></li>');
+      if (type == 'rootfolder') {
+        $div.addClass('rootfolder');
+        $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Crate</a></li>');  
+      } else {
+        $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Item</a></li>');
+      }
       $ul.find('.fa-pencil').parent().click(function() {
-        renameItem(node);
+        if (type == 'rootfolder') {
+          renameCrate(node);
+        } else {
+          renameItem(node);
+        }
       });
       if (type != 'rootfolder') {
         $ul.append('<li><a><i class="fa fa-trash-o"></i>Remove Item</a></li>');
@@ -166,12 +222,22 @@ function buildFileTree(data) {
         });
       }
     },
+    onCanMove: function(node) {
+      var result = true;
+      // Cannot move root node
+      if (!node.parent.parent) {
+        result = false;
+      }
+      return result;
+    },
     onCanMoveTo: function(moved_node, target_node, position) {
       // Can move before or after any node.
       // Can only move INSIDE of a node whose id ends with 'folder' 
       // console.log(target_node.id);
       if (target_node.id.indexOf('folder', target_node.id.length - 'folder'.length) == -1) {
         return (position != 'inside');
+      } else if (target_node.id == 'rootfolder') {
+        return (position != 'before' && position != 'after');
       } else {
         return true;
       }
@@ -179,19 +245,20 @@ function buildFileTree(data) {
   });
 
   $tree.bind('tree.open', function(event) {
-    saveTree($tree, false);
+    saveTree(false);
   });
 
   $tree.bind('tree.close', function(event) {
-    saveTree($tree, false);
+    saveTree(false);
   });
 
   $tree.bind('tree.move', function(event) {
     event.preventDefault();
     // do the move first, and _then_ POST back.
     event.move_info.do_move();
-    saveTree($tree);
-    indentTree($tree);
+    var msg = 'Item ' + event.move_info.moved_node.name + ' moved';
+    saveTree(msg);
+    indentTree();
   });
 
   expandRoot();
@@ -235,32 +302,6 @@ function updateCrateSize() {
   });
 }
 
-// function togglePostCrateToSWORD() {
-//     $.ajax({
-//         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-//         type: 'post',
-//         dataType: 'json',
-//         data: {'action': 'validate_metadata'},
-//         success: function(data) {
-//       if (data.status == "Success") {
-//     $('#post').removeAttr("title");
-//     $('#post').removeAttr("disabled");
-//       }
-//       else {
-//     $('#post').attr("title", "You cannot post this crate until metadata(title, description, creator) are all set");
-//     $('#post').attr("disabled", "disabled");
-//       }    
-//         },
-//         error: function(data) {
-//             OC.Notification.show(data.statusText);
-//       hideNotification(3000);
-//         }
-//     });
-// }
-
-// MISC: Disable function until UI is fixed
-function togglePostCrateToSWORD() {}
-
 function makeCrateListEditable() {
   $('#crateList .title').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=edit_title', {
     name: 'new_title',
@@ -282,9 +323,12 @@ function expandRoot() {
 }
 
 
-function saveTree($tree, successMessage) {
-  if(typeof(successMessage) === 'undefined') {
+function saveTree(successMessage, errorMessage, reload) {
+  if (typeof(successMessage) === 'undefined') {
     successMessage = 'Crate updated';
+  }
+  if (typeof(errorMessage) === 'undefined') {
+    errorMessage = 'Crate not updated';
   }
   $.ajax({
     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
@@ -299,9 +343,17 @@ function saveTree($tree, successMessage) {
         displayNotification(successMessage);
         updateCrateSize();
       }
+      if (reload) {
+        location.reload();
+      }
     },
     error: function(data) {
-      displayError(data.statusText);
+      if (errorMessage) {
+        displayError(errorMessage);
+      }
+      if (reload) {
+        location.reload();
+      }
     }
   });
 }
@@ -309,18 +361,6 @@ function saveTree($tree, successMessage) {
 function treeHasNoFiles() {
   var children = $tree.tree('getNodeById', 'rootfolder').children;
   return children.length == 0;
-}
-
-function removeFORCodes() {
-  var first = $('#for_second_level option:first').detach();
-  $('#for_second_level').children().remove();
-  $('#for_second_level').append(first);
-}
-
-function hideMetadata() {
-  if (treeHasNoFiles()) {
-    $('#metadata').hide();
-  }
 }
 
 function activateRemoveCreatorButton(buttonObj) {
@@ -340,7 +380,6 @@ function activateRemoveCreatorButton(buttonObj) {
       },
       success: function(data) {
         buttonObj.parent().remove();
-        togglePostCrateToSWORD();
       },
       error: function(data) {
         displayError(data.statusText);
@@ -349,108 +388,496 @@ function activateRemoveCreatorButton(buttonObj) {
   });
 }
 
-function activateRemoveCreatorButtons() {
-  $("input[id^='creator_']").click('click', function(event) {
-    // Remove people from backend
-    var input_element = $(this);
-    var id = input_element.attr("id");
-    creator_id = id.replace("creator_", "");
 
+function validateCrateName($input, $error, $confirm) {
+  var inputName = $input.val();
+    var crates = $.map($('#crates > option'), function(el, i) {
+    return $(el).attr('id');
+  });
+  var emptyName = function() {
+    return (!inputName || /^\s*$/.test(inputName));
+  };
+  var existingName = function() {
+    return crates.indexOf(inputName) > -1;
+  };
+  if(existingName() || emptyName()) {
+    $confirm.prop('disabled', true);
+    if (emptyName()) {
+      $error.text('Crate name cannot be blank');
+    } else {
+      $error.text('Crate with name "' + inputName + '" already exists');
+    }
+    $error.show();
+  } else if (inputName.length > 128) {
+      $error.text('Crate name has reached the limit of 128 characters');
+      $input.val(inputName.substr(0, 128));
+      $error.show();
+      $confirm.prop('disabled', false);
+   } else {
+    $confirm.prop('disabled', false);
+    $error.hide();
+  }
+}
+
+function initCrateActions() {
+
+  var metadataEmpty = function() {
+    var result = false;
+    $('.metadata').each(function() {
+      if($(this).text() === '') {
+        result = true;
+      }
+    });
+    return result;
+  }
+
+  var crateEmpty = function() {
+    return $tree.tree('getNodeById', 'rootfolder').children.length == 0;
+  }
+
+  var createCrate = function() {
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'get',
+      dataType: 'html',
+      async: false,
+      data: {
+        'action': 'create',
+        'crate_name': $('#crate_input_name').val(),
+        'crate_description': $('#crate_input_description').val(),
+      },
+      success: function(data) {
+        $('#crate_input_name').val('');
+        $('#crate_input_description').val('');
+        $('#createCrateModal').modal('hide');
+        $("#crates").append('<option id="' + data + '" value="' + data + '" >' + data + '</option>');
+        $("#crates").val(data);
+        $('#crates').trigger('change');
+        displayNotification('Crate ' + data + ' successfully created', 6000);
+      },
+      error: function(data) {
+        // $('#create_crate_error').text(data.statusText);
+        // $('#create_crate_error').show();
+        displayError(data.statusText);
+      }
+    });
+  }
+
+  var deleteCrate = function () {
+    var current_crate = $('#crates').val();
     $.ajax({
       url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
       type: 'post',
       dataType: 'json',
       data: {
-        'action': 'remove_people',
-        'creator_id': creator_id,
-        'full_name': input_element.parent().text()
+        'action': 'delete_crate'
       },
       success: function(data) {
-        input_element.parent().remove();
-        togglePostCrateToSWORD();
+        if (data.status == "Success") {
+          displayNotification('Crate ' + current_crate + ' deleted')
+          location.reload();
+        } else {
+          displayError(data.msg);
+        }
+      }
+    });
+    $('#deleteCrateModal').modal('hide');
+  }
+
+  $('#crate_input_name').keyup(function() {
+      var $input = $(this);
+      var $error = $('#crate_name_validation_error');
+      var $confirm = $('#createCrateModal').find('.btn-primary');
+      validateCrateName($input, $error, $confirm);
+  });
+
+  $('#createCrateModal').find('.btn-primary').click(createCrate);
+
+  $('#createCrateModal').on('show.bs.modal', function() {
+    $('#crate_input_name').val('');
+    $('#crate_input_description').val('');
+    $("#crate_name_validation_error").hide();
+    $("#crate_description_validation_error").hide();
+  });
+
+  $('#clearCrateModal').find('.btn-primary').click(function() {
+    var children = $tree.tree('getNodeById', 'rootfolder').children;
+    // NOTE: The while loop is a workaround to the forEach loop inexplicably skipping
+    // the first element
+    while(children.length > 0) {
+      children.forEach(function(node) {
+        $tree.tree('removeNode', node);
+      });
+    }
+    saveTree($('#crates').val() + ' has been cleared');
+    indentTree();
+    $('#clearCrateModal').modal('hide');
+  });  
+
+  $('#deleteCrateModal').on('show.bs.modal', function() {
+    var currentCrate = $('#crates').val();
+    $('#deleteCrateMsg').text('Crate ' + currentCrate + ' is not empty, proceed with deletion?');
+  });
+
+  $('#deleteCrateModal').find('.btn-primary').click(deleteCrate);
+
+  $('#delete').click(function() {
+    if (metadataEmpty() && crateEmpty()) {
+      deleteCrate();
+    } else {
+      $('#deleteCrateModal').modal('show');
+    }
+  });
+
+  $('#crates').change(function() {
+    var id = $(this).val();
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=switch&crate_id=' + id,
+      type: 'get',
+      dataType: 'html',
+      async: false,
+      success: function(data) {
+        location.reload();
       },
       error: function(data) {
-        displayError(data.statusText);
+        var e = data.statusText;
+        alert(e);
       }
     });
   });
+
 }
 
-function makeCreatorsEditable() {
-  $('#creators .full_name').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=edit_creator', {
-    id: 'creator_id',
-    name: 'new_full_name',
-    indicator: '<img src=' + OC.imagePath('crate_it', 'indicator.gif') + '>',
-    tooltip: 'Double click to edit...',
-    event: 'dblclick',
-    style: 'inherit'
+function drawCrateContents() {
+  $.ajax({
+    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      'action': 'get_items'
+    },
+    success: function(data) {
+      $tree = buildFileTree(data);
+      indentTree();
+    },
+    error: function(data) {
+      // TODO: why alert? It's overwritten anyway
+      var e = data.statusText;
+      alert(e);
+    }
   });
 }
 
-function makeCreatorEditable(creatorObj) {
-  creatorObj.editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=edit_creator', {
-    id: 'creator_id',
-    name: 'new_full_name',
-    indicator: '<img src=' + OC.imagePath('crate_it', 'indicator.gif') + '>',
-    tooltip: 'Double click to edit...',
-    event: 'dblclick',
-    style: 'inherit'
-  });
-}
 
-function activateRemoveActivityButton(buttonObj) {
-  buttonObj.click('click', function(event) {
-    // Remove activity from backend
-    var id = $(this).attr("id");
-    activity_id = id.replace("activity_", "");
+function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notification) {
 
+  var _self = this;
+  var searchResultsList = [];
+  var eventListeners = [];
+
+  this.search = function(keywords) {
     $.ajax({
       url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
       type: 'post',
       dataType: 'json',
       data: {
-        'action': 'remove_activity',
-        'activity_id': activity_id,
+        'action': 'search',
+        'type': definition.actions.search,
+        'keywords': keywords
       },
       success: function(data) {
-        buttonObj.parent().remove();
+        searchResultsList = [];
+        var records = data.map(function(record) { return parseMintResult(record); });
+        searchResultsList = records.filter(function(record) { return !isSelected(record.id); });
+        _self.notifyListeners();
+        if(searchResultsList == 0) {
+          $notification.text('0 new results returned')
+        } else {
+          $notification.text('');
+        }
+        drawList($resultsUl, searchResultsList, 'fa-plus');
       },
       error: function(data) {
-        displayError(data.statusText);
+        $notification.text(data.statusText);
       }
     });
-  });
-}
+  };
 
-function activateRemoveActivityButtons() {
-  $("input[id^='activity_']").click('click', function(event) {
-    // Remove activity from backend
-    var input_element = $(this);
-    var id = input_element.attr("id");
-    activity_id = id.replace("activity_", "");
+  var drawList = function ($li, list, faIcon) {
+    $li.empty();
+    list.forEach(function(record) {
+      var html = renderRecord(record, faIcon);
+      $li.append(html);
+      $li.find('#'+record.id).click(function(){
+        toggle(record.id);
+      });
+    });
+  }
 
+  this.addEventListener = function(callback) {
+    eventListeners.push(callback);
+  }
+
+  this.clearSelected = function() {
     $.ajax({
       url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
       type: 'post',
       dataType: 'json',
       data: {
-        'action': 'remove_activity',
-        'activity_id': activity_id,
+        action: 'clear_field',
+        field: definition.manifestField
       },
       success: function(data) {
-        input_element.parent().remove();
+        searchResultsList = searchResultsList.concat(selectedList);
+        selectedList = [];
+        $selectedUl.empty();
+        drawList($resultsUl, searchResultsList, 'fa-plus');
+        _self.notifyListeners();
       },
       error: function(data) {
         displayError(data.statusText);
       }
     });
+  }
+
+  this.notifyListeners = function() {
+    var e = {
+      selected: selectedList.length,
+      results: searchResultsList.length
+      };
+    eventListeners.forEach(function(listener) {
+      listener(e);
+    });
+  }
+
+  // NOTE: not currently used
+  // var resultComparitor = function(a, b) {
+  //   var result = 0;
+  //   if(a[definition.sortField] > b[definition.sortField]) {
+  //     result = 1;
+  //   } else if (a[definition.sortField] < b[definition.sortField]) {
+  //     result = -1;
+  //   }
+  //   return result;
+  // }
+
+  // this.toggle = function(id) {
+  function toggle(id) {
+    var action = definition.actions.add;
+    var faIcon = 'fa-minus';
+    var $sourceLi = $resultsUl;
+    var $destLi = $selectedUl;
+    var record = getRecord(id);
+    if (isSelected(id)) {
+      action = definition.actions.remove;
+      faIcon = 'fa-plus';
+      $sourceLi = $selectedUl;
+      $destLi = $resultsUl;
+      // TODO: This array switching should be called in update:success
+      remove(record, selectedList);
+      searchResultsList.push(record);
+    } else {
+      remove(record, searchResultsList);
+      selectedList.push(record);
+    }
+    var payload = {'action': action};
+    var html = renderRecord(record, faIcon);
+    $.extend(payload, record);
+    update(payload, html, $sourceLi, $destLi);
+  };
+
+  var remove = function(record, array) {
+    var index = array.indexOf(record);
+    if(index > -1) {
+      array = array.splice(index, 1);
+    }
+  };
+
+  var update = function(payload, html, $sourceLi, $destLi) {
+    $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      dataType: 'json',
+      data: payload,
+      success: function(data) {
+        $sourceLi.find('#'+payload.id).parent().remove();
+        $destLi.append(html);
+        $destLi.find('#'+payload.id).click(function(){
+          toggle(payload.id);
+        });
+        _self.notifyListeners();
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  };
+
+  function isSelected(id) {
+    var result = false;
+    selectedList.forEach(function(searchResult) {
+      if (searchResult.id == id) {
+        result = true;
+      }
+    });
+    return result;
+  };
+
+  function getRecord(id) {
+    var records = searchResultsList.concat(selectedList);
+    var result = null;
+    records.forEach(function(record){
+      if (record.id == id) {
+        result = record;
+      }
+    });
+    return result;
+  };
+
+    // mapping object is has {dest: source} format
+  // source can be an array of fields that will be merge into the dest
+  // var parseMintResult = function(mintObject) {
+  function parseMintResult(mintObject) {
+    var metadata = mintObject['result-metadata']['all'];
+    var result = {};
+    for(var destField in definition.mapping) {
+      var sourceField = definition.mapping[destField];
+      if($.isArray(sourceField)) {
+        var fieldElements = [];
+        sourceField.forEach(function(field) {
+          fieldElements.push(parseField(metadata[field]));
+        });
+        result[destField] = fieldElements.join(' ');
+      } else {
+        result[destField] = parseField(metadata[sourceField]);
+      }
+    }
+    return result;
+  };
+
+  // var parseField = function(field) {
+  function parseField(field) {
+    var result = field;
+    if($.isArray(field)) {
+      result = field[0];
+    }
+    return $.trim(result);
+  };
+
+    // fields is an ordered list of fields to render, with the first being used as the title
+  // var renderRecord = function(record, faIcon) {
+  function renderRecord(record, faIcon) {
+    var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
+    html += '<p class="metadata_heading">' + record[definition.displayFields[0]] + '</p>';
+    for (var i = 1; i < definition.displayFields.length ; i++) {
+      html += '<p class=>' + record[definition.displayFields[i]] + '</p>';
+    }
+    return '<li>' + html + '</li>';
+  };
+
+  drawList($selectedUl, selectedList, 'fa-minus');
+}
+
+
+
+function initSearchHandlers() {
+  // TODO: prefix this with var to close scope when not dubugging
+  manifest = getMaifest();
+  $clearMetadataModal = $('#clearMetadataModal');
+
+  var creatorDefinition = {
+    manifestField: 'creators',
+    actions: {
+      search: 'people',
+      add: 'save_people',
+      remove: 'remove_people'
+    },
+    mapping: {
+      'id': 'id',
+      'name' : ['Honorific', 'Given_Name', 'Family_Name'],
+      'email': 'Email'
+    },
+    displayFields: ['name', 'email'],
+    sortField: 'name'
+  };
+
+  var creatorSelectedList = manifest.creators;
+  var creator$resultsUl = $('#search_people_results');
+  var creator$selectedUl = $('#selected_creators');
+  var creator$notification = $('#creators_search_notification');
+  var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification);
+  $('#search_people').click(function () {
+    CreatorSearchManager.search($.trim($('#keyword').val()));
+  });
+  var creatorsCount = function(e) {
+    $('#creators_count').text(e.selected);
+  };
+  CreatorSearchManager.addEventListener(creatorsCount);
+  CreatorSearchManager.notifyListeners();
+  $('#clear_creators').click(function() {
+    $('#clearMetadataField').text('Creators');
+    attachModalHandlers($clearMetadataModal, CreatorSearchManager.clearSelected);
+  });
+
+  var activityDefinition = {
+    manifestField: 'activities',
+    actions: {
+      search: 'activities',
+      add: 'save_activity',
+      remove: 'remove_activity'
+    },
+    mapping: {
+      'id':'id',
+      'title': 'dc_title',
+      'date': 'dc_date',
+      'grant_number': 'grant_number'
+    },
+    displayFields: ['grant_number', 'date', 'title'],
+    sortField: 'title'
+  };
+  
+  var activitySelectedList = manifest.activities;
+  var activity$resultsUl = $('#search_activity_results');
+  var activity$selectedUl = $('#selected_activities');
+  var activity$notification = $('#activites_search_notification');
+  var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification);
+
+  $('#search_activity').click(function () {
+    ActivitySearchManager.search($.trim($('#keyword_activity').val()));
+  });
+  var activitiesSelectedCount = function(e) {
+    $('#activities_count').text(e.selected);
+  };
+  ActivitySearchManager.addEventListener(activitiesSelectedCount);
+  ActivitySearchManager.notifyListeners();
+  $('#clear_grant_numbers').click(function() {
+    $('#clearMetadataField').text('Grants');
+    attachModalHandlers($clearMetadataModal, ActivitySearchManager.clearSelected);
   });
 }
 
-$(document).ready(function() {
+// TODO: Super hacky synchronous call
+// There are many of async calls on page load that could probably all be reduced to this one
+function getMaifest() {
+  var result =[];
+  $.ajax({
+      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      type: 'post',
+      async: false,
+      dataType: 'json',
+      data: {'action': 'get_manifest'},
+      success: function(data) {
+        result = data;
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  return result;
+}
 
-  togglePostCrateToSWORD();
-
+$(document).ready(function() {  
+		
   $('#download').click('click', function(event) {
     if (treeHasNoFiles()) {
       displayNotification('No items in the crate to package');
@@ -483,33 +910,10 @@ $(document).ready(function() {
         displayNotification('Crate posted successfully');
       },
       error: function(data) {
-        displayError(data.statusText)
+        displayError(data.statusText);
       }
     });
 
-  });
-
-  $('#delete').click('click', function(event) {
-    var decision = confirm("All data of this crate will be lost, are you sure?");
-
-    if (decision == true) {
-      $.ajax({
-        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-        type: 'post',
-        dataType: 'json',
-        data: {
-          'action': 'delete_crate'
-        },
-        success: function(data) {
-          if (data.status == "Success") {
-            displayNotification('Crate deleted')
-            location.reload();
-          } else {
-            displayError(data.msg);
-          }
-        }
-      });
-    }
   });
 
   $('#epub').click(function(event) {
@@ -521,258 +925,17 @@ $(document).ready(function() {
     window.location = OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=epub';
   });
 
-  $('#clear').click(function(event) {
-    var children = $tree.tree('getNodeById', 'rootfolder').children;
-    children.forEach(function(node) {
-      $tree.tree('removeNode', node);
-    });
-    saveTree($tree);
-    hideMetadata();
-  });
-  
-   $('#crate_input_name').keyup(function () {
-	  if($(this).val().length > 128){
-	  	$("#crate_name_validation_error").text('Cr8 Name has reached the limit of 128 characters');	
-	  	$("#crate_name_validation_error").show();	
-        $(this).val($(this).val().substr(0, 128));
-	  }
-   });
-   
-   $('#crate_input_description').keyup(function () {
-	  if($(this).val().length > 10000){
-	  	$("#crate_description_validation_error").text('Cr8 Description has reached the limit of 10,000 characters');	
-	  	$("#crate_description_validation_error").show();	
-        $(this).val($(this).val().substr(0, 10000));
-	  }
-   });
-  
-  $('#subbutton').click(function(event) {
-      $('#create_crate_error').hide();
-  	  $("#crate_name_validation_error").hide();	
-  	  $('#crate_input_name').val('');
-  	  $('#crate_input_description').val('');
-  });
+  initCrateActions();
 
-  $('#create_crate_submit').click(function(event) {
-  	   $('#create_crate_error').hide();
-  	   $("#crate_name_validation_error").hide();
-  	   if ($('#crate_input_name').val() == '')
-  	   {
-  	   		$("#crate_name_validation_error").text("This field is mandatory");
-  	   		$("#crate_name_validation_error").show();
-  	   		return false;
-  	   } 
-       $.ajax({
-           url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-           type: 'get',
-           dataType: 'html',
-           async: false,
-           data: {'action':'create', 'crate_name':$('#crate_input_name').val()},
-           success: function(data){
-             $('#crate_input_name').val('');
-             $('#newCrateModal').modal('hide');
-             $("#crates").append('<option id="'+data+'" value="'+data+'" >'+data+'</option>');
-      		 $("#crates").val(data);
-             displayNotification('Crate '+data+' successfully created');
-       		 $('#crates').trigger('change');     
-            },
-           error: function(data){
-           	 $('#create_crate_error').text(data.statusText);
-           	 $('#create_crate_error').show();
-	           displayError(data.statusText);
-           }
-       });   
-       return false;
-  });
-  
-  $('#crateName').editable(OC.linkTo('crate_it', 'ajax/bagit_handler.php')+'?action=rename_crate', {
-    name : 'new_name',
-    indicator : '<img src='+OC.imagePath('crate_it', 'indicator.gif')+'>',
-    tooltip : 'Double click to edit...',
-    event : 'dblclick',
-    style : 'inherit',
-    height : '15px',
-    callback : function(value, settings){
-      $('#crates').find(':selected').text(value);
-      $('#crates').find(':selected').prop("id", value);
-      $('#crates').find(':selected').prop("value", value);
+  $('#crate_input_description').keyup(function() {
+    if ($(this).val().length > 6000) {
+      $("#crate_description_validation_error").text('Crate Description has reached the limit of 6,000 characters');
+      $("#crate_description_validation_error").show();
+      $(this).val($(this).val().substr(0, description_length));
     }
-  });
-  
-  $('#crates').change(function(){
-    var id = $(this).val();
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=switch&crate_id=' + id,
-      type: 'get',
-      dataType: 'html',
-          success: function(data) {
-          	location.reload(); 
-          },
-          error: function(data){
-          var e = data.statusText;
-          alert(e);
-          }
-     });
-  });
-
-  $('#for_top_level').change(function() {
-    var id = $(this).find(':selected').attr("id");
-    if (id === "select_top") {
-      //remove all the child selects
-      removeFORCodes();
-      return;
+    else {
+      $("#crate_description_validation_error").text('');
     }
-    //make a call to the backend, get next level codes, populate option
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=get_for_codes&level=' + id,
-      type: 'get',
-      dataType: 'json',
-      success: function(data) {
-        if (data != null) {
-          removeFORCodes();
-          for (var i = 0; i < data.length; i++) {
-            $("#for_second_level").append('<option id="' + data[i] + '" value="' + data[i] + '" >' + data[i] + '</option>');
-          }
-        }
-      },
-      error: function(data) {
-        var e = data.statusText;
-        alert(e);
-      }
-    });
-  });
-
-  $('#search_people').click('click', function(event) {
-    if ($.trim($('#keyword').val()).length == 0) {
-      $('#search_people_results').empty();
-      return;
-    }
-
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'search_people',
-        'keyword': $.trim($('#keyword').val())
-      },
-      success: function(data) {
-        // populate list of results
-        $('#search_people_results').empty();
-        for (var i = 0; i < data.length; i++) {
-          var all_data = data[i]['result-metadata']['all'];
-          var id = all_data['id'];
-          var honorific = $.trim(all_data['Honorific'][0]);
-          var given_name = $.trim(all_data['Given_Name'][0]);
-          var family_name = $.trim(all_data['Family_Name'][0]);
-          var email = $.trim(all_data['Email'][0]);
-          var full_name = "";
-          if (honorific)
-            full_name = full_name + honorific + ' ';
-          if (given_name)
-            full_name = full_name + given_name + ' ';
-          if (family_name)
-            full_name = full_name + family_name;
-          if (email)
-          // TODO: Fix this
-            full_name = full_name + '</p> <p>' + email;
-          $('#search_people_results').append('<li><button id="' + 'search_people_result_' + id + '"><i class="fa fa-plus"></i></button>' + '<p id="' + id + '" class="full_name">' + full_name + '</p></li>');
-        }
-        $("button[id^='search_people_result_']").click('click', function(event) {
-          // Add people to backend
-          var input_element = $(this);
-          var id = input_element.attr("id");
-          creator_id = id.replace("search_people_result_", "");
-
-          $.ajax({
-            url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-            type: 'post',
-            dataType: 'json',
-            data: {
-              'action': 'save_people',
-              'creator_id': creator_id,
-              'full_name': input_element.parent().text()
-            },
-            success: function(data) {
-              $('#creators').append('<li><button id="' + 'creator_' + creator_id + ' />' + '<span id="' + creator_id + '" class="full_name">' + input_element.parent().text() + '</span></li>');
-              input_element.parent().remove();
-
-              activateRemoveCreatorButton($('#creator_' + creator_id));
-              makeCreatorEditable($('#' + creator_id));
-              togglePostCrateToSWORD();
-            },
-            error: function(data) {
-              displayError(data.statusText);
-            }
-          });
-        });
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-
-  });
-
-  $('#search_activity').click('click', function(event) {
-    if ($.trim($('#keyword_activity').val()).length == 0) {
-      $('#search_activity_results').empty();
-      return;
-    }
-
-    $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
-      dataType: 'json',
-      data: {
-        'action': 'search_activity',
-        'keyword_activity': $.trim($('#keyword_activity').val())
-      },
-      success: function(data) {
-        // populate list of results
-        $('#search_activity_results').empty();
-        for (var i = 0; i < data.length; i++) {
-          var all_data = data[i]['result-metadata']['all'];
-          var id = all_data['id'];
-          var dc_title = $.trim(data[i]['dc:title']);
-          var grant_number = $.trim(data[i]['grant_number']);
-          var full_grant_code = grant_number + ": " + dc_title;
-          $('#search_activity_results').append('<li><input id="' + 'search_activity_result_' + id + '" type="button" value="Add" />' + '<span id="' + id + '"title="' + dc_title + '">' + grant_number + '</span></li>');
-        }
-        $("input[id^='search_activity_result_']").click('click', function(event) {
-          // Add grant code to backend
-          var input_element = $(this);
-          var id = input_element.attr("id");
-          var activity_id = id.replace("search_activity_result_", "");
-          var grant_number = input_element.parent().text();
-          var dc_title = $("span[id=" + activity_id + "]").attr('title');
-
-          $.ajax({
-            url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-            type: 'post',
-            dataType: 'json',
-            data: {
-              'action': 'save_activity',
-              'activity_id': activity_id,
-              'grant_number': grant_number,
-              'dc_title': dc_title
-            },
-            success: function(data) {
-              $('#activities').append('<li><input id="' + 'activity_' + activity_id + '" type="button" value="Remove" />' + '<span id="' + activity_id + '"title="' + dc_title + '">' + grant_number + '</span></li>');
-              input_element.parent().remove();
-              activateRemoveActivityButton($('#activity_' + activity_id));
-            },
-            error: function(data) {
-              displayError(data.statusText);
-            }
-          });
-        });
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
-
   });
 
   var description_length = $('#description_length').text();
@@ -781,6 +944,7 @@ $(document).ready(function() {
     var old_description = $('#description').text();
     $('#description').text('');
     $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');
+    $('#edit_description').addClass('hidden');
     $('#save_description').click(function(event) {
       $.ajax({
         url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
@@ -793,7 +957,7 @@ $(document).ready(function() {
         success: function(data) {
           $('#description').html('');
           $('#description').text(data.description);
-          togglePostCrateToSWORD();
+          $('#edit_description').removeClass('hidden');
         },
         error: function(data) {
           displayError(data.statusText);
@@ -803,25 +967,11 @@ $(document).ready(function() {
     $('#cancel_description').click(function(event) {
       $('#description').html('');
       $('#description').text(old_description);
+      $('#edit_description').removeClass('hidden');
     });
   });
 
-  $.ajax({
-    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-    type: 'get',
-    dataType: 'json',
-    data: {
-      'action': 'get_items'
-    },
-    success: function(data) {
-      $tree = buildFileTree(data);
-      indentTree($tree);
-    },
-    error: function(data) {
-      var e = data.statusText;
-      alert(e);
-    }
-  });
+  drawCrateContents();
 
   max_sword_mb = parseInt($('#max_sword_mb').text());
   max_zip_mb = parseInt($('#max_zip_mb').text());
@@ -829,9 +979,25 @@ $(document).ready(function() {
 
   updateCrateSize();
 
-  activateRemoveCreatorButtons();
-  makeCreatorsEditable();
+  initSearchHandlers();
 
-  activateRemoveActivityButtons();
+  calulate_heights();
 
+  $('#meta-data').on('show.bs.collapse', function (e) {
+      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');
+      calulate_heights();
+  });
+  $('#meta-data').on('hide.bs.collapse', function (e) {
+      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-down').addClass('fa-caret-up');
+      calulate_heights();
+  });
 });
+$( window ).resize(function() {
+  calulate_heights();
+});
+function calulate_heights() {
+  var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1 )) + $('.collapse.info.in .panel-body').outerHeight();
+  alert(tabsHeight)
+  var height = $('#meta-data').innerHeight() - tabsHeight;
+  $('.collapse.standard .panel-body').height(height + 12);
+}

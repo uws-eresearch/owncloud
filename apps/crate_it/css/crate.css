@@ -93,6 +93,10 @@ border-top:1px solid #dedede;
 // BUTTONS /////////////////////////////////////////////////////////////////////
 */
 
+.modal textarea.modal-input, .modal input[type="text"].modal-input{
+	width: 80%;
+} 
+
 .crateit input[type="text"], .crateit input[type="password"], .crateit input[type="search"], .crateit input[type="number"], .crateit input[type="email"], .crateit input[type="url"], .crateit input[type="time"], .crateit textarea, .crateit select, .crateit button, .crateit input[type="button"], .crateit .button, .crateit #quota, .crateit .pager li a, .container-metadata input[type="button"] {
 /*	width: 10em;*/
 	margin: .3em;
@@ -376,32 +380,17 @@ border-top-right-radius: 0;
 /*
 // METADATA CONTAINER //////////////////////////////////////////////////////////
 */
+
 .container-metadata {
 	position: fixed;
-	padding: 0 0 20px 0;
+	padding: 0;
 	top: 90px;
 	bottom: 0;
 	right: 0;
 	width: 290px;
 	background: #FFF;
 	border-left: 1px solid #CCC;
-	overflow-y: auto;
-}
-
-.container-metadata #crateName {
-	display: block;
-	padding: 0 20px;
-	height: 49px;
-	border-bottom: 1px solid #eee;
-	font-size: 18px;
-	line-height: 50px;
-	font-weight: bold;
-}
-
-.container-metadata #description_box {
-	display: block;
-	padding: 20px;
-	border-bottom: 1px solid #eee;
+	overflow-y: hidden;
 }
 
 .container-metadata #description_box label {
@@ -409,57 +398,129 @@ border-top-right-radius: 0;
 	font-size: 14px;
 	font-weight: bold;
 }
-
+.container-metadata .metadata {
+	margin:15px 0 20px 0;
+}
 .container-metadata #description_box textarea {
 	margin: 0;
 	width: 230px !important;
 }
 
-.container-metadata .crate-size {
-	display: block;
-	padding: 20px;
-	border-bottom: 1px solid #eee;
-	font-size: 14px;
-}
-
-.container-metadata .data-creators {
-	display: block;
-	padding: 20px;
-	border-bottom: 1px solid #eee;
-	font-size: 14px;
-}
-
 .container-metadata .data-creators ul#creators {
-	padding: 20px 0;
+	padding: 0 0 20px 0;
 }
 
 .container-metadata .data-creators li {
-	padding: 10px 0;
-	border-top: 1px solid #EEE;
+	padding: 14px 0;
+	border-bottom: 1px solid #EEE;
 }
 
+.container-metadata li .metadata_heading {
+  padding-right:34px;
+  font-weight:bold;
+}
 
-.container-metadata .grant-numbers {
-	display: block;
-	padding: 20px;
-	border-bottom: 1px solid #eee;
-	font-size: 14px;
+.container-metadata .trans-button {
+	font-size:14px;
+	background:none;
+	border:none;
+	padding:0;
+	margin:0;
+}
+.container-metadata .trans-button i.muted {
+	color:#ccc;
+}
+.container-metadata .input-group {
+	margin:15px 0 10px 0;
+}
+.container-metadata .input-group:first-child {
+	margin:0 0 10px 0;
 }
 
 .container-metadata .grant-numbers ul#activities {
-	padding: 20px 0;
+	padding: 0 0 20px 0;
 }
 
 .container-metadata .grant-numbers li {
-	padding: 10px 0;
-	height: 40px;
-	border-top: 1px solid #EEE;
+	padding: 14px 0;
+	border-bottom: 1px solid #EEE;
 }
 
 .container-metadata .grant-numbers label, .container-metadata .data-creators label, .container-metadata .crate-size label {
-	font-weight: bold;
+	font-weight: bold;	
+}
+.container-metadata .nothing-selected {
+	color:#777;
+	margin-top:15px;
 }
 
+
+/*
+// PANELS //////////////////////////////////////////////////////////////////////
+*/
+
+  .panel-group {
+    height:100%;
+    margin:0;
+  }
+  .panel-group .panel, .panel-group .panel+.panel {
+    border-radius:0;
+    border:none;
+    margin:0;
+  }
+  .panel-default>.panel-heading {
+    border-radius:0;
+    border-top:solid 1px #eee;
+    border-bottom:solid 1px #eee;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+  }
+  .panel-heading h4.panel-title {
+    font-size:14px;
+    font-weight:bold;
+  }
+  .panel-heading h4.panel-title i {
+    margin-top:2px;
+  }
+  .panel-group .panel-heading+.panel-collapse .panel-body {
+    border:none;
+  }
+  .panel-body {
+    padding: 20px 20px 10px 20px;
+    overflow:scroll;
+  }
+
+  .panel-body h6 {
+    text-transform:uppercase;
+    font-weight:bold;
+    margin:0;
+    padding-bottom:10px;
+    font-size:11px;
+    border-bottom: solid 1px #eee;
+  }
+  .panel-body h6 .standard {
+    font-weight:normal;
+  }
+  .panel-body h6.info {
+    border-bottom:none;
+    margin:0;
+    padding:0;
+  }
+
+.collapse {
+  display: none;
+}
+.collapse.in {
+  display: block;
+}
+.collapsing {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: height .35s ease;
+       -o-transition: height .35s ease;
+          transition: height .35s ease;
+}
 
 /*
 // FOOTER //////////////////////////////////////////////////////////////////////
@@ -529,4 +590,11 @@ font-size: 18px;
 
 #search_people_results button {
 	float: right;
+}
+
+
+#files ul.jqtree-tree li > div.jqtree-element.rootfolder span.jqtree-title {
+	font-size: x-large;
+	padding-left: 20px;
+	overflow: visible;
 }

@@ -6,3 +6,7 @@ log
 .vagrant
 .vagrant/**/*
 apps/crate_it/composer.phar
+cr8it.sublime*
+*.orig
+apps/crate_it/vendor
+apps/crate_it/vendor/**/*

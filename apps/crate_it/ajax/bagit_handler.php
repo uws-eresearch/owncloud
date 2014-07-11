@@ -25,10 +25,13 @@ OCP\User::checkLoggedIn();
 OCP\App::checkAppEnabled('crate_it');
 $user = OCP\User::getUser();
 
+$field = isset($_POST['field']) ? $_POST['field'] : '';
+$email = isset($_POST['email']) ? $_POST['email'] : '';
 $dir = isset($_GET['dir']) ? $_GET['dir'] : '';
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 $crate_id = isset($_GET['crate_id']) ? $_GET['crate_id'] : '';
 $crate_name = isset($_GET['crate_name']) ? $_GET['crate_name'] : '';
+$crate_description = isset($_GET['crate_description']) ? $_GET['crate_description'] : '';
 $neworder = isset($_GET['neworder']) ? $_GET['neworder'] : array();
 $element_id = isset($_POST['elementid']) ? $_POST['elementid'] : '';
 $new_title = isset($_POST['new_title']) ? $_POST['new_title'] : '';
@@ -36,16 +39,17 @@ $new_name = isset($_POST['new_name']) ? $_POST['new_name'] : '';
 $file_id = isset($_GET['file_id']) ? $_GET['file_id'] : '';
 $level = isset($_GET['level']) ? $_GET['level'] : '';
 $description = isset($_POST['crate_description']) ? $_POST['crate_description'] : '';
-$keyword = isset($_POST['keyword']) ? $_POST['keyword'] : '';
-$creator_id = isset($_POST['creator_id']) ? $_POST['creator_id'] : '';
-$full_name = isset($_POST['full_name']) ? $_POST['full_name'] : '';
+$keywords = isset($_POST['keywords']) ? $_POST['keywords'] : '';
+$id = isset($_POST['id']) ? $_POST['id'] : '';
+$name = isset($_POST['name']) ? $_POST['name'] : '';
 $new_full_name = isset($_POST['new_full_name']) ? $_POST['new_full_name'] : '';
 $vfs = isset($_POST['vfs']) ? $_POST['vfs'] : '';
 $sword_collection = isset($_POST['sword_collection']) ? $_POST['sword_collection'] : '';
-$activity_id = isset($_POST['activity_id']) ? $_POST['activity_id'] : '';
+// $activity_id = isset($_POST['activity_id']) ? $_POST['activity_id'] : '';
 $grant_number = isset($_POST['grant_number']) ? $_POST['grant_number'] : '';
-$dc_title = isset($_POST['dc_title']) ? $_POST['dc_title'] : '';
-$keyword_activity = isset($_POST['keyword_activity']) ? $_POST['keyword_activity'] : '';
+$date = isset($_POST['date']) ? $_POST['date'] : '';
+$title = isset($_POST['title']) ? $_POST['title'] : '';
+// $keyword_activity = isset($_POST['keyword_activity']) ? $_POST['keyword_activity'] : '';
 
 $action = '';
 if (isset($_GET['action'])) {
@@ -54,6 +58,12 @@ if (isset($_GET['action'])) {
 	$action = $_POST['action'];
 }
 
+$type = '';
+if (isset($_GET['type'])) {
+	$type = $_GET['type'];
+} elseif (isset($_POST['type'])){
+	$type = $_POST['type'];
+}
 
 //Get an instance of BagItManager
 $bagit_manager = \OCA\crate_it\lib\BagItManager::getInstance();
@@ -65,11 +75,12 @@ switch ($action){
 		// check if crate already exist
 		$crate_list = $bagit_manager->getCrateList();
 		$crate_already_exist = array_search($crate_name, $crate_list);
-		if ($crate_already_exist)
+		if ($crate_already_exist or $crate_name==='default_crate')
 		{
 			header('HTTP/1.1 401 Crate with name "' .$crate_name. '" already exists', 401);
 		} else {
 			$msg = $bagit_manager->createCrate($crate_name);
+			$ok = $bagit_manager->setDescription($crate_description);
 			if(!$msg){
 				header('HTTP/1.1 400 No name given', 400);
 			} else {
@@ -86,11 +97,11 @@ switch ($action){
 		}
 		break;
 	case 'switch':
-		$ok = $bagit_manager->switchCrate($crate_id);			
-		alert(''); //FIXME WHY DOES THIS WORK?!!?
+		$ok = $bagit_manager->switchCrate($crate_id);		
 		if(!$ok){
 			header('HTTP/1.1 400 No name',400);
 		} 
+		\OCP\Util::writeLog("crate_it", "Switched crate to: " . $_SESSION['crate_id'], 3); 
 		break;
 	case 'get_crate':
 		$msg = $bagit_manager->getSelectedCrate();
@@ -108,18 +119,25 @@ switch ($action){
         $ok = $bagit_manager->updateVFS($vfs);
         if($ok){
 			echo $ok;
-		}
-		else {
+		}	else {
 			header('HTTP/1.1 500 Internal Server Error');
 		}
         break;
 	case 'rename_crate':
-		$ok = $bagit_manager->renameCrate($new_name);
-		if($ok){
-			echo $new_name;
-		}
-		else {
-			header('HTTP/1.1 500 Internal Server Error');
+		// check if crate already exist
+		$crate_list = $bagit_manager->getCrateList();
+		$crate_already_exist = array_search($new_name, $crate_list);
+		if ($crate_already_exist or $new_name==='default_crate') {
+			header('HTTP/1.1 401 Crate with name "'.$new_name.'" already exists', 401);
+		} elseif (empty($new_name)) {
+			header('HTTP/1.1 401 Crate name cannot be blank', 401);
+		} else {
+			$ok = $bagit_manager->renameCrate($new_name, $vfs);
+			if($ok){
+				echo json_encode($new_name);
+			}	else {
+				header('HTTP/1.1 500 Internal Server Error');
+			}
 		}
 		break;
 	case 'preview':
@@ -209,36 +227,20 @@ switch ($action){
 		OCP\Util::writeLog("crate_it", $dr->sac_status." ".$dr->sac_statusmessage, OCP\Util::DEBUG);
 		header("HTTP/1.1 ".$dr->sac_status." ".$dr->sac_statusmessage);
 		break;
-	case 'get_for_codes':
-		//need to access the tmpl var
-		$results = $bagit_manager->lookUpMint("", 'top');
-		foreach ($results as $item) {
-			$vars = get_object_vars($item);
-			if($vars["rdf:about"] === $level){
-				//send skos:narrower array
-				echo json_encode(array_values($vars['skos:narrower']));
-			}
-		}
-		break;
-	case 'search_people':
-		$results = $bagit_manager->lookUpPeople($keyword);
-		echo json_encode($results);
-		break;
 	case 'save_people':
-		$success = $bagit_manager->savePeople($creator_id, $full_name);
-
+		$success = $bagit_manager->savePeople($id, $name, $email);
 		if($success){
-			echo json_encode($full_name);
+			echo json_encode($name);
 		}
 		else {
 			header('HTTP/1.1 400 people exists');
 		}
 		break;
 	case 'remove_people':
-		$success = $bagit_manager->removePeople($creator_id, $full_name);
+		$success = $bagit_manager->removePeople($id);
 
 		if($success){
-			echo json_encode($full_name);
+			echo json_encode($id);
 		}
 		else {
 			header('HTTP/1.1 500 Internal Server Error');
@@ -273,12 +275,26 @@ switch ($action){
 		$result = $bagit_manager->deleteCrate();
 		echo json_encode($result);
 		break;
-	case 'search_activity':
-		$results = $bagit_manager->lookUpActivity($keyword_activity);
-		echo json_encode($results);
+	case 'search':
+		try {
+			echo $bagit_manager->search($type, $keywords);
+		} catch (Exception $e) {
+			header('HTTP/1.1 500 '.$e->getMessage());
+		}
+		break;
+	case 'get_for_codes':
+		//need to access the tmpl var
+		$results = $bagit_manager->lookUpMint("", 'top');
+		foreach ($results as $item) {
+			$vars = get_object_vars($item);
+			if($vars["rdf:about"] === $level){
+				//send skos:narrower array
+				echo json_encode(array_values($vars['skos:narrower']));
+			}
+		}
 		break;
 	case 'save_activity':
-		$success = $bagit_manager->saveActivity($activity_id, $grant_number, $dc_title);
+		$success = $bagit_manager->saveActivity($id, $grant_number, $title, $date);
 
 		if($success){
 			echo json_encode($activity_id);
@@ -288,13 +304,32 @@ switch ($action){
 		}
 		break;
 	case 'remove_activity':
-		$success = $bagit_manager->removeActivity($activity_id);
+		$success = $bagit_manager->removeActivity($id);
 
 		if($success){
 			echo json_encode($activity_id);
 		}
 		else {
 			header('HTTP/1.1 500 Internal Server Error');
+		}
+		break;
+	case 'get_manifest':
+		$success = $bagit_manager->getManifestData();
+		if($success){
+			echo json_encode($success);
+		}	else {
+			header('HTTP/1.1 500 Could not load manifest data');
+		}
+		break;
+	case 'clear_field':
+		// TODO: A lot of these actions could be removed if
+	  // the payload would just specify the content it wanted to
+	  // insert into the manifest.
+		$success = $bagit_manager->clearMetadataField($field);
+		if($success){
+			echo json_encode($success);
+		}	else {
+			header('HTTP/1.1 500 Could not clear field');
 		}
 		break;
 }

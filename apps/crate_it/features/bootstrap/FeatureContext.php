@@ -955,6 +955,8 @@ JS;
     private function exec_sh_command($command) {
         if(getenv('TEST_ENV') == 'vagrant') {
             $command = self::$ssh_command."'$command'";
+        } else {
+            $command = 'sudo '.$command;
         }
         exec($command);
     }

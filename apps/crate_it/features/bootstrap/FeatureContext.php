@@ -429,15 +429,8 @@ class FeatureContext extends MinkContext
         $data_path = self::$crate_root.$crateName.'/data';
         $command = "mkdir -p $data_path\\";
         $this->exec_sh_command($command);
-        if(getenv('TEST_ENV') == 'vagrant') {
-            $command = "cd $data_path | echo $mainfest > $data_path/manifest.json";
-            $this->exec_sh_command($command);
-        } else {
-            $command = "cd $data_path";
-            $this->exec_sh_command($command);
-            $command = "echo $mainfest > $data_path/manifest.json";
-            $this->exec_sh_command($command);
-        }
+        $command = "echo $mainfest > $data_path/manifest.json";
+        $this->exec_sh_command($command);
         $command = 'chown -R apache:apache '.self::$crate_root;
         $this->exec_sh_command($command);
     }

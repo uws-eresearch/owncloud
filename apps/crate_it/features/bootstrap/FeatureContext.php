@@ -433,7 +433,7 @@ class FeatureContext extends MinkContext
             $command = "cd $data_path | echo $mainfest > $data_path/manifest.json";
             $this->exec_sh_command($command);
         } else {
-            $command = "cd $data_path"
+            $command = "cd $data_path";
             $this->exec_sh_command($command);
             $command = "echo $mainfest > $data_path/manifest.json";
             $this->exec_sh_command($command);

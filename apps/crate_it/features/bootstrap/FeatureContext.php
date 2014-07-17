@@ -429,7 +429,7 @@ class FeatureContext extends MinkContext
         $data_path = self::$crate_root.$crateName.'/data';
         $command = "mkdir -m 755 -p $data_path\\";
         $this->exec_sh_command($command);
-        $command = "bash -c 'echo $mainfest > $data_path/manifest.json'";
+        $command = "echo $mainfest | sudo tee $data_path/manifest.json";
         $this->exec_sh_command($command);
         $command = 'chown -R apache:apache '.self::$crate_root;
         $this->exec_sh_command($command);

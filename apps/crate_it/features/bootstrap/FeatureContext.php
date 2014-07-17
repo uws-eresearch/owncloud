@@ -116,7 +116,7 @@ class FeatureContext extends MinkContext
      * @Given /^I have folders? "([^"]*)"$/
      */
     public function iHaveFolders($folders) {
-        $command = 'mkdir -p '.self::$file_root.$folders;
+        $command = 'mkdir -m 755 -p '.self::$file_root.$folders;
         $this->exec_sh_command($command);
     }
 
@@ -427,9 +427,9 @@ class FeatureContext extends MinkContext
         // $mainfest = '{"description":"","creators":[],"activities":[],"vfs":[{"id":"rootfolder","name":"'.$crateName.'","folder":true,"children":[]}]}';
         $mainfest = '"{\"description\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
         $data_path = self::$crate_root.$crateName.'/data';
-        $command = "mkdir -p $data_path\\";
+        $command = "mkdir -m 755 -p $data_path\\";
         $this->exec_sh_command($command);
-        $command = "echo $mainfest > $data_path/manifest.json";
+        $command = "bash -c 'echo $mainfest > $data_path/manifest.json'";
         $this->exec_sh_command($command);
         $command = 'chown -R apache:apache '.self::$crate_root;
         $this->exec_sh_command($command);
@@ -956,7 +956,7 @@ JS;
         if(getenv('TEST_ENV') == 'vagrant') {
             $command = self::$ssh_command."'$command'";
         } else {
-            $command = 'sudo \''.$command.'\'';
+            $command = 'sudo '.$command;
         }
         exec($command);
     }

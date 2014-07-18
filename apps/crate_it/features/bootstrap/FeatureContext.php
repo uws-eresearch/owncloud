@@ -369,16 +369,18 @@ class FeatureContext extends MinkContext
      */
     public function iShouldHaveCrateActionsFor($actions, $crateItem)
     {
-        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
-        $page = $this->getSession()->getPage();
-        $el = $page->find('xpath', $xpath);
-        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
-        $actionItems = explode(', ', $actions);
-        $web_assert = new WebAssert($this->getSession());
-        foreach ($actionItems as $action) {
-            $web_assert->elementExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
-        }
-        
+        $this->spin(function($context) use ($actions, $crateItem) {
+            $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
+            $page = $context->getSession()->getPage();
+            $el = $page->find('xpath', $xpath);
+            $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+            $actionItems = explode(', ', $actions);
+            $web_assert = new WebAssert($context->getSession());
+            foreach ($actionItems as $action) {
+                $web_assert->elementExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
+            }
+            return true;
+        });
     }
 
     /**
@@ -386,15 +388,19 @@ class FeatureContext extends MinkContext
      */
     public function iShouldNotHaveCrateActionsFor($actions, $crateItem)
     {
-        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
-        $page = $this->getSession()->getPage();
-        $el = $page->find('xpath', $xpath);
-        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
-        $actionItems = explode(', ', $actions);
-        $web_assert = new WebAssert($this->getSession());
-        foreach ($actionItems as $action) {
-            $web_assert->elementNotExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
-        }
+        $this->spin(function($context) use ($actions, $crateItem) {
+            $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
+            $page = $context->getSession()->getPage();
+            $el = $page->find('xpath', $xpath);
+            $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+            $actionItems = explode(', ', $actions);
+            $web_assert = new WebAssert($context->getSession());
+            foreach ($actionItems as $action) {
+                $web_assert->elementNotExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
+            }
+            return true;
+        });
+        return false;
     }
 
     /**

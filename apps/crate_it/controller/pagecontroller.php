@@ -4,9 +4,16 @@ namespace OCA\crate_it\Controller;
 use \OCA\AppFramework\Controller\Controller;
 
 class PageController extends Controller {
+    
+    
+    /**
+     * @var CrateManager
+     */
+    private $crate_manager;
 
-    public function __construct($api, $request) {
+    public function __construct($api, $request, $crate_manager) {
         parent::__construct($api, $request);
+        $this->crate_manager = $crate_manager;
     }
 
     /**
@@ -18,13 +25,12 @@ class PageController extends Controller {
      */
     public function index() {       
         \OCP\Util::writeLog('crate_it', "PageController::index()", 3);         
-        //$model = $this->set_up_params();
-        $model = array();
+        $model = $this->set_up_params();
         return $this->render('index', $model);
     }
 
     private function set_up_params() {
-        $bagit_manager = \OCA\crate_it\lib\BagItManager::getInstance();
+        /**
         $manifestData = $bagit_manager->getManifestData();
         $config = $bagit_manager->getConfig();
         
@@ -45,7 +51,9 @@ class PageController extends Controller {
                         "sword_collections" => $bagit_manager->getCollectionsList());
         $model['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
         $model['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
-                    
+        **/
+        $model = array();
+        $model['crates'] = $this->crate_manager->getCrateList();           
         return $model;                          
     }
 

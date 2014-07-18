@@ -30,25 +30,25 @@
     </a>
 
     <select id="crates">
-      <?php foreach($_['crates'] as $crate):?>
-        <option id="<?php echo $crate; ?>" value="<?php echo $crate; ?>" <?php
-        if ($_['selected_crate'] == $crate) {echo 'selected';
-        }
-    ?>>
-          <?php echo $crate; ?>
-        </option>
-      <?php endforeach; ?>
+      {% for crate in crates %}  
+         {% if selected_crate == crate %} 
+            <option id="{{ crate }}" value="{{ crate }}" selected>
+         {% else %}
+            <option id="{{ crate }}" value="{{ crate }}">
+         {% endif %}
+         {{ crate }}
+          </option>
+      {% endfor %}
     </select>
 
     <div class="pull-right">
 
-      <?php if ($_['sword_status'] === "enabled" ):?>
-
+      {% if sword_status == "enabled" %}
         <a id="post" class="button" data-toggle="modal" data-target="#publishModal">
           <i class="fa fa-envelope"></i>
           Publish
         </a>
-      <?php endif; ?>
+      {% endif %}
 
 
       <div class="btn-group">
@@ -57,14 +57,14 @@
           Download
         </button>
         <ul class="dropdown-menu">
-          <?php if ($_['previews']==="on" ):?>
+          {% if previews == "on" %}
             <li>
               <a id="epub" class="dropdown-btn">
                 <i class="fa fa-book"></i>
                  ePub
               </a>
             </li>
-          <?php endif; ?>
+          {% endif %}
           <li>
             <a id="download" class="dropdown-btn">
               <i class="fa fa-archive"></i>

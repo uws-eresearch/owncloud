@@ -14,16 +14,22 @@ class CrateService {
     /**
      * @var BagManager
      */
-    private $bagmanager;
+    private $bag_manager;
     
-    public function __construct($api, $bagmanager){
+    /**
+     * @var CrateManager
+     */
+    private $crate_manager;
+    
+    public function __construct($api, $bag_manager, $crate_manager){
         $this->api = $api;
-        $this->bagmanager = $bagmanager;
+        $this->bag_manager = $bag_manager;
+        $this->crate_manager = $crate_manager;
     }
     
     public function addToBag($file)
     {
-        return $this->bagmanager->addToBag($file);   
+        return $this->bag_manager->addToBag($file);   
     }
     
 }

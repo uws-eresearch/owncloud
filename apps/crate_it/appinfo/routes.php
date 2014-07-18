@@ -26,7 +26,19 @@ namespace OCA\crate_it;
 use \OCA\AppFramework\App;
 use \OCA\crate_it\DependencyInjection\DIContainer;
 
-$this -> create('crate_it_index', '/')->get()->action(function($params) {
+
+/**
+$this->create('crate_it_index', '/hello')->get()->action(function($params) {
+    App::main('MyController', 'index', $params, new DIContainer());
+});
+**/
+$this->create('crate_it_index', '/')->get()->action(function($params) {
     // call the index method on the class PageController
     App::main('PageController', 'index', $params, new DIContainer());
 });
+
+$this->create('crate_it_add', '/crate/add')->get()->action(function($params) {
+    // call the index method on the class PageController
+    App::main('CrateController', 'add', $params, new DIContainer());
+});
+

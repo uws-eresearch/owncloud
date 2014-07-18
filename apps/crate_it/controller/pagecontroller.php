@@ -2,8 +2,6 @@
 namespace OCA\crate_it\Controller;
 
 use \OCA\AppFramework\Controller\Controller;
-use \OCA\AppFramework\Http\JSONResponse;
-use \OCA\AppFramework\Http;
 
 class PageController extends Controller {
 
@@ -12,14 +10,16 @@ class PageController extends Controller {
     }
 
     /**
+     * Home page index, displays default crate or last selected crate
+     * 
      * @CSRFExemption
      * @IsAdminExemption
-     * @IsLoggedInExemption
      * @IsSubAdminExemption
      */
     public function index() {       
         \OCP\Util::writeLog('crate_it', "PageController::index()", 3);         
-        $model = $this->set_up_params();
+        //$model = $this->set_up_params();
+        $model = array();
         return $this->render('index', $model);
     }
 

@@ -65,7 +65,7 @@ class BagItManager {
     }
 
     // TODO: This msg will get printed 3 times with each page load, which shouldn't be happening
-    \OCP\Util::writeLog("crate_it", "creating new crate " . $_SESSION['crate_id'], 3);
+    //\OCP\Util::writeLog("crate_it", "creating new crate " . $_SESSION['crate_id'], 3);
     if (empty($_SESSION['crate_id'])) {
       $this->selected_crate = 'default_crate';
       $_SESSION['crate_id'] = 'default_crate';

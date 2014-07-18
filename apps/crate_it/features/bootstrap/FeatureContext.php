@@ -876,6 +876,7 @@ JS;
 			$optionElement->selectOption($arg1, false);	
 			return true;
 		});
+        $this->waitForPageToLoad();
 	}
 
         /**

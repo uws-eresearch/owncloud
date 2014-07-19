@@ -30,6 +30,7 @@
     </a>
 
     <select id="crates">
+      
       {% for crate in crates %}  
          {% if selected_crate == crate %} 
             <option id="{{ crate }}" value="{{ crate }}" selected>

@@ -74,7 +74,6 @@ if (\OCP\App::isEnabled('appframework')) {
     $api->add3rdPartyScript('mockjax/jquery.mockjax');
 
     /**
-    \OC::$CLASSPATH['OCA\crate_it\lib\BagItManager'] = 'crate_it/lib/bagit_manager.php';
     \OC::$CLASSPATH['BagIt'] = 'crate_it/3rdparty/BagIt/bagit.php';
     \OC::$CLASSPATH['BagItManifest'] = 'crate_it/3rdparty/BagIt/bagit_manifest.php';
     \OC::$CLASSPATH['BagItFetch'] = 'crate_it/3rdparty/BagIt/bagit_fetch.php';

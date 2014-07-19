@@ -7,13 +7,13 @@ class PageController extends Controller {
     
     
     /**
-     * @var CrateManager
+     * @var SetupService
      */
-    private $crate_manager;
+    private $setup_service;
 
-    public function __construct($api, $request, $crate_manager) {
+    public function __construct($api, $request, $setup_service) {
         parent::__construct($api, $request);
-        $this->crate_manager = $crate_manager;
+        $this->setup_service = $setup_service;
     }
 
     /**
@@ -25,35 +25,54 @@ class PageController extends Controller {
      */
     public function index() {       
         \OCP\Util::writeLog('crate_it', "PageController::index()", 3);         
-        $model = $this->set_up_params();
-        return $this->render('index', $model);
+        try {
+            $this->create_default_crate();         
+            $model = $this->set_up_params();
+             \OCP\Util::writeLog('crate_it', $model, 3);
+            return $this->render('index', $model);
+            
+        } catch (Exception $e) {
+            // TODO handle exception
+            \OCP\Util::writeLog('crate_it', "ERROR: " .$e->getMessage(), 3);         
+        }
+        
+    }
+    
+    private function create_default_crate() {
+        // create default crate if no crates are available, or
+        // for some reason no crate is selected
+        if ($this->session('selected_crate') == null) 
+        {
+            \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
+            $this->setup_service->createDefaultCrate();
+            // The session variable holds the current selected crate.
+            // Make sure to update this whenever you change selected crate.
+            // The above line should throw an exception if it fails so
+            // the session variable is maintained
+            $_SESSION['selected_crate'] = 'default_crate';
+            session_commit();
+             \OCP\Util::writeLog('crate_it', "Wrote to session: ".$this->session('selected_crate'), 3);
+        }             
     }
 
     private function set_up_params() {
         /**
-        $manifestData = $bagit_manager->getManifestData();
-        $config = $bagit_manager->getConfig();
-        
-        $description_length = empty($config['description_length']) ? 6000 : $config['description_length'];
-        $max_sword_mb = empty($config['max_sword_mb']) ? 0 : $config['max_sword_mb'];
-        $max_zip_mb = empty($config['max_zip_mb']) ? 0 : $config['max_zip_mb'];
+        $manifestData = $bagit_manager->getManifestData();                
 
         $model = array("previews" => $bagit_manager->showPreviews(),
-                        "crates" => $bagit_manager->getCrateList(),
                         "selected_crate" => $bagit_manager->getSelectedCrate(),
                         "bagged_files" => $bagit_manager->getBaggedFiles(),
                         'description'=> $manifestData['description'],
-                        "description_length" => $description_length, 
-                        "max_sword_mb" => $max_sword_mb, 
-                        "max_zip_mb" => $max_zip_mb, 
                         "mint_status" => $bagit_manager->getMintStatus(), 
                         "sword_status" => $bagit_manager->getSwordStatus(), 
                         "sword_collections" => $bagit_manager->getCollectionsList());
         $model['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
         $model['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
         **/
-        $model = array();
-        $model['crates'] = $this->crate_manager->getCrateList();           
+        $model = $this->setup_service->loadParams();  
+        $selected_crate = $_SESSION['selected_crate'];
+        $model['selected_crate'] = $selected_crate;  
+        $model['bagged_files'] = $this->setup_service->getCrateFiles($selected_crate);  
         return $model;                          
     }
 

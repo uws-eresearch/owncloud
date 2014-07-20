@@ -34,7 +34,10 @@ $(document).ready(function(){
     if(location.href.indexOf("files")!=-1) {
         if(typeof FileActions!=='undefined'){
             FileActions.register('all','Add to crate', OC.PERMISSION_READ, '',function(filename){
-                $.ajax({url: OC.linkTo('crate_it/crate/add')+'?file='+getFileName($('#dir').val(),filename),
+                var params = {file: getFileName($('#dir').val(),filename)};
+                var c_url = OC.Router.generate('crate_it_add', params);
+                //$.ajax({url: OC.linkTo('/crate/add')+'?file='+getFileName($('#dir').val(),filename),
+                $.ajax({url: c_url,
                     type: 'get',
                     dataType: 'text/html',
                     complete: function(data){

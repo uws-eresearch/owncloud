@@ -25,10 +25,16 @@ class SetupService {
         $this->crate_manager = $crate_manager;
     }
     
-    public function loadParams()
+    public function loadParams($crate_id)
     {
         $params = $this->loadConfigParams();
-        $params['crates'] = $this->crate_manager->getCrateList();
+        $manifestData = $this->crate_manager->getManifestData($crate_id);
+        $params['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
+        $params['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
+        $params['description'] = $manifestData['description'];        
+        $model['selected_crate'] = $crate_id;  
+        $params['crates'] = $this->crate_manager->getCrateList();        
+        $model['bagged_files'] = $this->crate_manager->getCrateFiles($crate_id);
         return $params;
     }
     
@@ -42,15 +48,13 @@ class SetupService {
         $this->crate_manager->createCrate("default_crate");
     }
     
-    public function getCrateFiles($crate_id)
-    {
-        return $this->crate_manager->getCrateFiles($crate_id);
-    }
-    
+    /**
+     * Read from cr8it config file and load up params
+     */
     private function loadConfigParams()
     {
         $params = array();
-        $config = $this->config_manager->readConfig();   
+        $config = $this->config_manager->readConfig();  
         // init values
         $description_length = empty($config['description_length']) ? 6000 : $config['description_length'];
         $max_sword_mb = empty($config['max_sword_mb']) ? 0 : $config['max_sword_mb'];

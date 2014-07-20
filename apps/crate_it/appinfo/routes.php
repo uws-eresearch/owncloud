@@ -37,6 +37,10 @@ $this->create('crate_it_index', '/')->get()->action(function($params) {
     App::main('PageController', 'index', $params, new DIContainer());
 });
 
+$this->create('crate_it_get_items', '/crate/get_items')->get()->action(function($params){
+    App::main('CrateController', 'get_items', $params, new DIContainer());
+});
+
 $this->create('crate_it_add', '/crate/add')->get()->action(function($params) {
     // call the index method on the class PageController
     App::main('CrateController', 'add', $params, new DIContainer());

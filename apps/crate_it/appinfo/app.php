@@ -57,6 +57,8 @@ if (\OCP\App::isEnabled('appframework')) {
 
     $api->addScript('loader');
     $api->addScript('crate');
+    //$api->addScript('treeoperation');
+    //$api->addScript('cratedisplay');
 
     // Font awesome
     $api->addStyle('font-awesome');

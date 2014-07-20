@@ -24,4 +24,9 @@ class CrateService {
         return $this->crate_manager->addToCrate($file);   
     }
     
+    public function getItems($crate_id)
+    {
+        return $this->crate_manager->getManifestData($crate_id);
+    }
+    
 }

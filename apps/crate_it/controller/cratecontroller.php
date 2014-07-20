@@ -11,11 +11,11 @@ class CrateController extends Controller {
     /**
      * @var CrateService
      */
-    private $crateService;
+    private $crate_service;
     
-    public function __construct($api, $request, $crateService) {
+    public function __construct($api, $request, $crate_service) {
         parent::__construct($api, $request);
-        $this->crateService = $crateService;
+        $this->crate_service = $crate_service;
     }
     
     /**
@@ -48,6 +48,31 @@ class CrateController extends Controller {
     }
     
     /**
+     * Get crate items
+     * 
+     * @Ajax
+     * @CSRFExemption
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
+    public function get_items()
+    {
+        \OCP\Util::writeLog('crate_it', "CrateController::get_items()", 3);
+        try {
+            \OCP\Util::writeLog('crate_it', "Selected Crate:".$_SESSION['selected_crate'], 3);
+            $data = $this->crateService->getItems($_SESSION['selected_crate']);
+            return new JSONResponse($data, 200);
+        } catch (Exception $e)
+        {
+            return new JSONResponse(
+                array('msg' => "Error getting manifest data", 'error' => $e),
+                $e->getCode()
+            );
+        }
+    }
+    
+    
+    /**
      * Add To Crate
      *
      * @Ajax
@@ -57,9 +82,22 @@ class CrateController extends Controller {
      */
     public function add()
     {
-        $file = $this->params('file');
-        $msg = $this->$crate_service->add($file);
-        return new JSONResponse (array('msg'=>$msg), 200);
+        \OCP\Util::writeLog('crate_it', "CrateController::add()", 3);
+        try
+        {
+            // TODO error handling
+            $file = $this->params('file');
+            \OCP\Util::writeLog('crate_it', "Adding ".$file, 3);
+            $msg = $this->crate_service->addToBag($file);
+            return new JSONResponse (array('msg'=>$msg), 200);
+        } catch(Exception $e)
+        {
+            return new JSONResponse(
+                array('msg' => "Error adding file", 'error' => $e),
+                $e->getCode()
+            );
+        }
+       
     }
     
     /**
@@ -72,7 +110,7 @@ class CrateController extends Controller {
      */
     public function manifest()
     {
-        $success = $this->$crate_service->getManifest();
+        $success = $this->crate_service->getManifest();
         return new JSONResponse (array('msg'=>'OK'), $success);
     }
     

@@ -8,7 +8,6 @@ use \OCA\crate_it\Controller\PageController;
 use \OCA\crate_it\Controller\CrateController;
 use \OCA\crate_it\Service\CrateService;
 use \OCA\crate_it\Service\SetupService;
-use \OCA\crate_it\Manager\BagManager;
 use \OCA\crate_it\Manager\CrateManager;
 use \OCA\crate_it\Manager\ConfigManager;
 
@@ -38,7 +37,7 @@ class DIContainer extends BaseContainer {
         };
 
         $this['CrateService'] = function($c) {
-            return new CrateService($c['API'], $c['BagManager'], $c['CrateManager']);  
+            return new CrateService($c['API'], $c['CrateManager']);  
         };
         
         /* Controllers */
@@ -48,7 +47,7 @@ class DIContainer extends BaseContainer {
         };
                
         $this['CrateController'] = function($c) {
-            return new FileController($c['API'], $c['Request'], $c['CrateService']);
+            return new CrateController($c['API'], $c['Request'], $c['CrateService']);
         };
 
     }

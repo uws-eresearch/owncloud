@@ -57,22 +57,13 @@ class PageController extends Controller {
 
     private function set_up_params() {
         /**
-        $manifestData = $bagit_manager->getManifestData();                
-
         $model = array("previews" => $bagit_manager->showPreviews(),
-                        "selected_crate" => $bagit_manager->getSelectedCrate(),
-                        "bagged_files" => $bagit_manager->getBaggedFiles(),
-                        'description'=> $manifestData['description'],
                         "mint_status" => $bagit_manager->getMintStatus(), 
                         "sword_status" => $bagit_manager->getSwordStatus(), 
                         "sword_collections" => $bagit_manager->getCollectionsList());
-        $model['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
-        $model['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
         **/
-        $model = $this->setup_service->loadParams();  
         $selected_crate = $_SESSION['selected_crate'];
-        $model['selected_crate'] = $selected_crate;  
-        $model['bagged_files'] = $this->setup_service->getCrateFiles($selected_crate);  
+        $model = $this->setup_service->loadParams($selected_crate);
         return $model;                          
     }
 

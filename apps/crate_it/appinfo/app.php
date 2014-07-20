@@ -55,10 +55,10 @@ if (\OCP\App::isEnabled('appframework')) {
     $api->add3rdPartyScript('jeditable/jquery.jeditable');
     $api->add3rdPartyScript('jqtree/tree.jquery');
 
+
     $api->addScript('loader');
     $api->addScript('crate');
     //$api->addScript('treeoperation');
-    //$api->addScript('cratedisplay');
 
     // Font awesome
     $api->addStyle('font-awesome');

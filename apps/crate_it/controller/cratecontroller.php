@@ -9,7 +9,7 @@ use \OCA\AppFramework\Http;
 class CrateController extends Controller {
     
     /**
-     * @var CrateService
+     * @var $crate_service
      */
     private $crate_service;
     
@@ -60,7 +60,7 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::get_items()", 3);
         try {
             \OCP\Util::writeLog('crate_it', "Selected Crate:".$_SESSION['selected_crate'], 3);
-            $data = $this->crateService->getItems($_SESSION['selected_crate']);
+            $data = $this->crate_service->getItems($_SESSION['selected_crate']);
             return new JSONResponse($data, 200);
         } catch (Exception $e)
         {

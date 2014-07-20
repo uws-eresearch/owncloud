@@ -19,6 +19,8 @@
 
 #}
 
+{{ script('includeme') }}
+
 <div id="container" class="crateit">
 
   <div class="bar-actions">

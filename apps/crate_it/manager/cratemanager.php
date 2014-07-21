@@ -102,7 +102,7 @@ class CrateManager {
         return $cont_array;
     }
 
-    public function addToCrate($file)
+    public function addToCrate($crate_id, $file)
     {
         $path_parts = pathinfo($file);
         $filename = $path_parts['filename'];
@@ -119,8 +119,9 @@ class CrateManager {
           header("HTTP/1.0 403 Forbidden");
           die('403 Forbidden');
         }
+        $manifest_path = $this->getManifestPath($crate_id);
     
-        $contents = json_decode(file_get_contents($this->manifest) , true); // convert it to an array.
+        $contents = json_decode(file_get_contents($manifest_path) , true); // convert it to an array.
         $vfs = & $contents['vfs'][0];
         if (array_key_exists('children', $vfs)) {
           $vfs = & $vfs['children'];
@@ -131,14 +132,13 @@ class CrateManager {
         }
     
         $this->addPath($file, $vfs);
-        $fp = fopen($this->manifest, 'w');
+        $fp = fopen($manifest_path, 'w');
         fwrite($fp, json_encode($contents));
         fclose($fp);
     
         // update the hashes
-    
-        $this->bag->update();
-        return "File added to the crate " . $this->selected_crate;
+        $this->getOrCreateBag()->update();
+        return "File added to the crate " . $crate_id;
     }
 
    // TODO: There's currently no check for duplicates
@@ -174,6 +174,10 @@ class CrateManager {
           );
         }
         array_push($vfs, $vfs_entry);
+  }
+
+  private function getFullPath($file) {
+    return \OC\Files\Filesystem::getLocalFile($file);
   }
 
 }

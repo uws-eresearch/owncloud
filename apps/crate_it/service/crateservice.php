@@ -19,9 +19,9 @@ class CrateService {
         $this->crate_manager = $crate_manager;
     }
     
-    public function addToBag($file)
+    public function addToBag($crate_id, $file)
     {
-        return $this->crate_manager->addToCrate($file);   
+        return $this->crate_manager->addToCrate($crate_id, $file);   
     }
     
     public function getItems($crate_id)

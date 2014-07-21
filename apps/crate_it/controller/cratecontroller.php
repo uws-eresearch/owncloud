@@ -88,8 +88,8 @@ class CrateController extends Controller {
             // TODO error handling
             $file = $this->params('file');
             \OCP\Util::writeLog('crate_it', "Adding ".$file, 3);
-            $msg = $this->crate_service->addToBag($file);
-            return new JSONResponse (array('msg'=>$msg), 200);
+            $msg = $this->crate_service->addToBag($_SESSION['selected_crate'], $file);
+            return new JSONResponse ($msg, 200);
         } catch(Exception $e)
         {
             return new JSONResponse(

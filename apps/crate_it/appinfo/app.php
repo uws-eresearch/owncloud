@@ -57,6 +57,7 @@ if (\OCP\App::isEnabled('appframework')) {
 
 
     $api->addScript('loader');
+    $api->addScript('includeme');
     $api->addScript('crate');
     //$api->addScript('treeoperation');
 

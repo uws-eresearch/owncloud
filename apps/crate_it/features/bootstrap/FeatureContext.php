@@ -400,7 +400,6 @@ class FeatureContext extends MinkContext
             }
             return true;
         });
-        return false;
     }
 
     /**

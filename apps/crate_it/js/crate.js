@@ -125,6 +125,8 @@ $(document).ready(function() {
 
   //initSearchHandlers();
 
+  initCrateActions();
+  
   calulate_heights();
 
   $('#meta-data').on('show.bs.collapse', function (e) {

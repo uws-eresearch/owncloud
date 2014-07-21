@@ -34,10 +34,11 @@ $(document).ready(function(){
     if(location.href.indexOf("files")!=-1) {
         if(typeof FileActions!=='undefined'){
             FileActions.register('all','Add to crate', OC.PERMISSION_READ, '',function(filename){
-                var params = {file: getFileName($('#dir').val(),filename)};
-                var c_url = OC.Router.generate('crate_it_add', params);
-                //$.ajax({url: OC.linkTo('/crate/add')+'?file='+getFileName($('#dir').val(),filename),
-                $.ajax({url: c_url,
+                var params = {file: getFileName($('#dir').val(), filename)};
+                var c_url = OC.generateUrl('apps/crate_it/crate/add?file={file}', params);
+                console.log(c_url);
+                $.ajax({
+                    url: c_url,
                     type: 'get',
                     dataType: 'text/html',
                     complete: function(data){

@@ -28,18 +28,13 @@ class CrateController extends Controller {
      */
     public function create()
     {
-        if (!$this->params) {
-            return new JSONResponse (
-                array ('msg' => 'Params null'),
-                501
-            );
-        }
-        $crate_name = $this->params('crate_name');
-        $crate_description = $this->params('crate_description');
+        $name = $this->params('name');
+        $description = $this->params('description');
         try {
-            $msg = $this->$crateService->createCrate($crate_name, $crate_description);
-            return new JSONResponse (array('msg' => $msg), 200);
+            $msg = $this->crate_service->createCrate($name, $description);
+            return new JSONResponse(array('msg' => $msg), 200);
         } catch (Exception $e) {
+            \OCP\Util::writeLog('crate_it', $e->getMessage(), 3);
             return new JSONResponse (
                 array ('msg' => $e->getMessage(), 'error' => $e),
                 $e->getCode()

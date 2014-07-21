@@ -369,7 +369,7 @@ function activateRemoveCreatorButton(buttonObj) {
 
 function validateCrateName($input, $error, $confirm) {
   var inputName = $input.val();
-    var crates = $.map($('#crates > option'), function(el, i) {
+  var crates = $.map($('#crates > option'), function(el, i) {
     return $(el).attr('id');
   });
   var emptyName = function() {
@@ -415,10 +415,10 @@ function initCrateActions() {
 
   var createCrate = function() {
     var params =  {
-        'crate_name': $('#crate_input_name').val(),
-        'crate_description': $('#crate_input_description').val(),
+        'name': $('#crate_input_name').val(),
+        'description': $('#crate_input_description').val(),
       };
-    var c_url = OC.Router.generate('crate_it_create');
+    var c_url = OC.generateUrl('apps/crate_it/crate/create');
     $.ajax({
       url: c_url,
       type: 'post',

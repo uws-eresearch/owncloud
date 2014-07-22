@@ -90,18 +90,19 @@ class BagItManager {
   public static function getInstance() {
     if(self::$instance == NULL) {
       self::$instance = new BagItManager();
-      \OCP\Util::writeLog("crate_it", "Constructing new instance", 3);
+      \OCP\Util::writeLog("crate_it", "BagItManager::getInstance()", \OCP\Util::DEBUG);
     }
     return self::$instance;
   }
 
   public function showPreviews() {
     $config = $this->getConfig();
-    \OCP\Util::writeLog("crate_it", $config['previews'], \OCP\Util::DEBUG);
+    \OCP\Util::writeLog("crate_it", "BagItManager::showPreviews()", \OCP\Util::DEBUG);
     return $config['previews'];
   }
 
   public function createCrate($name) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::createCrate(".$name.")", \OCP\Util::DEBUG);
     if (empty($name)) {
       return false;
     }
@@ -112,6 +113,7 @@ class BagItManager {
   }
 
   private function createManifest() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::createManifest()", \OCP\Util::DEBUG);
     if (!file_exists($this->manifest)) {
       $fp = fopen($this->manifest, 'x');
       $entry = array(
@@ -134,6 +136,7 @@ class BagItManager {
   }
 
   public function switchCrate($name) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::switchCrate(".$name.")", \OCP\Util::DEBUG);
     if (empty($name)) {
       return false;
     }
@@ -146,6 +149,7 @@ class BagItManager {
   }
 
   private function initBag($name) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::initBag(".$name.")", \OCP\Util::DEBUG);
     $this->crate_dir = $this->crate_root . '/' . $name;
     $this->bag = new \BagIt($this->crate_dir);
     $data_dir = $this->bag->getDataDirectory();
@@ -153,10 +157,12 @@ class BagItManager {
   }
 
   public function getSelectedCrate() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getSelectedCrate()", \OCP\Util::DEBUG);
     return $this->selected_crate;
   }
 
   public function getCrateList() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getCrateList()", \OCP\Util::DEBUG);
     $cratelist = array();
     if ($handle = opendir($this->crate_root)) {
       $filteredlist = array(
@@ -178,6 +184,7 @@ class BagItManager {
   }
 
   public function getBaggedFiles() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getBaggedFiles()", \OCP\Util::DEBUG);
     $contents = $this->getManifestData();
     return json_encode($contents['vfs']);
   }
@@ -186,6 +193,7 @@ class BagItManager {
   }
 
   public function addToBag($file) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::addToBag(".$file.")", \OCP\Util::DEBUG);
     $path_parts = pathinfo($file);
     $filename = $path_parts['filename'];
     if (\OC\Files\Filesystem::isReadable($file)) {
@@ -238,6 +246,7 @@ class BagItManager {
   }
 
   private function getFullPath($file) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getFullPath(".$file.")", \OCP\Util::DEBUG);
     return \OC\Files\Filesystem::getLocalFile($file);
   }
 
@@ -245,6 +254,7 @@ class BagItManager {
   // TODO: root folder has isFolder set, so should other files folders
 
   private function addPath($path, &$vfs) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::addPath(".$path.")", \OCP\Util::DEBUG);
     if (\OC\Files\Filesystem::is_dir($path)) {
       $vfs_entry = array(
         'name' => basename($path) ,
@@ -282,6 +292,7 @@ class BagItManager {
   // TODO: Update this to fit with tree structure
 
   public function clearBag() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::clearBag()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $items = & $contents['titles'];
     $items = array();
@@ -295,6 +306,7 @@ class BagItManager {
   }
 
   public function renameCrate($new_name, $vfs) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::renameCrate(".$new_name.")", \OCP\Util::DEBUG);
     $this->updateVFS($vfs);
     rename($this->crate_dir, $this->crate_root . '/' . $new_name);
     $this->switchCrate($new_name);
@@ -302,6 +314,7 @@ class BagItManager {
   }
 
   public function setDescription($description) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::setDescription()", \OCP\Util::DEBUG);
     $config = $this->getConfig();
     $max = $config['description_length'];
     if (strlen($description) > $max) {
@@ -324,6 +337,7 @@ class BagItManager {
    * @return string
    */
   public function getPathFromFileId($file_id) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getPathFromFileId(".$file_id.")", \OCP\Util::DEBUG);
     foreach($this->flatList() as $value) {
       if ($value['id'] === $file_id) {
         $dir = $this->getParentDirectory($value['filename']);
@@ -338,6 +352,7 @@ class BagItManager {
    * $file The file path
    */
   private function getParentDirectory($filePath) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getParentDirectory()", \OCP\Util::DEBUG);
     $path_parts = pathinfo($filePath);
     $dir_prefix = \OC::$SERVERROOT . '/data/';
     $dir = str_replace($dir_prefix, "", $path_parts['dirname']);
@@ -353,6 +368,7 @@ class BagItManager {
   }
 
   private function getPreviewPath($full_path) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getPreviewPath()", \OCP\Util::DEBUG);
     $path_parts = pathinfo($full_path);
     $prev_file = $path_parts['filename'] . '.htm';
     $temp_dir = OC_Helper::tmpFolder();
@@ -377,7 +393,7 @@ class BagItManager {
   }
 
   public function createEpub() {
-
+    \OCP\Util::writeLog("crate_it", "BagItManager::createEpub()", \OCP\Util::DEBUG);
     // create temp html from manifest
 
     $pre_content = "<html><body><h1>Table of Contents</h1><p style='text-indent:0pt'>";
@@ -416,6 +432,7 @@ class BagItManager {
   }
 
   public function flatList() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::flatList()", \OCP\Util::DEBUG);
     $data = $this->getManifestData();
     $vfs = &$data['vfs'][0]['children'];
     $flat = array();
@@ -444,6 +461,7 @@ class BagItManager {
   }
 
   public function createZip() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::createZip()", \OCP\Util::DEBUG);
     $tmp_dir = OC_Helper::tmpFolder();
     OC_Helper::copyr($this->crate_dir, $tmp_dir);
     $bag = new \BagIt($tmp_dir);
@@ -568,16 +586,19 @@ class BagItManager {
   }
 
   private function humanReadableFileSize($bytes, $decimals = 2) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::humanReadableFileSize()", \OCP\Util::DEBUG);
     $sz = 'BKMGTP';
     $factor = floor((strlen($bytes) - 1) / 3);
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
   }
 
   public function search($type, $keywords) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::search()", \OCP\Util::DEBUG);
     return self::$searchProvider->search($type, $keywords); 
   }
 
   public function getManifestData() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getManifestData()", \OCP\Util::DEBUG);
     // read from manifest
     $fp = fopen($this->manifest, 'r');
     $contents = file_get_contents($this->manifest);
@@ -589,6 +610,7 @@ class BagItManager {
 
 
   public function savePeople($id, $name, $email) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::savePeople()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $new_creator = array('id' => $id, 'name' => $name, 'email' => $email);
     if ($contents['creators']) {
@@ -611,6 +633,7 @@ class BagItManager {
   }
 
   public function removePeople($id) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::removePeople()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $creators = & $contents['creators'];
     for ($i = 0; $i < count($creators); $i++) {
@@ -627,6 +650,7 @@ class BagItManager {
   }
 
   public function clearMetadataField($field) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::clearMetadataField()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $contents[$field] = array();
     $fp = fopen($this->manifest, 'w+');
@@ -637,6 +661,7 @@ class BagItManager {
   }
 
   public function editCreator($id, $new_name) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::editCreator()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $creators = & $contents['creators'];
     for ($i = 0; $i < count($creators); $i++) {
@@ -653,6 +678,7 @@ class BagItManager {
   }
 
   public function updateVFS($data) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::updateVFS()", \OCP\Util::DEBUG);
     $new_vfs = json_decode($data);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $fp = fopen($this->manifest, 'w+');
@@ -664,6 +690,7 @@ class BagItManager {
   }
 
   public function validateMetadata() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::validateMetadata()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     if (count($contents['creators']) > 0 && $contents['description'] && trim($contents['description']) != '') {
       return true;
@@ -674,6 +701,7 @@ class BagItManager {
   }
 
   function getCollectionsList() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getCollectionsList()", \OCP\Util::DEBUG);
     require ("swordappv2-php-library/swordappclient.php");
 
     $sac = new \SWORDAPPClient();
@@ -712,6 +740,7 @@ class BagItManager {
   }
 
   public static function getConfig() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getConfig()", \OCP\Util::DEBUG);
     $config = null;
     $config_file = \OC::$SERVERROOT . '/data/cr8it_config.json';
     if (file_exists($config_file)) {
@@ -722,6 +751,7 @@ class BagItManager {
   }
 
   public function getCrateSize() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getCrateSize()", \OCP\Util::DEBUG);
     $files = $this->flatList();
     $total = 0;
     foreach($files as $file) {
@@ -732,9 +762,10 @@ class BagItManager {
   }
 
   public function getMintStatus() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getMintStatus()", \OCP\Util::DEBUG);
     $config = $this->getConfig();
     if ($config['mint']) {
-      \OCP\Util::writeLog("crate_it", $config['mint']['status'], \OCP\Util::DEBUG);
+      // \OCP\Util::writeLog("crate_it", $config['mint']['status'], \OCP\Util::DEBUG);
       return $config['mint']['status'];
     }
     else {
@@ -743,9 +774,10 @@ class BagItManager {
   }
 
   public function getSwordStatus() {
+    \OCP\Util::writeLog("crate_it", "BagItManager::getSwordStatus()", \OCP\Util::DEBUG);
     $config = $this->getConfig();
     if ($config['sword']) {
-      \OCP\Util::writeLog("crate_it", $config['sword']['status'], \OCP\Util::DEBUG);
+      // \OCP\Util::writeLog("crate_it", $config['sword']['status'], \OCP\Util::DEBUG);
       return $config['sword']['status'];
     }
     else {
@@ -754,12 +786,12 @@ class BagItManager {
   }
 
   public function deleteCrate() {
-
+    \OCP\Util::writeLog("crate_it", "BagItManager::deleteCrate()", \OCP\Util::DEBUG);
     // Implement a simple trash bin
 
     $crate_name = basename($this->crate_dir);
     $trash_dir = $this->crate_trash . "/" . $crate_name . "_" . date(DATE_ISO8601);
-    \OCP\Util::writeLog("crate_it", $trash_dir, \OCP\Util::DEBUG);
+    // \OCP\Util::writeLog("crate_it", $trash_dir, \OCP\Util::DEBUG);
     try {
       rename($this->crate_dir, $trash_dir);
       $_SESSION['crate_id'] = '';
@@ -778,6 +810,7 @@ class BagItManager {
   }
 
   public function saveActivity($id, $grant_number, $title, $date) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::saveActivity()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $new_activity = array('id' => $id, 'grant_number' => $grant_number, 'title' => $title, 'date' => $date);
     if ($contents['activities']) {
@@ -799,6 +832,7 @@ class BagItManager {
   }
 
   public function removeActivity($id) {
+    \OCP\Util::writeLog("crate_it", "BagItManager::removeActivity()", \OCP\Util::DEBUG);
     $contents = json_decode(file_get_contents($this->manifest) , true);
     $activities = & $contents['activities'];
     for ($i = 0; $i < count($activities); $i++) {

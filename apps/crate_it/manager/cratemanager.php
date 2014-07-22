@@ -19,33 +19,40 @@ class CrateManager {
      * Create the bag with manifest file for the crate
      * Throws exception when fail
      */
-    public function createCrate($crate_id) {
-        \OCP\Util::writeLog('crate_it', "CrateManager::createCrate(".$crate_id.")", 3);
-        // creates the bag and return the manifest file path
-        $manifest_path = $this->getManifestPath($crate_id); 
-        $this->createManifest($crate_id, $manifest_path);
-        // TODO: validate and throws exception
+    // public function createCrate($crateName, $description) {
+    //     \OCP\Util::writeLog('crate_it', "CrateManager::createCrate(".$crateName.")", 3);
+    //     // creates the bag and return the manifest file path
+    //     $manifest_path = $this->getManifestPath($crateName); 
+    //     $this->createManifest($crateName, $manifest_path);
+    //     // TODO: validate and throws exception
+    // }
+    
+    private function getManifestPath($crateName) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::getManifestPath(".$crateName.")", \OCP\Util::DEBUG);
+        $bag = $this->getOrCreateBag($crateName);
+        $dataDir = $bag->getDataDirectory();
+        // \OCP\Util::writeLog('crate_it', 'Data dir: '.$dataDir, 3);
+        $manifestPath = $dataDir . '/manifest.json';
+        $manifestPath = stripslashes($manifestPath);
+        return $manifestPath;
     }
     
-    private function getManifestPath($crate_id) {
-        $bag = $this->getOrCreateBag($crate_id);
-        $data_dir = $bag->getDataDirectory();
-        $manifest_path = $data_dir . '/manifest.json';
-        return $manifest_path;
-    }
-    
-    private function getOrCreateBag($crate_id) {
-        $user_id = $this->api->getUserId();
-        $crate_dir = $this->getCrateRoot($user_id) . '/' . $crate_id;
-        return new \BagIt($crate_dir); // create new bag or return existing bag
+    private function getOrCreateBag($crateName) {
+        $userId = $this->api->getUserId();
+        $crateDir = $this->getCrateRoot($userId) . '/' . $crateName;
+        return new \BagIt($crateDir); // create new bag or return existing bag
     }
 
     public function getCrateList() {
-        $user_id = $this->api->getUserId();
-        \OCP\Util::writeLog("crate_it", 'Getting a list of crates for user: '.$user_id, \OCP\Util::DEBUG);
+        $userId = $this->api->getUserId();
+        \OCP\Util::writeLog("crate_it", 'CrateManager::getCrateList(), for: '.$userId, \OCP\Util::DEBUG);
         
         $cratelist = array();
-        if ($handle = opendir($this->getCrateRoot($user_id))) {
+        $crateRoot = $this->getCrateRoot($userId);
+        if(!file_exists($crateRoot)) {
+          mkdir($crateRoot);
+        }
+        if ($handle = opendir($crateRoot)) {
             $filteredlist = array('.', '..', 'packages', '.Trash');
             while (false !== ($file = readdir($handle))) {
                 if (!in_array($file, $filteredlist)) {
@@ -57,43 +64,46 @@ class CrateManager {
         return $cratelist;
     }
     
-    public function getCrateFiles($crate_id) {
-        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateFiles(".$crate_id.")", 3);
-        $contents = $this->getManifestData($crate_id);
+    public function getCrateFiles($crateName) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateFiles(".$crateName.")", \OCP\Util::DEBUG);
+        $contents = $this->getManifestData($crateName);
         return json_encode($contents['vfs']);
     }
 
-    private function getCrateRoot($user_id) {
-        $base_dir = \OC::$SERVERROOT . '/data/' . $user_id;
+    private function getCrateRoot($userId) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot(".$userId.")", \OCP\Util::DEBUG);
+        $base_dir = \OC::$SERVERROOT . '/data/' . $userId;
         return $base_dir . '/crates';
     }
     
-    private function createManifest($crate_id, $manifest_path) {
-    if (!file_exists($manifest_path)) {
-      $fp = fopen($manifest_path, 'x');
-      $entry = array(
-        'description' => '',
-        'creators' => array() ,
-        'activities' => array() ,
-        'vfs' => array(
-          array(
-            'id' => 'rootfolder',
-            'name' => $crate_id,
-            'folder' => true,
-            'children' => array()
+    public function createCrate($crateName, $description) {
+      \OCP\Util::writeLog('crate_it', "CrateManager::createCrate(".$crateName.','.$description.")", \OCP\Util::DEBUG);
+      // creates the bag and return the manifest file path
+      $manifestPath = $this->getManifestPath($crateName); 
+      if (!file_exists($manifestPath)) {
+        $entry = array(
+          'description' => $description,
+          'creators' => array() ,
+          'activities' => array() ,
+          'vfs' => array(
+            array(
+              'id' => 'rootfolder',
+              'name' => $crateName,
+              'folder' => true,
+              'children' => array()
+            )
           )
-        )
-      );
-      fwrite($fp, json_encode($entry));
-      fclose($fp);
-      $this->getOrCreateBag($crate_id)->update();
+        );
+        $this->writeToFile($manifestPath, json_encode($entry));
+        $this->getOrCreateBag($crateName)->update();
+      }
     }
-  }
     
-    public function getManifestData($crate_id)
-    {
-        $manifest_path = $this->getManifestPath($crate_id);
-        \OCP\Util::writeLog('crate_it', "Manifest for ".$crate_id." is: ".$manifest_path, 3);
+    public function getManifestData($crateName) {
+        $manifest_path = $this->getManifestPath($crateName);
+        // \OCP\Util::writeLog("crate_it", 'Manifest path: '.$manifest_path, \OCP\Util::DEBUG);
+        // \OCP\Util::writeLog('crate_it', "Manifest for ".$crateName." is: ".$manifest_path, 3);
+        \OCP\Util::writeLog('crate_it', "CrateManager::getManifestData(".$crateName.")", \OCP\Util::DEBUG);
         // read from manifest
         $fp = fopen($manifest_path, 'r');
         $contents = file_get_contents($manifest_path);
@@ -102,8 +112,8 @@ class CrateManager {
         return $cont_array;
     }
 
-    public function addToCrate($crate_id, $file)
-    {
+    public function addToCrate($crateName, $file) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::addToCrate(".$crateName.','.$file.")", \OCP\Util::DEBUG);
         $path_parts = pathinfo($file);
         $filename = $path_parts['filename'];
         if (\OC\Files\Filesystem::isReadable($file)) {  
@@ -119,7 +129,7 @@ class CrateManager {
           header("HTTP/1.0 403 Forbidden");
           die('403 Forbidden');
         }
-        $manifest_path = $this->getManifestPath($crate_id);
+        $manifest_path = $this->getManifestPath($crateName);
     
         $contents = json_decode(file_get_contents($manifest_path) , true); // convert it to an array.
         $vfs = & $contents['vfs'][0];
@@ -138,12 +148,14 @@ class CrateManager {
     
         // update the hashes
         $this->getOrCreateBag()->update();
-        return "File added to the crate " . $crate_id;
+        return "File added to the crate " . $crateName;
     }
 
    // TODO: There's currently no check for duplicates
    // TODO: root folder has isFolder set, so should other files folders
+    // TODO: refactor to two helpers, addFolder and addFile
     private function addPath($path, &$vfs) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::addPath(".$path.")", \OCP\Util::DEBUG);
         if (\OC\Files\Filesystem::is_dir($path)) {
           $vfs_entry = array(
             'name' => basename($path) ,
@@ -177,7 +189,15 @@ class CrateManager {
   }
 
   private function getFullPath($file) {
+    \OCP\Util::writeLog('crate_it', "CrateManager::getFullPath(".$file.")", \OCP\Util::DEBUG);
     return \OC\Files\Filesystem::getLocalFile($file);
+  }
+
+  private function writeToFile($path, $contents) {
+    \OCP\Util::writeLog('crate_it', "CrateManager::writeToFile(".$path.")", \OCP\Util::DEBUG);
+    $fp = fopen($path, 'w');
+    fwrite($fp, $contents);
+    fclose($fp);
   }
 
 }

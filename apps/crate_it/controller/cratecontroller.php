@@ -26,8 +26,8 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function create()
-    {
+    public function create() {
+        \OCP\Util::writeLog('crate_it', "CrateController::create()", \OCP\Util::DEBUG);
         $name = $this->params('name');
         $description = $this->params('description');
         try {
@@ -52,9 +52,9 @@ class CrateController extends Controller {
      */
     public function get_items()
     {
-        \OCP\Util::writeLog('crate_it', "CrateController::get_items()", 3);
+        \OCP\Util::writeLog('crate_it', "CrateController::get_items()", \OCP\Util::DEBUG);
         try {
-            \OCP\Util::writeLog('crate_it', "Selected Crate:".$_SESSION['selected_crate'], 3);
+            // \OCP\Util::writeLog('crate_it', "Selected Crate:".$_SESSION['selected_crate'], 3);
             $data = $this->crate_service->getItems($_SESSION['selected_crate']);
             return new JSONResponse($data, 200);
         } catch (Exception $e)
@@ -77,7 +77,7 @@ class CrateController extends Controller {
      */
     public function add()
     {
-        \OCP\Util::writeLog('crate_it', "CrateController::add()", 3);
+        \OCP\Util::writeLog('crate_it', "CrateController::add()", \OCP\Util::DEBUG);
         try
         {
             // TODO error handling
@@ -105,6 +105,7 @@ class CrateController extends Controller {
      */
     public function manifest()
     {
+        \OCP\Util::writeLog('crate_it', "CrateController::manifest()", \OCP\Util::DEBUG);
         $success = $this->crate_service->getManifest();
         return new JSONResponse (array('msg'=>'OK'), $success);
     }

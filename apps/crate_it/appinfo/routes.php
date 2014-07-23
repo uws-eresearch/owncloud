@@ -43,3 +43,7 @@ $this->create('crate_it_add', '/crate/add')->get()->action(function($params) {
 $this->create('crate_it_create', '/crate/create')->post()->action(function($params) {
     App::main('CrateController', 'create', $params, new DIContainer());
 });
+
+$this->create('crate_it_switch', '/crate/switch')->get()->action(function($params) {
+    App::main('CrateController', 'switchCrate', $params, new DIContainer());
+});

@@ -508,8 +508,9 @@ function initCrateActions() {
 
   $('#crates').change(function() {
     var id = $(this).val();
+    var c_url = OC.generateUrl('apps/crate_it/crate/switch?crate_id={crateName}', {crateName: id});
     $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php') + '?action=switch&crate_id=' + id,
+      url: c_url,
       type: 'get',
       dataType: 'html',
       async: false,

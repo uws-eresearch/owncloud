@@ -71,23 +71,6 @@ $bagit_manager = \OCA\crate_it\lib\BagItManager::getInstance();
 $config = $bagit_manager->getConfig();
 
 switch ($action){
-	// case 'create':
-	// 	// check if crate already exist
-	// 	$crate_list = $bagit_manager->getCrateList();
-	// 	$crate_already_exist = array_search($crate_name, $crate_list);
-	// 	if ($crate_already_exist or $crate_name==='default_crate')
-	// 	{
-	// 		header('HTTP/1.1 401 Crate with name "' .$crate_name. '" already exists', 401);
-	// 	} else {
-	// 		$msg = $bagit_manager->createCrate($crate_name);
-	// 		$ok = $bagit_manager->setDescription($crate_description);
-	// 		if(!$msg){
-	// 			header('HTTP/1.1 400 No name given', 400);
-	// 		} else {
-	// 			print $msg;
-	// 		}
-	// 	}
-	// 	break;
 	case 'describe':
 		$ok = $bagit_manager->setDescription($description);
 		if($ok){
@@ -96,25 +79,10 @@ switch ($action){
 			header('HTTP/1.1 500 Internal Server Error');
 		}
 		break;
-	case 'switch':
-		$ok = $bagit_manager->switchCrate($crate_id);		
-		if(!$ok){
-			header('HTTP/1.1 400 No name',400);
-		} 
-		\OCP\Util::writeLog("crate_it", "Switched crate to: " . $_SESSION['crate_id'], 3); 
-		break;
 	case 'get_crate':
 		$msg = $bagit_manager->getSelectedCrate();
 		print $msg;
 		break;
-	// case 'get_items':
-	// 	$msg = $bagit_manager->getManifestData();
-	// 	echo json_encode($msg);
-	// 	break;
-	// case 'add':
-	// 	$msg = $bagit_manager->addToBag($file);
-	// 	print $msg;
-	// 	break;
 	case 'update_vfs':
         $ok = $bagit_manager->updateVFS($vfs);
         if($ok){

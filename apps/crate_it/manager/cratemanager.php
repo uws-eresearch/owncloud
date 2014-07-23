@@ -70,6 +70,7 @@ class CrateManager {
     }
     
     private function createManifest($crate_id, $manifest_path) {
+    \OCP\Util::writeLog('crate_it', "creating manifest..", 3);
     if (!file_exists($manifest_path)) {
       $fp = fopen($manifest_path, 'x');
       $entry = array(
@@ -87,6 +88,7 @@ class CrateManager {
       );
       fwrite($fp, json_encode($entry));
       fclose($fp);
+      \OCP\Util::writeLog('crate_it', "Manifest created, about to update", 3);
       $this->getOrCreateBag($crate_id)->update();
     }
   }
@@ -137,8 +139,8 @@ class CrateManager {
         fclose($fp);
     
         // update the hashes
-        $this->getOrCreateBag()->update();
-        return "File added to the crate " . $crate_id;
+        $this->getOrCreateBag($crate_id)->update();
+        return 'File added to the crate ' . $crate_id;
     }
 
     // TODO: There's currently no check for duplicates
@@ -201,6 +203,7 @@ class CrateManager {
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateSize(). Crate: ".$crate_id, 3);
         
         $files = $this->flatList($crate_id);
+         \OCP\Util::writeLog('crate_it', "Flat list: ".$files, 3);
         $total = 0;
         foreach($files as $file) {
           $total+= filesize($file['filename']);

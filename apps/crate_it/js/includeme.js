@@ -274,7 +274,7 @@ function updateCrateSize() {
       }
     },
     error: function(data) {
-        displayError("Update crate size fail");
+        // do nothing - some owncloud ajax call somehow triggers this error block
     }
   });
 }

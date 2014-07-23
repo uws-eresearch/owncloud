@@ -41,7 +41,7 @@ class PageController extends Controller {
     private function create_default_crate() {
         // create default crate if no crates are available, or
         // for some reason no crate is selected
-        if ($this->session('selected_crate') == null) 
+        if ($this->session('selected_crate') === null) 
         {
             \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
             $this->setup_service->createDefaultCrate();

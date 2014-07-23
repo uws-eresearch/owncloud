@@ -85,7 +85,7 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::add()", 3);
         try
         {
-            // TODO error handling
+            // TODO check if this error handling works
             $file = $this->params('file');
             \OCP\Util::writeLog('crate_it', "Adding ".$file, 3);
             $msg = $this->crate_service->addToBag($_SESSION['selected_crate'], $file);

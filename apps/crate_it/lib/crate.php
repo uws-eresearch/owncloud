@@ -8,20 +8,23 @@ use BagIt;
 class Crate extends BagIt {
 
   private $manifestPath;
-  private $name;
+  private $crateName;
 
-  public function __construct($crateName, $description='') {
-      parent::__construct($crateName);
+  public function __construct($crateRoot, $crateName, $description='') {
+      \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.")", \OCP\Util::DEBUG);
+      if (!file_exists($crateRoot)) {
+          mkdir($crateRoot, 0755, true);
+      }
+      parent::__construct($crateRoot.'/'.$crateName);
       $this->manifestPath = $this->getDataDirectory().'/manifest.json';
       if (!file_exists($this->manifestPath)) {
         $this->createManifest($description);
       }
-      $tmp = explode('/', $crateName);
-      $this->name = end($tmp);
+      $this->crateName = $crateName;
   }
 
   private function createManifest($description) {
-    \OCP\Util::writeLog('crate_it', "Crate::createCrate(".$this->bag.','.$description.")", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog('crate_it', "Crate::createManifest(".$description.")", \OCP\Util::DEBUG);
     $description = NULL ? '' : $description;
     $entry = array(
       'description' => $description,
@@ -30,7 +33,7 @@ class Crate extends BagIt {
       'vfs' => array(
         array(
           'id' => 'rootfolder',
-          'name' => $this->name, // TODO: This is working for some reason
+          'name' => $self->crateName, // TODO: This is working for some reason
           'folder' => true,
           'children' => array()
         )
@@ -70,7 +73,6 @@ class Crate extends BagIt {
 
   // TODO: There's currently no check for duplicates
   // TODO: root folder has isFolder set, so should other files folders
-  // TODO: refactor to two helpers, addFolder and addFile
   private function addPath($path, &$vfs) {
     \OCP\Util::writeLog('crate_it', "CrateManager::addPath(".$path.")", \OCP\Util::DEBUG);
     if (\OC\Files\Filesystem::is_dir($path)) {
@@ -84,18 +86,19 @@ class Crate extends BagIt {
   private function addFolderToCrate($folder) {
     $vfsEntry = array(
       'name' => basename($folder) ,
-      'id' => 'folder',
+      'id' => 'folder', // TODO: change this to 'folder' => true, need to update js
       'children' => array()
     );
     $vfsContents = &$vfsEntry['children'];
     $paths = \OC\Files\Filesystem::getDirectoryContent($folder);
     foreach($paths as $path) {
         $relativePath = substr($path['path'], strlen('files/'));
-        if (!strncmp($path, "Shared", 6)) {
+        if (!strncmp($folder, "Shared", 6)) {
             $relativePath = 'Shared/'.$relativePath;
         }
         $this->addPath($relativePath, $vfsContents);
     }
+    return $vfsEntry;
   }
 
 
@@ -131,6 +134,7 @@ class Crate extends BagIt {
     return $contents;
   }
 
+  // TODO: Move to utility class
   private function getFullPath($path) {
     \OCP\Util::writeLog('crate_it', "CrateManager::getFullPath(".$path.")", \OCP\Util::DEBUG);
     return \OC\Files\Filesystem::getLocalFile($path);

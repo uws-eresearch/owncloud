@@ -121,7 +121,7 @@ $(document).ready(function() {
   max_zip_mb = parseInt($('#max_zip_mb').text());
   crate_size_mb = 0;
 
-  //updateCrateSize();
+  updateCrateSize();
 
   //initSearchHandlers();
 

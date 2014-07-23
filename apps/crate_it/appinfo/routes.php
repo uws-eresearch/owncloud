@@ -42,7 +42,13 @@ $this->create('crate_it_get_items', '/crate/get_items')->get()->action(function(
 });
 
 $this->create('crate_it_add', '/crate/add')->get()->action(function($params) {
-    // call the index method on the class PageController
     App::main('CrateController', 'add', $params, new DIContainer());
 });
 
+$this->create('crate_it_get_crate_size', '/crate/get_crate_size')->get()->action(function($params) {
+    App::main('CrateController', 'getCrateSize', $params, new DIContainer());
+});
+
+$this->create('crate_it_update', '/crate/update_crate')->post()->action(function($params) {
+    App::main('CrateController', 'updateCrate', $params, new DIContainer());
+});

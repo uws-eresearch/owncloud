@@ -114,6 +114,27 @@ class CrateController extends Controller {
         return new JSONResponse (array('msg'=>'OK'), $success);
     }
     
+    /**
+     * Get Crate Size
+     *
+     * @Ajax
+     * @CSRFExemption
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
+    public function getCrateSize()
+    {
+        \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", 3);
+        $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
+        return new JSONResponse($data, 200);
+    }
+    
+    public function updateCrate()
+    {
+        $data = $this->params('vfs');
+        $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $data);
+        return new JSONResponse($msg, 200);
+    }
     
     
 }

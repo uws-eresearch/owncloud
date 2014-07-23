@@ -31,6 +31,7 @@ class CrateManager {
         $bag = $this->getOrCreateBag($crate_id);
         $data_dir = $bag->getDataDirectory();
         $manifest_path = $data_dir . '/manifest.json';
+        \OCP\Util::writeLog('crate_it', "Manifest path for ".$crate_id." is: ".$manifest_path, 3);
         return $manifest_path;
     }
     
@@ -93,7 +94,6 @@ class CrateManager {
     public function getManifestData($crate_id)
     {
         $manifest_path = $this->getManifestPath($crate_id);
-        \OCP\Util::writeLog('crate_it', "Manifest for ".$crate_id." is: ".$manifest_path, 3);
         // read from manifest
         $fp = fopen($manifest_path, 'r');
         $contents = file_get_contents($manifest_path);
@@ -141,8 +141,8 @@ class CrateManager {
         return "File added to the crate " . $crate_id;
     }
 
-   // TODO: There's currently no check for duplicates
-   // TODO: root folder has isFolder set, so should other files folders
+    // TODO: There's currently no check for duplicates
+    // TODO: root folder has isFolder set, so should other files folders
     private function addPath($path, &$vfs) {
         if (\OC\Files\Filesystem::is_dir($path)) {
           $vfs_entry = array(
@@ -174,10 +174,68 @@ class CrateManager {
           );
         }
         array_push($vfs, $vfs_entry);
-  }
+    }
 
-  private function getFullPath($file) {
-    return \OC\Files\Filesystem::getLocalFile($file);
-  }
+    private function getFullPath($file) {
+        return \OC\Files\Filesystem::getLocalFile($file);
+    }
+    
+    public function updateCrate($crate_id, $data) {
+        
+        \OCP\Util::writeLog('crate_it', "CrateManager::UpdateCrate(). Updating crate: ".$crate_id, 3);
+        
+        $new_vfs = json_decode($data);
+        \OCP\Util::writeLog('crate_it', "Crate data: ".$new_vfs, 3);
+        
+        $manifest_path = $this->getManifestPath($crate_id);
+        $contents = json_decode(file_get_contents($manifest_path), true);
+        $fp = fopen($manifest_path, 'w+');
+        $contents['vfs'] = $new_vfs;
+        fwrite($fp, json_encode($contents));
+        fclose($fp);
+        $this->getOrCreateBag($crate_id)->update();
+        return true;
+    }
 
+    public function getCrateSize($crate_id) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateSize(). Crate: ".$crate_id, 3);
+        
+        $files = $this->flatList($crate_id);
+        $total = 0;
+        foreach($files as $file) {
+          $total+= filesize($file['filename']);
+        }
+        \OCP\Util::writeLog('crate_it', "Crate size: ".$total, 3);
+        $data = array('size' => $total, 'human' => \OCP\Util::humanFileSize($total));
+        return $data;
+    }
+    
+    public function flatList($crate_id) {
+        $data = $this->getManifestData($crate_id);
+        $vfs = &$data['vfs'][0]['children'];
+        $flat = array();
+        $ref = &$flat;
+        $this->flat_r($vfs, $ref, $data['vfs'][0]['name']);
+        return $flat;
+    }
+    
+    private function flat_r(&$vfs, &$flat, $path) {
+        if (count($vfs) > 0) {
+          foreach($vfs as $entry) {
+            if (array_key_exists('filename', $entry)) {
+              $flat_entry = array(
+                'id' => $entry['id'],
+                'path' => $path,
+                'name' => $entry['name'],
+                'filename' => $entry['filename']
+              );
+              array_push($flat, $flat_entry);
+            }
+            elseif (array_key_exists('children', $entry)) {
+              $this->flat_r($entry['children'], $flat, $path . $entry['name'] . '/');
+            }
+          }
+        }
+  }
+    
 }

@@ -247,12 +247,9 @@ function buildFileTree(data) {
 
 function updateCrateSize() {
   $.ajax({
-    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-    type: 'post',
+    url: 'crate/get_crate_size',
+    type: 'get',
     dataType: 'json',
-    data: {
-      'action': 'crate_size'
-    },
     success: function(data) {
       $('#crate_size_human').text(data['human']);
       crate_size_mb = data['size'] / (1024 * 1024);
@@ -276,7 +273,9 @@ function updateCrateSize() {
         $('#download').removeAttr("disabled");
       }
     },
-    error: function(data) {}
+    error: function(data) {
+        displayError("Update crate size fail");
+    }
   });
 }
 
@@ -309,11 +308,10 @@ function saveTree(successMessage, errorMessage, reload) {
     errorMessage = 'Crate not updated';
   }
   $.ajax({
-    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+    url: 'crate_it/update',
     type: 'post',
     dataType: 'html',
     data: {
-      'action': 'update_vfs',
       'vfs': $tree.tree('toJson')
     },
     success: function(data) {

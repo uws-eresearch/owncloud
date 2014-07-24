@@ -11,15 +11,9 @@ class PageController extends Controller {
      */
     private $setup_service;
 
-    /**
-     * @var Request
-     */
-    protected $request;
-
     public function __construct($api, $request, $setup_service) {
         parent::__construct($api, $request);
         $this->setup_service = $setup_service;
-        $this->request = $request;
     }
 
     /**

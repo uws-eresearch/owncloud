@@ -28,7 +28,6 @@ class PageController extends Controller {
         try {
             $this->create_default_crate();         
             $model = $this->set_up_params();
-             \OCP\Util::writeLog('crate_it', $model, 3);
             return $this->render('index', $model);
             
         } catch (Exception $e) {

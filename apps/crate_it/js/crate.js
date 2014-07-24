@@ -18,7 +18,6 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-alert = function() {};
 
 $(document).ready(function() {  
   /*      
@@ -143,7 +142,6 @@ $( window ).resize(function() {
 });
 function calulate_heights() {
   var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1 )) + $('.collapse.info.in .panel-body').outerHeight();
-  alert(tabsHeight);
   var height = $('#meta-data').innerHeight() - tabsHeight;
   $('.collapse.standard .panel-body').height(height + 12);
 }

@@ -15,12 +15,12 @@ class Crate extends BagIt {
       if (!file_exists($crateRoot)) {
           mkdir($crateRoot, 0755, true);
       }
-      parent::__construct($crateRoot.'/'.$crateName);
+      parent::__construct($crateRoot.'/'.$crateName);     
+      $this->crateName = $crateName;
       $this->manifestPath = $this->getDataDirectory().'/manifest.json';
       if (!file_exists($this->manifestPath)) {
         $this->createManifest($description);
       }
-      $this->crateName = $crateName;
   }
 
   private function createManifest($description) {
@@ -33,7 +33,7 @@ class Crate extends BagIt {
       'vfs' => array(
         array(
           'id' => 'rootfolder',
-          'name' => $this->crateName, // TODO: This is working for some reason
+          'name' => $this->crateName, 
           'folder' => true,
           'children' => array()
         )

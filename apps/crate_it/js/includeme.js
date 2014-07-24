@@ -564,9 +564,7 @@ function drawCrateContents() {
       indentTree();
     },
     error: function(data) {
-      // TODO: why alert? It's overwritten anyway
       var e = data.statusText;
-      alert(e);
     }
   });
 }

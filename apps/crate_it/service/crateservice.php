@@ -12,31 +12,33 @@ class CrateService {
     /**
      * @var CrateManager
      */
-    private $crate_manager;
+    private $crateManager;
     
-    public function __construct($api, $crate_manager){
+    public function __construct($api, $crateManager){
         $this->api = $api;
-        $this->crate_manager = $crate_manager;
+        $this->crateManager = $crateManager;
     }
     
-    public function addToBag($crate_id, $file)
-    {
-        return $this->crate_manager->addToCrate($crate_id, $file);   
+    public function addToBag($crateId, $file) {
+        return $this->crateManager->addToCrate($crateId, $file);   
     }
     
-    public function getItems($crate_id)
-    {
-        return $this->crate_manager->getManifestData($crate_id);
+    public function getItems($crateId) {
+        return $this->crateManager->getManifestData($crateId);
+    }
+
+    public function createCrate($crateName, $description) {
+        return $this->crateManager->createCrate($crateName, $description);   
     }
     
     public function getCrateSize($crate_id)
     {
-        return $this->crate_manager->getCrateSize($crate_id);
+        return $this->crateManager->getCrateSize($crate_id);
     }
     
     public function updateCrate($crate_id, $data)
     {
-        return $this->crate_manager->updateCrate($crate_id);
+        return $this->crateManager->updateCrate($crate_id);
     }
     
 }

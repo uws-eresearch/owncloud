@@ -32,9 +32,9 @@ class SetupService {
         $params['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
         $params['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
         $params['description'] = $manifestData['description'];        
-        $model['selected_crate'] = $crate_id;  
+        $params['selected_crate'] = $crate_id;  
         $params['crates'] = $this->crate_manager->getCrateList();        
-        $model['bagged_files'] = $this->crate_manager->getCrateFiles($crate_id);
+        $params['bagged_files'] = $this->crate_manager->getCrateFiles($crate_id);
         return $params;
     }
     
@@ -45,7 +45,7 @@ class SetupService {
     public function createDefaultCrate()
     {
         \OCP\Util::writeLog('crate_it', "Creaeting or getting default crate", 3);
-        $this->crate_manager->createCrate("default_crate");
+        $this->crate_manager->createCrate("default_crate", "");
     }
     
     /**

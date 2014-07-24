@@ -32,7 +32,7 @@
     <select id="crates">
       
       {% for crate in crates %}  
-         {% if selected_crate == crate %} 
+         {% if selected_crate is sameas(crate) %} 
             <option id="{{ crate }}" value="{{ crate }}" selected>
          {% else %}
             <option id="{{ crate }}" value="{{ crate }}">

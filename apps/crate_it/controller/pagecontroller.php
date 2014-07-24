@@ -11,9 +11,15 @@ class PageController extends Controller {
      */
     private $setup_service;
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
     public function __construct($api, $request, $setup_service) {
         parent::__construct($api, $request);
         $this->setup_service = $setup_service;
+        $this->request = $request;
     }
 
     /**
@@ -49,9 +55,9 @@ class PageController extends Controller {
             // Make sure to update this whenever you change selected crate.
             // The above line should throw an exception if it fails so
             // the session variable is maintained
-            $_SESSION['selected_crate'] = 'default_crate';
-            session_commit();
-             \OCP\Util::writeLog('crate_it', "Wrote to session: ".$this->session('selected_crate'), 3);
+           $this->session('selected_crate', 'default_crate');
+           session_commit();
+           \OCP\Util::writeLog('crate_it', "Wrote to session: ".$this->session('selected_crate'), 3);
         }             
     }
 
@@ -62,7 +68,8 @@ class PageController extends Controller {
                         "sword_status" => $bagit_manager->getSwordStatus(), 
                         "sword_collections" => $bagit_manager->getCollectionsList());
         **/
-        $selected_crate = $_SESSION['selected_crate'];
+        $selected_crate =  $this->session('selected_crate');
+        \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
         $model = $this->setup_service->loadParams($selected_crate);
         return $model;                          
     }

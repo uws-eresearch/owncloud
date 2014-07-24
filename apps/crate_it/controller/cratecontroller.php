@@ -54,7 +54,7 @@ class CrateController extends Controller {
     {
         \OCP\Util::writeLog('crate_it', "CrateController::get_items()", \OCP\Util::DEBUG);
         try {
-            $data = $this->crate_service->getItems($this->session('selected_crate'));
+            $data = $this->crate_service->getItems($_SESSION['selected_crate']);
             return new JSONResponse($data, 200);
         } catch (Exception $e)
         {
@@ -82,7 +82,7 @@ class CrateController extends Controller {
             // TODO check if this error handling works
             $file = $this->params('file');
             \OCP\Util::writeLog('crate_it', "Adding ".$file, 3);
-            $msg = $this->crate_service->addToBag($this->session('selected_crate'), $file);
+            $msg = $this->crate_service->addToBag($_SESSION['selected_crate'], $file);
             return new JSONResponse ($msg, 200);
         } catch(Exception $e)
         {
@@ -120,7 +120,7 @@ class CrateController extends Controller {
     public function getCrateSize()
     {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", 3);
-        $data = $this->crate_service->getCrateSize($this->session('selected_crate'));
+        $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
         return new JSONResponse($data, 200);
     }
     
@@ -135,7 +135,7 @@ class CrateController extends Controller {
     public function updateCrate()
     {
         $data = $this->params('vfs');
-        $msg = $this->crate_service->updateCrate($this->session('selected_crate'), $data);
+        $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $data);
         return new JSONResponse($msg, 200);
     }
     

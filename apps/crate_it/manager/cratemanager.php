@@ -78,6 +78,7 @@ class CrateManager {
       \OCP\Util::writeLog('crate_it', "Crate::addToCrate(".$crateName.','.$path.")", \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
         $crate->addToCrate($path);
+        return 'Added to crate '.$crateName;
     }
 
     // TODO Move to Crate class!!

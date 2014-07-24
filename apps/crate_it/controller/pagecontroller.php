@@ -11,15 +11,9 @@ class PageController extends Controller {
      */
     private $setup_service;
 
-    /**
-     * @var Request
-     */
-    protected $request;
-
     public function __construct($api, $request, $setup_service) {
         parent::__construct($api, $request);
         $this->setup_service = $setup_service;
-        $this->request = $request;
     }
 
     /**
@@ -34,7 +28,6 @@ class PageController extends Controller {
         try {
             $this->create_default_crate();         
             $model = $this->set_up_params();
-             \OCP\Util::writeLog('crate_it', $model, 3);
             return $this->render('index', $model);
             
         } catch (Exception $e) {
@@ -47,7 +40,7 @@ class PageController extends Controller {
     private function create_default_crate() {
         // create default crate if no crates are available, or
         // for some reason no crate is selected
-        if ($this->session('selected_crate') === null) 
+        if ($_SESSION['selected_crate'] === null) 
         {
             \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
             $this->setup_service->createDefaultCrate();
@@ -55,9 +48,9 @@ class PageController extends Controller {
             // Make sure to update this whenever you change selected crate.
             // The above line should throw an exception if it fails so
             // the session variable is maintained
-           $this->session('selected_crate', 'default_crate');
+           $_SESSION['selected_crate'] = 'default_crate';
            session_commit();
-           \OCP\Util::writeLog('crate_it', "Wrote to session: ".$this->session('selected_crate'), 3);
+           \OCP\Util::writeLog('crate_it', "Wrote to session: ".$_SESSION['selected_crate'], 3);
         }             
     }
 
@@ -68,8 +61,7 @@ class PageController extends Controller {
                         "sword_status" => $bagit_manager->getSwordStatus(), 
                         "sword_collections" => $bagit_manager->getCollectionsList());
         **/
-        $selected_crate =  $this->session('selected_crate');
-        \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
+        $selected_crate =  $_SESSION['selected_crate'];
         $model = $this->setup_service->loadParams($selected_crate);
         return $model;                          
     }

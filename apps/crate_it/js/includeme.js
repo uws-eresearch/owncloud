@@ -504,24 +504,53 @@ function initCrateActions() {
     }
   });
 
+  // $('#crates').change(function() {
+  //   var id = $(this).val();
+  //   var c_url = OC.generateUrl('apps/crate_it/crate/switch?crate_id={crateName}', {crateName: id});
+  //   $.ajax({
+  //     url: c_url,
+  //     type: 'get',
+  //     dataType: 'html',
+  //     async: false,
+  //     success: function(data) {
+  //       location.reload();
+  //     },
+  //     error: function(data) {
+  //       var e = data.statusText;
+  //       alert(e);
+  //     }
+  //   });
+  // });
+
+
   $('#crates').change(function() {
     var id = $(this).val();
-    var c_url = OC.generateUrl('apps/crate_it/crate/switch?crate_id={crateName}', {crateName: id});
+    var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {crateName: id});
+    console.log(c_url);
     $.ajax({
       url: c_url,
       type: 'get',
       dataType: 'html',
       async: false,
       success: function(data) {
-        location.reload();
+        manifest = JSON.parse(data);
+        reloadCrateData(manifest);
       },
       error: function(data) {
-        var e = data.statusText;
-        alert(e);
+        displayError(data.statusText);
       }
     });
   });
 
+}
+
+//TODO use something like this when the pages loads
+function reloadCrateData(manifest) {
+  // TODO load other metadata
+  $tree.remove();
+  $('#container').after('<div id="files"></div>');
+  buildFileTree(manifest);
+  indentTree();
 }
 
 function drawCrateContents() {

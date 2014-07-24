@@ -43,6 +43,11 @@ class Crate extends BagIt {
     $this->update();
   }
 
+  public function setField($field, $value) {
+    $manifest = getManifest();
+    $manifest[$field] = $value;
+    $this->setManifest($manifest);
+  }
 
   public function getManifest() {
     $manifest = $this->readFile($this->manifestPath);

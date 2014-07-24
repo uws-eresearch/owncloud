@@ -123,7 +123,9 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::switchCrates()", \OCP\Util::DEBUG);
         // TODO: setting session variables is horrible, see if we can avoid this altogether
         // TODO: symphony/twig don't use the session variable like this
-        $_SESSION['selected_crate'] = $this->params('crate_id');
+        // $_SESSION['selected_crate'] = $this->params('crate_id');
+        $session = $this->get('session');
+        $session->set('selected_crate', $this->params('crate_id'));
         $this->get_items();
 
     }

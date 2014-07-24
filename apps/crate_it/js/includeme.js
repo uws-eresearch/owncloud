@@ -532,6 +532,7 @@ function drawCrateContents() {
     type: 'get',
     dataType: 'json',
     success: function(data) {
+      manifest = data;
       $tree = buildFileTree(data);
       indentTree();
     },

@@ -11,9 +11,15 @@ class PageController extends Controller {
      */
     private $setup_service;
 
+    /**
+     * @var Request
+     */
+    protected $request;
+
     public function __construct($api, $request, $setup_service) {
         parent::__construct($api, $request);
         $this->setup_service = $setup_service;
+        $this->request = $request;
     }
 
     /**
@@ -62,7 +68,11 @@ class PageController extends Controller {
                         "sword_status" => $bagit_manager->getSwordStatus(), 
                         "sword_collections" => $bagit_manager->getCollectionsList());
         **/
-        $selected_crate = $_SESSION['selected_crate'];
+        // $selected_crate = $_SESSION['selected_crate'];
+        // $session = $this->get('session');
+        // $request = Request::createFromGlobals();
+        $session = $this->request->getSession();
+        $selected_crate = $session->get('selected_crate');
         $model = $this->setup_service->loadParams($selected_crate);
         return $model;                          
     }

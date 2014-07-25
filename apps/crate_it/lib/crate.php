@@ -51,7 +51,7 @@ class Crate extends BagIt {
 
   public function getManifest() {
     $manifest = $this->readFile($this->manifestPath);
-    \OCP\Util::writeLog('crate_it', "Manifest before decode: ".$manifest, \OCP\Util::DEBUG);    
+    //\OCP\Util::writeLog('crate_it', "Manifest before decode: ".$manifest, \OCP\Util::DEBUG);    
     return json_decode($manifest, true);
   }
 
@@ -75,10 +75,25 @@ class Crate extends BagIt {
     $this->setManifest($manifest);
     $this->update();
   }
+  
+  /**
+   * NOTE: this currently just update VFS! Change it to update everything including
+   * description and metadata?
+   */
+  public function updateCrate($data) {
+     \OCP\Util::writeLog("crate_it", "Crate::updateCrate()", \OCP\Util::DEBUG);
+     $new_vfs = json_decode($data);
+     // read the manifest content and insert new vfs
+     $manifest = $this->getManifest();
+     $manifest['vfs'] = $new_vfs;
+     $this->setManifest($manifest);     
+     $this->update();
+     return true;
+  }
 
   public function getSize() {        
     $files = $this->flatList();
-     \OCP\Util::writeLog('crate_it', "Crate::getSize() - Flat list: ".sizeof($files), 3);
+    // \OCP\Util::writeLog('crate_it', "Crate::getSize() - Flat list: ".sizeof($files), 3);
     $total = 0;
     foreach($files as $file) {
       $total+= filesize($file['filename']);

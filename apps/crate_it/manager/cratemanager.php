@@ -89,4 +89,9 @@ class CrateManager {
         return $data; 
     }
     
+    public function updateCrate($crateName, $data) {
+        $crate = $this->getCrate($crateName);
+        $crate->updateCrate($data);
+    }
+    
 }

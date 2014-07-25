@@ -134,6 +134,7 @@ class CrateController extends Controller {
      */
     public function updateCrate()
     {
+        \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", 3);
         $data = $this->params('vfs');
         $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $data);
         return new JSONResponse($msg, 200);

@@ -308,7 +308,7 @@ function saveTree(successMessage, errorMessage, reload) {
     errorMessage = 'Crate not updated';
   }
   $.ajax({
-    url: 'crate_it/update',
+    url: 'crate/update',
     type: 'post',
     dataType: 'html',
     data: {

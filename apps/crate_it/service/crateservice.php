@@ -38,7 +38,7 @@ class CrateService {
     
     public function updateCrate($crate_id, $data)
     {
-        return $this->crateManager->updateCrate($crate_id);
+        return $this->crateManager->updateCrate($crate_id, $data);
     }
     
 }

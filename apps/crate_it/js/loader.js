@@ -40,9 +40,9 @@ $(document).ready(function(){
                 $.ajax({
                     url: c_url,
                     type: 'get',
-                    dataType: 'text/html',
+                    dataType: 'json',
                     complete: function(data){
-                        OC.Notification.show(data.responseText);
+                        OC.Notification.show(data.responseJSON);
                         setTimeout(function() {OC.Notification.hide();}, 3000);
                     }
                 });

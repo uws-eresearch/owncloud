@@ -525,6 +525,7 @@ function initCrateActions() {
 
 
   $('#crates').change(function() {
+    console.log("$('#crates').change: " + $(this).val());
     var id = $(this).val();
     var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {crateName: id});
     console.log(c_url);
@@ -534,6 +535,7 @@ function initCrateActions() {
       dataType: 'json',
       async: false,
       success: function(data) {
+        manifest = data;
         reloadCrateData(data);
       },
       error: function(data) 
@@ -555,10 +557,13 @@ function reloadCrateData(manifest) {
   indentTree();
 }
 
-function drawCrateContents(crateName) {
-  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {'crateName': crateName});
+function drawCrateContents() {
+  // TODO: maybe get rid of this and just use reloadCrateData
+  console.log("drawCrateContents(): " + templateVars['selected_crate']);
+  console.log(c_url);
+  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {'crateName': templateVars['selected_crate']});
   $.ajax({
-    url: 'crate/get_items',
+    url: c_url,
     type: 'get',
     dataType: 'json',
     success: function(data) {

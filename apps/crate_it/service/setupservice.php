@@ -32,7 +32,7 @@ class SetupService {
         $params['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
         $params['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
         $params['description'] = $manifestData['description'];        
-        $params['selected_crate'] = $crate_id;  
+        $params['selected_crate'] = $crate_id;
         $params['crates'] = $this->crate_manager->getCrateList();        
         $params['bagged_files'] = $this->crate_manager->getCrateFiles($crate_id);
         return $params;
@@ -60,6 +60,9 @@ class SetupService {
         $max_sword_mb = empty($config['max_sword_mb']) ? 0 : $config['max_sword_mb'];
         $max_zip_mb = empty($config['max_zip_mb']) ? 0 : $config['max_zip_mb'];
         // load up array
+        // TODO: Hacky, sets up default selected_crate if none is set,
+        //       overridden when loadParams($crate_id) is called
+        $params['selected_crate'] = 'default_crate';
         $params['description_length'] = $description_length;
         $params['max_sword_mb'] = $max_sword_mb;
         $params['max_zip_mb'] = $max_zip_mb;     

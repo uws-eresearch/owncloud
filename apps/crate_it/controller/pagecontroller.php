@@ -38,11 +38,17 @@ class PageController extends Controller {
     }
     
     private function create_default_crate() {
+        \OCP\Util::writeLog('crate_it', "create_default_crate()", \OCP\Util::DEBUG);
+        $params = $this->set_up_params();
+        $crates = $params['crates'];
+        \OCP\Util::writeLog('crate_it', 'test: '.$crates[0], \OCP\Util::DEBUG);
+        if(empty($crates)) {
+            \OCP\Util::writeLog('crate_it', "EMPTY!!!", \OCP\Util::DEBUG);
+        }
         // create default crate if no crates are available, or
         // for some reason no crate is selected
-        if ($_SESSION['selected_crate'] === null) 
-        {
-            \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
+        if ($_SESSION['selected_crate'] === null)  {
+            // \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
             $this->setup_service->createDefaultCrate();
             // The session variable holds the current selected crate.
             // Make sure to update this whenever you change selected crate.
@@ -50,9 +56,11 @@ class PageController extends Controller {
             // the session variable is maintained
            $_SESSION['selected_crate'] = 'default_crate';
            session_commit();
-           \OCP\Util::writeLog('crate_it', "Wrote to session: ".$_SESSION['selected_crate'], 3);
+           \OCP\Util::writeLog('crate_it', "Wrote to session: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
         }             
     }
+
+
 
     private function set_up_params() {
         /**

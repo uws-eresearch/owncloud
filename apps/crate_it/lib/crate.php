@@ -123,7 +123,6 @@ class Crate extends BagIt {
     return $vfsEntry;
   }
 
-
   // TODO: Move to utility class
   private function writeFile($path, $contents) {
     \OCP\Util::writeLog('crate_it', "Crate::writeToFile(".$path.")", \OCP\Util::DEBUG);

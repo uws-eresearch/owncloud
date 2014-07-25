@@ -40,7 +40,7 @@ $(document).ready(function(){
                 $.ajax({
                     url: c_url,
                     type: 'get',
-                    dataType: 'text/html',
+                    dataType: 'json',
                     complete: function(data){
                         OC.Notification.show(data.responseText);
                         setTimeout(function() {OC.Notification.hide();}, 3000);

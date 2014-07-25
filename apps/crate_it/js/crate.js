@@ -116,21 +116,16 @@ $(document).ready(function() {
   */
   
 
- 
-  // max_sword_mb = parseInt($('#max_sword_mb').text());
-  // max_zip_mb = parseInt($('#max_zip_mb').text());
-  // crate_size_mb = 0;
-
   loadTemplateVars();
   drawCrateContents();
-  // reloadCrateData(templateVars['selected_crate']);
 
-  updateCrateSize();
+  // updateCrateSize(); // NOTE: this currently appears to cause a new crate to be initialized in the crate root
 
   //initSearchHandlers();
 
   initCrateActions();
   
+  // TODO: Move all this
   calulate_heights();
 
   $('#meta-data').on('show.bs.collapse', function (e) {

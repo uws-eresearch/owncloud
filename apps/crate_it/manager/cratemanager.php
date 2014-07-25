@@ -33,6 +33,9 @@ class CrateManager {
     private function getCrate($crateName) {
       \OCP\Util::writeLog('crate_it', "CrateManager::getCrate(".$crateName.")", \OCP\Util::DEBUG);
       $crateRoot = $this->getCrateRoot();
+      // if (!file_exists($crateRoot.'/'.$crateName)) {
+      //   throw new \Exception("Crate $crateName not found");
+      // }
       return new Crate($crateRoot, $crateName);
     }
 

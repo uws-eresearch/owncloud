@@ -15,6 +15,7 @@ class Crate extends BagIt {
       if (!file_exists($crateRoot)) {
           mkdir($crateRoot, 0755, true);
       }
+      // TODO: Need a check to see if a crate exists, otherwise it can create junk
       parent::__construct($crateRoot.'/'.$crateName);     
       $this->crateName = $crateName;
       $this->manifestPath = $this->getDataDirectory().'/manifest.json';

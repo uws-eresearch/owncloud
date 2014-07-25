@@ -114,11 +114,16 @@ $(document).ready(function() {
     });
   });
   */
-  drawCrateContents();
+  
+
  
-  max_sword_mb = parseInt($('#max_sword_mb').text());
-  max_zip_mb = parseInt($('#max_zip_mb').text());
-  crate_size_mb = 0;
+  // max_sword_mb = parseInt($('#max_sword_mb').text());
+  // max_zip_mb = parseInt($('#max_zip_mb').text());
+  // crate_size_mb = 0;
+
+  loadTemplateVars();
+  drawCrateContents();
+  // reloadCrateData(templateVars['selected_crate']);
 
   updateCrateSize();
 

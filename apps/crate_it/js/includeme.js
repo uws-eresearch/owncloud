@@ -420,17 +420,18 @@ function initCrateActions() {
     $.ajax({
       url: c_url,
       type: 'post',
-      dataType: 'html',
+      dataType: 'json',
       async: false,
       data: params,
       success: function(data) {
+        var crateName = data.crateName;
         $('#crate_input_name').val('');
         $('#crate_input_description').val('');
         $('#createCrateModal').modal('hide');
-        $("#crates").append('<option id="' + data + '" value="' + data + '" >' + data + '</option>');
-        $("#crates").val(data);
+        $("#crates").append('<option id="' + crateName + '" value="' + crateName + '" >' + crateName + '</option>');
+        $("#crates").val(crateName);
         $('#crates').trigger('change');
-        displayNotification('Crate ' + data + ' successfully created', 6000);
+        displayNotification('Crate ' + crateName + ' successfully created', 6000);
       },
       error: function(data) {
         displayError(data.statusText);
@@ -530,13 +531,13 @@ function initCrateActions() {
     $.ajax({
       url: c_url,
       type: 'get',
-      dataType: 'html',
+      dataType: 'json',
       async: false,
       success: function(data) {
-        manifest = JSON.parse(data);
-        reloadCrateData(manifest);
+        reloadCrateData(data);
       },
-      error: function(data) {
+      error: function(data) 
+      {
         displayError(data.statusText);
       }
     });
@@ -547,13 +548,15 @@ function initCrateActions() {
 //TODO use something like this when the pages loads
 function reloadCrateData(manifest) {
   // TODO load other metadata
-  $tree.remove();
+  // $tree.remove();
+  $('#files').remove();
   $('#container').after('<div id="files"></div>');
   buildFileTree(manifest);
   indentTree();
 }
 
-function drawCrateContents() {
+function drawCrateContents(crateName) {
+  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {'crateName': crateName});
   $.ajax({
     url: 'crate/get_items',
     type: 'get',
@@ -875,4 +878,18 @@ function getMaifest() {
       }
     });
   return result;
+}
+
+
+function loadTemplateVars() {
+  templateVars = {}
+  $('#hidden_vars').children().each(function() {
+    var $el = $(this);
+    var key = $el.attr('id');
+    var value = $el.text();
+    if(!isNaN(value)) {
+      value = +value;
+    }
+    templateVars[key] = value;
+  });
 }

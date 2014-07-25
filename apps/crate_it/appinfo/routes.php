@@ -53,9 +53,9 @@ $this->create('crate_it_create', '/crate/create')->post()->action(function($para
     App::main('CrateController', 'create', $params, new DIContainer());
 });
 
-$this->create('crate_it_switch', '/crate/switch')->get()->action(function($params) {
-    App::main('CrateController', 'switchCrate', $params, new DIContainer());
-});
+// $this->create('crate_it_switch', '/crate/switch')->get()->action(function($params) {
+//     App::main('CrateController', 'switchCrate', $params, new DIContainer());
+// });
 
 // $this->create('crate_it_set_field', '/crate/switch')->get()->action(function($params) {
 //     App::main('CrateController', 'setField', $params, new DIContainer());

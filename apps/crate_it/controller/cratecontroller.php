@@ -33,7 +33,9 @@ class CrateController extends Controller {
         try {
             $msg = $this->crate_service->createCrate($name, $description);
             $_SESSION['selected_crate'] = $name;
-            return new JSONResponse(array('msg' => $msg), 200);
+            session_commit();
+            return new JSONResponse(array('crateName' => $msg), 200);
+            // return new JSONResponse($msg, 200);
         } catch (Exception $e) {
             \OCP\Util::writeLog('crate_it', $e->getMessage(), 3);
             return new JSONResponse (
@@ -57,7 +59,8 @@ class CrateController extends Controller {
         try {
             $crateName = $this->params('crate_id');
             $crateName = $crateName !== '' ? $crateName : 'default_crate'; // TODO delete this hack
-            // $data = $this->crate_service->getItems($_SESSION['selected_crate']);
+            $_SESSION['selected_crate'] = $crateName;
+            session_commit();
             $data = $this->crate_service->getItems($crateName);
             return new JSONResponse($data, 200);
         } catch (Exception $e)
@@ -151,16 +154,16 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function switchCrate()
-    {
-        \OCP\Util::writeLog('crate_it', "CrateController::switchCrates()", \OCP\Util::DEBUG);
-        // TODO: setting session variables is horrible, see if we can avoid this altogether
-        // TODO: symphony/twig don't use the session variable like this
-        $crate_id = $this->params('crate_id');
-        $_SESSION['selected_crate'] = $crate_id;
-        session_commit();
-        return true;
-    }
+    // public function switchCrate()
+    // {
+    //     \OCP\Util::writeLog('crate_it', "CrateController::switchCrates()", \OCP\Util::DEBUG);
+    //     // TODO: setting session variables is horrible, see if we can avoid this altogether
+    //     // TODO: symphony/twig don't use the session variable like this
+    //     $crate_id = $this->params('crate_id');
+    //     $_SESSION['selected_crate'] = $crate_id;
+    //     session_commit();
+    //     return true;
+    // }
 
     
 }

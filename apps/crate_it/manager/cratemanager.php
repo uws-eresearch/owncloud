@@ -23,6 +23,7 @@ class CrateManager {
         \OCP\Util::writeLog('crate_it', "CrateManager::createCrate(".$crateName.")", \OCP\Util::DEBUG);
         $crateRoot = $this->getCrateRoot();
         new Crate($crateRoot, $crateName, $description);
+        return $crateName;
     }
     
     /**

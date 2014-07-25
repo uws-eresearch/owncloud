@@ -81,47 +81,12 @@ class CrateManager {
         return 'Added to crate '.$crateName;
     }
 
-    // TODO Move to Crate class!!
-    public function getCrateSize($crate_id) {
-        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateSize(). Crate: ".$crate_id, 3);
-        
-        $files = $this->flatList($crate_id);
-         \OCP\Util::writeLog('crate_it', "Flat list: ".$files, 3);
-        $total = 0;
-        foreach($files as $file) {
-          $total+= filesize($file['filename']);
-        }
-        \OCP\Util::writeLog('crate_it', "Crate size: ".$total, 3);
+    public function getCrateSize($crateName) {
+        $crate = $this->getCrate($crateName);
+        $total = $crate->getSize();   
+        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateSize() - Crate size: ".$total, 3);      
         $data = array('size' => $total, 'human' => \OCP\Util::humanFileSize($total));
-        return $data;
+        return $data; 
     }
-    
-    public function flatList($crate_id) {
-        $data = $this->getManifestData($crate_id);
-        $vfs = &$data['vfs'][0]['children'];
-        $flat = array();
-        $ref = &$flat;
-        $this->flat_r($vfs, $ref, $data['vfs'][0]['name']);
-        return $flat;
-    }
-    
-    private function flat_r(&$vfs, &$flat, $path) {
-        if (count($vfs) > 0) {
-          foreach($vfs as $entry) {
-            if (array_key_exists('filename', $entry)) {
-              $flat_entry = array(
-                'id' => $entry['id'],
-                'path' => $path,
-                'name' => $entry['name'],
-                'filename' => $entry['filename']
-              );
-              array_push($flat, $flat_entry);
-            }
-            elseif (array_key_exists('children', $entry)) {
-              $this->flat_r($entry['children'], $flat, $path . $entry['name'] . '/');
-            }
-          }
-        }
-  }
     
 }

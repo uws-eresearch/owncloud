@@ -32,11 +32,11 @@ class CrateController extends Controller {
         $description = $this->params('description');
         try {
             $msg = $this->crate_service->createCrate($name, $description);
-            return new JSONResponse(array('msg' => $msg), 200);
+            return new JSONResponse($msg, 200);
         } catch (Exception $e) {
             \OCP\Util::writeLog('crate_it', $e->getMessage(), 3);
             return new JSONResponse (
-                array ('msg' => $e->getMessage(), 'error' => $e),
+                array ($e->getMessage(), 'error' => $e),
                 $e->getCode()
             );
         }

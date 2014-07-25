@@ -51,6 +51,7 @@ class Crate extends BagIt {
 
   public function getManifest() {
     $manifest = $this->readFile($this->manifestPath);
+    \OCP\Util::writeLog('crate_it', "Manifest before decode: ".$manifest, \OCP\Util::DEBUG);    
     return json_decode($manifest, true);
   }
 
@@ -62,8 +63,7 @@ class Crate extends BagIt {
   public function addToCrate($path) {
     \OCP\Util::writeLog('crate_it', "Crate::addToCrate(".$path.")", \OCP\Util::DEBUG);
     $manifest = $this->getManifest();
-    // $contents = json_decode(file_get_contents($manifest_path) , true); // convert it to an array.
-    $vfs = &$manifest['vfs'][0];
+    $vfs = &$manifest['vfs'][0];    
     // TODO: we should be able to get rid of this if we initialise the manifest correctly
     if (array_key_exists('children', $vfs)) {
       $vfs = &$vfs['children'];
@@ -74,6 +74,46 @@ class Crate extends BagIt {
     $this->addPath($path, $vfs);
     $this->setManifest($manifest);
     $this->update();
+  }
+
+  public function getSize() {        
+    $files = $this->flatList();
+     \OCP\Util::writeLog('crate_it', "Crate::getSize() - Flat list: ".sizeof($files), 3);
+    $total = 0;
+    foreach($files as $file) {
+      $total+= filesize($file['filename']);
+    }
+    return $total;
+  }
+  
+  public function flatList() {
+        $data = $this->getManifest();
+        \OCP\Util::writeLog('crate_it', "Manifest data size: ".sizeof($data),3);    
+        
+        $vfs = &$data['vfs'][0]['children'];
+        $flat = array();
+        $ref = &$flat;
+        $this->flat_r($vfs, $ref, $data['vfs'][0]['name']);
+        return $flat;
+    }
+    
+    private function flat_r(&$vfs, &$flat, $path) {
+        if (count($vfs) > 0) {
+          foreach($vfs as $entry) {
+            if (array_key_exists('filename', $entry)) {
+              $flat_entry = array(
+                'id' => $entry['id'],
+                'path' => $path,
+                'name' => $entry['name'],
+                'filename' => $entry['filename']
+              );
+              array_push($flat, $flat_entry);
+            }
+            elseif (array_key_exists('children', $entry)) {
+              $this->flat_r($entry['children'], $flat, $path . $entry['name'] . '/');
+            }
+          }
+        }
   }
 
   // TODO: There's currently no check for duplicates
@@ -138,7 +178,7 @@ class Crate extends BagIt {
     fclose($fp);
     return $contents;
   }
-
+  
   // TODO: Move to utility class
   private function getFullPath($path) {
     \OCP\Util::writeLog('crate_it', "CrateManager::getFullPath(".$path.")", \OCP\Util::DEBUG);

@@ -48,5 +48,10 @@ $(document).ready(function(){
                 });
             });
         }
+    } else {
+        loadTemplateVars();
+        drawCrateContents();
+        initCrateActions();
+        calulate_heights();
     }
 });

@@ -559,6 +559,8 @@ function reloadCrateData(manifest) {
 
 function drawCrateContents() {
   // TODO: maybe get rid of this and just use reloadCrateData
+  // TODO: This currently causes problems because it's reliant on templateVars
+  // which becomes null on the files page 
   console.log("drawCrateContents(): " + templateVars['selected_crate']);
   console.log(c_url);
   var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {'crateName': templateVars['selected_crate']});

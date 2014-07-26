@@ -116,17 +116,17 @@ $(document).ready(function() {
   */
   
 
-  loadTemplateVars();
-  drawCrateContents();
+  // loadTemplateVars();
+  // drawCrateContents();
 
   // updateCrateSize(); // NOTE: this currently appears to cause a new crate to be initialized in the crate root
 
   //initSearchHandlers();
 
-  initCrateActions();
+  // initCrateActions();
   
   // TODO: Move all this
-  calulate_heights();
+  // calulate_heights();
 
   $('#meta-data').on('show.bs.collapse', function (e) {
       $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');

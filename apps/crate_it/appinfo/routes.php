@@ -45,7 +45,7 @@ $this->create('crate_it_get_crate_size', '/crate/get_crate_size')->get()->action
     App::main('CrateController', 'getCrateSize', $params, new DIContainer());
 });
 
-$this->create('crate_it_update', '/crate/update_crate')->post()->action(function($params) {
+$this->create('crate_it_update', '/crate/update')->post()->action(function($params) {
     App::main('CrateController', 'updateCrate', $params, new DIContainer());
 });
 

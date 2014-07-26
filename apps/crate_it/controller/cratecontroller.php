@@ -31,15 +31,17 @@ class CrateController extends Controller {
         $name = $this->params('name');
         $description = $this->params('description');
         try {
+            // TODO: maybe this selection stuff should be in a switchcrate method
             $msg = $this->crate_service->createCrate($name, $description);
             $_SESSION['selected_crate'] = $name;
             session_commit();
+            // return new JSONResponse($msg, 200);
             return new JSONResponse(array('crateName' => $msg), 200);
             // return new JSONResponse($msg, 200);
         } catch (Exception $e) {
             \OCP\Util::writeLog('crate_it', $e->getMessage(), 3);
             return new JSONResponse (
-                array ('msg' => $e->getMessage(), 'error' => $e),
+                array ($e->getMessage(), 'error' => $e),
                 $e->getCode()
             );
         }
@@ -141,29 +143,11 @@ class CrateController extends Controller {
      */
     public function updateCrate()
     {
+        \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", 3);
         $data = $this->params('vfs');
         $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $data);
         return new JSONResponse($msg, 200);
     }
-    
-    /**
-     * SwitchCrate
-     *
-     * @Ajax
-     * @CSRFExemption
-     * @IsAdminExemption
-     * @IsSubAdminExemption
-     */
-    // public function switchCrate()
-    // {
-    //     \OCP\Util::writeLog('crate_it', "CrateController::switchCrates()", \OCP\Util::DEBUG);
-    //     // TODO: setting session variables is horrible, see if we can avoid this altogether
-    //     // TODO: symphony/twig don't use the session variable like this
-    //     $crate_id = $this->params('crate_id');
-    //     $_SESSION['selected_crate'] = $crate_id;
-    //     session_commit();
-    //     return true;
-    // }
 
     
 }

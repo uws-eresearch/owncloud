@@ -42,7 +42,7 @@ $(document).ready(function(){
                     type: 'get',
                     dataType: 'json',
                     complete: function(data){
-                        OC.Notification.show(data.responseText);
+                        OC.Notification.show(data.responseJSON);
                         setTimeout(function() {OC.Notification.hide();}, 3000);
                     }
                 });

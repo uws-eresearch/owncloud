@@ -24,53 +24,19 @@ class PageController extends Controller {
      * @IsSubAdminExemption
      */
     public function index() {       
-        \OCP\Util::writeLog('crate_it', "PageController::index()", 3);         
+        \OCP\Util::writeLog('crate_it', "PageController::index()", \OCP\Util::DEBUG);         
         try {
-            $this->create_default_crate();         
-            $model = $this->set_up_params();
+            $model = $this->setUpParams();
             return $this->render('index', $model);
-            
         } catch (Exception $e) {
             // TODO handle exception
-            \OCP\Util::writeLog('crate_it', "ERROR: " .$e->getMessage(), 3);         
+            \OCP\Util::writeLog('crate_it', "ERROR: " .$e->getMessage(), \OCP\Util::DEBUG);
         }
         
     }
     
-    private function create_default_crate() {
-        \OCP\Util::writeLog('crate_it', "create_default_crate()", \OCP\Util::DEBUG);
-        $params = $this->set_up_params();
-        $crates = $params['crates'];
-        \OCP\Util::writeLog('crate_it', 'test: '.$crates[0], \OCP\Util::DEBUG);
-        if(empty($crates)) {
-            \OCP\Util::writeLog('crate_it', "EMPTY!!!", \OCP\Util::DEBUG);
-        }
-        // create default crate if no crates are available, or
-        // for some reason no crate is selected
-        if ($_SESSION['selected_crate'] === null)  {
-            // \OCP\Util::writeLog('crate_it', "No selected crate, creating default", 3);
-            $this->setup_service->createDefaultCrate();
-            // The session variable holds the current selected crate.
-            // Make sure to update this whenever you change selected crate.
-            // The above line should throw an exception if it fails so
-            // the session variable is maintained
-           $_SESSION['selected_crate'] = 'default_crate';
-           session_commit();
-           \OCP\Util::writeLog('crate_it', "Wrote to session: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
-        }             
-    }
-
-
-
-    private function set_up_params() {
-        /**
-        $model = array("previews" => $bagit_manager->showPreviews(),
-                        "mint_status" => $bagit_manager->getMintStatus(), 
-                        "sword_status" => $bagit_manager->getSwordStatus(), 
-                        "sword_collections" => $bagit_manager->getCollectionsList());
-        **/
-        $selected_crate =  $_SESSION['selected_crate'];
-        $model = $this->setup_service->loadParams($selected_crate);
+    private function setUpParams() {
+        $model = $this->setup_service->loadParams();
         return $model;                          
     }
 

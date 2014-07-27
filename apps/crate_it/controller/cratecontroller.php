@@ -39,7 +39,7 @@ class CrateController extends Controller {
             return new JSONResponse(array('crateName' => $msg), 200);
             // return new JSONResponse($msg, 200);
         } catch (Exception $e) {
-            \OCP\Util::writeLog('crate_it', $e->getMessage(), 3);
+            \OCP\Util::writeLog('crate_it', $e->getMessage(), \OCP\Util::DEBUG);
             return new JSONResponse (
                 array ($e->getMessage(), 'error' => $e),
                 $e->getCode()
@@ -60,13 +60,13 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::get_items()", \OCP\Util::DEBUG);
         try {
             $crateName = $this->params('crate_id');
-            $crateName = $crateName !== '' ? $crateName : 'default_crate'; // TODO delete this hack
+            // $crateName = $crateName !== '' ? $crateName : 'default_crate'; // TODO delete this hack
             $_SESSION['selected_crate'] = $crateName;
             session_commit();
+            \OCP\Util::writeLog('crate_it', "selected_crate:: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
             $data = $this->crate_service->getItems($crateName);
             return new JSONResponse($data, 200);
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             return new JSONResponse(
                 array('msg' => "Error getting manifest data", 'error' => $e),
                 $e->getCode()
@@ -128,7 +128,7 @@ class CrateController extends Controller {
      */
     public function getCrateSize()
     {
-        \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", 3);
+        \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", \OCP\Util::DEBUG);
         $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
         return new JSONResponse($data, 200);
     }
@@ -143,7 +143,7 @@ class CrateController extends Controller {
      */
     public function updateCrate()
     {
-        \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", 3);
+        \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", \OCP\Util::DEBUG);
         $data = $this->params('vfs');
         $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $data);
         return new JSONResponse($msg, 200);

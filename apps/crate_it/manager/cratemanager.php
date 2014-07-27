@@ -15,6 +15,8 @@ class CrateManager {
     
     public function __construct($api){
         $this->api = $api;
+        $this->ensureDefaultCrateExists();
+        // $this->ensureCrateIsSelected();
     }
     
 
@@ -43,10 +45,6 @@ class CrateManager {
         \OCP\Util::writeLog("crate_it", 'CrateManager::getCrateList()', \OCP\Util::DEBUG);
         $cratelist = array();
         $crateRoot = $this->getCrateRoot();
-        // TODO: Should this check be somewhere else?
-        if(!file_exists($crateRoot)) {
-          mkdir($crateRoot);
-        }
         if ($handle = opendir($crateRoot)) {
             $filteredlist = array('.', '..', 'packages', '.Trash');
             while (false !== ($file = readdir($handle))) {
@@ -65,6 +63,30 @@ class CrateManager {
         return json_encode($contents['vfs']);
     }
 
+    private function ensureDefaultCrateExists() {
+        $crateRoot = $this->getCrateRoot();
+        if (!file_exists($crateRoot)) {
+            mkdir($crateRoot, 0755, true);
+        }
+        $crateList = $this->getCrateList();
+        if(empty($crateList)) {
+            $this->createCrate('default_crate');
+        }
+    }
+
+    // TODO: Currently not functioning correctly
+    private function ensureCrateIsSelected() {
+        $crateList = $this->getCrateList();
+        if (!in_array($_SESSION['selected_crate'], $crateList)) {
+            if (in_array('default_crate', $crateList)) {
+                $_SESSION['selected_crate'] = 'default_crate';
+            } else {
+                $_SESSION['selected_crate'] = $crateList[0];
+            }
+        }
+        session_commit();
+    }
+
     private function getCrateRoot() {        
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot()", \OCP\Util::DEBUG);
         $userId = $this->api->getUserId();
@@ -79,7 +101,7 @@ class CrateManager {
     }
 
     public function addToCrate($crateName, $path) {
-      \OCP\Util::writeLog('crate_it', "Crate::addToCrate(".$crateName.','.$path.")", \OCP\Util::DEBUG);
+        \OCP\Util::writeLog('crate_it', "Crate::addToCrate(".$crateName.','.$path.")", \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
         $crate->addToCrate($path);
         return 'Added to crate '.$crateName;

@@ -12,10 +12,6 @@ class Crate extends BagIt {
 
   public function __construct($crateRoot, $crateName, $description='') {
       \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.")", \OCP\Util::DEBUG);
-      if (!file_exists($crateRoot)) {
-          mkdir($crateRoot, 0755, true);
-      }
-      // TODO: Need a check to see if a crate exists, otherwise it can create junk
       parent::__construct($crateRoot.'/'.$crateName);     
       $this->crateName = $crateName;
       $this->manifestPath = $this->getDataDirectory().'/manifest.json';
@@ -102,7 +98,8 @@ class Crate extends BagIt {
     return $total;
   }
   
-  public function flatList() {
+
+  private function flatList() {
         $data = $this->getManifest();
         \OCP\Util::writeLog('crate_it', "Manifest data size: ".sizeof($data),3);    
         

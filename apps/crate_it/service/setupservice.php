@@ -25,16 +25,18 @@ class SetupService {
         $this->crate_manager = $crate_manager;
     }
     
-    public function loadParams($crate_id)
-    {
+    // TODO: much of this could be pushed to javascript side and juse
+    //       be loaded with the manifest
+    public function loadParams() {
         $params = $this->loadConfigParams();
-        $manifestData = $this->crate_manager->getManifestData($crate_id);
+        $selectedCrate = $_SESSION['selected_crate']; // set by the CrateManager
+        $manifestData = $this->crate_manager->getManifestData($selectedCrate);
         $params['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
         $params['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
         $params['description'] = $manifestData['description'];        
-        $params['selected_crate'] = $crate_id;
+        $params['selected_crate'] = $selectedCrate;
         $params['crates'] = $this->crate_manager->getCrateList();        
-        $params['bagged_files'] = $this->crate_manager->getCrateFiles($crate_id);
+        $params['bagged_files'] = $this->crate_manager->getCrateFiles($selectedCrate);
         return $params;
     }
     
@@ -47,7 +49,7 @@ class SetupService {
         \OCP\Util::writeLog('crate_it', "Creaeting or getting default crate", 3);
         $this->crate_manager->createCrate("default_crate", "");
     }
-    
+
     /**
      * Read from cr8it config file and load up params
      */
@@ -62,7 +64,7 @@ class SetupService {
         // load up array
         // TODO: Hacky, sets up default selected_crate if none is set,
         //       overridden when loadParams($crate_id) is called
-        $params['selected_crate'] = 'default_crate';
+        // $params['selected_crate'] = 'default_crate';
         $params['description_length'] = $description_length;
         $params['max_sword_mb'] = $max_sword_mb;
         $params['max_zip_mb'] = $max_zip_mb;     

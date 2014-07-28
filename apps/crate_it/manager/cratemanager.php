@@ -27,6 +27,7 @@ class CrateManager {
         \OCP\Util::writeLog('crate_it', "CrateManager::createCrate(".$crateName.")", \OCP\Util::DEBUG);
         $crateRoot = $this->getCrateRoot();
         new Crate($crateRoot, $crateName, $description);
+        // TODO: Just returns a parameter that was passed?
         return $crateName;
     }
     
@@ -120,6 +121,13 @@ class CrateManager {
     public function updateCrate($crateName, $field, $value) {
         $crate = $this->getCrate($crateName);
         $crate->updateCrate($field, $value);
+    }
+
+    public function deleteCrate($crateName) {
+        $crate = $this->getCrate($crateName);
+        $crate->deleteCrate();
+        $this->ensureDefaultCrateExists();
+        $this->ensureCrateIsSelected();
     }
     
 }

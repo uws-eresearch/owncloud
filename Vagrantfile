@@ -38,6 +38,7 @@ Vagrant.configure("2") do |config|
 
   if !data['vm']['provider']['virtualbox'].empty?
     config.vm.provider :virtualbox do |virtualbox|
+      # virtualbox.gui = true
       data['vm']['provider']['virtualbox']['modifyvm'].each do |key, value|
         if key == "natdnshostresolver1"
           value = value ? "on" : "off"

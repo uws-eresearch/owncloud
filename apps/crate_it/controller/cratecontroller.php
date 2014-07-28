@@ -26,7 +26,7 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function create() {
+    public function createCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::create()", \OCP\Util::DEBUG);
         $name = $this->params('name');
         $description = $this->params('description');
@@ -35,11 +35,8 @@ class CrateController extends Controller {
             $msg = $this->crate_service->createCrate($name, $description);
             $_SESSION['selected_crate'] = $name;
             session_commit();
-            // return new JSONResponse($msg, 200);
             return new JSONResponse(array('crateName' => $msg), 200);
-            // return new JSONResponse($msg, 200);
         } catch (Exception $e) {
-            \OCP\Util::writeLog('crate_it', $e->getMessage(), \OCP\Util::DEBUG);
             return new JSONResponse (
                 array ($e->getMessage(), 'error' => $e),
                 $e->getCode()
@@ -149,5 +146,19 @@ class CrateController extends Controller {
         return new JSONResponse($msg, 200);
     }
 
-    
+    /**
+     * Delete Crate
+     *
+     * @Ajax
+     * @CSRFExemption
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
+    public function deleteCrate() {
+        // TODO: all of these methods always return successfully, which shouldn't happen
+        //       perhaps messages and response codes should be created by the CrateService?
+        \OCP\Util::writeLog('crate_it', "CrateController::deleteCrate()", \OCP\Util::DEBUG);
+        $this->crate_service->deleteCrate($_SESSION['selected_crate']);
+        return new JSONResponse($data, 200);
+    }
 }

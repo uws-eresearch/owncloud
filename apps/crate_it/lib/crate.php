@@ -9,11 +9,13 @@ class Crate extends BagIt {
 
   private $manifestPath;
   private $crateName;
+  // private $crateRoot;
 
   public function __construct($crateRoot, $crateName, $description='') {
       \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.")", \OCP\Util::DEBUG);
       parent::__construct($crateRoot.'/'.$crateName);     
       $this->crateName = $crateName;
+      // $this->crateRoot = $crateRoot;
       $this->manifestPath = $this->getDataDirectory().'/manifest.json';
       if (!file_exists($this->manifestPath)) {
         $this->createManifest($description);
@@ -77,6 +79,9 @@ class Crate extends BagIt {
      return true;
   }
 
+  public function deleteCrate() {
+    rrmdir($this->bag);
+  }
 
 
   public function getSize() {        

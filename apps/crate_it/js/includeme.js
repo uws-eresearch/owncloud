@@ -440,22 +440,20 @@ function initCrateActions() {
     });
   };
 
-  var deleteCrate = function () {
+  var deleteCrate = function() {
     var current_crate = $('#crates').val();
     $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
-      type: 'post',
+      url: OC.generateUrl('apps/crate_it/crate/delete'),
+      type: 'get',
       dataType: 'json',
-      data: {
-        'action': 'delete_crate'
-      },
       success: function(data) {
-        if (data.status == "Success") {
-          displayNotification('Crate ' + current_crate + ' deleted');
-          location.reload();
-        } else {
-          displayError(data.msg);
-        }
+        // TODO: push notification messages to server side to data.msg
+        displayNotification('Crate ' + current_crate + ' deleted');
+        location.reload();
+      },
+      error: function(data) {
+        // TODO: be consistent with response messages
+        displayError(data.statusText);
       }
     });
     $('#deleteCrateModal').modal('hide');
@@ -542,10 +540,6 @@ function reloadCrateData(manifest) {
 
 function drawCrateContents() {
   // TODO: maybe get rid of this and just use reloadCrateData
-  // TODO: This currently causes problems because it's reliant on templateVars
-  // which becomes null on the files page 
-  console.log("drawCrateContents(): " + templateVars['selected_crate']);
-  console.log(c_url);
   var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {'crateName': templateVars['selected_crate']});
   $.ajax({
     url: c_url,

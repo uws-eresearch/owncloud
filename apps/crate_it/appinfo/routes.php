@@ -40,7 +40,6 @@ $this->create('crate_it_add', '/crate/add')->get()->action(function($params) {
     App::main('CrateController', 'add', $params, new DIContainer());
 });
 
-
 $this->create('crate_it_get_crate_size', '/crate/get_crate_size')->get()->action(function($params) {
     App::main('CrateController', 'getCrateSize', $params, new DIContainer());
 });
@@ -50,7 +49,10 @@ $this->create('crate_it_update', '/crate/update')->post()->action(function($para
 });
 
 $this->create('crate_it_create', '/crate/create')->post()->action(function($params) {
-    App::main('CrateController', 'create', $params, new DIContainer());
+    App::main('CrateController', 'createCrate', $params, new DIContainer());
 });
 
-
+// NOTE: This route should possibly be changed to use the DELETE http method
+$this->create('crate_it_delete', '/crate/delete')->get()->action(function($params) {
+    App::main('CrateController', 'deleteCrate', $params, new DIContainer());
+});

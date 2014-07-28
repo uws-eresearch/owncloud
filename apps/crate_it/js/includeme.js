@@ -299,7 +299,7 @@ function expandRoot() {
   $tree.tree('openNode', rootnode);
 }
 
-
+// TODO: Give this function a better name
 function saveTree(successMessage, errorMessage, reload) {
   if (typeof(successMessage) === 'undefined') {
     successMessage = 'Crate updated';
@@ -312,7 +312,8 @@ function saveTree(successMessage, errorMessage, reload) {
     type: 'post',
     dataType: 'html',
     data: {
-      'vfs': $tree.tree('toJson')
+      'field': 'vfs',
+      'value': $tree.tree('toJson')
     },
     success: function(data) {
       if (successMessage) {
@@ -504,24 +505,6 @@ function initCrateActions() {
       $('#deleteCrateModal').modal('show');
     }
   });
-
-  // $('#crates').change(function() {
-  //   var id = $(this).val();
-  //   var c_url = OC.generateUrl('apps/crate_it/crate/switch?crate_id={crateName}', {crateName: id});
-  //   $.ajax({
-  //     url: c_url,
-  //     type: 'get',
-  //     dataType: 'html',
-  //     async: false,
-  //     success: function(data) {
-  //       location.reload();
-  //     },
-  //     error: function(data) {
-  //       var e = data.statusText;
-  //       alert(e);
-  //     }
-  //   });
-  // });
 
 
   $('#crates').change(function() {

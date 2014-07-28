@@ -55,12 +55,11 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function get_items()
+    public function getItems()
     {
         \OCP\Util::writeLog('crate_it', "CrateController::get_items()", \OCP\Util::DEBUG);
         try {
             $crateName = $this->params('crate_id');
-            // $crateName = $crateName !== '' ? $crateName : 'default_crate'; // TODO delete this hack
             $_SESSION['selected_crate'] = $crateName;
             session_commit();
             \OCP\Util::writeLog('crate_it', "selected_crate:: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
@@ -144,8 +143,9 @@ class CrateController extends Controller {
     public function updateCrate()
     {
         \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", \OCP\Util::DEBUG);
-        $data = $this->params('vfs');
-        $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $data);
+        $field = $this->params('field');
+        $value = $this->params('value');
+        $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
         return new JSONResponse($msg, 200);
     }
 

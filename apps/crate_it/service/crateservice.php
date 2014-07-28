@@ -31,14 +31,14 @@ class CrateService {
         return $this->crateManager->createCrate($crateName, $description);   
     }
     
-    public function getCrateSize($crate_id)
+    public function getCrateSize($crateId)
     {
-        return $this->crateManager->getCrateSize($crate_id);
+        return $this->crateManager->getCrateSize($crateId);
     }
     
-    public function updateCrate($crate_id, $data)
+    public function updateCrate($crateId, $field, $value)
     {
-        return $this->crateManager->updateCrate($crate_id, $data);
+        return $this->crateManager->updateCrate($crateId, $field, $value);
     }
     
 }

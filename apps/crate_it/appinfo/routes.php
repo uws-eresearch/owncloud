@@ -56,3 +56,7 @@ $this->create('crate_it_create', '/crate/create')->post()->action(function($para
 $this->create('crate_it_delete', '/crate/delete')->get()->action(function($params) {
     App::main('CrateController', 'deleteCrate', $params, new DIContainer());
 });
+
+$this->create('crate_it_rename', '/crate/rename')->post()->action(function($params) {
+    App::main('CrateController', 'renameCrate', $params, new DIContainer());
+});

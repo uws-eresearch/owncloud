@@ -9,13 +9,13 @@ class Crate extends BagIt {
 
   private $manifestPath;
   private $crateName;
-  // private $crateRoot;
+  private $crateRoot;
 
   public function __construct($crateRoot, $crateName, $description='') {
       \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.")", \OCP\Util::DEBUG);
-      parent::__construct($crateRoot.'/'.$crateName);     
+      parent::__construct($this->getAbsolutePath($crateRoot, $crateName));     
       $this->crateName = $crateName;
-      // $this->crateRoot = $crateRoot;
+      $this->crateRoot = $crateRoot;
       $this->manifestPath = $this->getDataDirectory().'/manifest.json';
       if (!file_exists($this->manifestPath)) {
         $this->createManifest($description);
@@ -83,6 +83,13 @@ class Crate extends BagIt {
     rrmdir($this->bag);
   }
 
+
+  public function renameCrate($newCrateName) {
+    \OCP\Util::writeLog('crate_it', "renameCrate($this->crateName, $newCrateName)", \OCP\Util::DEBUG);
+    $oldCrateName = $this->getAbsolutePath($this->crateRoot, $this->crateName);
+    $newCrateName = $this->getAbsolutePath($this->crateRoot, $newCrateName);
+    rename($oldCrateName, $newCrateName);
+  }
 
   public function getSize() {        
     $files = $this->flatList();
@@ -191,6 +198,10 @@ class Crate extends BagIt {
   private function getFullPath($path) {
     \OCP\Util::writeLog('crate_it', "CrateManager::getFullPath(".$path.")", \OCP\Util::DEBUG);
     return \OC\Files\Filesystem::getLocalFile($path);
+  }
+
+  private function getAbsolutePath($root, $basename) {
+    return $root.'/'.$basename;
   }
 
 }

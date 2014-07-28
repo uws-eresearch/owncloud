@@ -46,4 +46,8 @@ class CrateService {
     public function deleteCrate($crateName) {
         return $this->crateManager->deleteCrate($crateName);
     }
+
+    public function renameCrate($crateName, $newCrateName) {
+        return $this->crateManager->renameCrate($crateName, $newCrateName);
+    }
 }

@@ -113,7 +113,7 @@ class CrateManager {
     public function getCrateSize($crateName) {
         $crate = $this->getCrate($crateName);
         $total = $crate->getSize();   
-        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateSize() - Crate size: ".$total, 3);      
+        \OCP\Util::writeLog('crate_it', "CrateManager::getCrateSize() - Crate size: ".$total, \OCP\Util::DEBUG);
         $data = array('size' => $total, 'human' => \OCP\Util::humanFileSize($total));
         return $data; 
     }
@@ -128,6 +128,12 @@ class CrateManager {
         $crate->deleteCrate();
         $this->ensureDefaultCrateExists();
         $this->ensureCrateIsSelected();
+    }
+
+    public function renameCrate($crateName, $newCrateName) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::renameCrate($crateName, $newCrateName)", \OCP\Util::DEBUG);
+        $crate = $this->getCrate($crateName);
+        $crate->renameCrate($newCrateName);
     }
     
 }

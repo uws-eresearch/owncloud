@@ -103,29 +103,28 @@ function buildFileTree(data) {
     });
 
     var confirmCallback = function() {
-      var newName = $('#rename-crate').val();
-      $tree.tree('updateNode', node, newName);
-      var vfs = $tree.tree('toJson');
+      var newCrateName = $('#rename-crate').val();
+      $tree.tree('updateNode', node, newCrateName); // TODO: shouldn't this be in success?
+      var c_url = OC.generateUrl('apps/crate_it/crate/rename');
       $.ajax({
-        url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+        url: c_url,
         type: 'post',
         dataType: 'json',
         data: {
-          'action': 'rename_crate',
-          'new_name': newName,
-          'vfs': vfs
+          'newCrateName': newCrateName,
         },
         success: function() {
-          $('#crates > #' + oldName).val(newName).attr('id', newName).text(newName);
-          var successMessage = 'Renamed ' + oldName + ' to ' + newName;
+          $('#crates > #' + oldName).val(newCrateName).attr('id', newCrateName).text(newCrateName);
+          // TODO: move messges to server side generations
+          var successMessage = 'Renamed ' + oldName + ' to ' + newCrateName;
           var errorMessage = oldName + ' not renamed';
+          // TODO: try to do this withou a page reload
           saveTree(successMessage, errorMessage, true);
-          
         },
         error: function(data) {
           $tree.tree('updateNode', node, oldName);
           displayError(oldName + ' not renamed');
-          location.reload();
+          // location.reload();
         }
       });
     };

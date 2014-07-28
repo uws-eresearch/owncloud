@@ -159,6 +159,27 @@ class CrateController extends Controller {
         //       perhaps messages and response codes should be created by the CrateService?
         \OCP\Util::writeLog('crate_it', "CrateController::deleteCrate()", \OCP\Util::DEBUG);
         $this->crate_service->deleteCrate($_SESSION['selected_crate']);
+        // TODO: No $data?
+        return new JSONResponse($data, 200);
+    }
+
+    /**
+     * Rename Crate
+     *
+     * @Ajax
+     * @CSRFExemption
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
+    public function renameCrate() {
+        \OCP\Util::writeLog('crate_it', "CrateController::renameCrate()", \OCP\Util::DEBUG);
+        $oldCrateName = $_SESSION['selected_crate'];
+        $newCrateName = $this->params('newCrateName');
+        $this->crate_service->renameCrate($oldCrateName, $newCrateName);
+        // TODO: need method for setting selected crate
+        $_SESSION['selected_crate'] = $newCrateName;
+        session_commit();
+        // TODO: No $data?
         return new JSONResponse($data, 200);
     }
 }

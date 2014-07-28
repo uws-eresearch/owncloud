@@ -15,8 +15,10 @@ class CrateManager {
     
     public function __construct($api){
         $this->api = $api;
-        $this->ensureDefaultCrateExists();
+        if ($api->isLoggedIn()) {
+            $this->ensureDefaultCrateExists();
         // $this->ensureCrateIsSelected();
+        }
     }
     
 

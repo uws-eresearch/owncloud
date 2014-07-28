@@ -31,7 +31,7 @@ function getFileName(dir, filename) {
 }
 
 $(document).ready(function(){
-    if(location.href.indexOf("files")!=-1) {
+    if(location.pathname.indexOf("files") != -1) {
         if(typeof FileActions!=='undefined'){
             FileActions.register('all','Add to crate', OC.PERMISSION_READ, '',function(filename){
                 var params = {file: getFileName($('#dir').val(), filename)};
@@ -48,7 +48,7 @@ $(document).ready(function(){
                 });
             });
         }
-    } else {
+    } else if(location.pathname.indexOf("crate_it") != -1) {
         loadTemplateVars();
         drawCrateContents();
         initCrateActions();

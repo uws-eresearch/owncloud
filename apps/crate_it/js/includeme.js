@@ -508,7 +508,6 @@ function initCrateActions() {
     console.log("$('#crates').change: " + $(this).val());
     var id = $(this).val();
     var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {crateName: id});
-    console.log(c_url);
     $.ajax({
       url: c_url,
       type: 'get',
@@ -563,12 +562,12 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
   var eventListeners = [];
 
   this.search = function(keywords) {
+    var c_url = OC.generateUrl('apps/crate_it/crate/search');
     $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      url: c_url,
       type: 'post',
       dataType: 'json',
       data: {
-        'action': 'search',
         'type': definition.actions.search,
         'keywords': keywords
       },
@@ -637,18 +636,6 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     });
   };
 
-  // NOTE: not currently used
-  // var resultComparitor = function(a, b) {
-  //   var result = 0;
-  //   if(a[definition.sortField] > b[definition.sortField]) {
-  //     result = 1;
-  //   } else if (a[definition.sortField] < b[definition.sortField]) {
-  //     result = -1;
-  //   }
-  //   return result;
-  // }
-
-  // this.toggle = function(id) {
   function toggle(id) {
     var action = definition.actions.add;
     var faIcon = 'fa-minus';
@@ -742,7 +729,6 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     return result;
   };
 
-  // var parseField = function(field) {
   function parseField(field) {
     var result = field;
     if($.isArray(field)) {
@@ -751,8 +737,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     return $.trim(result);
   };
 
-    // fields is an ordered list of fields to render, with the first being used as the title
-  // var renderRecord = function(record, faIcon) {
+  // fields is an ordered list of fields to render, with the first being used as the title
   function renderRecord(record, faIcon) {
     var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
     html += '<p class="metadata_heading">' + record[definition.displayFields[0]] + '</p>';
@@ -843,13 +828,14 @@ function initSearchHandlers() {
   });
 }
 
-// TODO: Super hacky synchronous call
+// TODO: Super hacky blocking synchronous call
 // There are many of async calls on page load that could probably all be reduced to this one
 function getMaifest() {
   var result =[];
+  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {crateName: $('#crates').val()});
   $.ajax({
-      url: OC.linkTo('crate_it/crates/manifest'),
-      type: 'post',
+      url: c_url,
+      type: 'get',
       async: false,
       dataType: 'json',
       data: {'action': 'get_manifest'},

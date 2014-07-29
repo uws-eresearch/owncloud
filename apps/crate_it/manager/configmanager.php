@@ -4,6 +4,7 @@ namespace OCA\crate_it\Manager;
 
 class ConfigManager {
 
+    // TODO: Could this be made a static method in a utility class
     public function readConfig() {
         $config = null;
         $config_file = \OC::$SERVERROOT . '/data/cr8it_config.json';

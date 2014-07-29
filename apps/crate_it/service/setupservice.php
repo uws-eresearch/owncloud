@@ -46,6 +46,7 @@ class SetupService {
      */
     public function createDefaultCrate()
     {
+        // TODO: I don't think this method is used anymore
         \OCP\Util::writeLog('crate_it', "Creaeting or getting default crate", 3);
         $this->crate_manager->createCrate("default_crate", "");
     }
@@ -62,9 +63,6 @@ class SetupService {
         $max_sword_mb = empty($config['max_sword_mb']) ? 0 : $config['max_sword_mb'];
         $max_zip_mb = empty($config['max_zip_mb']) ? 0 : $config['max_zip_mb'];
         // load up array
-        // TODO: Hacky, sets up default selected_crate if none is set,
-        //       overridden when loadParams($crate_id) is called
-        // $params['selected_crate'] = 'default_crate';
         $params['description_length'] = $description_length;
         $params['max_sword_mb'] = $max_sword_mb;
         $params['max_zip_mb'] = $max_zip_mb;     

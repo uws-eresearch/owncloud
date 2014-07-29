@@ -6,6 +6,7 @@ use \OCA\AppFramework\DependencyInjection\DIContainer as BaseContainer;
 
 use \OCA\crate_it\Controller\PageController;
 use \OCA\crate_it\Controller\CrateController;
+use \OCA\crate_it\Controller\SearchController;
 use \OCA\crate_it\Service\CrateService;
 use \OCA\crate_it\Service\SetupService;
 use \OCA\crate_it\Manager\CrateManager;
@@ -48,6 +49,10 @@ class DIContainer extends BaseContainer {
                
         $this['CrateController'] = function($c) {
             return new CrateController($c['API'], $c['Request'], $c['CrateService']);
+        };
+
+        $this['SearchController'] = function($c) {
+            return new SearchController($c['API'], $c['Request'], $c['ConfigManager']);
         };
 
     }

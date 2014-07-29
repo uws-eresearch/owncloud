@@ -52,6 +52,7 @@ $(document).ready(function(){
         loadTemplateVars();
         drawCrateContents();
         initCrateActions();
+        initSearchHandlers();
         calulate_heights();
     }
 });

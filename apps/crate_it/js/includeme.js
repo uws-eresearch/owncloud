@@ -210,7 +210,6 @@ function buildFileTree(data) {
     onCanMoveTo: function(moved_node, target_node, position) {
       // Can move before or after any node.
       // Can only move INSIDE of a node whose id ends with 'folder' 
-      // console.log(target_node.id);
       if (target_node.id.indexOf('folder', target_node.id.length - 'folder'.length) == -1) {
         return (position != 'inside');
       } else if (target_node.id == 'rootfolder') {
@@ -309,10 +308,10 @@ function saveTree(successMessage, errorMessage, reload) {
   $.ajax({
     url: 'crate/update',
     type: 'post',
-    dataType: 'html',
+    dataType: 'json',
     data: {
       'field': 'vfs',
-      'value': $tree.tree('toJson')
+      'value': JSON.parse($tree.tree('toJson'))
     },
     success: function(data) {
       if (successMessage) {
@@ -505,7 +504,6 @@ function initCrateActions() {
 
 
   $('#crates').change(function() {
-    console.log("$('#crates').change: " + $(this).val());
     var id = $(this).val();
     var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {crateName: id});
     $.ajax({
@@ -637,13 +635,13 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
   };
 
   function toggle(id) {
-    var action = definition.actions.add;
+    // var action = definition.actions.add;
     var faIcon = 'fa-minus';
     var $sourceLi = $resultsUl;
     var $destLi = $selectedUl;
     var record = getRecord(id);
     if (isSelected(id)) {
-      action = definition.actions.remove;
+      // action = definition.actions.remove;
       faIcon = 'fa-plus';
       $sourceLi = $selectedUl;
       $destLi = $resultsUl;
@@ -654,10 +652,11 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       remove(record, searchResultsList);
       selectedList.push(record);
     }
-    var payload = {'action': action};
+    // var payload = {'action': action};
     var html = renderRecord(record, faIcon);
-    $.extend(payload, record);
-    update(payload, html, $sourceLi, $destLi);
+    // $.extend(payload, record);
+    // update(payload, html, $sourceLi, $destLi);
+    update(record, html, $sourceLi, $destLi);
   };
 
   var remove = function(record, array) {
@@ -667,17 +666,18 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     }
   };
 
-  var update = function(payload, html, $sourceLi, $destLi) {
+  var update = function(record, html, $sourceLi, $destLi) {
+    var c_url = OC.generateUrl('apps/crate_it/crate/update');
     $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      url: c_url,
       type: 'post',
       dataType: 'json',
-      data: payload,
+      data: {field: definition.manifestField, value: selectedList},
       success: function(data) {
-        $sourceLi.find('#'+payload.id).parent().remove();
+        $sourceLi.find('#'+record.id).parent().remove();
         $destLi.append(html);
-        $destLi.find('#'+payload.id).click(function(){
-          toggle(payload.id);
+        $destLi.find('#'+record.id).click(function(){
+          toggle(record.id);
         });
         _self.notifyListeners();
       },

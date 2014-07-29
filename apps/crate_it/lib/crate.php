@@ -71,7 +71,6 @@ class Crate extends BagIt {
 
   public function updateCrate($field, $value) {
      \OCP\Util::writeLog("crate_it", "Crate::updateCrate($field, $value)", \OCP\Util::DEBUG);
-     $value = json_decode($value);
      $manifest = $this->getManifest();
      $manifest[$field] = $value;
      $this->setManifest($manifest);     

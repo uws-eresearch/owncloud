@@ -297,7 +297,6 @@ function expandRoot() {
   $tree.tree('openNode', rootnode);
 }
 
-// TODO: Give this function a better name
 function saveTree(successMessage, errorMessage, reload) {
   if (typeof(successMessage) === 'undefined') {
     successMessage = 'Crate updated';
@@ -305,8 +304,9 @@ function saveTree(successMessage, errorMessage, reload) {
   if (typeof(errorMessage) === 'undefined') {
     errorMessage = 'Crate not updated';
   }
+  var c_url = OC.generateUrl('apps/crate_it/crate/update');
   $.ajax({
-    url: 'crate/update',
+    url: c_url,
     type: 'post',
     dataType: 'json',
     data: {
@@ -617,7 +617,6 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       dataType: 'json',
       data: {
         field: definition.manifestField,
-        value: []
       },
       success: function(data) {
         searchResultsList = searchResultsList.concat(selectedList);
@@ -865,3 +864,29 @@ function loadTemplateVars() {
     templateVars[key] = value;
   });
 }
+
+
+function calulateHeights() {
+  var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1 )) + $('.collapse.info.in .panel-body').outerHeight();
+  var height = $('#meta-data').innerHeight() - tabsHeight;
+  $('.collapse.standard .panel-body').height(height + 12);
+}
+
+
+function initAutoResizeMetadataTabs() {
+  $('#meta-data').on('show.bs.collapse', function (e) {
+      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');
+      calulateHeights();
+  });
+  $('#meta-data').on('hide.bs.collapse', function (e) {
+      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-down').addClass('fa-caret-up');
+      calulateHeights();
+  });
+
+  $(window).resize(function() {
+    calulateHeights();
+  });  
+}
+
+
+

@@ -53,6 +53,6 @@ $(document).ready(function(){
         drawCrateContents();
         initCrateActions();
         initSearchHandlers();
-        calulate_heights();
+        initAutoResizeMetadataTabs();
     }
 });

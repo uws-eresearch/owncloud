@@ -19,7 +19,7 @@
  *
  */
 
-$(document).ready(function() {  
+// $(document).ready(function() {  
   /*      
   $('#download').click('click', function(event) {
     if (treeHasNoFiles()) {
@@ -128,20 +128,20 @@ $(document).ready(function() {
   // TODO: Move all this
   // calulate_heights();
 
-  $('#meta-data').on('show.bs.collapse', function (e) {
-      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');
-      calulate_heights();
-  });
-  $('#meta-data').on('hide.bs.collapse', function (e) {
-      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-down').addClass('fa-caret-up');
-      calulate_heights();
-  });
-});
-$( window ).resize(function() {
-  calulate_heights();
-});
-function calulate_heights() {
-  var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1 )) + $('.collapse.info.in .panel-body').outerHeight();
-  var height = $('#meta-data').innerHeight() - tabsHeight;
-  $('.collapse.standard .panel-body').height(height + 12);
-}
+  // $('#meta-data').on('show.bs.collapse', function (e) {
+  //     $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');
+  //     calulate_heights();
+  // });
+  // $('#meta-data').on('hide.bs.collapse', function (e) {
+  //     $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-down').addClass('fa-caret-up');
+  //     calulate_heights();
+  // });
+// });
+// $( window ).resize(function() {
+//   calulate_heights();
+// });
+// function calulate_heights() {
+//   var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1 )) + $('.collapse.info.in .panel-body').outerHeight();
+//   var height = $('#meta-data').innerHeight() - tabsHeight;
+//   $('.collapse.standard .panel-body').height(height + 12);
+// }

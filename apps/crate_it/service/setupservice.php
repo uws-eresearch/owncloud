@@ -29,6 +29,9 @@ class SetupService {
     //       be loaded with the manifest
     public function loadParams() {
         $params = $this->loadConfigParams();
+        if(!isset($_SESSION['selected_crate'])) {
+            $_SESSION['selected_crate'] = 'default_crate';
+        }
         $selectedCrate = $_SESSION['selected_crate']; // set by the CrateManager
         $manifestData = $this->crate_manager->getManifestData($selectedCrate);
         $params['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);

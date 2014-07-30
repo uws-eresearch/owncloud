@@ -27,6 +27,7 @@ class FeatureContext extends MinkContext
 
     private static $file_root = '/var/www/html/owncloud/data/test/files/';
     private static $crate_root = '/var/www/html/owncloud/data/test/crates/';
+    private static $ssh_command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 ';
 
     /**
      * Initializes context.
@@ -114,10 +115,9 @@ class FeatureContext extends MinkContext
         /**
      * @Given /^I have folders? "([^"]*)"$/
      */
-    public function iHaveFolders($folders)
-    {
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'mkdir -p '.self::$file_root.$folders.'\'';
-        exec($command);
+    public function iHaveFolders($folders) {
+        $command = 'mkdir -m 755 -p '.self::$file_root.$folders;
+        $this->exec_sh_command($command);
     }
 
     /**
@@ -126,8 +126,8 @@ class FeatureContext extends MinkContext
     public function iHaveFileWithin($file, $folder)
     {
         $folder = (!empty($folder) ? $folder.'/' : $folder);
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'touch '.self::$file_root.$folder.$file.'\'';
-        exec($command);
+        $command = 'touch '.self::$file_root.$folder.$file;
+        $this->exec_sh_command($command);
     }
 
     /**
@@ -266,10 +266,9 @@ class FeatureContext extends MinkContext
     /**
      * @Given /^I have no files$/
      */
-    public function iHaveNoFiles()
-    {
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'rm -rf /var/www/html/owncloud/data/test/files/*\'';
-        exec($command);
+    public function iHaveNoFiles() {
+        $command = "rm -rf /var/www/html/owncloud/data/test/files/*";
+        $this->exec_sh_command($command);
     }
 
     /**
@@ -370,16 +369,18 @@ class FeatureContext extends MinkContext
      */
     public function iShouldHaveCrateActionsFor($actions, $crateItem)
     {
-        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
-        $page = $this->getSession()->getPage();
-        $el = $page->find('xpath', $xpath);
-        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
-        $actionItems = explode(', ', $actions);
-        $web_assert = new WebAssert($this->getSession());
-        foreach ($actionItems as $action) {
-            $web_assert->elementExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
-        }
-        
+        $this->spin(function($context) use ($actions, $crateItem) {
+            $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
+            $page = $context->getSession()->getPage();
+            $el = $page->find('xpath', $xpath);
+            $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+            $actionItems = explode(', ', $actions);
+            $web_assert = new WebAssert($context->getSession());
+            foreach ($actionItems as $action) {
+                $web_assert->elementExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
+            }
+            return true;
+        });
     }
 
     /**
@@ -387,15 +388,18 @@ class FeatureContext extends MinkContext
      */
     public function iShouldNotHaveCrateActionsFor($actions, $crateItem)
     {
-        $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
-        $page = $this->getSession()->getPage();
-        $el = $page->find('xpath', $xpath);
-        $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
-        $actionItems = explode(', ', $actions);
-        $web_assert = new WebAssert($this->getSession());
-        foreach ($actionItems as $action) {
-            $web_assert->elementNotExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
-        }
+        $this->spin(function($context) use ($actions, $crateItem) {
+            $xpath = '//span[contains(concat(" ", normalize-space(@class), " "), " jqtree-title ") and text() = "'.$crateItem.'"]/following-sibling::ul';
+            $page = $context->getSession()->getPage();
+            $el = $page->find('xpath', $xpath);
+            $el->click(); // HACK: Click method moves the webdriver mouse, so CSS :hover elements display
+            $actionItems = explode(', ', $actions);
+            $web_assert = new WebAssert($context->getSession());
+            foreach ($actionItems as $action) {
+                $web_assert->elementNotExists('xpath', $xpath.'//a[text() = "'.$action.'"]');
+            }
+            return true;
+        });
     }
 
     /**
@@ -428,23 +432,20 @@ class FeatureContext extends MinkContext
         // $mainfest = '{"description":"","creators":[],"activities":[],"vfs":[{"id":"rootfolder","name":"'.$crateName.'","folder":true,"children":[]}]}';
         $mainfest = '"{\"description\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
         $data_path = self::$crate_root.$crateName.'/data';
-        // $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'mkdir -p '.$data_path.' | echo '.$mainfest.' > '.$data_path.'/manifest.json\'';
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'mkdir -p '.$data_path.'\'';
-        // $this->printDebug($command);
-        exec($command);
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \' cd '.$data_path.' | echo '.$mainfest.' > '.$data_path.'/manifest.json\'';
-        exec($command);
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \' chown -R apache:apache '.self::$crate_root.'\'';
-        exec($command);
+        $command = "mkdir -m 755 -p $data_path\\";
+        $this->exec_sh_command($command);
+        $command = "echo $mainfest | sudo tee $data_path/manifest.json";
+        $this->exec_sh_command($command);
+        $command = 'chown -R apache:apache '.self::$crate_root;
+        $this->exec_sh_command($command);
     }
 
     /**
      * @Given /^I have no crates$/
      */
-    public function iHaveNoCrates()
-    {
-        $command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 \'rm -rf '.self::$crate_root.'\'';
-        exec($command);
+    public function iHaveNoCrates() {
+        $command = 'rm -rf '.self::$crate_root;
+        $this->exec_sh_command($command);
     }
 
 
@@ -880,6 +881,7 @@ JS;
 			$optionElement->selectOption($arg1, false);	
 			return true;
 		});
+        $this->waitForPageToLoad();
 	}
 
         /**
@@ -954,6 +956,15 @@ JS;
             usleep($increment);
         }
         throw new Exception('Page not ready after '.($timeout/1000000).' seconds');
+    }
+
+    private function exec_sh_command($command) {
+        if(getenv('TEST_ENV') == 'vagrant') {
+            $command = self::$ssh_command."'$command'";
+        } else {
+            $command = 'sudo '.$command;
+        }
+        exec($command);
     }
 
 }

@@ -526,12 +526,13 @@ function initCrateActions() {
 
 //TODO use something like this when the pages loads
 function reloadCrateData(manifest) {
-  // TODO load other metadata
-  // $tree.remove();
   $('#files').remove();
   $('#container').after('<div id="files"></div>');
   buildFileTree(manifest);
   indentTree();
+  // TODO Have a registry of search managers and loop over them
+  CreatorSearchManager.loadManifestData(manifest);
+  ActivitySearchManager.loadManifestData(manifest);
 }
 
 function drawCrateContents() {
@@ -587,6 +588,12 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     });
   };
 
+  this.loadManifestData = function(manifest) {
+    selectedList = manifest[definition.manifestField];
+    drawList($selectedUl, selectedList, 'fa-minus');
+    _self.notifyListeners();
+  }
+
   var drawList = function ($li, list, faIcon) {
     $li.empty();
     list.forEach(function(record) {
@@ -603,13 +610,14 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
   };
 
   this.clearSelected = function() {
+    var c_url = OC.generateUrl('apps/crate_it/crate/update');
     $.ajax({
-      url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+      url: c_url,
       type: 'post',
       dataType: 'json',
       data: {
-        action: 'clear_field',
-        field: definition.manifestField
+        field: definition.manifestField,
+        value: []
       },
       success: function(data) {
         searchResultsList = searchResultsList.concat(selectedList);
@@ -635,13 +643,11 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
   };
 
   function toggle(id) {
-    // var action = definition.actions.add;
     var faIcon = 'fa-minus';
     var $sourceLi = $resultsUl;
     var $destLi = $selectedUl;
     var record = getRecord(id);
     if (isSelected(id)) {
-      // action = definition.actions.remove;
       faIcon = 'fa-plus';
       $sourceLi = $selectedUl;
       $destLi = $resultsUl;
@@ -652,10 +658,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       remove(record, searchResultsList);
       selectedList.push(record);
     }
-    // var payload = {'action': action};
     var html = renderRecord(record, faIcon);
-    // $.extend(payload, record);
-    // update(payload, html, $sourceLi, $destLi);
     update(record, html, $sourceLi, $destLi);
   };
 
@@ -754,15 +757,15 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
 
 function initSearchHandlers() {
   // TODO: prefix this with var to close scope when not dubugging
+  // TODO: replace this call with a variable shared between buildFileTree
+  //       as the manifest is retrieved multiple times
   manifest = getMaifest();
   $clearMetadataModal = $('#clearMetadataModal');
 
   var creatorDefinition = {
     manifestField: 'creators',
     actions: {
-      search: 'people',
-      add: 'save_people',
-      remove: 'remove_people'
+      search: 'people'
     },
     mapping: {
       'id': 'id',
@@ -777,7 +780,8 @@ function initSearchHandlers() {
   var creator$resultsUl = $('#search_people_results');
   var creator$selectedUl = $('#selected_creators');
   var creator$notification = $('#creators_search_notification');
-  var CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification);
+  // TODO: add this to a namespace rather than exposing globally
+  CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification);
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword').val()));
   });
@@ -794,9 +798,7 @@ function initSearchHandlers() {
   var activityDefinition = {
     manifestField: 'activities',
     actions: {
-      search: 'activities',
-      add: 'save_activity',
-      remove: 'remove_activity'
+      search: 'activities'
     },
     mapping: {
       'id':'id',
@@ -812,7 +814,8 @@ function initSearchHandlers() {
   var activity$resultsUl = $('#search_activity_results');
   var activity$selectedUl = $('#selected_activities');
   var activity$notification = $('#activites_search_notification');
-  var ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification);
+  // TODO: add this to a namespace rather than exposing globally
+  ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification);
 
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));

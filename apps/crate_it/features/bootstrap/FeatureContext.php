@@ -949,8 +949,8 @@ JS;
         $session = $this->getSession();
         for($i = 0; $i <= $timeout; $i += $increment) {
             $ready = $session->evaluateScript('return window.document.readyState == "complete"');
-            $jquery = $session->evaluateScript('return 0 === $.active');
-            if ($ready  and $jquery) {
+            $jquery = $session->evaluateScript('return $ != undefined && 0 === $.active');
+            if ($ready and $jquery) {
                 return;
             }
             usleep($increment);

@@ -691,13 +691,14 @@ var result = '[' +
   			      '{\"result-metadata\":{\"all\": {\"id\": [\"123123\"], \"grant_number\": [\"123123\"], \"dc_title\": [\"Title B\"], \"dc_date\": [\"2010\"]}}}'
   			       + ',' +
   			      '{\"result-metadata\":{\"all\": {\"id\": [\"123456\"], \"grant_number\": [\"123456\"], \"dc_title\": [\"Title C\"], \"dc_date\": [\"1988\"]}}}'
-  			    +']';			    
+  			    +']';	
+var c_url = OC.generateUrl('apps/crate_it/crate/search');  			    		    
 $.mockjax({
-    url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
+    url: c_url,
     type: 'post',
     dataType: 'json',
     data: {
-        'action': 'search',
+        'type': 'activities',
         'keywords': '123'
       },
     responseText : result
@@ -709,13 +710,14 @@ JS;
 	
 
     private function resultlessMockActivityLookup() {
-                $js = <<<JS
+        $js = <<<JS
+var c_url = OC.generateUrl('apps/crate_it/crate/search');                   
 $.mockjax({
     url: OC.linkTo('crate_it', 'ajax/bagit_handler.php'),
     type: 'post',
     dataType: 'json',
     data: {
-        'action': 'search',
+        'type': 'activities',
         'keywords': 'abc'
       },
     responseText: '[{\"result-metadata\":{\"all\": {\"id\": [\"111123\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}]'

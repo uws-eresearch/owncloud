@@ -17,7 +17,7 @@ class CrateManager {
         $this->api = $api;
         if ($api->isLoggedIn()) {
             $this->ensureDefaultCrateExists();
-        // $this->ensureCrateIsSelected();
+            $this->ensureCrateIsSelected();
         }
     }
     

@@ -13,8 +13,11 @@ class CrateController extends Controller {
      */
     private $crate_service;
     
-    public function __construct($api, $request, $crate_service) {
+    public function __construct($api, $request, $crate_service, $setupService) {
         parent::__construct($api, $request);
+        // TODO: This is currently necessary to ensure that a seletect_crate is set
+        //       would be better refactored out
+        $setupService->loadParams();
         $this->crate_service = $crate_service;
     }
     

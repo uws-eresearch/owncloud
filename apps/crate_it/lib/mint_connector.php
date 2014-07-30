@@ -10,15 +10,13 @@ class MintConnector implements SearchProvider {
                           'FOR' => '/ANZSRC_FOR/opensearch/lookup?count=999&level=',
                           'people' => '/Parties_People/opensearch/lookup?searchTerms=');
 
-  function __construct() {
-    $config = \OCA\crate_it\lib\BagItManager::getConfig();
-    $this->url = $config['mint']['url'];
+  function __construct($url) {
+    $this->url = $url;
   }
   
 
   public function search($type, $keywords) {
     $result = array();
-    
     $ch = curl_init();
     $query = $this->url.$this->action[$type].urlencode($keywords);
     \OCP\Util::writeLog("crate_it::search", $query, \OCP\Util::DEBUG);
@@ -33,8 +31,7 @@ class MintConnector implements SearchProvider {
       $content_array = json_decode($content);
       $result = $content_array->results;
     }
-
-    return json_encode($result);
+    return $result;
   }
 
 

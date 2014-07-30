@@ -56,7 +56,7 @@ class FeatureContext extends MinkContext
      */
     public function iGoToTheCrateItPage()
     {
-        $this->visit('/owncloud/index.php/apps/crate_it');
+        $this->visit('/owncloud/index.php/apps/crate_it/');
         $this->waitForPageToLoad();
     }
 

@@ -14,7 +14,7 @@ Feature: Create and select a new crate
     And I fill in "New Crate Name" with "new crate"
     And I fill in "New Crate Description" with "crate description"
     Then I press "Create" on the popup dialog
-    #Then I should see notice "Crate new crate successfully created"
+    Then I should see notice "Crate new crate successfully created"
     And the selected crate should be "new crate"
     And I should see the crate description "crate description"
     

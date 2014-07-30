@@ -49,7 +49,7 @@
 
                     <h6>Select New Data Creators</h6>
                     <div id="search_people_box" class="input-group">
-                      <input id="keyword" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
+                      <input id="keyword_creator" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
                       <span class="input-group-btn">
                         <button id="search_people" class="btn btn-default" type="button" placeholder="Search Creators...">
                           <i class="fa fa-search"></i>

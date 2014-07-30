@@ -775,6 +775,8 @@ function initSearchHandlers() {
     sortField: 'name'
   };
 
+  // TODO: a lot of these elements could be pushed into the SearchManager constructor
+  //      so it creates the widget
   var creatorSelectedList = manifest.creators;
   var creator$resultsUl = $('#search_people_results');
   var creator$selectedUl = $('#selected_creators');
@@ -782,7 +784,12 @@ function initSearchHandlers() {
   // TODO: add this to a namespace rather than exposing globally
   CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification);
   $('#search_people').click(function () {
-    CreatorSearchManager.search($.trim($('#keyword').val()));
+    CreatorSearchManager.search($.trim($('#keyword_creator').val()));
+  });
+  $('#keyword_creator').keyup(function(e) {
+    if (e.keyCode == 13) {
+      CreatorSearchManager.search($.trim($(this).val()));
+    }
   });
   var creatorsCount = function(e) {
     $('#creators_count').text(e.selected);
@@ -818,6 +825,11 @@ function initSearchHandlers() {
 
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
+  });
+  $('#keyword_activity').keyup(function(e) {
+    if (e.keyCode == 13) {
+      ActivitySearchManager.search($.trim($(this).val()));
+    }
   });
   var activitiesSelectedCount = function(e) {
     $('#activities_count').text(e.selected);

@@ -158,9 +158,11 @@ class CrateController extends Controller {
         // TODO: all of these methods always return successfully, which shouldn't happen
         //       perhaps messages and response codes should be created by the CrateService?
         \OCP\Util::writeLog('crate_it', "CrateController::deleteCrate()", \OCP\Util::DEBUG);
-        $this->crate_service->deleteCrate($_SESSION['selected_crate']);
+        $selected_crate = $_SESSION['selected_crate'];
+        $this->crate_service->deleteCrate($selected_crate);
         // TODO: No $data?
-        return new JSONResponse($data, 200);
+        $msg = 'Crate '.$selected_crate.' is deleted';
+        return new JSONResponse($msg, 200);
     }
 
     /**

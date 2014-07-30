@@ -48,7 +48,7 @@ class DIContainer extends BaseContainer {
         };
                
         $this['CrateController'] = function($c) {
-            return new CrateController($c['API'], $c['Request'], $c['CrateService']);
+            return new CrateController($c['API'], $c['Request'], $c['CrateService'], $c['SetupService']);
         };
 
         $this['SearchController'] = function($c) {

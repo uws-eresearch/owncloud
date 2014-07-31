@@ -41,17 +41,24 @@
                   
                   <div id="creators_box" class="data-creators">
 
-                      <h6>Selected Data Creators (<span id="creators_count"></span>) <button id="clear_creators" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-times muted"></i></button></h6>
+                      <h6>Selected Data Creators (<span id="creators_count"></span>)
+                        <button id="clear_creators" class="pull-right trans-button" type="button">
+                          <i class="fa fa-times muted"></i>
+                        </button>
+                      </h6>
 
                       <ul id="selected_creators">
-
                       </ul>
 
-                    <h6>Select New Data Creators</h6>
+                    <h6>Select New Data Creators
+                      <button id="add_creator_number" class="pull-right trans-button" type="button" data-toggle="modal" data-target="#addCreatorModal">
+                        <i class="fa fa-plus muted"></i>
+                      </button>
+                    </h6>
                     <div id="search_people_box" class="input-group">
                       <input id="keyword_creator" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
                       <span class="input-group-btn">
-                        <button id="search_people" class="btn btn-default" type="button" placeholder="Search Creators...">
+                        <button id="search_people" class="btn btn-default" type="button">
                           <i class="fa fa-search"></i>
                         </button>
                       </span>
@@ -82,7 +89,7 @@
                   <div id="activities_box" class="grant-numbers">
 
                     <h6>Selected Grants (<span id="activities_count"></span>)
-                      <button id="clear_grant_numbers" class="pull-right trans-button" type="button" placeholder="Edit">
+                      <button id="clear_grant_numbers" class="pull-right trans-button" type="button">
                         <i class="fa fa-times muted"></i>
                       </button>
                     </h6>
@@ -91,7 +98,11 @@
                     </ul>
 
 
-                    <h6>Add New Grants</h6>
+                    <h6>Add New Grants
+                      <button id="add_grant_number" class="pull-right trans-button" type="button" data-toggle="modal" data-target="#addGrantModal">
+                        <i class="fa fa-plus muted"></i>
+                      </button>
+                    </h6>
                     <div id="search_activity_box" class="input-group">
                       <input id="keyword_activity" class="form-control" type="text" name="keyword_activity" placeholder="Search Grants..."/>
                       <span class="input-group-btn">

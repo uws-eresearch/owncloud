@@ -363,6 +363,37 @@ function activateRemoveCreatorButton(buttonObj) {
   });
 }
 
+// TODO: Possibly better off migrating to jQuery validation plugin
+//       see http://jqueryvalidation.org/documentation/
+
+function isEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
+
+function validateTextLength($input, $error, $confirm, maxLength) {
+  if (typeof(maxLength) === 'undefined') {
+    maxLength = 256;
+  }
+  var inputText = $input.val();
+  var emptyText = function() {
+    return (!inputText || /^\s*$/.test(inputText));
+  };
+  if(emptyText()) {
+    $confirm.prop('disabled', true);
+    $error.text('Field cannot be blank');
+    $error.show();
+  } else if (inputText.length > maxLength) {
+      $error.text('Field has reached the limit of ' + maxLength + ' characters');
+      $input.val(inputText.substr(0, maxLength));
+      $error.show();
+      $confirm.prop('disabled', false);
+   } else {
+    $confirm.prop('disabled', false);
+    $error.hide();
+  }
+}
+
 
 function validateCrateName($input, $error, $confirm) {
   var inputName = $input.val();
@@ -393,6 +424,8 @@ function validateCrateName($input, $error, $confirm) {
     $error.hide();
   }
 }
+
+
 
 function initCrateActions() {
 
@@ -668,7 +701,70 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     }
   };
 
-  var update = function(record, html, $sourceLi, $destLi) {
+  function createEmptyRecord() {
+    var record = {};
+    for (field in definition.mapping) {
+      record[field] = '';
+    }
+    return record;
+  }
+
+  // TODO: this indicates that we probably need a Record object
+  //       with this as a member function
+  function hashCode(record) {
+    var hashString = function(string) {
+      var hash = 0, i, chr, len;
+      if (string.length == 0) return hash;
+      for (i = 0, len = string.length; i < len; i++) {
+        chr   = string.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+      }
+      return hash;
+    }
+
+    var getRecordString = function(record) {
+      var recordString;
+        for (field in record) {
+          var value = record[field];
+          if (typeof value == 'string' || value instanceof String) {
+            recordString += value;
+          } else if (value != null && typeof value == 'object') {
+            recordString += getRecordString(value);
+          }
+        }
+      return recordString;
+    }
+    recordString = getRecordString(record);
+    return hashString(recordString);
+  }
+
+  this.addRecord = function(overrides) {
+    var record = createEmptyRecord();
+    addOverrides(record, overrides);
+    record['id'] = hashCode(record);
+    selectedList.push(record);
+    var html = renderRecord(record, 'fa-minus');
+    update(record, html, null, $selectedUl);
+  }
+
+
+  function addOverrides(record, overrides) {
+    record['overrides'] = overrides;
+  }
+
+  function applyOverrides(record) {
+    newRecord = record;
+    if('undefined' !== typeof record.overrides) {
+      var newRecord = $.extend(true, {}, record);
+      for (override in newRecord.overrides) {
+        newRecord[override] = newRecord.overrides[override];
+      }
+    }
+    return newRecord;
+  }
+
+  function update(record, html, $sourceLi, $destLi) {
     var c_url = OC.generateUrl('apps/crate_it/crate/update');
     $.ajax({
       url: c_url,
@@ -676,7 +772,9 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       dataType: 'json',
       data: {field: definition.manifestField, value: selectedList},
       success: function(data) {
-        $sourceLi.find('#'+record.id).parent().remove();
+        if($sourceLi) {
+          $sourceLi.find('#'+record.id).parent().remove();
+        }
         $destLi.append(html);
         $destLi.find('#'+record.id).click(function(){
           toggle(record.id);
@@ -741,6 +839,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
 
   // fields is an ordered list of fields to render, with the first being used as the title
   function renderRecord(record, faIcon) {
+    record = applyOverrides(record);
     var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
     html += '<p class="metadata_heading">' + record[definition.displayFields[0]] + '</p>';
     for (var i = 1; i < definition.displayFields.length ; i++) {
@@ -800,6 +899,16 @@ function initSearchHandlers() {
     $('#clearMetadataField').text('Creators');
     attachModalHandlers($clearMetadataModal, CreatorSearchManager.clearSelected);
   });
+
+  var addCreator = function() {
+    // TODO: add ajax
+    var name = $('#add-creator-name').val();
+    var email = $('#add-creator-email').val();
+    var overrides = {'name': name, 'email': email}
+    CreatorSearchManager.addRecord(overrides);
+  }
+  $addCreatorModal = $('#addCreatorModal');
+  attachModalHandlers($addCreatorModal, addCreator);
 
   var activityDefinition = {
     manifestField: 'activities',

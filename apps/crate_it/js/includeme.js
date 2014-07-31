@@ -912,7 +912,6 @@ function initSearchHandlers() {
   });
 
   var addCreator = function() {
-    // TODO: add ajax
     var name = $('#add-creator-name').val();
     var email = $('#add-creator-email').val();
     var overrides = {'name': name, 'email': email}
@@ -976,6 +975,27 @@ function initSearchHandlers() {
     $('#clearMetadataField').text('Grants');
     attachModalHandlers($clearMetadataModal, ActivitySearchManager.clearSelected);
   });
+
+  var addActivity = function() {
+    var grant_number = $('#add-grant-number').val();
+    var date = $('#add-grant-year').val();
+    var title = $('#add-grant-title').val();
+    var institution = $('#add-grant-institution').val();
+    var overrides = {'grant_number': grant_number,
+                     'date': date,
+                     'title': title,
+                     'institution': institution};
+    ActivitySearchManager.addRecord(overrides);
+  }
+
+  // TODO: Naming inconsistency here between 'grants' and activities
+  var $addActivityModal = $('#addGrantModal');
+  var $addActivityModalConfirm = $addActivityModal.find('.btn-primary');
+
+  $('#add-activity').click(function() {
+    attachModalHandlers($addActivityModal, addActivity);
+  })
+
 }
 
 // TODO: Super hacky blocking synchronous call

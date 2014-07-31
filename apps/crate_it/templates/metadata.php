@@ -99,7 +99,7 @@
 
 
                     <h6>Add New Grants
-                      <button id="add_grant_number" class="pull-right trans-button" type="button" data-toggle="modal" data-target="#addGrantModal">
+                      <button id="add-activity" class="pull-right trans-button" type="button" data-toggle="modal" data-target="#addGrantModal">
                         <i class="fa fa-plus muted"></i>
                       </button>
                     </h6>

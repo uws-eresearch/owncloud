@@ -409,6 +409,71 @@ function activateRemoveCreatorButton(buttonObj) {
   });
 }
 
+// TODO: Possibly better off migrating to jQuery validation plugin
+//       see http://jqueryvalidation.org/documentation/
+
+
+
+function validateEmail($input, $error, $confirm) {
+  validateTextLength($input, $error, $confirm, 128);
+  var email = $input.val();
+  var isEmail = function() {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(email);
+  }
+  if(!isEmail()) {
+    $confirm.prop('disabled', true);
+    $error.text('Not recognised as a valid email address');
+    $error.show();
+  }
+}
+
+function validateYear($input, $error, $confirm) {
+  var inputYear = $.trim($input.val());
+  var isYear = function() {
+    var regex = /^\d{4}$/;
+    return regex.test(inputYear);
+  }
+  var emptyYear = function() {
+    return (!inputYear || /^\s*$/.test(inputYear));
+  };
+  if(emptyYear()) {
+    $confirm.prop('disabled', true);
+    $error.text('Year can not be blank');
+    $error.show();
+  } else if(!isYear()) {
+    $confirm.prop('disabled', true);
+    $error.text('Must be a valid submit year');
+    $error.show();
+  } else {
+    $confirm.prop('disabled', false);
+    $error.hide();
+  }
+}
+
+function validateTextLength($input, $error, $confirm, maxLength) {
+  if (typeof(maxLength) === 'undefined') {
+    maxLength = 256;
+  }
+  var inputText = $input.val();
+  var emptyText = function() {
+    return (!inputText || /^\s*$/.test(inputText));
+  };
+  if(emptyText()) {
+    $confirm.prop('disabled', true);
+    $error.text('Field cannot be blank');
+    $error.show();
+  } else if (inputText.length > maxLength) {
+      $error.text('Field has reached the limit of ' + maxLength + ' characters');
+      $input.val(inputText.substr(0, maxLength));
+      $error.show();
+      $confirm.prop('disabled', false);
+   } else {
+    $confirm.prop('disabled', false);
+    $error.hide();
+  }
+}
+
 
 function validateCrateName($input, $error, $confirm) {
   var inputName = $input.val();
@@ -439,6 +504,8 @@ function validateCrateName($input, $error, $confirm) {
     $error.hide();
   }
 }
+
+
 
 function initCrateActions() {
 
@@ -716,7 +783,70 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     }
   };
 
-  var update = function(record, html, $sourceLi, $destLi) {
+  function createEmptyRecord() {
+    var record = {};
+    for (field in definition.mapping) {
+      record[field] = '';
+    }
+    return record;
+  }
+
+  // TODO: this indicates that we probably need a Record object
+  //       with this as a member function
+  function hashCode(record) {
+    var hashString = function(string) {
+      var hash = 0, i, chr, len;
+      if (string.length == 0) return hash;
+      for (i = 0, len = string.length; i < len; i++) {
+        chr   = string.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+      }
+      return hash;
+    }
+
+    var getRecordString = function(record) {
+      var recordString;
+        for (field in record) {
+          var value = record[field];
+          if (typeof value == 'string' || value instanceof String) {
+            recordString += value;
+          } else if (value != null && typeof value == 'object') {
+            recordString += getRecordString(value);
+          }
+        }
+      return recordString;
+    }
+    recordString = getRecordString(record);
+    return hashString(recordString);
+  }
+
+  this.addRecord = function(overrides) {
+    var record = createEmptyRecord();
+    addOverrides(record, overrides);
+    record['id'] = hashCode(record);
+    selectedList.push(record);
+    var html = renderRecord(record, 'fa-minus');
+    update(record, html, null, $selectedUl);
+  }
+
+
+  function addOverrides(record, overrides) {
+    record['overrides'] = overrides;
+  }
+
+  function applyOverrides(record) {
+    newRecord = record;
+    if('undefined' !== typeof record.overrides) {
+      var newRecord = $.extend(true, {}, record);
+      for (override in newRecord.overrides) {
+        newRecord[override] = newRecord.overrides[override];
+      }
+    }
+    return newRecord;
+  }
+
+  function update(record, html, $sourceLi, $destLi) {
     var c_url = OC.generateUrl('apps/crate_it/crate/update');
     $.ajax({
       url: c_url,
@@ -724,7 +854,9 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       dataType: 'json',
       data: {field: definition.manifestField, value: selectedList},
       success: function(data) {
-        $sourceLi.find('#'+record.id).parent().remove();
+        if($sourceLi) {
+          $sourceLi.find('#'+record.id).parent().remove();
+        }
         $destLi.append(html);
         $destLi.find('#'+record.id).click(function(){
           toggle(record.id);
@@ -789,6 +921,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
 
   // fields is an ordered list of fields to render, with the first being used as the title
   function renderRecord(record, faIcon) {
+    record = applyOverrides(record);
     var html = '<button class="pull-right" id="' + record.id + '"><i class="fa ' + faIcon + '"></i></button>';
     html += '<p class="metadata_heading">' + record[definition.displayFields[0]] + '</p>';
     for (var i = 1; i < definition.displayFields.length ; i++) {
@@ -849,6 +982,31 @@ function initSearchHandlers() {
     attachModalHandlers($clearMetadataModal, CreatorSearchManager.clearSelected);
   });
 
+  var addCreator = function() {
+    var name = $('#add-creator-name').val();
+    var email = $('#add-creator-email').val();
+    var overrides = {'name': name, 'email': email}
+    CreatorSearchManager.addRecord(overrides);
+  }
+  var $addCreatorModal = $('#addCreatorModal');
+  var $addCreatorConfirm = $addCreatorModal.find('.btn-primary');
+
+  $('#add-creator-name').keyup(function() {
+      var $input = $(this);
+      var $error = $('#add-creator-name-validation-error');
+      validateTextLength($input, $error, $addCreatorConfirm);
+  });
+
+  $('#add-creator-email').keyup(function() {
+      var $input = $(this);
+      var $error = $('#add-creator-email-validation-error');
+      validateEmail($input, $error, $addCreatorConfirm);
+  });
+
+  $('#add-creator').click(function() {
+    attachModalHandlers($addCreatorModal, addCreator);
+  });
+
   var activityDefinition = {
     manifestField: 'activities',
     actions: {
@@ -888,6 +1046,51 @@ function initSearchHandlers() {
     $('#clearMetadataField').text('Grants');
     attachModalHandlers($clearMetadataModal, ActivitySearchManager.clearSelected);
   });
+
+  var addActivity = function() {
+    var grant_number = $('#add-grant-number').val();
+    var date = $('#add-grant-year').val();
+    var title = $('#add-grant-title').val();
+    var institution = $('#add-grant-institution').val();
+    var overrides = {'grant_number': grant_number,
+                     'date': date,
+                     'title': title,
+                     'institution': institution};
+    ActivitySearchManager.addRecord(overrides);
+  }
+
+  // TODO: Naming inconsistency here between 'grants' and activities
+  var $addActivityModal = $('#addGrantModal');
+  var $addActivityConfirm = $addActivityModal.find('.btn-primary');
+
+  $('#add-grant-number').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-number-validation-error');
+    validateTextLength($input, $error, $addActivityConfirm);
+  });
+
+  $('#add-grant-year').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-year-validation-error');
+    validateYear($input, $error, $addActivityConfirm);
+  });
+
+  $('#add-grant-institution').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-institution-validation-error');
+    validateTextLength($input, $error, $addActivityConfirm);
+  });
+
+  $('#add-grant-title').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-title-validation-error');
+    validateTextLength($input, $error, $addActivityConfirm);
+  });
+
+  $('#add-activity').click(function() {
+    attachModalHandlers($addActivityModal, addActivity);
+  })
+
 }
 
 // TODO: Super hacky blocking synchronous call

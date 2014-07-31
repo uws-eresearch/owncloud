@@ -100,7 +100,6 @@
 
 {% include 'metadata.php' %}       
 
-
 {% include 'help_modal.php' %}   
 
 {% include 'publish_modal.php' %}   
@@ -119,6 +118,10 @@
 
 {% include 'delete_crate_modal.php' %}   
 
-{% include 'clear_metadata_modal.php' %}   
+{% include 'clear_metadata_modal.php' %}  
 
-{% include 'javascript_vars.php' %}   
+{% include 'add_creator_modal.php' %}
+
+{% include 'add_grant_modal.php' %}
+
+{% include 'javascript_vars.php' %}

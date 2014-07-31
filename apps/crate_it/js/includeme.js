@@ -382,6 +382,29 @@ function validateEmail($input, $error, $confirm) {
   }
 }
 
+function validateYear($input, $error, $confirm) {
+  var inputYear = $.trim($input.val());
+  var isYear = function() {
+    var regex = /^\d{4}$/;
+    return regex.test(inputYear);
+  }
+  var emptyYear = function() {
+    return (!inputYear || /^\s*$/.test(inputYear));
+  };
+  if(emptyYear()) {
+    $confirm.prop('disabled', true);
+    $error.text('Year can not be blank');
+    $error.show();
+  } else if(!isYear()) {
+    $confirm.prop('disabled', true);
+    $error.text('Must be a valid submit year');
+    $error.show();
+  } else {
+    $confirm.prop('disabled', false);
+    $error.hide();
+  }
+}
+
 function validateTextLength($input, $error, $confirm, maxLength) {
   if (typeof(maxLength) === 'undefined') {
     maxLength = 256;
@@ -990,7 +1013,31 @@ function initSearchHandlers() {
 
   // TODO: Naming inconsistency here between 'grants' and activities
   var $addActivityModal = $('#addGrantModal');
-  var $addActivityModalConfirm = $addActivityModal.find('.btn-primary');
+  var $addActivityConfirm = $addActivityModal.find('.btn-primary');
+
+  $('#add-grant-number').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-number-validation-error');
+    validateTextLength($input, $error, $addActivityConfirm);
+  });
+
+  $('#add-grant-year').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-year-validation-error');
+    validateYear($input, $error, $addActivityConfirm);
+  });
+
+  $('#add-grant-institution').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-institution-validation-error');
+    validateTextLength($input, $error, $addActivityConfirm);
+  });
+
+  $('#add-grant-title').keyup(function() {
+    var $input = $(this);
+    var $error = $('#add-grant-title-validation-error');
+    validateTextLength($input, $error, $addActivityConfirm);
+  });
 
   $('#add-activity').click(function() {
     attachModalHandlers($addActivityModal, addActivity);

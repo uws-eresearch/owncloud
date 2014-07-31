@@ -38,7 +38,7 @@ class CrateController extends Controller {
             $msg = $this->crate_service->createCrate($name, $description);
             $_SESSION['selected_crate'] = $name;
             session_commit();
-            return new JSONResponse(array('crateName' => $msg), 200);
+            return new JSONResponse(array('crateName' => $msg, 'crateDescription' => $description), 200);
         } catch (Exception $e) {
             return new JSONResponse (
                 array ($e->getMessage(), 'error' => $e),

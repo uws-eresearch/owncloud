@@ -488,8 +488,8 @@ class FeatureContext extends MinkContext
     public function theSelectedCrateShouldBe($arg1)
     {
         $page = $this->getSession()->getPage();
-    	$optionElement = $page->find('xpath', '//select[@id="crates"]/option[@selected]');
-		$selectedDefaultValue = (string)$optionElement->getText();
+    	$optionElement = $page->find('css', '#crates');
+		$selectedDefaultValue = (string)$optionElement->getValue();
 		if ($selectedDefaultValue != $arg1)
 		{
 			throw new Exception('Selected value is "' . $selectedDefaultValue . '" , not "'. $arg1 .'".');
@@ -621,8 +621,8 @@ class FeatureContext extends MinkContext
     public function theSelectedCrateNameShouldBeALongStringTruncatedToCharacters($arg1)
     {
         $page = $this->getSession()->getPage();
-    	$optionElement = $page->find('xpath', '//select[@id="crates"]/option[@selected]');		
-    	$name_text =  (string)$optionElement->getText();
+    	$optionElement = $page->find('css', '#crates');		
+    	$name_text =  (string)$optionElement->getValue();
 		$name_len = strlen($name_text);
 		if ($name_len != $arg1)
 		{

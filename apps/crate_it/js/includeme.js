@@ -4,7 +4,8 @@ function setupDescriptionOps() {
     if ($(this).val().length > 6000) {
       $("#crate_description_validation_error").text('Crate Description has reached the limit of 6,000 characters');
       $("#crate_description_validation_error").show();
-      $(this).val($(this).val().substr(0, description_length));
+      // TODO read from model params loaded from PageController!
+      $(this).val($(this).val().substr(0, 6000));
     }
     else {
       $("#crate_description_validation_error").text('');
@@ -474,6 +475,7 @@ function initCrateActions() {
         $('#createCrateModal').modal('hide');
         $("#crates").append('<option id="' + crateName + '" value="' + crateName + '" >' + crateName + '</option>');
         $("#crates").val(crateName);
+        $("#description").text(data.crateDescription);
         $('#crates').trigger('change');
         displayNotification('Crate ' + crateName + ' successfully created', 6000);
       },
@@ -571,6 +573,7 @@ function initCrateActions() {
 
 //TODO use something like this when the pages loads
 function reloadCrateData(manifest) {
+  $('#description').text(manifest['description']);
   $('#files').remove();
   $('#container').after('<div id="files"></div>');
   buildFileTree(manifest);

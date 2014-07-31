@@ -1,3 +1,17 @@
+function setupEditDesriptionOp() {
+  $('#crate_description').keyup(function() {
+    var description_length = templateVars['description_length'];  
+    if ($(this).val().length > description_length) {
+      $("#edit_description_validation_error").text('Crate Description has reached the limit of 6,000 characters');
+      $("#edit_description_validation_error").show();
+      $(this).val($(this).val().substr(0, description_length));
+    }
+    else {
+      $("#edit_description_validation_error").text('');
+    }
+  });  
+}
+
 function setupDescriptionOps() {
     
   $('#crate_input_description').keyup(function() {
@@ -11,25 +25,12 @@ function setupDescriptionOps() {
       $("#crate_description_validation_error").text('');
     }
   });
-  
-  /* TODO CRATEIT-51
-  $('#crate_description').keyup(function() {
-    var description_length = templateVars['description_length'];  
-    if ($(this).val().length > description_length) {
-      $("#edit_description_validation_error").text('Crate Description has reached the limit of 6,000 characters');
-      $("#edit_description_validation_error").show();
-      $(this).val($(this).val().substr(0, description_length));
-    }
-    else {
-      $("#crate_description_validation_error").text('');
-    }
-  });
-  */
  
   $('#edit_description').click(function(event) {
     var old_description = $('#description').text();
     $('#description').text('');
-    $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><div id="edit_description_validation_error" style="color:red;"></div><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');
+    $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><div id="edit_description_validation_error" style="color:red;"></div><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');    
+    setupEditDesriptionOp();
     $('#edit_description').addClass('hidden');
     $('#save_description').click(function(event) {
     var c_url = OC.generateUrl('apps/crate_it/crate/update');
@@ -45,6 +46,7 @@ function setupDescriptionOps() {
           $('#description').html('');
           $('#description').text(data.description);
           $('#edit_description').removeClass('hidden');
+          calulateHeights();
         },
         error: function(data) {
           displayError(data.statusText);

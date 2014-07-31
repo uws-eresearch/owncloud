@@ -41,6 +41,9 @@
         <section>
           <p>Cr8it has been developed through a collaboration between the University of Newcastle, the University of Western Sydney, and Intersect Australia Ltd.</p>
         </section>
+        <section>
+          Release {{ release }} at commit {{ commit }}.
+        </section>
       </div>
 
       <div class="modal-footer">

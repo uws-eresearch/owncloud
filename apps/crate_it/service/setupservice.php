@@ -40,6 +40,12 @@ class SetupService {
         $params['selected_crate'] = $selectedCrate;
         $params['crates'] = $this->crate_manager->getCrateList();        
         $params['bagged_files'] = $this->crate_manager->getCrateFiles($selectedCrate);
+        $git = array();
+        exec('git describe --all --long', $git);
+        $git = explode('/', $git[0]);
+        $git = explode('-', $git[0]);
+        $params['release'] = $git[0];
+        $params['commit'] = $git[2];
         return $params;
     }
     

@@ -51,7 +51,7 @@
                       </ul>
 
                     <h6>Select New Data Creators
-                      <button id="add_creator_number" class="pull-right trans-button" type="button" data-toggle="modal" data-target="#addCreatorModal">
+                      <button id="add-creator" class="pull-right trans-button" type="button" data-toggle="modal" data-target="#addCreatorModal">
                         <i class="fa fa-plus muted"></i>
                       </button>
                     </h6>

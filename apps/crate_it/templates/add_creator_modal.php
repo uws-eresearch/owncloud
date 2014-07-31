@@ -7,9 +7,15 @@
       </div>
       <div class="modal-body">
         <p>Name:</p>
-        <input id="add-creator-name" type="text" class="modal-input"></input>
+        <input id="add-creator-name" type="text" name="add-creator-name" class="modal-input"></input>
+        <p>
+          <label id="add-creator-name-validation-error" validates="add-creator-name" style="color:red;display:none"></label>
+        <p>
         <p>Email:</p>
         <input id="add-creator-email" type="text" class="modal-input"></input>
+        <p>
+          <label id="add-creator-email-validation-error" validates="add-creator-email" style="color:red;display:none"></label>
+        <p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

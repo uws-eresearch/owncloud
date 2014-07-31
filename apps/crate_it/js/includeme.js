@@ -366,9 +366,20 @@ function activateRemoveCreatorButton(buttonObj) {
 // TODO: Possibly better off migrating to jQuery validation plugin
 //       see http://jqueryvalidation.org/documentation/
 
-function isEmail(email) {
-  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-  return regex.test(email);
+
+
+function validateEmail($input, $error, $confirm) {
+  validateTextLength($input, $error, $confirm, 128);
+  var email = $input.val();
+  var isEmail = function() {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(email);
+  }
+  if(!isEmail()) {
+    $confirm.prop('disabled', true);
+    $error.text('Not recognised as a valid email address');
+    $error.show();
+  }
 }
 
 function validateTextLength($input, $error, $confirm, maxLength) {
@@ -907,8 +918,24 @@ function initSearchHandlers() {
     var overrides = {'name': name, 'email': email}
     CreatorSearchManager.addRecord(overrides);
   }
-  $addCreatorModal = $('#addCreatorModal');
-  attachModalHandlers($addCreatorModal, addCreator);
+  var $addCreatorModal = $('#addCreatorModal');
+  var $addCreatorConfirm = $addCreatorModal.find('.btn-primary');
+
+  $('#add-creator-name').keyup(function() {
+      var $input = $(this);
+      var $error = $('#add-creator-name-validation-error');
+      validateTextLength($input, $error, $addCreatorConfirm);
+  });
+
+  $('#add-creator-email').keyup(function() {
+      var $input = $(this);
+      var $error = $('#add-creator-email-validation-error');
+      validateEmail($input, $error, $addCreatorConfirm);
+  });
+
+  $('#add-creator').click(function() {
+    attachModalHandlers($addCreatorModal, addCreator);
+  });
 
   var activityDefinition = {
     manifestField: 'activities',

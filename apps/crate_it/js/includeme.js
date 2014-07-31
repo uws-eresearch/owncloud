@@ -1,3 +1,48 @@
+function setupDescriptionOps() {
+    
+  $('#crate_input_description').keyup(function() {
+    if ($(this).val().length > 6000) {
+      $("#crate_description_validation_error").text('Crate Description has reached the limit of 6,000 characters');
+      $("#crate_description_validation_error").show();
+      $(this).val($(this).val().substr(0, description_length));
+    }
+    else {
+      $("#crate_description_validation_error").text('');
+    }
+  });
+
+  $('#edit_description').click(function(event) {
+    var old_description = $('#description').text();
+    $('#description').text('');
+    $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');
+    $('#edit_description').addClass('hidden');
+    $('#save_description').click(function(event) {
+    var c_url = OC.generateUrl('apps/crate_it/crate/edit_description');
+      $.ajax({
+        url: c_url,
+        type: 'post',
+        dataType: 'json',
+        data: {
+          'crate_description': $('#crate_description').val()
+        },
+        success: function(data) {
+          $('#description').html('');
+          $('#description').text(data.description);
+          $('#edit_description').removeClass('hidden');
+        },
+        error: function(data) {
+          displayError(data.statusText);
+        }
+      });
+    });
+    $('#cancel_description').click(function(event) {
+      $('#description').html('');
+      $('#description').text(old_description);
+      $('#edit_description').removeClass('hidden');
+    });
+  });
+}
+
 function displayError(errorMessage, delayTime) {
   displayNotification('There was an error: ' + errorMessage, delayTime);
 }

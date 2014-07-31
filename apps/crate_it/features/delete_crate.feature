@@ -20,7 +20,7 @@ Feature: Delete an existing crate
       And I add "file.txt" to the current crate
       Then I go to the crate_it page
       When I click the delete crate button
-      Then I should see "Crate crate1 is not empty, proceed with deletion?"
+      Then I should see "Crate crate1 is not empty, proceed with deletion?" in the modal
       And I press "Delete" on the popup dialog
       # Then I should see notice "Crate crate1 deleted" // TODO: This doesn't work some unknown reason
       Then I should not have crate "crate1"

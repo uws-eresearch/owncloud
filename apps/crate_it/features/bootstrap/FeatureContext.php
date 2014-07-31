@@ -538,6 +538,22 @@ class FeatureContext extends MinkContext
 		{
 			throw new Exception('Error message is "' . $msg . '" , not "'. $arg1 .'".');
 		}
+    } 
+    
+    /**
+     * @Then /^I should see "([^"]*)" in the modal$/
+     */
+    public function iShouldSeeInTheModal($arg1)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+        $label = $el->find('xpath', '//div[@class="modal-body"]/p');
+
+        $msg = $label->getText();
+        if ($msg != $arg1)
+        {
+            throw new Exception('Message is "' . $msg . '" , not "'. $arg1 .'".');
+        }
     }
 	
 	/**

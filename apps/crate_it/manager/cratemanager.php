@@ -83,11 +83,12 @@ class CrateManager {
         if (!in_array($_SESSION['selected_crate'], $crateList)) {
             if (in_array('default_crate', $crateList)) {
                 $_SESSION['selected_crate'] = 'default_crate';
+                session_commit();
             } else {
-                $_SESSION['selected_crate'] = $crateList[0];
+                $_SESSION['selected_crate'] = $crateList[0];               
+                session_commit();
             }
         }
-        session_commit();
     }
 
     private function getCrateRoot() {        

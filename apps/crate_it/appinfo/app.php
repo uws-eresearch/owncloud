@@ -58,8 +58,7 @@ if (\OCP\App::isEnabled('appframework')) {
 
     $api->addScript('loader');
     $api->addScript('includeme');
-    $api->addScript('crate');
-    //$api->addScript('treeoperation');
+    $api->addScript('util');
 
     // Font awesome
     $api->addStyle('font-awesome');
@@ -76,22 +75,6 @@ if (\OCP\App::isEnabled('appframework')) {
     // For tests
     $api->add3rdPartyScript('mockjax/jquery.mockjax');
 
-    /**
-    \OC::$CLASSPATH['BagIt'] = 'crate_it/3rdparty/BagIt/bagit.php';
-    \OC::$CLASSPATH['BagItManifest'] = 'crate_it/3rdparty/BagIt/bagit_manifest.php';
-    \OC::$CLASSPATH['BagItFetch'] = 'crate_it/3rdparty/BagIt/bagit_fetch.php';
-
-    // TODO: This dependency needs to be toggleable
-    \OC::$CLASSPATH['OCA\file_previewer\lib\Solr'] = 'file_previewer/lib/solr.php';
-
-    $config_file = \OC::$SERVERROOT . '/data/cr8it_config.json';
-    if (!file_exists($config_file)) {
-        $fp = fopen($config_file, 'x');
-        $entry = array('max_zip_mb' => 2000, 'max_sword_mb' => 2000, "description_length" => 4000, "previews" => "on");
-        fwrite($fp, json_encode($entry));
-        fclose($fp);
-    }
-    */
 } else {
     $msg = 'Can not enable the Cr8it app because the App Framework ' . 'App is disabled';
     \OCP\Util::writeLog('crate_it', $msg, \OCP\Util::ERROR);

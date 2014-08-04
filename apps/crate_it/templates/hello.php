@@ -1,4 +1,0 @@
-Message: 
-
-<div>{{ msg }}</div>
-

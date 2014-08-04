@@ -581,12 +581,13 @@ class FeatureContext extends MinkContext
     public function iShouldSeeTheCrateDescription($arg1)
     {
         $page = $this->getSession()->getPage();
-		$xpath = '//div[@id="description_box"]/div[@id="description"]';
-		$desc = $page->find('xpath', $xpath);
-		if ($desc->getText() != $arg1)
-		{
-			throw new Exception('The crate should have description "' .$arg1);
-		}	
+        $xpath = '//div[@id="description_box"]/div[@id="description"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        if ($str_desc!= $arg1)
+        {
+            throw new Exception("The crate should have description '$arg1', but it's '$str_desc'");
+        }            
     }
 
     /**
@@ -1120,7 +1121,37 @@ JS;
 		   $this->matchTableValue($hash[$count]['year'], $years[$count], $count);
 		   $this->matchTableValue($hash[$count]['title'], $titles[$count], $count);
 		}
-    }	
+    }
+    	
+    /**
+     * @When /^I click the edit description button$/
+     */
+    public function iClickTheEditDescriptionButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//button[@id="edit_description"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click the Save button$/
+     */
+    public function iClickTheSaveButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="save_description"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click the Cancel button$/
+     */
+    public function iClickTheCancelButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="cancel_description"]';
+        $page->find('xpath', $xpath)->click();
+    }    
 
     public function spin($lambda, $timeout=10) {
         $timeout = $timeout * 1000000; // convert seconds to microseconds

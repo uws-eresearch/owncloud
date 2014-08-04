@@ -145,8 +145,8 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", \OCP\Util::DEBUG);
         $field = $this->params('field');
         $value = $this->params('value');
-        $msg = $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
-        return new JSONResponse($msg, 200);
+        $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
+        return new JSONResponse(array('description' => $value), 200);
     }
 
     /**

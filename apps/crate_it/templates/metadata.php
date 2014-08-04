@@ -10,7 +10,7 @@
                 </h4>
               </div>
               
-              <div id="crate-information" class="panel-collapse collapse in info">
+              <div id="crate-information" class="panel-collapse collapse in standard">
                 <div class="panel-body">
                   <div id='description_box'>
                     <h6>

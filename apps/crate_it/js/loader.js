@@ -52,6 +52,7 @@ $(document).ready(function(){
         loadTemplateVars();
         drawCrateContents();
         initCrateActions();
+        updateCrateSize();
         setupDescriptionOps();
         initSearchHandlers();
         initAutoResizeMetadataTabs();

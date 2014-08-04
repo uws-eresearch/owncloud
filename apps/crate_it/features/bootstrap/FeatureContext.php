@@ -697,18 +697,18 @@ class FeatureContext extends MinkContext
 	}
 
     private function mockActivityLookup()
-	{
+    {
         // TODO: Look at way to load mockjax dynamically so that is isn't loaded in production
-        // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is! 	
+        // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is!    
         $js = <<<JS
 var result = '[' + 
-  			      '{\"result-metadata\":{\"all\": {\"id\": [\"111123\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}'
-  			       + ',' +
-  			      '{\"result-metadata\":{\"all\": {\"id\": [\"123123\"], \"grant_number\": [\"123123\"], \"dc_title\": [\"Title B\"], \"dc_date\": [\"2010\"]}}}'
-  			       + ',' +
-  			      '{\"result-metadata\":{\"all\": {\"id\": [\"123456\"], \"grant_number\": [\"123456\"], \"dc_title\": [\"Title C\"], \"dc_date\": [\"1988\"]}}}'
-  			    +']';	
-var c_url = OC.generateUrl('apps/crate_it/crate/search');  			    		    
+                  '{\"result-metadata\":{\"all\": {\"id\": [\"111123\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}'
+                   + ',' +
+                  '{\"result-metadata\":{\"all\": {\"id\": [\"123123\"], \"grant_number\": [\"123123\"], \"dc_title\": [\"Title B\"], \"dc_date\": [\"2010\"]}}}'
+                   + ',' +
+                  '{\"result-metadata\":{\"all\": {\"id\": [\"123456\"], \"grant_number\": [\"123456\"], \"dc_title\": [\"Title C\"], \"dc_date\": [\"1988\"]}}}'
+                +']';   
+var c_url = OC.generateUrl('apps/crate_it/crate/search');                           
 $.mockjax({
     url: c_url,
     type: 'post',
@@ -716,6 +716,34 @@ $.mockjax({
     data: {
         'type': 'activities',
         'keywords': '123'
+      },
+    responseText : result
+  });
+JS;
+       $this->getSession()->executeScript($js);
+            
+    }
+
+    private function mockCreatorLookup()
+	{
+        // TODO: Look at way to load mockjax dynamically so that is isn't loaded in production
+        // NOTE: DO NOT INDENT THE FOLLOWING BLOCK - leave it how it is! 	
+        $js = <<<JS
+var result = '[' + 
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"1\"], \"Email\": [\"john@smith.com\"], \"Honorific\": [\"Prof\"], \"Given_Name\": [\"John\"], \"Family_Name\": [\"Smith\"]}}}'
+  			       + ',' +
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"2\"], \"Email\": [\"john@doe.org\"], \"Honorific\": [\"Mr\"], \"Given_Name\": [\"John\"], \"Family_Name\": [\"Doe\"]}}}'
+  			       + ',' +
+  			      '{\"result-metadata\":{\"all\": {\"id\": [\"3\"], \"Email\": [\"dan@silverchair.com\"], \"Honorific\": [\"Mr\"], \"Given_Name\": [\"Daniel\"], \"Family_Name\": [\"Johns\"]}}}'
+  			    +']';	
+var c_url = OC.generateUrl('apps/crate_it/crate/search');  			    		    
+$.mockjax({
+    url: c_url,
+    type: 'post',
+    dataType: 'json',
+    data: {
+        'type': 'people',
+        'keywords': 'John'
       },
     responseText : result
   });
@@ -737,6 +765,23 @@ $.mockjax({
         'keywords': 'abc'
       },
     responseText: '[{\"result-metadata\":{\"all\": {\"id\": [\"111123\"], \"grant_number\": [\"111123\"], \"dc_title\": [\"Title A\"], \"dc_date\": [\"1999\"]}}}]'
+  });
+JS;
+        $this->getSession()->executeScript($js);
+    }
+
+    private function resultlessMockCreatorLookup() {
+        $js = <<<JS
+var c_url = OC.generateUrl('apps/crate_it/crate/search');                           
+$.mockjax({
+    url: c_url,
+    type: 'post',
+    dataType: 'json',
+    data: {
+        'type': 'people',
+        'keywords': 'John'
+      },
+    responseText : '[]'
   });
 JS;
         $this->getSession()->executeScript($js);
@@ -781,6 +826,47 @@ JS;
  
 
     /**
+     * @Given /^I click the search creator button$/
+     */
+    public function iClickTheSearchCreatorButton()
+    {
+        $this->getSession()->executeScript('$.mockjaxClear();');    
+        $this->mockCreatorLookup();        
+        $this->spin(function($context) {    
+            $session = $context->getSession();
+            $page = $session->getPage();
+            $xpath = '//button[@id="search_people"]';
+            $el = $page->find('xpath', $xpath);
+            $el->click();
+            return true;
+        });
+        sleep(1);
+        // clear mockjax
+        $this->getSession()->executeScript('$.mockjaxClear();');
+    }
+
+
+    /**
+     * @When /^I click the search creator button and get no results$/
+     */
+    public function iClickTheSearchCreatorButtonAndGetNoResults()
+    {
+        $this->getSession()->executeScript('$.mockjaxClear();');
+        $this->resultlessMockCreatorLookup();
+        $this->spin(function($context) {    
+            $session = $context->getSession();
+            $page = $session->getPage();
+            $xpath = '//button[@id="search_people"]';
+            $el = $page->find('xpath', $xpath);
+            $el->click();
+            return true;
+        });
+        sleep(2);
+        // clear mockjax
+        $this->getSession()->executeScript('$.mockjaxClear();');
+    }
+
+    /**
      * @Given /^I click the search grant number button and get no results$/
      */
     public function iClickTheSearchGrantNumberButtonAndGetNoResults()
@@ -817,6 +903,21 @@ JS;
     }
 
     /**
+     * @When /^I clear all creators$/
+     */
+    public function iClearAllCreators()
+    {
+        // TODO: A lot of these methods just search by xpath and click and element,
+        // The can probably be refactored and remove to be a lot DRYer
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $button = $page->find('css', '#clear_creators');
+            $button->click();
+            return true;
+        });
+    }
+
+    /**
      * @Then /^I should see these entries in the result list$/
      */
     public function iShouldSeeTheseEntriesInTheResultList(TableNode $table)
@@ -840,6 +941,75 @@ JS;
 		}
     }
     
+    /**
+     * @Then /^I should see these entries in the creator result list$/
+     */
+    public function iShouldSeeTheseEntriesInTheCreatorResultList(TableNode $table)
+    {
+
+        $page = $this->getSession()->getPage();
+        $xpath = '//ul[@id="search_people_results"]//p[@class="metadata_heading"]';
+        $name = $this->checkSearchResult($xpath, $page);
+        
+        $xpath = '//ul[@id="search_people_results"]//p[2]';
+        $email = $this->checkSearchResult($xpath, $page);
+        
+        $hash = $table->getHash();
+        for ($count = 0; $count < count($hash); $count++ ){
+           $this->matchTableValue($hash[$count]['name'], $name[$count], $count);
+           $this->matchTableValue($hash[$count]['email'], $email[$count], $count);
+        }
+    }
+
+    /**
+     * @Given /^I add creator "([^"]*)" to the list$/
+     */
+    public function iAddCreatorToTheList($arg1)
+    {
+        $this->spin(function($context) use ($arg1) {
+            $page = $context->getSession()->getPage();
+            $xpath = '//ul[@id="search_people_results"]//button[@id="'.$arg1.'"]';
+            $button = $page->find('xpath', $xpath);
+            $button->click();
+            return true;
+        });
+    }
+
+    /**
+     * @Then /^I should see these entries in the selected creatora list$/
+     */
+    public function iShouldSeeTheseEntriesInTheSelectedCreatoraList(TableNode $table)
+    {
+        sleep(1);
+        $page = $this->getSession()->getPage();
+        $xpath = '//ul[@id="selected_creators"]//p[@class="metadata_heading"]';
+        $name = $this->checkSearchResult($xpath, $page);
+        
+        $xpath = '//ul[@id="selected_creators"]//p[2]';
+        $email = $this->checkSearchResult($xpath, $page);
+        
+        $hash = $table->getHash();
+        for ($count = 0; $count < count($hash); $count++ ){
+           $this->matchTableValue($hash[$count]['name'], $name[$count], $count);
+           $this->matchTableValue($hash[$count]['email'], $email[$count], $count);
+        }
+    }
+
+
+    /**
+     * @Given /^I remove creator "([^"]*)" in the list$/
+     */
+    public function iRemoveCreatorInTheList($arg1)
+    {
+        $this->spin(function($context) use ($arg1) {
+            $page = $context->getSession()->getPage();
+            $xpath = '//ul[@id="selected_creators"]//button[@id="'.$arg1.'"]';
+            $button = $page->find('xpath', $xpath);
+            $button->click();
+            return true;
+        });
+    }
+
 	private function checkSearchResult($xpath, $page)
 	{
 		$el_array = $page->findAll('xpath', $xpath);
@@ -902,7 +1072,7 @@ JS;
         $this->waitForPageToLoad();
 	}
 
-        /**
+    /**
      * @Then /^I should no selected grants$/
      */
     public function iShouldNoSelectedGrants()
@@ -910,6 +1080,19 @@ JS;
         $this->spin(function($context) {
             $page = $context->getSession()->getPage();
             $grants = $page->findAll('css', '#selected_activities > li');
+            assertEquals(0, count($grants));
+            return true;
+        });
+    }
+
+    /**
+     * @Then /^I should have no selected creators$/
+     */
+    public function iShouldNoSelectedCreators()
+    {
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $grants = $page->findAll('css', '#selected_creators > li');
             assertEquals(0, count($grants));
             return true;
         });

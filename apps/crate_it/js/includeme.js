@@ -983,7 +983,7 @@ function initSearchHandlers() {
   CreatorSearchManager.addEventListener(creatorsCount);
   CreatorSearchManager.notifyListeners();
   $('#clear_creators').click(function() {
-    $('#clearMetadataField').text('Creators');
+    $('#clearMetadataField').text('creators');
     attachModalHandlers($clearMetadataModal, CreatorSearchManager.clearSelected);
   });
 

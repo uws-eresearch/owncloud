@@ -115,99 +115,18 @@ CrateIt.Util = {
       return !(!value || /^\s*$/.test(value));
     }
 
+  },
+
+  EmailValidator: function() {
+    this.invalidMessage = 'Not a valid email address';
+
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+    this.isValid = function(value) {
+      return regex.test(value);
+    }
+
   }
-
-
-  // function validateEmail($input, $error, $confirm) {
-  //   validateTextLength($input, $error, $confirm, 128);
-  //   var email = $input.val();
-  //   var isEmail = function() {
-  //     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-  //     return regex.test(email);
-  //   }
-  //   if(!isEmail()) {
-  //     $confirm.prop('disabled', true);
-  //     $error.text('Not recognised as a valid email address');
-  //     $error.show();
-  //   }
-  // }
-
-  // function validateYear($input, $error, $confirm) {
-  //   var inputYear = $.trim($input.val());
-  //   var isYear = function() {
-  //     var regex = /^\d{4}$/;
-  //     return regex.test(inputYear);
-  //   }
-  //   var emptyYear = function() {
-  //     return (!inputYear || /^\s*$/.test(inputYear));
-  //   };
-  //   if(emptyYear()) {
-  //     $confirm.prop('disabled', true);
-  //     $error.text('Year can not be blank');
-  //     $error.show();
-  //   } else if(!isYear()) {
-  //     $confirm.prop('disabled', true);
-  //     $error.text('Must be a valid submit year');
-  //     $error.show();
-  //   } else {
-  //     $confirm.prop('disabled', false);
-  //     $error.hide();
-  //   }
-  // }
-
-  // function validateTextLength($input, $error, $confirm, maxLength) {
-  //   if (typeof(maxLength) === 'undefined') {
-  //     maxLength = 256;
-  //   }
-  //   var inputText = $input.val();
-  //   var emptyText = function() {
-  //     return (!inputText || /^\s*$/.test(inputText));
-  //   };
-  //   if(emptyText()) {
-  //     $confirm.prop('disabled', true);
-  //     $error.text('Field cannot be blank');
-  //     $error.show();
-  //   } else if (inputText.length > maxLength) {
-  //       $error.text('Field has reached the limit of ' + maxLength + ' characters');
-  //       $input.val(inputText.substr(0, maxLength));
-  //       $error.show();
-  //       $confirm.prop('disabled', false);
-  //    } else {
-  //     $confirm.prop('disabled', false);
-  //     $error.hide();
-  //   }
-  // }
-
-
-  // function validateCrateName($input, $error, $confirm) {
-  //   var inputName = $input.val();
-  //   var crates = $.map($('#crates > option'), function(el, i) {
-  //     return $(el).attr('id');
-  //   });
-  //   var emptyName = function() {
-  //     return (!inputName || /^\s*$/.test(inputName));
-  //   };
-  //   var existingName = function() {
-  //     return crates.indexOf(inputName) > -1;
-  //   };
-  //   if(existingName() || emptyName()) {
-  //     $confirm.prop('disabled', true);
-  //     if (emptyName()) {
-  //       $error.text('Crate name cannot be blank');
-  //     } else {
-  //       $error.text('Crate with name "' + inputName + '" already exists');
-  //     }
-  //     $error.show();
-  //   } else if (inputName.length > 128) {
-  //       $error.text('Crate name has reached the limit of 128 characters');
-  //       $input.val(inputName.substr(0, 128));
-  //       $error.show();
-  //       $confirm.prop('disabled', false);
-  //    } else {
-  //     $confirm.prop('disabled', false);
-  //     $error.hide();
-  //   }
-  // }
 
 
 

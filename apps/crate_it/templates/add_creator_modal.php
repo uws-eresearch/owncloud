@@ -9,17 +9,17 @@
         <p>Name</p>
         <input id="add-creator-name" type="text" name="add-creator-name" class="modal-input"></input>
         <p>
-          <label id="add-creator-name-validation-error" validates="add-creator-name" style="color:red;display:none"></label>
+          <label style="color:red;display:none"></label>
         <p>
         <p>Email</p>
         <input id="add-creator-email" type="text" class="modal-input"></input>
         <p>
-          <label id="add-creator-email-validation-error" validates="add-creator-email" style="color:red;display:none"></label>
+          <label style="color:red;display:none"></label>
         <p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Add</button>
+        <button type="button" class="btn btn-primary" disabled>Add</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

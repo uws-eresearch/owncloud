@@ -76,6 +76,11 @@ function attachModalHandlers($modal, confirmCallback) {
     if ($input) {
       $input.val('');
     }
+    var $label = $modal.find('label');
+    if($label) {
+      $label.hide();
+    }
+
   };
 
   $confirm.click(function() {
@@ -991,18 +996,15 @@ function initSearchHandlers() {
   var $addCreatorModal = $('#addCreatorModal');
   var $addCreatorConfirm = $addCreatorModal.find('.btn-primary');
 
-  $('#add-creator-name').keyup(function() {
-      var $input = $(this);
-      var $error = $('#add-creator-name-validation-error');
-      validateTextLength($input, $error, $addCreatorConfirm);
-  });
+  var addCreatorValidator = new CrateIt.Util.FormValidator($addCreatorModal);
+  addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Util.RequiredValidator('Name'));
+  addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
 
-  $('#add-creator-email').keyup(function() {
-      var $input = $(this);
-      var $error = $('#add-creator-email-validation-error');
-      validateEmail($input, $error, $addCreatorConfirm);
-  });
+  addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Util.RequiredValidator('Email'));
+  addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Util.MaxLengthValidator('Email', 128));
+  addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Util.EmailValidator());
 
+  // TODO: this doesn't need to be dynamically attached, maybe create a second helper
   $('#add-creator').click(function() {
     attachModalHandlers($addCreatorModal, addCreator);
   });
@@ -1062,18 +1064,18 @@ function initSearchHandlers() {
   // TODO: Naming inconsistency here between 'grants' and activities
   var $addActivityModal = $('#addGrantModal');
 
-  var grantValidator = new CrateIt.Util.FormValidator($addActivityModal);
-  grantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.RequiredValidator('Grant number'));
-  grantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
+  var addGrantValidator = new CrateIt.Util.FormValidator($addActivityModal);
+  addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.RequiredValidator('Grant number'));
+  addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
 
-  grantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.RequiredValidator('Grant number'));
-  grantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.YearValidator());
+  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.RequiredValidator('Grant number'));
+  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.YearValidator());
   
-  grantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.RequiredValidator('Institution'));
-  grantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.MaxLengthValidator('Institution', 256));
+  addGrantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.RequiredValidator('Institution'));
+  addGrantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.MaxLengthValidator('Institution', 256));
 
-  grantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.RequiredValidator('Title'));
-  grantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.MaxLengthValidator('Title', 256));
+  addGrantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.RequiredValidator('Title'));
+  addGrantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.MaxLengthValidator('Title', 256));
 
 
   $('#add-activity').click(function() {

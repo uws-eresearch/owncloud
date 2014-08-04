@@ -6,7 +6,7 @@
         <h4 class="modal-title" id="renameCrateModalLabel">Rename Crate</h4>
       </div>
       <div class="modal-body">
-        <p>New Name:</p>
+        <p>New Name</p>
         <input id="rename-crate" type="text" class="modal-input"></input>
         <p>
         <label id="rename_crate_error" name="Error Message" style="color:red;display:none"></label>

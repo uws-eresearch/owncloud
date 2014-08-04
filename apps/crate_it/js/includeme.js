@@ -1061,39 +1061,24 @@ function initSearchHandlers() {
 
   // TODO: Naming inconsistency here between 'grants' and activities
   var $addActivityModal = $('#addGrantModal');
-  var $addActivityConfirm = $addActivityModal.find('.btn-primary');
 
-  grantValidator = new CrateIt.Util.FormValidator($('#addGrantModal'));
-  // addGrantValidator = new CrateIt.Util.FieldValidator($('#add-grant-number'));
-  grantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.YearValidator());
+  var grantValidator = new CrateIt.Util.FormValidator($addActivityModal);
+  grantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.RequiredValidator('Grant number'));
+  grantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
 
-  // $('#add-grant-number').keyup(function() {
-  //   var $input = $(this);
-  //   var $error = $('#add-grant-number-validation-error');
-  //   validateTextLength($input, $error, $addActivityConfirm);
-  // });
+  grantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.RequiredValidator('Grant number'));
+  grantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.YearValidator());
+  
+  grantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.RequiredValidator('Institution'));
+  grantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.MaxLengthValidator('Institution', 256));
 
-  // $('#add-grant-year').keyup(function() {
-  //   var $input = $(this);
-  //   var $error = $('#add-grant-year-validation-error');
-  //   validateYear($input, $error, $addActivityConfirm);
-  // });
+  grantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.RequiredValidator('Title'));
+  grantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.MaxLengthValidator('Title', 256));
 
-  // $('#add-grant-institution').keyup(function() {
-  //   var $input = $(this);
-  //   var $error = $('#add-grant-institution-validation-error');
-  //   validateTextLength($input, $error, $addActivityConfirm);
-  // });
 
-  // $('#add-grant-title').keyup(function() {
-  //   var $input = $(this);
-  //   var $error = $('#add-grant-title-validation-error');
-  //   validateTextLength($input, $error, $addActivityConfirm);
-  // });
-
-  // $('#add-activity').click(function() {
-  //   attachModalHandlers($addActivityModal, addActivity);
-  // })
+  $('#add-activity').click(function() {
+    attachModalHandlers($addActivityModal, addActivity);
+  })
 
 }
 

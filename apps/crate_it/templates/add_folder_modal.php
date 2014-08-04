@@ -6,7 +6,7 @@
         <h4 class="modal-title" id="addFolderModalLabel">Add Folder</h4>
       </div>
       <div class="modal-body">
-        <p>Folder Name:</p>
+        <p>Folder Name</p>
         <input id="add-folder" type="text" class="modal-input"></input>
       </div>
       <div class="modal-footer">

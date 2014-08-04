@@ -6,12 +6,12 @@
         <h4 class="modal-title" id="addCreatorModalLabel">Add Creator</h4>
       </div>
       <div class="modal-body">
-        <p>Name:</p>
+        <p>Name</p>
         <input id="add-creator-name" type="text" name="add-creator-name" class="modal-input"></input>
         <p>
           <label id="add-creator-name-validation-error" validates="add-creator-name" style="color:red;display:none"></label>
         <p>
-        <p>Email:</p>
+        <p>Email</p>
         <input id="add-creator-email" type="text" class="modal-input"></input>
         <p>
           <label id="add-creator-email-validation-error" validates="add-creator-email" style="color:red;display:none"></label>

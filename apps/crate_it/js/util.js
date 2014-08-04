@@ -2,7 +2,7 @@ var CrateIt = CrateIt || {};
 
 CrateIt.Util = {
 
-  FieldValidator: function($field, formValidator) {
+  FieldValidator: function($field) {
 
     var $message = $field.next().find('label');
     var validators = [];
@@ -25,7 +25,6 @@ CrateIt.Util = {
 
     this.addValidator = function(validator) {
       validators.push(validator);
-      $field.keyup(checkValidity);
     }
 
     var checkValidity = function() {
@@ -46,29 +45,34 @@ CrateIt.Util = {
       $message.hide();
     }
 
+    $field.keyup(checkValidity);
+
   },
 
 
   FormValidator: function($form) {
 
-    var validators = [];
+    var validators = {};
     var _self = this;
     var $submit = $form.find('.btn-primary');
 
 
     this.addValidator = function($field, fieldValidator) {
-      var validator = new CrateIt.Util.FieldValidator($field, _self);
+      var key = $field.attr('id');
+      if(key in validators) {
+        var validator = validators[key];
+      } else {
+        var validator = new CrateIt.Util.FieldValidator($field);
+        validators[key] = validator;
+      }
       validator.addValidator(fieldValidator);
-      validators.push(validator);
     }
 
 
     this.validate = function() {
-      console.log('putin');
       var valid = false;
-      for(var i = 0; i < validators.length; i++){
-        var validator = validators[i];
-        valid = validator.validate();
+      for(var validator in validators) {
+        valid = validators[validator].validate();
         if(!valid) {
           break;
         }
@@ -100,6 +104,15 @@ CrateIt.Util = {
 
     this.isValid = function(value) {
       return value.length <= maxLength;
+    }
+
+  },
+
+  RequiredValidator: function (fieldName) {
+    this.invalidMessage = fieldName + ' is required';
+
+    this.isValid = function(value) {
+      return !(!value || /^\s*$/.test(value));
     }
 
   }

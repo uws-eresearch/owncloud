@@ -6,7 +6,7 @@
         <h4 class="modal-title" id="renameItemModalLabel">Rename Item</h4>
       </div>
       <div class="modal-body">
-        <p>New Name:</p>
+        <p>New Name</p>
         <input id="rename-item" type="text" class="modal-input"></input>
       </div>
       <div class="modal-footer">

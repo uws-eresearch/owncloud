@@ -997,21 +997,6 @@ JS;
         }
     }
 
-
-    /**
-     * @Given /^I remove creator "([^"]*)" in the list$/
-     */
-    public function iRemoveCreatorInTheList($arg1)
-    {
-        $this->spin(function($context) use ($arg1) {
-            $page = $context->getSession()->getPage();
-            $xpath = '//ul[@id="selected_creators"]//button[@id="'.$arg1.'"]';
-            $button = $page->find('xpath', $xpath);
-            $button->click();
-            return true;
-        });
-    }
-
 	private function checkSearchResult($xpath, $page)
 	{
 		$el_array = $page->findAll('xpath', $xpath);
@@ -1153,6 +1138,42 @@ JS;
         $xpath = '//input[@id="cancel_description"]';
         $page->find('xpath', $xpath)->click();
     }    
+
+
+    /**
+     * @When /^I click on "([^"]*)"$/
+     */
+    public function iClickOn($name)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->findById($name);
+        $el->click();
+        $this->waitForPageToLoad();
+    }
+
+
+    /**
+     * @When /^I remove creator "([^"]*)" from the selected list$/
+     */
+    public function iRemoveCreatorFromTheSelectedList($email)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('xpath', '//p[text()="'.$email.'"]/..//i');
+        $el->click();
+        $this->waitForPageToLoad();
+    }
+
+    /**
+     * @Given /^the "([^"]*)" button in the popup dialog should be disabled$/
+     */
+    public function theButtonInThePopupDialogShouldBeDisabled($buttonText)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+        $el->find('xpath', '//button[text() = "'.$buttonText.'"]');
+        $el->hasAttribute('disabled');
+    }
+
 
     public function spin($lambda, $timeout=10) {
         $timeout = $timeout * 1000000; // convert seconds to microseconds

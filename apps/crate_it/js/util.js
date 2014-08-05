@@ -100,7 +100,7 @@ CrateIt.Util = {
   },
 
   MaxLengthValidator: function(fieldName, maxLength) {
-    this.invalidMessage = fieldName + 'must be less than ' + maxLength + ' characters';
+    this.invalidMessage = fieldName + ' must be less than ' + maxLength + ' characters';
 
     this.isValid = function(value) {
       return value.length <= maxLength;
@@ -118,12 +118,21 @@ CrateIt.Util = {
   },
 
   EmailValidator: function() {
-    this.invalidMessage = 'Not a valid email address';
+    this.invalidMessage = 'Must be a valid email address';
 
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 
     this.isValid = function(value) {
       return regex.test(value);
+    }
+
+  },
+
+  OptionalValidator: function(validator) {
+    this.invalidMessage = validator.invalidMessage;
+
+    this.isValid = function(value) {
+      return /^\s*$/.test(value) || validator.isValid(value);
     }
 
   }

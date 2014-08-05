@@ -803,6 +803,7 @@ JS;
 			}
 			return true;
 		});
+        $this->waitForPageToLoad();
     }
 	
     /**

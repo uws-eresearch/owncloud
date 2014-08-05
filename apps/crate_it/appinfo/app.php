@@ -59,6 +59,7 @@ if (\OCP\App::isEnabled('appframework')) {
     $api->addScript('loader');
     $api->addScript('includeme');
     $api->addScript('util');
+    $api->addScript('initializers');
 
     // Font awesome
     $api->addStyle('font-awesome');

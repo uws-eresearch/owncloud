@@ -89,7 +89,7 @@ CrateIt.Util = {
   },
 
   YearValidator: function() {
-    this.invalidMessage = 'Must be a valid submit year';
+    this.invalidMessage = 'Must be a valid year';
 
     var regex = /^\d{4}$/;
 

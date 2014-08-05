@@ -805,6 +805,7 @@ JS;
 		});
         $this->waitForPageToLoad();
     }
+
 	
     /**
      * @Given /^I click the search grant number button$/
@@ -1143,17 +1144,19 @@ JS;
     /**
      * @When /^I click on "([^"]*)"$/
      */
-    public function iClickOn($name)
-    {
-        $page = $this->getSession()->getPage();
-        $el = $page->findById($name);
-        $el->click();
+    public function iClickOn($name) {
+        $this->spin(function($context) use ($name) {
+            $page = $context->getSession()->getPage();
+            $el = $page->findById($name);
+            $el->click();
+            return true;
+        });
         $this->waitForPageToLoad();
     }
 
 
     /**
-     * @When /^I remove creator "([^"]*)" from the selected list$/
+     * @When /^I remove (?:creator|grant) "([^"]*)" from the selected list$/
      */
     public function iRemoveCreatorFromTheSelectedList($email)
     {

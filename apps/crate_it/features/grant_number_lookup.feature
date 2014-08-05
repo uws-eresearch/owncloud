@@ -91,6 +91,116 @@ Feature: Search, add and remove grant number
       | 123123   | 2010 | Title B |
       | 111123   | 1999 | Title A |
       
+    #CRATEIT-184
+    Scenario: A user can manually add a grant
+      When I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123123              |
+        | add-grant-year        | 2007                |
+        | add-grant-institution | The Ponds Institute |
+        | add-grant-title       | Anti Aging Creams   |
+      When I press "Add" on the popup dialog
+      Then I should see these entries in the selected grant number list
+      | grant    | year | title             |
+      | 123123   | 2007 | Anti Aging Creams |
     
-    
+    #CRATEIT-184
+    Scenario: A user can cancel manually add a grant
+      When I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123123              |
+        | add-grant-year        | 2007                |
+        | add-grant-institution | The Ponds Institute |
+        | add-grant-title       | Anti Aging Creams   |
+      When I press "Add" on the popup dialog
+      When I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123456             |
+        | add-grant-year        | 2009               |
+        | add-grant-institution | College University |
+        | add-grant-title       | Monkey Physics     |
+      When I press "Cancel" on the popup dialog
+      Then I should see these entries in the selected grant number list
+      | grant    | year | title             |
+      | 123123   | 2007 | Anti Aging Creams |
+
+    #CRATEIT-184
+    Scenario: A user can remove a manually added grant
+      When I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123123              |
+        | add-grant-year        | 2007                |
+        | add-grant-institution | The Ponds Institute |
+        | add-grant-title       | Anti Aging Creams   |
+      When I press "Add" on the popup dialog
+      When I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123456             |
+        | add-grant-year        | 2009               |
+        | add-grant-institution | College University |
+        | add-grant-title       | Monkey Physics     |
+      When I press "Add" on the popup dialog
+      Then I should see these entries in the selected grant number list
+      | grant    | year | title             |
+      | 123123   | 2007 | Anti Aging Creams |
+      | 123456   | 2009 | Monkey Physics    |
+      When I remove creator "123456" from the selected list
+      Then I should see these entries in the selected grant number list
+      | grant    | year | title             |
+      | 123123   | 2007 | Anti Aging Creams |
+
+      #CRATEIT-184
+      Scenario: A manually added grant number is mandatory
+        When I click on "add-activity"
+        And I fill in "add-grant-number" with "  "
+        Then I should see "Grant number is required"
+        And the "Add" button in the popup dialog should be disabled
       
+      #CRATEIT-184
+      Scenario: A manually added grant number can not be longer than 256 characters
+        When I click on "add-activity"
+        And I fill in "add-grant-number" with a long string of 257 characters
+        Then I should see "Grant number must be less than 256 characters"
+        And the "Add" button in the popup dialog should be disabled
+
+      #CRATEIT-184
+      Scenario: A manually added grant year is mandatory
+        When I click on "add-activity"
+        And I fill in "add-grant-year" with "  "
+        Then I should see "Year is required"
+        And the "Add" button in the popup dialog should be disabled
+
+      #CRATEIT-184
+      Scenario: A manually added grant year must be a 4 digit year
+        When I click on "add-activity"
+        And I fill in "add-grant-year" with "Meow"
+        Then I should see "Must be a valid year"
+        And the "Add" button in the popup dialog should be disabled
+
+      #CRATEIT-184
+      Scenario: A manually added grant institution is mandatory
+        When I click on "add-activity"
+        And I fill in "add-grant-institution" with "  "
+        Then I should see "Institution is required"
+        And the "Add" button in the popup dialog should be disabled
+      
+      #CRATEIT-184
+      Scenario: A manually added grant institution can not be longer than 256 characters
+        When I click on "add-activity"
+        And I fill in "add-grant-institution" with a long string of 257 characters
+        Then I should see "Institution must be less than 256 characters"
+        And the "Add" button in the popup dialog should be disabled
+
+      #CRATEIT-184
+      Scenario: A manually added grant title is mandatory
+        When I click on "add-activity"
+        And I fill in "add-grant-title" with "  "
+        Then I should see "Title is required"
+        And the "Add" button in the popup dialog should be disabled
+      
+      #CRATEIT-184
+      Scenario: A manually added grant title can not be longer than 256 characters
+        When I click on "add-activity"
+        And I fill in "add-grant-title" with a long string of 257 characters
+        Then I should see "Title must be less than 256 characters"
+        And the "Add" button in the popup dialog should be disabled

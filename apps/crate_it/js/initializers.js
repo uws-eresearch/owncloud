@@ -341,7 +341,7 @@ function initSearchHandlers() {
   addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.RequiredValidator('Grant number'));
   addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
 
-  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.RequiredValidator('Grant number'));
+  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.RequiredValidator('Year'));
   addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.YearValidator());
   
   addGrantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.RequiredValidator('Institution'));

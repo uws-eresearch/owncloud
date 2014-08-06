@@ -122,6 +122,10 @@
 
 {% include 'add_creator_modal.php' %}
 
+{% include 'edit_creator_modal.php' %}
+
 {% include 'add_grant_modal.php' %}
+
+{% include 'edit_activities_modal.php' %}
 
 {% include 'javascript_vars.php' %}

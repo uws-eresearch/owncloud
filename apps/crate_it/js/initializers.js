@@ -227,11 +227,13 @@ function initSearchHandlers() {
     },
     mapping: {
       'id': 'id',
+      'identifier': 'dc_identifier',
       'name' : ['Honorific', 'Given_Name', 'Family_Name'],
       'email': 'Email'
     },
     displayFields: ['name', 'email'],
-    sortField: 'name'
+    editFields: ['name', 'email'],
+    editableRecords: ['manual', 'mint']
   };
 
   // TODO: a lot of these elements could be pushed into the SearchManager constructor
@@ -240,8 +242,9 @@ function initSearchHandlers() {
   var creator$resultsUl = $('#search_people_results');
   var creator$selectedUl = $('#selected_creators');
   var creator$notification = $('#creators_search_notification');
+  var creator$editModal = $('#editCreatorsModal');
   // TODO: add this to a namespace rather than exposing globally
-  CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification);
+  CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification, creator$editModal);
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword_creator').val()));
   });
@@ -289,20 +292,24 @@ function initSearchHandlers() {
     },
     mapping: {
       'id':'id',
+      'identifier': 'dc_identifier',
       'title': 'dc_title',
       'date': 'dc_date',
+      'institution': 'institution',
       'grant_number': 'grant_number'
     },
     displayFields: ['grant_number', 'date', 'title'],
-    sortField: 'title'
+    editFields: ['grant_number', 'date', 'title', 'institution'],
+    editableRecords: ['manual']
   };
   
   var activitySelectedList = manifest.activities;
   var activity$resultsUl = $('#search_activity_results');
   var activity$selectedUl = $('#selected_activities');
   var activity$notification = $('#activites_search_notification');
+  var activity$editModal = $('#editActivitiesModal');
   // TODO: add this to a namespace rather than exposing globally
-  ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification);
+  ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification, activity$editModal);
 
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));

@@ -580,6 +580,7 @@ class FeatureContext extends MinkContext
      */
     public function iShouldSeeTheCrateDescription($arg1)
     {
+        $this->waitForPageToLoad();
         $page = $this->getSession()->getPage();
         $xpath = '//div[@id="description_box"]/div[@id="description"]';
         $desc = $page->find('xpath', $xpath);
@@ -587,7 +588,7 @@ class FeatureContext extends MinkContext
         if ($str_desc!= $arg1)
         {
             throw new Exception("The crate should have description '$arg1', but it's '$str_desc'");
-        }            
+        }    
     }
 
     /**
@@ -636,6 +637,7 @@ class FeatureContext extends MinkContext
      */
     public function theSelectedCrateDescriptionShouldBeALongStringTruncatedToCharacters($arg1)
     {
+        sleep(1);
         $page = $this->getSession()->getPage();
 		$xpath = '//div[@id="description_box"]/div[@id="description"]';
 		$desc = $page->find('xpath', $xpath);

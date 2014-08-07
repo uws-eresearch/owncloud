@@ -144,7 +144,7 @@ Feature: Search, add and remove grant number
       | grant    | year | title             |
       | 123123   | 2007 | Anti Aging Creams |
       | 123456   | 2009 | Monkey Physics    |
-      When I remove creator "123456" from the selected list
+      When I remove grant "123456" from the selected list
       Then I should see these entries in the selected grant number list
       | grant    | year | title             |
       | 123123   | 2007 | Anti Aging Creams |
@@ -204,3 +204,163 @@ Feature: Search, add and remove grant number
         And I fill in "add-grant-title" with a long string of 257 characters
         Then I should see "Title must be less than 256 characters"
         And the "Add" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: A user can edit a manually added a grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        Then I fill in the following:
+          | edit-activities-grant_number| 123456             |
+          | edit-activities-date        | 2009               |
+          | edit-activities-institution | College University |
+          | edit-activities-title       | Monkey Physics     |
+        When I press "Save" on the popup dialog
+        Then I should see these entries in the selected grant number list
+          | grant    | year | title             |
+          | 123456   | 2009 | Monkey Physics    |
+
+      #CRATEIT-185
+      Scenario: A user can cancel editing a manually added a grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        Then I fill in the following:
+          | edit-activities-grant_number| 123456             |
+          | edit-activities-date        | 2009               |
+          | edit-activities-institution | College University |
+          | edit-activities-title       | Monkey Physics     |
+        When I press "Cancel" on the popup dialog
+        Then I should see these entries in the selected grant number list
+          | grant    | year | title             |
+          | 123123   | 2007 | Anti Aging Creams |
+        
+      #CRATEIT-185
+      Scenario: A user can not edit a grant added from the mint
+        Given I fill in "keyword_activity" with "123"
+        And I click the search grant number button 
+        And I add creator "123123" to the selected list
+        When I edit grant "123123"
+        Then I should not see "Add Grant"
+
+      #CRATEIT-185
+      Scenario: Grant number is mandatory in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-grant_number" with "  "
+        Then I should see "Grant number is required"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: Grant number can not be longer than 256 characters in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-grant_number" with a long string of 257 characters
+        Then I should see "Grant number must be less than 256 characters"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: Year is mandatory in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-date" with "  "
+        Then I should see "Year is required"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: Year must be a 4 digit year in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-date" with "Meow"
+        Then I should see "Must be a valid year"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: Institution is mandatory in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-institution" with "  "
+        Then I should see "Institution is required"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: Institution can not be longer than 256 characters in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-institution" with a long string of 257 characters
+        Then I should see "Institution must be less than 256 characters"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: Title is mandatory in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-title" with "  "
+        Then I should see "Title is required"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-185
+      Scenario: Title can not be longer than 256 characters in a manually edited grant
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
+        When I edit grant "123123"
+        And I fill in "edit-activities-title" with a long string of 257 characters
+        Then I should see "Title must be less than 256 characters"
+        And the "Save" button in the popup dialog should be disabled

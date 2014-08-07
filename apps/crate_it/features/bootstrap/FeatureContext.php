@@ -1169,7 +1169,7 @@ JS;
     }
 
     /**
-     * @When /^I edit creator "([^"]*)"$/
+     * @When /^I edit (?:grant|creator) "([^"]*)"$/
      */
     public function iEditCreator($email)
     {

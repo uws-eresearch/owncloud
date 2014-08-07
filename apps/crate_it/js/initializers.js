@@ -227,11 +227,13 @@ function initSearchHandlers() {
     },
     mapping: {
       'id': 'id',
+      'identifier': 'dc_identifier',
       'name' : ['Honorific', 'Given_Name', 'Family_Name'],
       'email': 'Email'
     },
     displayFields: ['name', 'email'],
-    sortField: 'name'
+    editFields: ['name', 'email'],
+    editableRecords: ['manual', 'mint']
   };
 
   // TODO: a lot of these elements could be pushed into the SearchManager constructor
@@ -240,8 +242,18 @@ function initSearchHandlers() {
   var creator$resultsUl = $('#search_people_results');
   var creator$selectedUl = $('#selected_creators');
   var creator$notification = $('#creators_search_notification');
+  var creator$editModal = $('#editCreatorsModal');
+
+  var editCreatorValidator = new CrateIt.Util.FormValidator(creator$editModal);
+  editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Util.RequiredValidator('Name'));
+  editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Util.MaxLengthValidator('Name', 256));
+
+  var optionalEditEmailValidator = new CrateIt.Util.OptionalValidator(new CrateIt.Util.EmailValidator());
+  editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Util.MaxLengthValidator('Email', 128));
+  editCreatorValidator.addValidator($('#edit-creators-email'), optionalEditEmailValidator);
+
   // TODO: add this to a namespace rather than exposing globally
-  CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification);
+  CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification, creator$editModal);
   $('#search_people').click(function () {
     CreatorSearchManager.search($.trim($('#keyword_creator').val()));
   });
@@ -289,20 +301,38 @@ function initSearchHandlers() {
     },
     mapping: {
       'id':'id',
+      'identifier': 'dc_identifier',
       'title': 'dc_title',
       'date': 'dc_date',
+      'institution': 'foaf_name',
       'grant_number': 'grant_number'
     },
     displayFields: ['grant_number', 'date', 'title'],
-    sortField: 'title'
+    editFields: ['grant_number', 'date', 'title', 'institution'],
+    editableRecords: ['manual']
   };
   
   var activitySelectedList = manifest.activities;
   var activity$resultsUl = $('#search_activity_results');
   var activity$selectedUl = $('#selected_activities');
   var activity$notification = $('#activites_search_notification');
+  var activity$editModal = $('#editActivitiesModal');
+  var editActivityValidator = new CrateIt.Util.FormValidator(activity$editModal);
+  editActivityValidator.addValidator($('#edit-activities-grant_number'), new CrateIt.Util.RequiredValidator('Grant number'));
+  editActivityValidator.addValidator($('#edit-activities-grant_number'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
+
+  editActivityValidator.addValidator($('#edit-activities-date'), new CrateIt.Util.RequiredValidator('Year'));
+  editActivityValidator.addValidator($('#edit-activities-date'), new CrateIt.Util.YearValidator());
+  
+  editActivityValidator.addValidator($('#edit-activities-institution'), new CrateIt.Util.RequiredValidator('Institution'));
+  editActivityValidator.addValidator($('#edit-activities-institution'), new CrateIt.Util.MaxLengthValidator('Institution', 256));
+
+  editActivityValidator.addValidator($('#edit-activities-title'), new CrateIt.Util.RequiredValidator('Title'));
+  editActivityValidator.addValidator($('#edit-activities-title'), new CrateIt.Util.MaxLengthValidator('Title', 256));
+
+
   // TODO: add this to a namespace rather than exposing globally
-  ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification);
+  ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification, activity$editModal);
 
   $('#search_activity').click(function () {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));

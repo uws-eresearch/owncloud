@@ -172,6 +172,125 @@ Feature: Search, add and remove grant number
         And I fill in "add-creator-email" with "elvis@graceland.org"
         Then I press "Add" on the popup dialog
         Then I should see these entries in the selected creatora list
-        | name       | email               |
-        | Elvis      | elvis@graceland.org |
+          | name       | email               |
+          | Elvis      | elvis@graceland.org |
+
+      #CRATEIT-183
+      Scenario: A user can edit a manually added creator
+        When I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        When I edit creator "joe@bloggs.org"
+        And I fill in the following:
+          | edit-creators-name  | Elvis               |
+          | edit-creators-email | elvis@graceland.org |
+        Then I press "Save" on the popup dialog
+        Then I should see these entries in the selected creatora list
+          | name       | email               |
+          | Elvis      | elvis@graceland.org |
+
+      #CRATEIT-183
+      Scenario: A user can cancel editing a manually added creator
+        When I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        When I edit creator "joe@bloggs.org"
+        And I fill in the following:
+          | edit-creators-name  | Elvis               |
+          | edit-creators-email | elvis@graceland.org |
+        Then I press "Cancel" on the popup dialog
+        Then I should see these entries in the selected creatora list
+          | name       | email               |
+          | Joe Bloggs | joe@bloggs.org      |
+
+      #CRATEIT-183
+      Scenario: A manually edited creator from the mint displays original details
+        Given I fill in "keyword_creator" with "John"
+        And I click the search creator button
+        And I add creator "john@smith.com" to the selected list
+        When I edit creator "john@smith.com"
+        And I fill in the following:
+          | edit-creators-name  | Elvis               |
+          | edit-creators-email | elvis@graceland.org |
+        Then I press "Save" on the popup dialog
+        When I edit creator "elvis@graceland.org"
+        Then I should see the following:
+          | original-creators-name | Prof John Smith     |
+          | original-creators-email| john@smith.com      |
+          | edit-creators-name     | Elvis               |
+          | edit-creators-email    | elvis@graceland.org |
+
+      #CRATEIT-183
+      Scenario: A manually edited creator name is mandatory
+        When I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        When I edit creator "joe@bloggs.org"
+        And I fill in "edit-creators-name" with "  "
+        Then I should see "Name is required"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-183
+      Scenario: A manually edited creator name has a maximum length of 256 characters
+        When I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        When I edit creator "joe@bloggs.org"
+        And I fill in "edit-creators-name" with a long string of 257 characters
+        Then I should see "Name must be less than 256 characters"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-183
+      Scenario: A manually edited creator email is optional
+        When I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        When I edit creator "joe@bloggs.org"
+        And I fill in "edit-creators-name" with "Elvis"
+        And I fill in "edit-creators-email" with "  "
+        Then I press "Save" on the popup dialog
+        Then I should see these entries in the selected creatora list
+        | name  | email |
+        | Elvis |       |
+
+      #CRATEIT-183
+      Scenario: A manually edited creator email has a maximum length of 128 characters
+        When I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        When I edit creator "joe@bloggs.org"
+        And I fill in "edit-creators-name" with "Elvis"
+        And I fill in "edit-creators-email" with a long string of 129 characters
+        Then I should see "Email must be less than 128 characters"
+        And the "Save" button in the popup dialog should be disabled
+
+      #CRATEIT-183
+      Scenario: A manually edited creator email must be a valid email address
+        When I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        When I edit creator "joe@bloggs.org"
+        And I fill in "edit-creators-name" with "Elvis"
+        And I fill in "edit-creators-email" with "elvis"
+        Then I should see "Must be a valid email address"
+        And the "Save" button in the popup dialog should be disabled
+        And I fill in "edit-creators-email" with "elvis@graceland.org"
+        Then I press "Save" on the popup dialog
+        Then I should see these entries in the selected creatora list
+          | name       | email               |
+          | Elvis      | elvis@graceland.org |
 

@@ -1156,12 +1156,24 @@ JS;
 
 
     /**
-     * @When /^I remove (?:creator|grant) "([^"]*)" from the selected list$/
+     * @When /^I (?:add|remove) (?:creator|grant) "([^"]*)" (?:to|from) the selected list$/
      */
-    public function iRemoveCreatorFromTheSelectedList($email)
+    public function iAddRemoveCreatorGrantToFromTheSelectedList($email)
     {
         $page = $this->getSession()->getPage();
         $el = $page->find('xpath', '//p[text()="'.$email.'"]/..//i');
+        $el->click();
+        $this->waitForPageToLoad();
+    }
+
+    /**
+     * @When /^I edit creator "([^"]*)"$/
+     */
+    public function iEditCreator($email)
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//p[text()="'.$email.'"]/..//i[contains(@class,"fa-edit")]';
+        $el = $page->find('xpath', $xpath);
         $el->click();
         $this->waitForPageToLoad();
     }
@@ -1175,6 +1187,16 @@ JS;
         $el = $page->find('css', '.modal.in');
         $el->find('xpath', '//button[text() = "'.$buttonText.'"]');
         $el->hasAttribute('disabled');
+    }
+
+    /**
+     * @Then /^I should see the following:$/
+     */
+    public function iShouldSeeTheFollowing(TableNode $table) {
+        $webAssert = new WebAssert($this->getSession());
+        foreach ($table->getRowsHash() as $field => $value) {
+            $webAssert->fieldValueEquals($field, $value);
+        }
     }
 
 

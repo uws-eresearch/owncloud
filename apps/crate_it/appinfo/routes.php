@@ -65,3 +65,8 @@ $this->create('crate_it_search', '/crate/search')->post()->action(function($para
     App::main('SearchController', 'search', $params, new DIContainer());
 });
 
+$this->create('crate_it_zip', '/crate/downloadzip')->get()->action(function($params) {
+    App::main('DownloadController', 'downloadZip', $params, new DIContainer());
+});
+
+

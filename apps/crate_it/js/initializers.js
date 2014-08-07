@@ -94,6 +94,17 @@ function initCrateActions() {
     });
     $('#deleteCrateModal').modal('hide');
   };
+  
+  var downloadCrate = function() {
+    if (treeHasNoFiles()) {
+      displayNotification('No items in the crate to package');
+      return;
+    }
+    
+    displayNotification('Your download is being prepared. This might take some time if the files are big');
+    var c_url = OC.generateUrl('apps/crate_it/crate/downloadzip');
+    window.location = c_url;
+  };
 
   $('#crate_input_name').keyup(function() {
       var $input = $(this);
@@ -159,6 +170,8 @@ function initCrateActions() {
       }
     });
   });
+  
+  $('#download').click(downloadCrate);
 
 }
 

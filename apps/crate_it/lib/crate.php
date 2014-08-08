@@ -2,7 +2,7 @@
 
 namespace OCA\crate_it\lib;
 
-require 'apps/crate_it/3rdparty/BagIt/bagit.php';
+require '3rdparty/BagIt/bagit.php';
 use BagIt;
 
 class Crate extends BagIt {
@@ -107,8 +107,25 @@ class Crate extends BagIt {
     return $total;
   }
   
+  public function getAllFilesAndFolders() {
+      // TODO check empty folders too?
+      //$data = $this->getManifest();
+      //$vfs = &$data['vfs'][0]['children'];
+      //$flat = array();
+      //$ref = &$flat;
+      //$this->flat_f($vfs, $ref, $data['vfs'][0]['name']);  
+      $flat = $this->flatList();   
+      \OCP\Util::writeLog('crate_it', "flat: ".serialize($flat), \OCP\Util::DEBUG);    
+       
+      $res = array();
+      foreach ($flat as $elem) {
+        $res[] = $elem['filename']? $elem['filename'] : $elem['folderpath'];     
+      }
+      return $res;
+  }
+  
 
-  private function flatList() {
+   private function flatList() {
         $data = $this->getManifest();
         \OCP\Util::writeLog('crate_it', "Manifest data size: ".sizeof($data), \OCP\Util::DEBUG);    
         
@@ -136,7 +153,34 @@ class Crate extends BagIt {
             }
           }
         }
-  }
+    }
+    
+    private function flat_f(&$vfs, &$flat, $path) {
+        if (count($vfs) > 0) {
+          foreach($vfs as $entry) {
+            if (array_key_exists('filename', $entry)) {
+              $flat_entry = array(
+                'id' => $entry['id'],
+                'path' => $path,
+                'name' => $entry['name'],
+                'filename' => $entry['filename']
+              );
+              array_push($flat, $flat_entry);
+            }
+            elseif (array_key_exists('children', $entry)) {
+              $flat_entry = array(
+                'id' => $entry['id'],
+                'name' => $entry['name'],
+                'folderpath' => $entry['folderpath']
+              );  
+              array_push($flat, $flat_entry);
+              $this->flat_f($entry['children'], $flat, $path . $entry['name'] . '/');
+            
+            }
+            
+          }
+        }
+    }
 
   // TODO: There's currently no check for duplicates
   // TODO: root folder has isFolder set, so should other files folders
@@ -154,7 +198,8 @@ class Crate extends BagIt {
     $vfsEntry = array(
       'name' => basename($folder) ,
       'id' => 'folder', // TODO: change this to 'folder' => true, need to update js
-      'children' => array()
+      'children' => array(),
+      'folderpath' => $folder
     );
     $vfsContents = &$vfsEntry['children'];
     $paths = \OC\Files\Filesystem::getDirectoryContent($folder);

@@ -51,8 +51,12 @@
         </a>
       {% endif %}
 
-
-      <div class="btn-group">
+      <a id="check" class="button" data-toggle="modal" data-target="#checkCrateModal">
+         <i class="fa fa-check-circle"></i>
+         Check Crate
+      </a>  
+      
+      <div class="btn-group">      
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
           <i class="fa fa-download"></i>
           Download
@@ -127,5 +131,7 @@
 {% include 'add_grant_modal.php' %}
 
 {% include 'edit_activities_modal.php' %}
+
+{% include 'check_crate_modal.php' %}  
 
 {% include 'javascript_vars.php' %}

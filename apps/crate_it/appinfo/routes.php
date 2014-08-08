@@ -69,4 +69,7 @@ $this->create('crate_it_zip', '/crate/downloadzip')->get()->action(function($par
     App::main('DownloadController', 'downloadZip', $params, new DIContainer());
 });
 
+$this->create('crate_it_check', '/crate/check')->get()->action(function($params) {
+    App::main('CrateController', 'checkCrate', $params, new DIContainer());
+});
 

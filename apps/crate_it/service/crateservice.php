@@ -50,4 +50,8 @@ class CrateService {
     public function renameCrate($crateName, $newCrateName) {
         return $this->crateManager->renameCrate($crateName, $newCrateName);
     }
+    
+    public function checkCrate($crateName) {
+        return $this->crateManager->checkCrate($crateName);
+    }
 }

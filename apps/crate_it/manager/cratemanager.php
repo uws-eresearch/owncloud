@@ -2,8 +2,6 @@
 
 namespace OCA\crate_it\Manager;
 
-require 'apps/crate_it/lib/crate.php';
-
 use OCA\crate_it\lib\Crate;
 
 class CrateManager {
@@ -135,6 +133,23 @@ class CrateManager {
         \OCP\Util::writeLog('crate_it', "CrateManager::renameCrate($crateName, $newCrateName)", \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
         $crate->renameCrate($newCrateName);
+    }
+    
+    public function checkCrate($crateName) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - ".$crateName, \OCP\Util::DEBUG);
+        $crate = $this->getCrate($crateName);
+        
+        $files = $crate->getAllFilesAndFolders();     
+        $res = array();
+        foreach ($files as $filepath) {
+            \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - checking ".$filepath, \OCP\Util::DEBUG);
+            $file_exist = file_exists($filepath); 
+            if (!$file_exist) {
+                //$res[$filepath] = $file_exist; 
+                $res[basename($filepath)] = $file_exist; 
+            }
+        }
+        return $res;
     }
     
 }

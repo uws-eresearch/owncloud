@@ -47,8 +47,8 @@ if (\OCP\App::isEnabled('appframework')) {
         "name" => $api->getTrans()->t("Cr8It")
         )
     );
-    //add 3rdparty folder to include path   
-    $dir = dirname(dirname(__FILE__)) . '/3rdparty';
+    //add project root folder to include path   
+    $dir = dirname(dirname(__FILE__)) . '/';
     set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
         
     //load the required files

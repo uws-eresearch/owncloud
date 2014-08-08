@@ -42,6 +42,32 @@ function initCrateActions() {
     });
     return result;
   };
+  
+  var checkCrate = function() {
+      $('#result-message').text('');
+      $('#check-results-table').empty();
+      var c_url = OC.generateUrl('apps/crate_it/crate/check');
+      $.ajax({
+          url: c_url,
+          type: 'get',
+          dataType: 'json',
+          async: false,
+          success: function(data) {
+              $('#result-message').text(data.msg);
+              res = data.result;
+              var key;
+              for (key in res) {
+                // newRow = '<tr><td>' + key + '</td><td>' + res[key] + '</td></tr>';
+                newRow = '<tr><td>' + key + '</td>/tr>';
+                 $("#check-results-table").last().append(newRow); 
+              }
+              
+          },
+          error: function(data) {
+              // TODO Format errors
+          }
+      });
+  };
 
   var crateEmpty = function() {
     return $tree.tree('getNodeById', 'rootfolder').children.length == 0;
@@ -151,6 +177,7 @@ function initCrateActions() {
     }
   });
 
+  $('#check').click(checkCrate);
 
   $('#crates').change(function() {
     var id = $(this).val();
@@ -218,6 +245,12 @@ function setupDescriptionOps() {
       });
     });
     $('#cancel_description').click(function(event) {
+      
+      //$('#description').html('');
+      // var escaped = $('<div>').text(old_description).text();
+      //$('#description').html(escaped.replace(/\n/g, '<br />'));     
+      //$('#edit_description').removeClass('hidden');
+        
       $('#description').html('');
       $('#description').text(old_description);
       $('#edit_description').removeClass('hidden');
@@ -375,7 +408,7 @@ function initSearchHandlers() {
                      'title': title,
                      'institution': institution};
     ActivitySearchManager.addRecord(overrides);
-  }
+  };
 
   // TODO: Naming inconsistency here between 'grants' and activities
   var $addActivityModal = $('#addGrantModal');

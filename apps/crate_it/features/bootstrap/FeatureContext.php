@@ -1156,6 +1156,41 @@ JS;
         $this->waitForPageToLoad();
     }
 
+    /**
+     * @Given /^I remove "([^"]*)" from the file system$/
+     */
+    public function iRemoveFromTheFileSystem($arg1)
+    {
+        $command = "rm -rf /var/www/html/owncloud/data/test/files/$arg1";
+        $this->exec_sh_command($command);
+    }
+
+    /**
+     * @Given /^I rename "([^"]*)" to "([^"]*)" in the file system$/
+     */
+    public function iRenameToInTheFileSystem($arg1, $arg2)
+    {
+        $command = "mv /var/www/html/owncloud/data/test/files/$arg1 /var/www/html/owncloud/data/test/files/$arg2";
+        $this->exec_sh_command($command);
+    }
+
+    /**
+     * @Given /^I should see these files listed as invalid$/
+     */
+    public function iShouldSeeTheseFilesListedAsInvalid(TableNode $table)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+        $xpath = '//*[@id="check-results-table"]//tr/td';
+        $res_table = $el->findAll('xpath', $xpath);
+        
+
+        $hash = $table->getHash();
+        for ($count = 0; $count < count($hash); $count++ ){
+           $this->matchTableValue($hash[$count]['filename'], $res_table[$count].getHtml(), $count);
+        }
+    }
+
 
     /**
      * @When /^I (?:add|remove) (?:creator|grant) "([^"]*)" (?:to|from) the selected list$/

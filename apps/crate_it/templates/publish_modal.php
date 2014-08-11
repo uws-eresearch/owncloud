@@ -7,11 +7,11 @@
       </div>
       <div class="modal-body">
         <select id="sword_collection">
-          <?php foreach ($_['sword_collections'] as $collection => $href): ?>
-            <option value="<?php echo $href?>">
-              <?php echo $collection; ?>
+          {% for collection in collections %}
+            <option value="">
+              {{ collection }}
             </option>
-          <?php endforeach; ?>
+          {% endfor %}
         </select>
 
         <section>

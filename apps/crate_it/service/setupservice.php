@@ -74,7 +74,19 @@ class SetupService {
         // load up array
         $params['description_length'] = $description_length;
         $params['max_sword_mb'] = $max_sword_mb;
-        $params['max_zip_mb'] = $max_zip_mb;     
+        $params['max_zip_mb'] = $max_zip_mb;
+        $sword = $config['sword'];
+        $params['sword_status'] = $sword['status'];
+        // TODO: this is really ugly, check if collections can be made config parameters
+        //       also, this slows down page load as it has to connect to another server
+        //       (NOTE: the setup service gets called multiple times with each page load too!!)
+        //       try memoizing the results or make it an ajax call
+        if($sword['status'] == 'enabled') {
+            require 'apps/crate_it/lib/sword_connector.php';
+            $publisher = new \OCA\crate_it\lib\SwordConnector($sword['username'], $sword['password'], $sword['sd_uri'], $sword['obo']);
+            $params['collections'] = $publisher->getCollections();
+            // \OCP\Util::writeLog('crate_it', "Collections: ".print_r($params['collections']), \OCP\Util::DEBUG);
+        }
         return $params;
     }
 

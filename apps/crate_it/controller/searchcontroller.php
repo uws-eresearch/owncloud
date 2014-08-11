@@ -13,14 +13,14 @@ class SearchController extends Controller {
 
 
     /**
-     * @var $searchProver
+     * @var $searchProvider
      */
-    private $searchProver;
+    private $searchProvider;
 
     public function __construct($api, $request, $configManager) {
       parent::__construct($api, $request);
       $config = $configManager->readConfig();
-      $this->searchProver = new MintConnector($config['mint']['url']);
+      $this->searchProvider = new MintConnector($config['mint']['url']);
     }
 
 
@@ -37,7 +37,7 @@ class SearchController extends Controller {
         $type = $this->params('type');
         $keywords = $this->params('keywords');
         try {
-            $result = $this->searchProver->search($type, $keywords);
+            $result = $this->searchProvider->search($type, $keywords);
             $response = new JSONResponse ($result, 200);
         } catch (Exception $e) {
             $reponse = new JSONResponse (array('statusText' => $e-getMessage()), 404);

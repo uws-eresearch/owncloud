@@ -64,6 +64,10 @@ class DIContainer extends BaseContainer {
         $this['DownloadController'] = function($c) {
             return new DownloadController($c['API'], $c['Request'], $c['DownloadService']);
         };
+
+        $this['PublishController'] = function($c) {
+            return new PublishController($c['API'], $c['Request'], $c['ConfigManager']);
+        };
     }
 
 }

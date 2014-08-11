@@ -141,7 +141,7 @@ Feature: Search, add and remove grant number
       Scenario: A manually added creator name has a maximum length of 256 characters
         When I click on "add-creator"
         And I fill in "add-creator-name" with a long string of 257 characters
-        Then I should see "Name must be less than 256 characters"
+        Then I should see "Name must not be more than 256 characters"
         And the "Add" button in the popup dialog should be disabled
 
       #CRATEIT-177
@@ -159,7 +159,7 @@ Feature: Search, add and remove grant number
         When I click on "add-creator"
         And I fill in "add-creator-name" with "Elvis"
         And I fill in "add-creator-email" with a long string of 129 characters
-        Then I should see "Email must be less than 128 characters"
+        Then I should see "Email must not be more than 128 characters"
         And the "Add" button in the popup dialog should be disabled
 
       #CRATEIT-177
@@ -245,7 +245,7 @@ Feature: Search, add and remove grant number
         Then I press "Add" on the popup dialog
         When I edit creator "joe@bloggs.org"
         And I fill in "edit-creators-name" with a long string of 257 characters
-        Then I should see "Name must be less than 256 characters"
+        Then I should see "Name must not be more than 256 characters"
         And the "Save" button in the popup dialog should be disabled
 
       #CRATEIT-183
@@ -273,7 +273,7 @@ Feature: Search, add and remove grant number
         When I edit creator "joe@bloggs.org"
         And I fill in "edit-creators-name" with "Elvis"
         And I fill in "edit-creators-email" with a long string of 129 characters
-        Then I should see "Email must be less than 128 characters"
+        Then I should see "Email must not be more than 128 characters"
         And the "Save" button in the popup dialog should be disabled
 
       #CRATEIT-183

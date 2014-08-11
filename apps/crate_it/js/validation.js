@@ -1,6 +1,6 @@
 var CrateIt = CrateIt || {};
 
-CrateIt.Util = {
+CrateIt.Validation = {
 
   FieldValidator: function($field) {
 
@@ -12,7 +12,7 @@ CrateIt.Util = {
     this.validate = function() {
       var result = false;
       var value = $.trim($field.val());
-      for(var i = 0; i < validators.length; i++){
+      for (var i = 0; i < validators.length; i++) {
         var validator = validators[i];
         result = validator.isValid(value);
         if (!result) {
@@ -59,10 +59,10 @@ CrateIt.Util = {
 
     this.addValidator = function($field, fieldValidator) {
       var key = $field.attr('id');
-      if(key in validators) {
+      if (key in validators) {
         var validator = validators[key];
       } else {
-        var validator = new CrateIt.Util.FieldValidator($field);
+        var validator = new CrateIt.Validation.FieldValidator($field);
         validators[key] = validator;
       }
       validator.addValidator(fieldValidator);
@@ -71,13 +71,13 @@ CrateIt.Util = {
 
     this.validate = function() {
       var valid = false;
-      for(var validator in validators) {
+      for (var validator in validators) {
         valid = validators[validator].validate();
-        if(!valid) {
+        if (!valid) {
           break;
         }
       }
-      if(valid) {
+      if (valid) {
         $submit.removeAttr('disabled');
       } else {
         $submit.attr('disabled', 'disabled');
@@ -100,7 +100,7 @@ CrateIt.Util = {
   },
 
   MaxLengthValidator: function(fieldName, maxLength) {
-    this.invalidMessage = fieldName + ' must be less than ' + maxLength + ' characters';
+    this.invalidMessage = fieldName + ' must not be more than ' + maxLength + ' characters';
 
     this.isValid = function(value) {
       return value.length <= maxLength;
@@ -108,7 +108,7 @@ CrateIt.Util = {
 
   },
 
-  RequiredValidator: function (fieldName) {
+  RequiredValidator: function(fieldName) {
     this.invalidMessage = fieldName + ' is required';
 
     this.isValid = function(value) {

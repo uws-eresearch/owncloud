@@ -160,7 +160,7 @@ Feature: Search, add and remove grant number
       Scenario: A manually added grant number can not be longer than 256 characters
         When I click on "add-activity"
         And I fill in "add-grant-number" with a long string of 257 characters
-        Then I should see "Grant number must be less than 256 characters"
+        Then I should see "Grant number must not be more than 256 characters"
         And the "Add" button in the popup dialog should be disabled
 
       #CRATEIT-184
@@ -188,7 +188,7 @@ Feature: Search, add and remove grant number
       Scenario: A manually added grant institution can not be longer than 256 characters
         When I click on "add-activity"
         And I fill in "add-grant-institution" with a long string of 257 characters
-        Then I should see "Institution must be less than 256 characters"
+        Then I should see "Institution must not be more than 256 characters"
         And the "Add" button in the popup dialog should be disabled
 
       #CRATEIT-184
@@ -202,7 +202,7 @@ Feature: Search, add and remove grant number
       Scenario: A manually added grant title can not be longer than 256 characters
         When I click on "add-activity"
         And I fill in "add-grant-title" with a long string of 257 characters
-        Then I should see "Title must be less than 256 characters"
+        Then I should see "Title must not be more than 256 characters"
         And the "Add" button in the popup dialog should be disabled
 
       #CRATEIT-185
@@ -278,7 +278,7 @@ Feature: Search, add and remove grant number
         When I press "Add" on the popup dialog
         When I edit grant "123123"
         And I fill in "edit-activities-grant_number" with a long string of 257 characters
-        Then I should see "Grant number must be less than 256 characters"
+        Then I should see "Grant number must not be more than 256 characters"
         And the "Save" button in the popup dialog should be disabled
 
       #CRATEIT-185
@@ -334,7 +334,7 @@ Feature: Search, add and remove grant number
         When I press "Add" on the popup dialog
         When I edit grant "123123"
         And I fill in "edit-activities-institution" with a long string of 257 characters
-        Then I should see "Institution must be less than 256 characters"
+        Then I should see "Institution must not be more than 256 characters"
         And the "Save" button in the popup dialog should be disabled
 
       #CRATEIT-185
@@ -362,5 +362,5 @@ Feature: Search, add and remove grant number
         When I press "Add" on the popup dialog
         When I edit grant "123123"
         And I fill in "edit-activities-title" with a long string of 257 characters
-        Then I should see "Title must be less than 256 characters"
+        Then I should see "Title must not be more than 256 characters"
         And the "Save" button in the popup dialog should be disabled

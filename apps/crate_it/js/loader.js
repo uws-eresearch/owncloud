@@ -21,34 +21,37 @@
 
 function getFileName(dir, filename) {
     var baseUrl = '';
-    if(dir === '/'){
-        baseUrl = filename; 
-    }
-    else{
-        baseUrl = dir.replace(/^\//g,'') + '/' + filename;
+    if (dir === '/') {
+        baseUrl = filename;
+    } else {
+        baseUrl = dir.replace(/^\//g, '') + '/' + filename;
     }
     return baseUrl;
 }
 
-$(document).ready(function(){
-    if(location.pathname.indexOf("files") != -1) {
-        if(typeof FileActions!=='undefined'){
-            FileActions.register('all','Add to crate', OC.PERMISSION_READ, '',function(filename){
-                var params = {file: getFileName($('#dir').val(), filename)};
+$(document).ready(function() {
+    if (location.pathname.indexOf("files") != -1) {
+        if (typeof FileActions !== 'undefined') {
+            FileActions.register('all', 'Add to crate', OC.PERMISSION_READ, '', function(filename) {
+                var params = {
+                    file: getFileName($('#dir').val(), filename)
+                };
                 var c_url = OC.generateUrl('apps/crate_it/crate/add?file={file}', params);
                 console.log(c_url);
                 $.ajax({
                     url: c_url,
                     type: 'get',
                     dataType: 'json',
-                    complete: function(data){
+                    complete: function(data) {
                         OC.Notification.show(data.responseJSON);
-                        setTimeout(function() {OC.Notification.hide();}, 3000);
+                        setTimeout(function() {
+                            OC.Notification.hide();
+                        }, 3000);
                     }
                 });
             });
         }
-    } else if(location.pathname.indexOf("crate_it") != -1) {
+    } else if (location.pathname.indexOf("crate_it") != -1) {
         loadTemplateVars();
         drawCrateContents();
         initCrateActions();

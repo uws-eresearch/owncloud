@@ -1,15 +1,14 @@
 function setupEditDesriptionOp() {
   $('#crate_description').keyup(function() {
-    var description_length = templateVars['description_length'];  
+    var description_length = templateVars['description_length'];
     if ($(this).val().length > description_length) {
       $("#edit_description_validation_error").text('Crate Description has reached the limit of 6,000 characters');
       $("#edit_description_validation_error").show();
       $(this).val($(this).val().substr(0, description_length));
-    }
-    else {
+    } else {
       $("#edit_description_validation_error").text('');
     }
-  });  
+  });
 }
 
 
@@ -46,7 +45,7 @@ function attachModalHandlers($modal, confirmCallback) {
       $input.val('');
     }
     var $label = $modal.find('label');
-    if($label) {
+    if ($label) {
       $label.hide();
     }
 
@@ -78,8 +77,8 @@ function buildFileTree(data) {
       'x-office-presentation', 'x-office-spreadsheet'
     ];
     var icon = 'file';
-    if(node.id == 'rootfolder') {
-      return 'url('+ OC.filePath('crate_it', 'img', 'crate.png') + ')';
+    if (node.id == 'rootfolder') {
+      return 'url(' + OC.filePath('crate_it', 'img', 'crate.png') + ')';
     } else if (node.folder || node.id == 'folder') {
       icon = 'folder';
     } else {
@@ -148,7 +147,7 @@ function buildFileTree(data) {
         }
       });
     };
-   // the successMessage function gets called after the name has changed
+    // the successMessage function gets called after the name has changed
     attachModalHandlers($modal, confirmCallback);
   };
 
@@ -161,7 +160,7 @@ function buildFileTree(data) {
       $tree.tree('updateNode', node, newName);
       indentTree();
       var successMessage = 'Renamed ' + oldName + ' to ' + newName;
-      var errorMessage = 'error renaming' +  oldName;
+      var errorMessage = 'error renaming' + oldName;
       saveTree(successMessage, errorMessage);
     };
     attachModalHandlers($modal, confirmCallback);
@@ -201,7 +200,7 @@ function buildFileTree(data) {
       }
       if (type == 'rootfolder') {
         $div.addClass('rootfolder');
-        $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Crate</a></li>');  
+        $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Crate</a></li>');
       } else {
         $ul.append('<li><a><i class="fa fa-pencil"></i>Rename Item</a></li>');
       }
@@ -264,7 +263,7 @@ function buildFileTree(data) {
 
 
 function updateCrateSize() {
-  var max_sword_mb = templateVars['max_sword_mb'];  
+  var max_sword_mb = templateVars['max_sword_mb'];
   var max_zip_mb = templateVars['max_zip_mb'];
   $.ajax({
     url: 'crate/get_crate_size',
@@ -294,7 +293,7 @@ function updateCrateSize() {
       }
     },
     error: function(data) {
-        // do nothing - some owncloud ajax call somehow triggers this error block
+      // do nothing - some owncloud ajax call somehow triggers this error block
     }
   });
 }
@@ -397,7 +396,7 @@ function validateEmail($input, $error, $confirm) {
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     return regex.test(email);
   }
-  if(!isEmail()) {
+  if (!isEmail()) {
     $confirm.prop('disabled', true);
     $error.text('Not recognised as a valid email address');
     $error.show();
@@ -413,11 +412,11 @@ function validateYear($input, $error, $confirm) {
   var emptyYear = function() {
     return (!inputYear || /^\s*$/.test(inputYear));
   };
-  if(emptyYear()) {
+  if (emptyYear()) {
     $confirm.prop('disabled', true);
     $error.text('Year can not be blank');
     $error.show();
-  } else if(!isYear()) {
+  } else if (!isYear()) {
     $confirm.prop('disabled', true);
     $error.text('Must be a valid submit year');
     $error.show();
@@ -435,16 +434,16 @@ function validateTextLength($input, $error, $confirm, maxLength) {
   var emptyText = function() {
     return (!inputText || /^\s*$/.test(inputText));
   };
-  if(emptyText()) {
+  if (emptyText()) {
     $confirm.prop('disabled', true);
     $error.text('Field cannot be blank');
     $error.show();
   } else if (inputText.length > maxLength) {
-      $error.text('Field has reached the limit of ' + maxLength + ' characters');
-      $input.val(inputText.substr(0, maxLength));
-      $error.show();
-      $confirm.prop('disabled', false);
-   } else {
+    $error.text('Field has reached the limit of ' + maxLength + ' characters');
+    $input.val(inputText.substr(0, maxLength));
+    $error.show();
+    $confirm.prop('disabled', false);
+  } else {
     $confirm.prop('disabled', false);
     $error.hide();
   }
@@ -462,7 +461,7 @@ function validateCrateName($input, $error, $confirm) {
   var existingName = function() {
     return crates.indexOf(inputName) > -1;
   };
-  if(existingName() || emptyName()) {
+  if (existingName() || emptyName()) {
     $confirm.prop('disabled', true);
     if (emptyName()) {
       $error.text('Crate name cannot be blank');
@@ -471,11 +470,11 @@ function validateCrateName($input, $error, $confirm) {
     }
     $error.show();
   } else if (inputName.length > 128) {
-      $error.text('Crate name has reached the limit of 128 characters');
-      $input.val(inputName.substr(0, 128));
-      $error.show();
-      $confirm.prop('disabled', false);
-   } else {
+    $error.text('Crate name has reached the limit of 128 characters');
+    $input.val(inputName.substr(0, 128));
+    $error.show();
+    $confirm.prop('disabled', false);
+  } else {
     $confirm.prop('disabled', false);
     $error.hide();
   }
@@ -498,31 +497,31 @@ function reloadCrateData(manifest) {
 // TODO: Super hacky blocking synchronous call
 // There are many of async calls on page load that could probably all be reduced to this one
 function getMaifest() {
-  var result =[];
-  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {crateName: $('#crates').val()});
+  var result = [];
+  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {
+    crateName: $('#crates').val()
+  });
   $.ajax({
-      url: c_url,
-      type: 'get',
-      async: false,
-      dataType: 'json',
-      data: {'action': 'get_manifest'},
-      success: function(data) {
-        result = data;
-      },
-      error: function(data) {
-        displayError(data.statusText);
-      }
-    });
+    url: c_url,
+    type: 'get',
+    async: false,
+    dataType: 'json',
+    data: {
+      'action': 'get_manifest'
+    },
+    success: function(data) {
+      result = data;
+    },
+    error: function(data) {
+      displayError(data.statusText);
+    }
+  });
   return result;
 }
 
 
 function calulateHeights() {
-  var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1 )) + $('.collapse.info.in .panel-body').outerHeight();
+  var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1)) + $('.collapse.info.in .panel-body').outerHeight();
   var height = $('#meta-data').innerHeight() - tabsHeight;
   $('.collapse.standard .panel-body').height(height + 12);
 }
-
-
-
-

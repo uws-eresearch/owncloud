@@ -4,7 +4,7 @@ function loadTemplateVars() {
     var $el = $(this);
     var key = $el.attr('id');
     var value = $el.text();
-    if(!isNaN(value)) {
+    if (!isNaN(value)) {
       value = +value;
     }
     templateVars[key] = value;
@@ -14,7 +14,9 @@ function loadTemplateVars() {
 
 function drawCrateContents() {
   // TODO: maybe get rid of this and just use reloadCrateData
-  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {'crateName': templateVars['selected_crate']});
+  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {
+    'crateName': templateVars['selected_crate']
+  });
   $.ajax({
     url: c_url,
     type: 'get',
@@ -36,7 +38,7 @@ function initCrateActions() {
   var metadataEmpty = function() {
     var result = false;
     $('.metadata').each(function() {
-      if($(this).text() === '') {
+      if ($(this).text() === '') {
         result = true;
       }
     });
@@ -48,10 +50,10 @@ function initCrateActions() {
   };
 
   var createCrate = function() {
-    var params =  {
-        'name': $('#crate_input_name').val(),
-        'description': $('#crate_input_description').val(),
-      };
+    var params = {
+      'name': $('#crate_input_name').val(),
+      'description': $('#crate_input_description').val(),
+    };
     var c_url = OC.generateUrl('apps/crate_it/crate/create');
     $.ajax({
       url: c_url,
@@ -94,23 +96,23 @@ function initCrateActions() {
     });
     $('#deleteCrateModal').modal('hide');
   };
-  
+
   var downloadCrate = function() {
     if (treeHasNoFiles()) {
       displayNotification('No items in the crate to package');
       return;
     }
-    
+
     displayNotification('Your download is being prepared. This might take some time if the files are big');
     var c_url = OC.generateUrl('apps/crate_it/crate/downloadzip');
     window.location = c_url;
   };
 
   $('#crate_input_name').keyup(function() {
-      var $input = $(this);
-      var $error = $('#crate_name_validation_error');
-      var $confirm = $('#createCrateModal').find('.btn-primary');
-      validateCrateName($input, $error, $confirm);
+    var $input = $(this);
+    var $error = $('#crate_name_validation_error');
+    var $confirm = $('#createCrateModal').find('.btn-primary');
+    validateCrateName($input, $error, $confirm);
   });
 
   $('#createCrateModal').find('.btn-primary').click(createCrate);
@@ -126,7 +128,7 @@ function initCrateActions() {
     var children = $tree.tree('getNodeById', 'rootfolder').children;
     // NOTE: The while loop is a workaround to the forEach loop inexplicably skipping
     // the first element
-    while(children.length > 0) {
+    while (children.length > 0) {
       children.forEach(function(node) {
         $tree.tree('removeNode', node);
       });
@@ -134,7 +136,7 @@ function initCrateActions() {
     saveTree($('#crates').val() + ' has been cleared');
     indentTree();
     $('#clearCrateModal').modal('hide');
-  });  
+  });
 
   $('#deleteCrateModal').on('show.bs.modal', function() {
     var currentCrate = $('#crates').val();
@@ -154,7 +156,9 @@ function initCrateActions() {
 
   $('#crates').change(function() {
     var id = $(this).val();
-    var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {crateName: id});
+    var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {
+      crateName: id
+    });
     $.ajax({
       url: c_url,
       type: 'get',
@@ -164,40 +168,38 @@ function initCrateActions() {
         manifest = data;
         reloadCrateData(data);
       },
-      error: function(data) 
-      {
+      error: function(data) {
         displayError(data.statusText);
       }
     });
   });
-  
+
   $('#download').click(downloadCrate);
 
 }
 
 
 function setupDescriptionOps() {
-    
+
   $('#crate_input_description').keyup(function() {
-    var description_length = templateVars['description_length'];  
+    var description_length = templateVars['description_length'];
     if ($(this).val().length > description_length) {
       $("#crate_description_validation_error").text('Crate Description has reached the limit of 6,000 characters');
       $("#crate_description_validation_error").show();
       $(this).val($(this).val().substr(0, description_length));
-    }
-    else {
+    } else {
       $("#crate_description_validation_error").text('');
     }
   });
- 
+
   $('#edit_description').click(function(event) {
     var old_description = $('#description').text();
     $('#description').text('');
-    $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><div id="edit_description_validation_error" style="color:red;"></div><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');    
+    $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><div id="edit_description_validation_error" style="color:red;"></div><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');
     setupEditDesriptionOp();
     $('#edit_description').addClass('hidden');
     $('#save_description').click(function(event) {
-    var c_url = OC.generateUrl('apps/crate_it/crate/update');
+      var c_url = OC.generateUrl('apps/crate_it/crate/update');
       $.ajax({
         url: c_url,
         type: 'post',
@@ -241,7 +243,7 @@ function initSearchHandlers() {
     mapping: {
       'id': 'id',
       'identifier': 'dc_identifier',
-      'name' : ['Honorific', 'Given_Name', 'Family_Name'],
+      'name': ['Honorific', 'Given_Name', 'Family_Name'],
       'email': 'Email'
     },
     displayFields: ['name', 'email'],
@@ -257,17 +259,17 @@ function initSearchHandlers() {
   var creator$notification = $('#creators_search_notification');
   var creator$editModal = $('#editCreatorsModal');
 
-  var editCreatorValidator = new CrateIt.Util.FormValidator(creator$editModal);
-  editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Util.RequiredValidator('Name'));
-  editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Util.MaxLengthValidator('Name', 256));
+  var editCreatorValidator = new CrateIt.Validation.FormValidator(creator$editModal);
+  editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Validation.RequiredValidator('Name'));
+  editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Validation.MaxLengthValidator('Name', 256));
 
-  var optionalEditEmailValidator = new CrateIt.Util.OptionalValidator(new CrateIt.Util.EmailValidator());
-  editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Util.MaxLengthValidator('Email', 128));
+  var optionalEditEmailValidator = new CrateIt.Validation.OptionalValidator(new CrateIt.Validation.EmailValidator());
+  editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Validation.MaxLengthValidator('Email', 128));
   editCreatorValidator.addValidator($('#edit-creators-email'), optionalEditEmailValidator);
 
   // TODO: add this to a namespace rather than exposing globally
   CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification, creator$editModal);
-  $('#search_people').click(function () {
+  $('#search_people').click(function() {
     CreatorSearchManager.search($.trim($('#keyword_creator').val()));
   });
   $('#keyword_creator').keyup(function(e) {
@@ -288,18 +290,21 @@ function initSearchHandlers() {
   var addCreator = function() {
     var name = $('#add-creator-name').val();
     var email = $('#add-creator-email').val();
-    var overrides = {'name': name, 'email': email}
+    var overrides = {
+      'name': name,
+      'email': email
+    }
     CreatorSearchManager.addRecord(overrides);
   }
   var $addCreatorModal = $('#addCreatorModal');
   var $addCreatorConfirm = $addCreatorModal.find('.btn-primary');
 
-  var addCreatorValidator = new CrateIt.Util.FormValidator($addCreatorModal);
-  addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Util.RequiredValidator('Name'));
-  addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Util.MaxLengthValidator('Name', 256));
+  var addCreatorValidator = new CrateIt.Validation.FormValidator($addCreatorModal);
+  addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Validation.RequiredValidator('Name'));
+  addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Validation.MaxLengthValidator('Name', 256));
 
-  var optionalEmailValidator = new CrateIt.Util.OptionalValidator(new CrateIt.Util.EmailValidator());
-  addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Util.MaxLengthValidator('Email', 128));
+  var optionalEmailValidator = new CrateIt.Validation.OptionalValidator(new CrateIt.Validation.EmailValidator());
+  addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Validation.MaxLengthValidator('Email', 128));
   addCreatorValidator.addValidator($('#add-creator-email'), optionalEmailValidator);
 
   // TODO: this doesn't need to be dynamically attached, maybe create a second helper
@@ -313,7 +318,7 @@ function initSearchHandlers() {
       search: 'activities'
     },
     mapping: {
-      'id':'id',
+      'id': 'id',
       'identifier': 'dc_identifier',
       'title': 'dc_title',
       'date': 'dc_date',
@@ -324,30 +329,30 @@ function initSearchHandlers() {
     editFields: ['grant_number', 'date', 'title', 'institution'],
     editableRecords: ['manual']
   };
-  
+
   var activitySelectedList = manifest.activities;
   var activity$resultsUl = $('#search_activity_results');
   var activity$selectedUl = $('#selected_activities');
   var activity$notification = $('#activites_search_notification');
   var activity$editModal = $('#editActivitiesModal');
-  var editActivityValidator = new CrateIt.Util.FormValidator(activity$editModal);
-  editActivityValidator.addValidator($('#edit-activities-grant_number'), new CrateIt.Util.RequiredValidator('Grant number'));
-  editActivityValidator.addValidator($('#edit-activities-grant_number'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
+  var editActivityValidator = new CrateIt.Validation.FormValidator(activity$editModal);
+  editActivityValidator.addValidator($('#edit-activities-grant_number'), new CrateIt.Validation.RequiredValidator('Grant number'));
+  editActivityValidator.addValidator($('#edit-activities-grant_number'), new CrateIt.Validation.MaxLengthValidator('Grant number', 256));
 
-  editActivityValidator.addValidator($('#edit-activities-date'), new CrateIt.Util.RequiredValidator('Year'));
-  editActivityValidator.addValidator($('#edit-activities-date'), new CrateIt.Util.YearValidator());
-  
-  editActivityValidator.addValidator($('#edit-activities-institution'), new CrateIt.Util.RequiredValidator('Institution'));
-  editActivityValidator.addValidator($('#edit-activities-institution'), new CrateIt.Util.MaxLengthValidator('Institution', 256));
+  editActivityValidator.addValidator($('#edit-activities-date'), new CrateIt.Validation.RequiredValidator('Year'));
+  editActivityValidator.addValidator($('#edit-activities-date'), new CrateIt.Validation.YearValidator());
 
-  editActivityValidator.addValidator($('#edit-activities-title'), new CrateIt.Util.RequiredValidator('Title'));
-  editActivityValidator.addValidator($('#edit-activities-title'), new CrateIt.Util.MaxLengthValidator('Title', 256));
+  editActivityValidator.addValidator($('#edit-activities-institution'), new CrateIt.Validation.RequiredValidator('Institution'));
+  editActivityValidator.addValidator($('#edit-activities-institution'), new CrateIt.Validation.MaxLengthValidator('Institution', 256));
+
+  editActivityValidator.addValidator($('#edit-activities-title'), new CrateIt.Validation.RequiredValidator('Title'));
+  editActivityValidator.addValidator($('#edit-activities-title'), new CrateIt.Validation.MaxLengthValidator('Title', 256));
 
 
   // TODO: add this to a namespace rather than exposing globally
   ActivitySearchManager = new SearchManager(activityDefinition, activitySelectedList, activity$resultsUl, activity$selectedUl, activity$notification, activity$editModal);
 
-  $('#search_activity').click(function () {
+  $('#search_activity').click(function() {
     ActivitySearchManager.search($.trim($('#keyword_activity').val()));
   });
   $('#keyword_activity').keyup(function(e) {
@@ -370,28 +375,30 @@ function initSearchHandlers() {
     var date = $('#add-grant-year').val();
     var title = $('#add-grant-title').val();
     var institution = $('#add-grant-institution').val();
-    var overrides = {'grant_number': grant_number,
-                     'date': date,
-                     'title': title,
-                     'institution': institution};
+    var overrides = {
+      'grant_number': grant_number,
+      'date': date,
+      'title': title,
+      'institution': institution
+    };
     ActivitySearchManager.addRecord(overrides);
   }
 
   // TODO: Naming inconsistency here between 'grants' and activities
   var $addActivityModal = $('#addGrantModal');
 
-  var addGrantValidator = new CrateIt.Util.FormValidator($addActivityModal);
-  addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.RequiredValidator('Grant number'));
-  addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Util.MaxLengthValidator('Grant number', 256));
+  var addGrantValidator = new CrateIt.Validation.FormValidator($addActivityModal);
+  addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Validation.RequiredValidator('Grant number'));
+  addGrantValidator.addValidator($('#add-grant-number'), new CrateIt.Validation.MaxLengthValidator('Grant number', 256));
 
-  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.RequiredValidator('Year'));
-  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Util.YearValidator());
-  
-  addGrantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.RequiredValidator('Institution'));
-  addGrantValidator.addValidator($('#add-grant-institution'), new CrateIt.Util.MaxLengthValidator('Institution', 256));
+  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Validation.RequiredValidator('Year'));
+  addGrantValidator.addValidator($('#add-grant-year'), new CrateIt.Validation.YearValidator());
 
-  addGrantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.RequiredValidator('Title'));
-  addGrantValidator.addValidator($('#add-grant-title'), new CrateIt.Util.MaxLengthValidator('Title', 256));
+  addGrantValidator.addValidator($('#add-grant-institution'), new CrateIt.Validation.RequiredValidator('Institution'));
+  addGrantValidator.addValidator($('#add-grant-institution'), new CrateIt.Validation.MaxLengthValidator('Institution', 256));
+
+  addGrantValidator.addValidator($('#add-grant-title'), new CrateIt.Validation.RequiredValidator('Title'));
+  addGrantValidator.addValidator($('#add-grant-title'), new CrateIt.Validation.MaxLengthValidator('Title', 256));
 
 
   $('#add-activity').click(function() {
@@ -402,16 +409,16 @@ function initSearchHandlers() {
 
 
 function initAutoResizeMetadataTabs() {
-  $('#meta-data').on('show.bs.collapse', function (e) {
-      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');
-      calulateHeights();
+  $('#meta-data').on('show.bs.collapse', function(e) {
+    $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-up').addClass('fa-caret-down');
+    calulateHeights();
   });
-  $('#meta-data').on('hide.bs.collapse', function (e) {
-      $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-down').addClass('fa-caret-up');
-      calulateHeights();
+  $('#meta-data').on('hide.bs.collapse', function(e) {
+    $(e.target).siblings('.panel-heading').find('.fa').removeClass('fa-caret-down').addClass('fa-caret-up');
+    calulateHeights();
   });
 
   $(window).resize(function() {
     calulateHeights();
-  });  
+  });
 }

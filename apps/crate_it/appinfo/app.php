@@ -58,7 +58,7 @@ if (\OCP\App::isEnabled('appframework')) {
 
     $api->addScript('loader');
     $api->addScript('includeme');
-    $api->addScript('util');
+    $api->addScript('validation');
     $api->addScript('search');
     $api->addScript('initializers');
 

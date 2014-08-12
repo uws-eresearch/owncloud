@@ -183,6 +183,7 @@ function initCrateActions() {
     
     $('#publish-description').text($('#description').text());
 
+    // TODO: create proper render functions
     var records = CreatorSearchManager.getSelected();
     records.forEach(function(record){
       var html = '';

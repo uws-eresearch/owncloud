@@ -9,8 +9,8 @@
         <section>
           <h3>Collection</h3>
           <select id="publish-collection">
-            {% for collection in collections %}
-              <option value="">
+            {% for collection, href in collections %}
+              <option value="{{ href }}">
                 {{ collection }}
               </option>
             {% endfor %}

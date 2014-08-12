@@ -278,17 +278,17 @@ function updateCrateSize() {
         $('#download').attr("disabled", "disabled");
         if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
           msg += ', and SWORD limit: ' + max_sword_mb + 'MB';
-          $('#post').attr("disabled", "disabled");
+          $('#publish').attr("disabled", "disabled");
         }
         msg += '.';
       } else if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
         msg = 'WARNING: Crate size exceeds SWORD limit: ' + max_sword_mb + 'MB.';
-        $('#post').attr("disabled", "disabled");
+        $('#publish').attr("disabled", "disabled");
       }
       if (msg) {
         displayNotification(msg, 6000);
       } else {
-        $('#post').removeAttr("disabled");
+        $('#publish').removeAttr("disabled");
         $('#download').removeAttr("disabled");
       }
     },

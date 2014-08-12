@@ -96,6 +96,10 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     });
   };
 
+  this.getSelected = function getSelected() {
+
+  }
+
   function toggle(id) {
     var faIcon = 'fa-minus';
     var $sourceLi = $resultsUl;

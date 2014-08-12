@@ -45,7 +45,7 @@
     <div class="pull-right">
 
       {% if sword_status == "enabled" %}
-        <a id="post" class="button" data-toggle="modal" data-target="#publishModal">
+        <a id="publish" class="button" data-toggle="modal" data-target="#publishModal">
           <i class="fa fa-envelope"></i>
           Publish
         </a>

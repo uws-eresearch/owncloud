@@ -6,43 +6,34 @@
         <h2 class="modal-title" id="publishModalLabel">Publish Crate</h2>
       </div>
       <div class="modal-body">
-        <select id="sword_collection">
-          {% for collection in collections %}
-            <option value="">
-              {{ collection }}
-            </option>
-          {% endfor %}
-        </select>
+        <section>
+          <h3>Collection</h3>
+          <select id="publish-collection">
+            {% for collection in collections %}
+              <option value="">
+                {{ collection }}
+              </option>
+            {% endfor %}
+          </select>
+        </section>
+
+        <section>
+          <div id='publish-description'>
+            <h3>Description</h3>
+          </div>
+        </section>
 
         <section>
           <h3>Creators</h3>
-          <ul id="creators">
-            <?php foreach($_['creators'] as $creator):?>
-              <li>
-                <input id="creator_<?php echo $creator['creator_id'] ?>" type="button" value="Remove" />
-                <span id="<?php echo $creator['creator_id'] ?>" class="full_name"><?php echo $creator['full_name'] ?></span>
-              </li>
-            <?php endforeach;?>
+          <ul id="publish-creators">
           </ul>
         </section>
 
         <section>
           <h3>Grant Numbers</h3>
-          <ul id="activities">
-            <?php foreach($_['activities'] as $activity):?>
-              <li>
-                <input id="activity_<?php echo $activity['activity_id'] ?>" type="button" value="Remove" />
-                <span id="<?php echo $activity['activity_id'] ?>" class="grant_number"><?php echo $activity['grant_number'] ?></span>
-              </li>
-            <?php endforeach;?>
+          <ul id="publish-activities">
           </ul>
         </section>
-
-        <div id='#description_box'>
-          <label for="description">Description</label>
-          <input id="edit_description" type="button" value="Edit" />
-          <div id="description"><?php echo htmlentities($_['description']) ?></div>
-        </div>
 
       </div>
       <div class="modal-footer">

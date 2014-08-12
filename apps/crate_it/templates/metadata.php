@@ -17,7 +17,7 @@
                       Description
                       <button id="edit_description" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-edit"></i></button>
                     </h6>
-                    <div id="description" class="metadata">{{ description | nl2br }}</div>
+                    <div id="description" style="white-space: pre-wrap;" class="metadata">{{ description }}</div>
                   </div>
                   <div class='crate-size'>
                     <h6 class="info">Crate Size: <span id="crate_size_human" class="standard"></span></h6>

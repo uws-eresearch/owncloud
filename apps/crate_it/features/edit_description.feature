@@ -28,6 +28,31 @@ Feature: Edit crate description
     And I click the Cancel button
     Then I should see the crate description "Another Description"
     
+  #CRATEIT-51
+  @wip
+  Scenario: Edit and cancel description with linebreak
+    When I click the edit description button
+    And I fill in "crate_description" with 
+      """
+      This is
+      a sentence
+      with linebreaks
+      """
+    And I click the Save button
+    Then I should see the crate description 
+      """
+      This is
+      a sentence
+      with linebreaks
+      """
+    And I click the edit description button
+    And I click the Cancel button
+    Then I should see the crate description 
+      """
+      This is
+      a sentence
+      with linebreaks
+      """
   
   #CRATEIT-51
   Scenario: 6000 characters cap for description

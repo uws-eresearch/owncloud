@@ -50,7 +50,11 @@ if (\OCP\App::isEnabled('appframework')) {
     //add project root folder to include path   
     $dir = dirname(dirname(__FILE__)) . '/';
     set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
-        
+ 
+    //add 3rdparty folder to include path   
+    $dir = dirname(dirname(__FILE__)) . '/3rdparty';
+    set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
+           
     //load the required files
     $api->add3rdPartyScript('jeditable/jquery.jeditable');
     $api->add3rdPartyScript('jqtree/tree.jquery');

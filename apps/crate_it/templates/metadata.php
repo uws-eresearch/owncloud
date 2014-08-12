@@ -16,7 +16,7 @@
                     <h6>
                       Description
                       <button id="edit_description" class="pull-right trans-button" type="button" placeholder="Edit"><i class="fa fa-edit"></i></button>
-                    </h6>
+                    </h6>                   
                     <div id="description" style="white-space: pre-wrap;" class="metadata">{{ description }}</div>
                   </div>
                   <div class='crate-size'>

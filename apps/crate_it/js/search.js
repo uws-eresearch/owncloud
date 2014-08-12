@@ -97,7 +97,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
   };
 
   this.getSelected = function getSelected() {
-
+    return selectedList.slice();
   }
 
   function toggle(id) {

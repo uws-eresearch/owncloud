@@ -6,6 +6,9 @@ use \OCA\AppFramework\Controller\Controller;
 use \OCA\AppFramework\Http\JSONResponse;
 use \OCA\AppFramework\Http;
 
+require 'apps/crate_it/lib/zipdownloadresponse.php';
+use OCA\crate_it\lib\ZipDownloadResponse;
+
 class CrateController extends Controller {
     
     /**
@@ -188,6 +191,22 @@ class CrateController extends Controller {
         return new JSONResponse($data, 200);
     }
     
+    /**
+     * Paackage Crate as a Zip
+     *
+     * @CSRFExemption
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
+    public function packageCrate() {
+        \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
+        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
+        $filename = basename($packagePath);
+        $response = new ZipDownloadResponse($packagePath, $filename);
+        return $response;
+    }
+
+
     /**
      * Check crate 
      *

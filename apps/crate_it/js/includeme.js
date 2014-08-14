@@ -188,9 +188,15 @@ function buildFileTree(data) {
     selectable: false,
     useContextMenu: false,
     onCreateLi: function(node, $li) {
-      $div = $li.find('.jqtree-element');
+      $div = $li.find('.jqtree-element');     
       $div.css('background-image', createImgUrl(node));
       $ul = $div.append('<ul class="crate-actions pull-right"></ul>').find('ul');
+      // append consistency checker icon
+      var valid = node.valid;
+      if (valid == 'false') {
+        $title = $div.find('.jqtree-title');
+        $title.append('<i class="fa fa-times-circle" style="color:red;"></i>');
+      }    
       var type = node.id;
       if (type == 'rootfolder' || type == 'folder') {
         $ul.append('<li><a><i class="fa fa-plus"></i>Add Folder Item</a></li>');

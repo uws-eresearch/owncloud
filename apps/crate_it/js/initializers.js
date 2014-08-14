@@ -358,9 +358,9 @@ function initSearchHandlers() {
     var overrides = {
       'name': name,
       'email': email
-    }
+    };
     CreatorSearchManager.addRecord(overrides);
-  }
+  };
   var $addCreatorModal = $('#addCreatorModal');
   var $addCreatorConfirm = $addCreatorModal.find('.btn-primary');
 
@@ -468,7 +468,7 @@ function initSearchHandlers() {
 
   $('#add-activity').click(function() {
     attachModalHandlers($addActivityModal, addActivity);
-  })
+  });
 
 }
 

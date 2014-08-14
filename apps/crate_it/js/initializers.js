@@ -206,6 +206,7 @@ function initCrateActions() {
   $('#publish').click(function() {
     // TODO: Migrate to a single  client side shared model of the manifest
     // TODO: let this be handled by the search managers perhaps?
+
     $('#publish-creators').children().remove();
     
     $('#publish-description').text($('#description').text());

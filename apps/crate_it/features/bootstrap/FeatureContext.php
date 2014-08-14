@@ -1131,7 +1131,7 @@ JS;
         $xpath = '//input[@id="save_description"]';
         $page->find('xpath', $xpath)->click();
     }
-
+    
     /**
      * @Given /^I click the Cancel button$/
      */
@@ -1181,13 +1181,13 @@ JS;
     {
         $page = $this->getSession()->getPage();
         $el = $page->find('css', '.modal.in');
-        $xpath = '//*[@id="check-results-table"]//tr/td';
-        $res_table = $el->findAll('xpath', $xpath);
-        
-
         $hash = $table->getHash();
         for ($count = 0; $count < count($hash); $count++ ){
-           $this->matchTableValue($hash[$count]['filename'], $res_table[$count].getHtml(), $count);
+            $expected = $hash[$count]['filename'];
+            $xpath = "//*[@id='check-results-table']//tr[$count+1]/td";
+            $cell_item = $el->find('xpath', $xpath);
+            $actual = $cell_item->getHtml();
+            assertEquals($expected, $actual);
         }
     }
 

@@ -202,9 +202,7 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
         $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
         $filename = basename($packagePath);
-        // $response = new ZipDownloadResponse($packagePath, $filename, 'application/octet-stream');
         $response = new ZipDownloadResponse($packagePath, $filename);
-        \OCP\Util::writeLog('crate_it', "Response: ".print_r($response), \OCP\Util::DEBUG);
         return $response;
     }
 

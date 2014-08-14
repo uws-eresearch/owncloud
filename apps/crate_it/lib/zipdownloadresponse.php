@@ -14,7 +14,6 @@ class ZipDownloadResponse extends DownloadResponse {
     public function __construct($zipfilepath, $filename, $contentType='application/zip'){
         parent::__construct($filename, $contentType);
         $this->zipfilepath = $zipfilepath;
-        // $this->data = readFile($this->zipfilepath);
     }
 
 
@@ -23,7 +22,6 @@ class ZipDownloadResponse extends DownloadResponse {
      * @return string the file contents
      */
     public function render(){
-        // return $this->data;
-        return readFile($this->zipfilepath);
+        return file_get_contents($this->zipfilepath);
     }
 }

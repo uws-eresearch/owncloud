@@ -97,6 +97,8 @@ class Crate extends BagIt {
     rename($oldCrateName, $newCrateName);
   }
 
+  // TODO: If a file has been added to the crate multiple times this will give the wront size
+  //       Look at using BagIt::getBagContents() instead
   public function getSize() {        
     $files = $this->flatList();
     \OCP\Util::writeLog('crate_it', "Crate::getSize() - Flat list: ".sizeof($files), \OCP\Util::DEBUG);
@@ -124,63 +126,101 @@ class Crate extends BagIt {
       return $res;
   }
   
+  public function packageCrate() {
+    $clone = $this->createTempClone();
+    $clone->storeFiles();
+    $tmpFolder = \OC_Helper::tmpFolder();
+    $packagePath = $tmpFolder.'/'.$this->crateName;
+    $clone->package($packagePath, 'zip');
+    return $packagePath.'.zip';
+  }    
 
-   private function flatList() {
-        $data = $this->getManifest();
-        \OCP\Util::writeLog('crate_it', "Manifest data size: ".sizeof($data), \OCP\Util::DEBUG);    
-        
-        $vfs = &$data['vfs'][0]['children'];
-        $flat = array();
-        $ref = &$flat;
-        $this->flat_r($vfs, $ref, $data['vfs'][0]['name']);
-        return $flat;
+  private function createTempClone() {
+    $tmpFolder = \OC_Helper::tmpFolder();
+    $tmpCrate = new Crate($tmpFolder, $this->crateName);
+    $manifest = $this->getManifest();
+    $tmpCrate->setManifest($manifest);
+    return $tmpCrate;
+  }
+
+  public function storeFiles() {
+    $files = $this->getFilePaths();
+    foreach ($files as $path) {
+      $absPath = $this->getFullPath($path);
+      \OCP\Util::writeLog("crate_it", "Crate::storeFiles($absPath, $path)", \OCP\Util::DEBUG);
+      $this->addFile($absPath, $path);
     }
-    
-    private function flat_r(&$vfs, &$flat, $path) {
-        if (count($vfs) > 0) {
-          foreach($vfs as $entry) {
-            if (array_key_exists('filename', $entry)) {
-              $flat_entry = array(
-                'id' => $entry['id'],
-                'path' => $path,
-                'name' => $entry['name'],
-                'filename' => $entry['filename']
-              );
-              array_push($flat, $flat_entry);
-            }
-            elseif (array_key_exists('children', $entry)) {
-              $this->flat_r($entry['children'], $flat, $path . $entry['name'] . '/');
-            }
+    $this->update();
+  }
+
+  private function getFilePaths() {
+    $flattened = $this->flatList();
+    $result = array();
+    foreach ($flattened as $entry) {
+      $path = $entry['filename'];
+      if($path && !in_array($path, $result)) {
+        array_push($result, $path);
+      }
+    }
+    return $result;
+  }
+
+  private function flatList() {
+      $data = $this->getManifest();
+      \OCP\Util::writeLog('crate_it', "Manifest data size: ".sizeof($data), \OCP\Util::DEBUG);    
+      
+      $vfs = &$data['vfs'][0]['children'];
+      $flat = array();
+      $ref = &$flat;
+      $this->flat_r($vfs, $ref, $data['vfs'][0]['name']);
+      return $flat;
+  }
+  
+  private function flat_r(&$vfs, &$flat, $path) {
+      if (count($vfs) > 0) {
+        foreach($vfs as $entry) {
+          if (array_key_exists('filename', $entry)) {
+            $flat_entry = array(
+              'id' => $entry['id'],
+              'path' => $path,
+              'name' => $entry['name'],
+              'filename' => $entry['filename']
+            );
+            array_push($flat, $flat_entry);
+          }
+          elseif (array_key_exists('children', $entry)) {
+            $this->flat_r($entry['children'], $flat, $path . $entry['name'] . '/');
           }
         }
-    }
-    
-    private function flat_f(&$vfs, &$flat, $path) {
-        if (count($vfs) > 0) {
-          foreach($vfs as $entry) {
-            if (array_key_exists('filename', $entry)) {
-              $flat_entry = array(
-                'id' => $entry['id'],
-                'path' => $path,
-                'name' => $entry['name'],
-                'filename' => $entry['filename']
-              );
-              array_push($flat, $flat_entry);
-            }
-            elseif (array_key_exists('children', $entry)) {
-              $flat_entry = array(
-                'id' => $entry['id'],
-                'name' => $entry['name'],
-                'folderpath' => $entry['folderpath']
-              );  
-              array_push($flat, $flat_entry);
-              $this->flat_f($entry['children'], $flat, $path . $entry['name'] . '/');
-            
-            }
-            
+      }
+  }
+  
+  private function flat_f(&$vfs, &$flat, $path) {
+      if (count($vfs) > 0) {
+        foreach($vfs as $entry) {
+          if (array_key_exists('filename', $entry)) {
+            $flat_entry = array(
+              'id' => $entry['id'],
+              'path' => $path,
+              'name' => $entry['name'],
+              'filename' => $entry['filename']
+            );
+            array_push($flat, $flat_entry);
           }
+          elseif (array_key_exists('children', $entry)) {
+            $flat_entry = array(
+              'id' => $entry['id'],
+              'name' => $entry['name'],
+              'folderpath' => $entry['folderpath']
+            );  
+            array_push($flat, $flat_entry);
+            $this->flat_f($entry['children'], $flat, $path . $entry['name'] . '/');
+          
+          }
+          
         }
-    }
+      }
+  }
 
   // TODO: There's currently no check for duplicates
   // TODO: root folder has isFolder set, so should other files folders
@@ -222,8 +262,9 @@ class Crate extends BagIt {
     finfo_close($finfo);
     $vfsEntry = array(
       'id' => $id,
-      'name' => basename($file) ,
-      'filename' => $fullPath,
+      'name' => basename($file),
+      // 'filename' => $fullPath,
+      'filename' => $file,
       'mime' => $mime
     );
     return $vfsEntry;

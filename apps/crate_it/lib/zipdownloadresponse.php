@@ -9,11 +9,12 @@ use \OCA\AppFramework\Http\DownloadResponse;
 class ZipDownloadResponse extends DownloadResponse {
 
     private $zipfilepath;
+    private $data;
 
     public function __construct($zipfilepath, $filename, $contentType='application/zip'){
         parent::__construct($filename, $contentType);
-        $this->addHeader('Content-Disposition', 'attachment;filename='.$filename);
         $this->zipfilepath = $zipfilepath;
+        // $this->data = readFile($this->zipfilepath);
     }
 
 
@@ -22,6 +23,7 @@ class ZipDownloadResponse extends DownloadResponse {
      * @return string the file contents
      */
     public function render(){
+        // return $this->data;
         return readFile($this->zipfilepath);
     }
 }

@@ -135,6 +135,11 @@ class CrateManager {
         $crate->renameCrate($newCrateName);
     }
     
+    public function packageCrate($crateName){
+        $crate = $this->getCrate($crateName);
+        return $crate->packageCrate();
+    }
+
     public function checkCrate($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);

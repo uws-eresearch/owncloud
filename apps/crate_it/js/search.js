@@ -213,7 +213,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     var id = $(prefix + 'record').val();
     var record = getRecord(id);
     var overrides = record.overrides || {};
-    definition.displayFields.forEach(function(field) {
+    definition.editFields.forEach(function(field) {
       var elId = prefix + field;
       overrides[field] = $(elId).val();
     });

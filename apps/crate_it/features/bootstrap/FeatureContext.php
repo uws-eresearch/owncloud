@@ -238,12 +238,16 @@ class FeatureContext extends MinkContext
     {
         $page = $this->getSession()->getPage();
     	$web_assert = new WebAssert($this->getSession());
-		$node_order = $page->findAll('xpath', '//div[@id="files"]/ul/li//ul/li/div/span/text()');
-		$expected_order = str_split($arg1);
+		$nodes = $page->findAll('xpath', '//div[@id="files"]/ul/li/ul/li/div/span');
+        $node_order = array();
+        foreach ($nodes as $node) {
+            $node_order[] = $node->getText();
+        }
+		$expected_order = explode(',',$arg1);
 		$difference = array_diff($node_order, $expected_order);
 		if ( count($difference) > 0)
 		{
-			throw new Exception('The node order is "' .$node_order. '" instead of "' .$expected_order. '"');
+			throw new Exception('The node order is "' .serialize($node_order). '" instead of "' .serialize($expected_order). '"');
 		}
     }
 	

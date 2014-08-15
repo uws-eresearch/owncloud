@@ -15,6 +15,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
         'keywords': keywords
       },
       success: function(data) {
+        console.log(data);
         searchResultsList = [];
         var records = data.map(function(record) {
           return parseMintResult(record);

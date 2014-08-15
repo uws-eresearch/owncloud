@@ -30,6 +30,29 @@ class CrateService {
     public function getItems($crateId) {
         return $this->crateManager->getManifestData($crateId);
     }
+    
+    public function getDescription($crateId) {
+        $manifest = $this->getItems($crateId); 
+        return $manifest['description'];
+    }
+    
+    public function getCreators($crateId) {
+        $manifest = $this->getItems($crateId); 
+        return $manifest['creators'];
+    }
+    
+    public function getCrateFiles($crateId) {
+        return $this->crateManager->getCrateFiles($crateId);
+    }
+    
+    public function getGrants($crateId) {
+        $manifest = $this->getItems($crateId); 
+        return $manifest['activities'];
+    }
+    
+    public function getAllFiles($crateId) {
+        return $this->crateManager->getCrate($crateId)->getFlatList();
+    }
 
     public function createCrate($crateName, $description) {
         return $this->crateManager->createCrate($crateName, $description);   

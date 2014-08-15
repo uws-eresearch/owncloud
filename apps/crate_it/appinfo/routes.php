@@ -73,3 +73,7 @@ $this->create('crate_it_check', '/crate/check')->get()->action(function($params)
     App::main('CrateController', 'checkCrate', $params, new DIContainer());
 });
 
+$this->create('crate_it_preview', '/crate/preview')->get()->action(function($params) {
+    App::main('CrateController', 'readmePreview', $params, new DIContainer());
+});
+

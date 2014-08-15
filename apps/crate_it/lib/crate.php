@@ -42,6 +42,12 @@ class Crate extends BagIt {
     $this->update();
   }
 
+  private function createReadme($dir, $html_str) {
+      $readme_path = "$dir/data/README.html";
+      \OCP\Util::writeLog('crate_it', "Crate::createReadme(".$readme_path.")", \OCP\Util::DEBUG);
+      $this->writeFile($readme_path, $html_str);
+  } 
+  
   public function getManifest() {
     $manifest = $this->readFile($this->manifestPath);
     //\OCP\Util::writeLog('crate_it', "Manifest before decode: ".$manifest, \OCP\Util::DEBUG);    
@@ -126,8 +132,8 @@ class Crate extends BagIt {
       return $res;
   }
   
-  public function packageCrate() {
-    $clone = $this->createTempClone();
+  public function packageCrate($readme_html) {
+    $clone = $this->createTempClone($readme_html);
     $clone->storeFiles();
     $tmpFolder = \OC_Helper::tmpFolder();
     $packagePath = $tmpFolder.'/'.$this->crateName;
@@ -135,11 +141,12 @@ class Crate extends BagIt {
     return $packagePath.'.zip';
   }    
 
-  private function createTempClone() {
+  private function createTempClone($readme_html) {
     $tmpFolder = \OC_Helper::tmpFolder();
     $tmpCrate = new Crate($tmpFolder, $this->crateName);
     $manifest = $this->getManifest();
     $tmpCrate->setManifest($manifest);
+    $this->createReadme($tmpFolder.'/'.$this->crateName, $readme_html);
     return $tmpCrate;
   }
 

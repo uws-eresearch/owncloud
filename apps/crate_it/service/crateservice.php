@@ -74,8 +74,8 @@ class CrateService {
         return $this->crateManager->renameCrate($crateName, $newCrateName);
     }
     
-    public function packageCrate($crateName) {
-        return $this->crateManager->packageCrate($crateName);
+    public function packageCrate($crateName, $readme_html) {
+        return $this->crateManager->packageCrate($crateName, $readme_html);
     }
 
     public function checkCrate($crateName) {

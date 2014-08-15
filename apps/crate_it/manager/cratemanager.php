@@ -135,9 +135,9 @@ class CrateManager {
         $crate->renameCrate($newCrateName);
     }
     
-    public function packageCrate($crateName){
+    public function packageCrate($crateName, $readme_html){
         $crate = $this->getCrate($crateName);
-        return $crate->packageCrate();
+        return $crate->packageCrate($readme_html);
     }
 
     public function checkCrate($crateName) {

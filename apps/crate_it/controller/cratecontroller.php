@@ -208,7 +208,8 @@ class CrateController extends Controller {
      */
     public function packageCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
-        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
+        $readme_html = $this->getReadme($readme_html);
+        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate'], $readme_html);
         $filename = basename($packagePath);
         $response = new ZipDownloadResponse($packagePath, $filename);
         return $response;
@@ -218,6 +219,7 @@ class CrateController extends Controller {
         $crate_id = $_SESSION['selected_crate'];
         $model = array("crate_name" => $crate_id,
                         "created_date" => date("Y-m-d H:i:s"),
+                        "created_date_formatted" => date("F jS, Y"),
                         "description" => $this->crate_service->getDescription($crate_id),
                         "creators" => $this->crate_service->getCreators($crate_id),
                         "grants" => $this->crate_service->getGrants($crate_id),

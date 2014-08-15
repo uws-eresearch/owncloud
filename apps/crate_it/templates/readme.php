@@ -9,7 +9,7 @@
                   <h1>Package Title</h1>
                   <span property="http://schema.org/name http://purl.org/dc/elements/1.1/title">{{ crate_name }}</span>
                   <h1>Package Creation Date</h1>
-                  <span content="{{ created_date }}" property="http://schema.org/dateCreated">{{ created_date }}</span>
+                  <span content="{{ created_date }}" property="http://schema.org/dateCreated">{{ created_date_formatted }}</span>
                   <h1>Package File Name</h1>
                   <span property="http://schema.org/name">{{ crate_name }}.zip</span>
                   <h1>ID</h1>
@@ -132,7 +132,7 @@
                                 <tr>
                                     <td>{{ file_elem.name }}</td>
                                     <td>{{ file_elem.path }}/{{ file_elem.name }}</td>
-                                    <td><a href="file:///data/{{file_elem.path}}/{{file_elem.name}}">View</a></td>
+                                    <td><a href="file:///{{file_elem.path}}/{{file_elem.name}}">View</a></td>
                                 </tr>
                             
                             {% endfor %}          

@@ -981,9 +981,9 @@ JS;
     }
 
     /**
-     * @Then /^I should see these entries in the selected creatora list$/
+     * @Then /^I should see these entries in the selected creators list$/
      */
-    public function iShouldSeeTheseEntriesInTheSelectedCreatoraList(TableNode $table)
+    public function iShouldSeeTheseEntriesInTheSelectedcreatorsList(TableNode $table)
     {
         sleep(1);
         $page = $this->getSession()->getPage();

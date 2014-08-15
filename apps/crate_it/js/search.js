@@ -347,5 +347,16 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     return '<li>' + html + '</li>';
   };
 
+  // NOTE: This is used on the publish summary
+  // TODO: Refactor?
+  this.renderSummary = function(record) {
+    var record = applyOverrides(record);
+    var html = '';
+    definition.displayFields.forEach(function(field){
+      html += '<span>' + record[field] +'</span>';
+    });
+    return '<div>' + html + '</div>';
+  }
+
   drawList($selectedUl, selectedList, 'fa-minus');
 }

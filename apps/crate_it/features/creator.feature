@@ -1,7 +1,7 @@
 @javascript
 Feature: Search, add and remove grant number 
   As a user
-  I want to add grant number related to the crate
+  I want to add crators related to the crate
   
   Background:
     Given I have no crates
@@ -26,16 +26,16 @@ Feature: Search, add and remove grant number
     And I click the search creator button
     And I add creator "1" to the list
     And I add creator "3" to the list
-    Then I should see these entries in the selected creatora list
+    Then I should see these entries in the selected creators list
       | name            | email               |
       | Prof John Smith | john@smith.com      |
       | Mr Daniel Johns | dan@silverchair.com |
     And I remove creator "john@smith.com" from the selected list
-    Then I should see these entries in the selected creatora list
+    Then I should see these entries in the selected creators list
       | name            | email               |
       | Mr Daniel Johns | dan@silverchair.com |
     And I add creator "2" to the list
-    Then I should see these entries in the selected creatora list
+    Then I should see these entries in the selected creators list
       | name            | email               |
       | Mr Daniel Johns | dan@silverchair.com |
       | Mr John Doe     | john@doe.org        |
@@ -77,7 +77,7 @@ Feature: Search, add and remove grant number
      When I clear all creators
      Then I should see "Clear all creators?"
      When I press "Cancel" on the popup dialog
-     Then I should see these entries in the selected creatora list
+     Then I should see these entries in the selected creators list
       | name            | email               |
       | Prof John Smith | john@smith.com      |
       | Mr Daniel Johns | dan@silverchair.com |
@@ -89,7 +89,7 @@ Feature: Search, add and remove grant number
         | add-creator-name  | Joe Bloggs     |
         | add-creator-email | joe@bloggs.org |
       When I press "Add" on the popup dialog
-      Then I should see these entries in the selected creatora list
+      Then I should see these entries in the selected creators list
         | name       | email          |
         | Joe Bloggs | joe@bloggs.org |
 
@@ -105,7 +105,7 @@ Feature: Search, add and remove grant number
         | add-creator-name  | Elvis               |
         | add-creator-email | elvis@graceland.org |
       When I press "Cancel" on the popup dialog
-      Then I should see these entries in the selected creatora list
+      Then I should see these entries in the selected creators list
         | name       | email          |
         | Joe Bloggs | joe@bloggs.org |
     
@@ -121,12 +121,12 @@ Feature: Search, add and remove grant number
         | add-creator-name  | Elvis               |
         | add-creator-email | elvis@graceland.org |
       Then I press "Add" on the popup dialog
-      Then I should see these entries in the selected creatora list
+      Then I should see these entries in the selected creators list
         | name       | email               |
         | Joe Bloggs | joe@bloggs.org      |   
         | Elvis      | elvis@graceland.org |
       When I remove creator "elvis@graceland.org" from the selected list
-      Then I should see these entries in the selected creatora list
+      Then I should see these entries in the selected creators list
         | name       | email               |
         | Joe Bloggs | joe@bloggs.org      |
 
@@ -150,7 +150,7 @@ Feature: Search, add and remove grant number
         And I fill in "add-creator-name" with "Elvis"
         And I fill in "add-creator-email" with "  "
         Then I press "Add" on the popup dialog
-        Then I should see these entries in the selected creatora list
+        Then I should see these entries in the selected creators list
         | name  | email |
         | Elvis |       |
 
@@ -171,7 +171,7 @@ Feature: Search, add and remove grant number
         And the "Add" button in the popup dialog should be disabled
         And I fill in "add-creator-email" with "elvis@graceland.org"
         Then I press "Add" on the popup dialog
-        Then I should see these entries in the selected creatora list
+        Then I should see these entries in the selected creators list
           | name       | email               |
           | Elvis      | elvis@graceland.org |
 
@@ -187,7 +187,7 @@ Feature: Search, add and remove grant number
           | edit-creators-name  | Elvis               |
           | edit-creators-email | elvis@graceland.org |
         Then I press "Save" on the popup dialog
-        Then I should see these entries in the selected creatora list
+        Then I should see these entries in the selected creators list
           | name       | email               |
           | Elvis      | elvis@graceland.org |
 
@@ -203,7 +203,7 @@ Feature: Search, add and remove grant number
           | edit-creators-name  | Elvis               |
           | edit-creators-email | elvis@graceland.org |
         Then I press "Cancel" on the popup dialog
-        Then I should see these entries in the selected creatora list
+        Then I should see these entries in the selected creators list
           | name       | email               |
           | Joe Bloggs | joe@bloggs.org      |
 
@@ -259,7 +259,7 @@ Feature: Search, add and remove grant number
         And I fill in "edit-creators-name" with "Elvis"
         And I fill in "edit-creators-email" with "  "
         Then I press "Save" on the popup dialog
-        Then I should see these entries in the selected creatora list
+        Then I should see these entries in the selected creators list
         | name  | email |
         | Elvis |       |
 
@@ -290,7 +290,7 @@ Feature: Search, add and remove grant number
         And the "Save" button in the popup dialog should be disabled
         And I fill in "edit-creators-email" with "elvis@graceland.org"
         Then I press "Save" on the popup dialog
-        Then I should see these entries in the selected creatora list
+        Then I should see these entries in the selected creators list
           | name       | email               |
           | Elvis      | elvis@graceland.org |
 

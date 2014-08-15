@@ -4,6 +4,7 @@ namespace OCA\crate_it\Controller;
 
 use \OCA\AppFramework\Controller\Controller;
 use \OCA\AppFramework\Http\JSONResponse;
+use \OCA\AppFramework\Http\TextResponse;
 use \OCA\AppFramework\Http;
 
 require 'apps/crate_it/lib/zipdownloadresponse.php';
@@ -12,14 +13,20 @@ use OCA\crate_it\lib\ZipDownloadResponse;
 class CrateController extends Controller {
     
     /**
+     * @var $twig
+     */
+    private $twig;
+    
+    /**
      * @var $crate_service
      */
     private $crate_service;
     
-    public function __construct($api, $request, $crate_service, $setupService) {
+    public function __construct($api, $request, $twig, $crate_service, $setupService) {
         parent::__construct($api, $request);
         // TODO: This is currently necessary to ensure that a seletect_crate is set
         //       would be better refactored out
+        $this->twig = $twig;
         $setupService->loadParams();
         $this->crate_service = $crate_service;
     }
@@ -137,6 +144,7 @@ class CrateController extends Controller {
     
     /**
      * Update Crate
+     * TODO change to not just return description but all fields?
      *
      * @Ajax
      * @CSRFExemption
@@ -200,10 +208,37 @@ class CrateController extends Controller {
      */
     public function packageCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
-        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
+        $readme_html = $this->getReadme($readme_html);
+        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate'], $readme_html);
         $filename = basename($packagePath);
         $response = new ZipDownloadResponse($packagePath, $filename);
         return $response;
+    }
+    
+    private function getReadme() {
+        $crate_id = $_SESSION['selected_crate'];
+        $model = array("crate_name" => $crate_id,
+                        "created_date" => date("Y-m-d H:i:s"),
+                        "created_date_formatted" => date("F jS, Y"),
+                        "description" => $this->crate_service->getDescription($crate_id),
+                        "creators" => $this->crate_service->getCreators($crate_id),
+                        "grants" => $this->crate_service->getGrants($crate_id),
+                        "files" => $this->crate_service->getAllFiles($crate_id));
+                        
+        return $this->twig->render('readme.php', $model);        
+    }
+
+    /**
+     * README previewer - this is for debugging purposes.
+     *
+     * @CSRFExemption
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
+    public function readmePreview() {
+        \OCP\Util::writeLog('crate_it', "CrateController::readmePreview()", \OCP\Util::DEBUG);
+        $raw_template = $this->getReadme();                    
+        return new TextResponse($raw_template, 'html');
     }
 
 

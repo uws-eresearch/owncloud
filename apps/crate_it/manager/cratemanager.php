@@ -33,7 +33,7 @@ class CrateManager {
      * Create the bag with manifest file for the crate
      * Throws exception when fail
      */
-    private function getCrate($crateName) {
+    public function getCrate($crateName) {
       \OCP\Util::writeLog('crate_it', "CrateManager::getCrate(".$crateName.")", \OCP\Util::DEBUG);
       $crateRoot = $this->getCrateRoot();
       if (!file_exists($crateRoot.'/'.$crateName)) {
@@ -135,9 +135,9 @@ class CrateManager {
         $crate->renameCrate($newCrateName);
     }
     
-    public function packageCrate($crateName){
+    public function packageCrate($crateName, $readme_html){
         $crate = $this->getCrate($crateName);
-        return $crate->packageCrate();
+        return $crate->packageCrate($readme_html);
     }
 
     public function checkCrate($crateName) {

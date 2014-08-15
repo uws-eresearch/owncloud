@@ -648,6 +648,7 @@ font-size: 18px;
 
 .modal .publish-meta  > div > ul > div > span {
   display:block ;
+  word-wrap: break-word;
 }
 .modal .publish-meta div > span:first-child {
   font-weight: bold;

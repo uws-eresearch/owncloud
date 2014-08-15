@@ -249,7 +249,7 @@ Feature: Search, add and remove grant number
         And the "Save" button in the popup dialog should be disabled
 
       #CRATEIT-183
-      Scenario: A manually edited creator email is optional
+      Scenario: A manually edited creator email is required
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -258,10 +258,7 @@ Feature: Search, add and remove grant number
         When I edit creator "joe@bloggs.org"
         And I fill in "edit-creators-name" with "Elvis"
         And I fill in "edit-creators-email" with "  "
-        Then I press "Save" on the popup dialog
-        Then I should see these entries in the selected creators list
-        | name  | email |
-        | Elvis |       |
+        Then I should see "Email is required"
 
       #CRATEIT-183
       Scenario: A manually edited creator email has a maximum length of 128 characters

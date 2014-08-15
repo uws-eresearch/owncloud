@@ -321,9 +321,10 @@ function initSearchHandlers() {
   editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Validation.RequiredValidator('Name'));
   editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Validation.MaxLengthValidator('Name', 256));
 
-  var optionalEditEmailValidator = new CrateIt.Validation.OptionalValidator(new CrateIt.Validation.EmailValidator());
+  editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Validation.RequiredValidator('Email'));
   editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Validation.MaxLengthValidator('Email', 128));
-  editCreatorValidator.addValidator($('#edit-creators-email'), optionalEditEmailValidator);
+  editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Validation.EmailValidator());
+  
 
   // TODO: add this to a namespace rather than exposing globally
   CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification, creator$editModal);

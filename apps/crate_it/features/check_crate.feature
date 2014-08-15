@@ -33,27 +33,27 @@ Feature:Check crate
     And I remove "file1.txt" from the file system
     And I rename "folder1" to "newfolder" in the file system
     And I click on "check"
-    #Then I should see "The following items no longer exist:"
+    Then I should see "The following items no longer exist:"
     And I should see these files listed as invalid
     | filename  |
     | file1.txt |
     | file2.txt |
     Then I click on "confirm_checker"
-    #And I remove "file1.txt" 
-    #And I click on "check"
-    #And I wait for 1 seconds 
-    #Then I should see "The following item no longer exists:"
-    #And I should see these files listed as invalid
-    #| filename  |
-    #| file2.txt |
-    #Then I click on "confirm_checker"
-    #And I rename "file0.txt" to "file0" in the file system
-    #And I click on "check"
-    #Then I should see "The following items no longer exist:"
-    #And I should see these files listed as invalid
-    #| filename  |
-    #| file0.txt |
-    #| file2.txt |
+    And I remove "file1.txt" 
+    And I press "Remove" on the popup dialog
+    And I click on "check"
+    Then I should see "The following item no longer exists:"
+    And I should see these files listed as invalid
+    | filename  |
+    | file2.txt |
+    Then I click on "confirm_checker"
+    And I rename "file0.txt" to "file0" in the file system
+    And I click on "check"
+    Then I should see "The following items no longer exist:"
+    And I should see these files listed as invalid
+    | filename  |
+    | file0.txt |
+    | file2.txt |
     
   
   

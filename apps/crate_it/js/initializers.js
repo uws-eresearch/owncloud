@@ -214,21 +214,14 @@ function initCrateActions() {
     // TODO: create proper render functions
     var records = CreatorSearchManager.getSelected();
     records.forEach(function(record){
-      var html = '';
-      html += '<span>' + record.name + '</span>';
-      html += '<span>' + record.email + '</span>';
-      html = '<div>' + html + '</div>';
+      var html = CreatorSearchManager.renderSummary(record);
       $('#publish-creators').append(html);
     });
 
     $('#publish-activities').children().remove();
     records = ActivitySearchManager.getSelected();
     records.forEach(function(record){
-      var html = '';
-      html += '<span>' + record.grant_number + '</span>';
-      html += '<span>' + record.date + '</span>';
-      html += '<span>' + record.title + '</span>';
-      html = '<div>' + html + '</div>';
+      var html = ActivitySearchManager.renderSummary(record);
       $('#publish-activities').append(html);
     });
 

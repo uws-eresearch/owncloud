@@ -191,33 +191,6 @@ class Crate extends BagIt {
         }
       }
   }
-  
-  // private function flat_f(&$vfs, &$flat, $path) {
-  //     if (count($vfs) > 0) {
-  //       foreach($vfs as $entry) {
-  //         if (array_key_exists('filename', $entry)) {
-  //           $flat_entry = array(
-  //             'id' => $entry['id'],
-  //             'path' => $path,
-  //             'name' => $entry['name'],
-  //             'filename' => $entry['filename']
-  //           );
-  //           array_push($flat, $flat_entry);
-  //         }
-  //         elseif (array_key_exists('children', $entry)) {
-  //           $flat_entry = array(
-  //             'id' => $entry['id'],
-  //             'name' => $entry['name'],
-  //             'folderpath' => $entry['folderpath']
-  //           );  
-  //           array_push($flat, $flat_entry);
-  //           $this->flat_f($entry['children'], $flat, $path . $entry['name'] . '/');
-          
-  //         }
-          
-  //       }
-  //     }
-  // }
 
   // TODO: There's currently no check for duplicates
   // TODO: root folder has isFolder set, so should other files folders

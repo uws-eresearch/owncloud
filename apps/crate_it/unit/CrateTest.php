@@ -1,5 +1,7 @@
 <?php
 
+require 'mock_util.php';
+
 require 'lib/crate.php';
 use OCA\crate_it\lib\Crate;
 

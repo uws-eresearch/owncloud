@@ -31,6 +31,8 @@ class CrateService {
         return $this->crateManager->getManifestData($crateId);
     }
     
+    // TODO: The following are all special cases that can probably be
+    //       reduced to getItems()
     public function getDescription($crateId) {
         $manifest = $this->getItems($crateId); 
         return $manifest['description'];
@@ -41,13 +43,13 @@ class CrateService {
         return $manifest['creators'];
     }
     
-    public function getCrateFiles($crateId) {
-        return $this->crateManager->getCrateFiles($crateId);
-    }
-    
     public function getGrants($crateId) {
         $manifest = $this->getItems($crateId); 
         return $manifest['activities'];
+    }
+
+    public function getCrateFiles($crateId) {
+        return $this->crateManager->getCrateFiles($crateId);
     }
     
     public function getAllFiles($crateId) {

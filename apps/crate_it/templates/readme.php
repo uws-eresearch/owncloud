@@ -28,16 +28,17 @@
                             <tbody>
                                 {% for creator in creators %}  
                                     <tr>
-                                        {% if creator.name %}
-                                            <td>{{ creator.name }}</td>
-                                        {% else %}
+                                        {% if creator.overrides.name %}
                                             <td>{{ creator.overrides.name }}</td>  
+                                        {% else %}
+                                            <td>{{ creator.name }}</td>
                                         {% endif %}
                                         
-                                        {% if creator.email %}
-                                            <td>{{ creator.email }}</td>
-                                        {% else %}
+                                        {% if creator.overrides.email %}
                                             <td>{{ creator.overrides.email }}</td>  
+                                        {% else %}
+                                            <td>{{ creator.email }}</td>
+                                            
                                         {% endif %}
                                         <td>{{ creator.identifier}} </td>
                                         <td>{{ creator.source}}</td>
@@ -60,26 +61,26 @@
                             <tbody>
                                 {% for grant in grants %}  
                                     <tr>
-                                        {% if grant.grant_number %}
-                                            <td>{{ grant.grant_number }}</td>
-                                        {% else %}
+                                        {% if grant.overrides.grant_number %}
                                             <td>{{ grant.overrides.grant_number }}</td>  
+                                        {% else %}
+                                            <td>{{ grant.grant_number }}</td>
                                         {% endif %}
                                         
-                                        {% if grant.title %}
-                                            <td>{{ grant.title }}</td>
-                                        {% else %}
+                                        {% if grant.overrides.title %}
                                             <td>{{ grant.overrides.title }}</td>  
+                                        {% else %}
+                                            <td>{{ grant.title }}</td>
                                         {% endif %}
-                                        {% if grant.date %}
+                                        {% if grant.overrides.date %}
+                                            <td>{{ grant.overrides.date }}</td>
+                                        {% else %}
                                             <td>{{ grant.date }}</td>
-                                        {% else %}
-                                            <td>{{ grant.overrides.date }}</td>  
                                         {% endif %}                                    
-                                        {% if grant.institution %}
-                                            <td>{{ grant.institution }}</td>
-                                        {% else %}
+                                        {% if grant.overrides.institution %}
                                             <td>{{ grant.overrides.institution }}</td>  
+                                        {% else %}
+                                            <td>{{ grant.institution }}</td>
                                         {% endif %}
                                         <td>{{ grant.identifier}} </td>
                                         <td>{{ grant.source}}</td>

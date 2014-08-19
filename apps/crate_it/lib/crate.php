@@ -41,16 +41,33 @@ class Crate extends BagIt {
     $this->writeFile($this->manifestPath, json_encode($entry));
     $this->update();
   }
-
-  private function createReadme($dir, $html_str) {
-      $readme_path = "$dir/data/README.html";
-      \OCP\Util::writeLog('crate_it', "Crate::createReadme(".$readme_path.")", \OCP\Util::DEBUG);
-      $this->writeFile($readme_path, $html_str);
-  } 
   
+  // TODO: Convenience function for development, remove
+  //       in production release?
+  public function getReadme($twig) {
+    $this->createReadme($twig);
+    $readmePath = $this->getDataDirectory()."/README.html";
+    return $this->readFile($readmePath);
+  }
+
+  // TODO: Attempt to get own reference to TWIG rather than have it
+  //       passed as a parameter
+  // TODO: Since the file is created directly, it bypasses the manifest,
+  //       is that what we want?
+  private function createReadme($twig) {
+    $manifest = $this->getManifest();
+    $manifest['crate_name'] = $this->crateName;
+    $manifest['files'] = $this->flatList();
+    $manifest['created_date'] = date("Y-m-d H:i:s");
+    $manifest['created_date_formatted'] = date("F jS, Y");
+    $htmlStr = $twig->render('readme.php', $manifest);
+    $readmePath = $this->getDataDirectory()."/README.html";
+    $this->writeFile($readmePath, $htmlStr);
+  }
+
+
   public function getManifest() {
     $manifest = $this->readFile($this->manifestPath);
-    //\OCP\Util::writeLog('crate_it', "Manifest before decode: ".$manifest, \OCP\Util::DEBUG);    
     return json_decode($manifest, true);
   }
 
@@ -62,8 +79,7 @@ class Crate extends BagIt {
   public function addToCrate($path) {
     \OCP\Util::writeLog('crate_it', "Crate::addToCrate(".$path.")", \OCP\Util::DEBUG);
     $manifest = $this->getManifest();
-    $vfs = &$manifest['vfs'][0];    
-    // TODO: we should be able to get rid of this if we initialise the manifest correctly
+    $vfs = &$manifest['vfs'][0];
     if (array_key_exists('children', $vfs)) {
       $vfs = &$vfs['children'];
     } else {
@@ -132,8 +148,9 @@ class Crate extends BagIt {
       return $res;
   }
   
-  public function packageCrate($readme_html) {
-    $clone = $this->createTempClone($readme_html);
+  public function packageCrate($twig) {
+    $clone = $this->createTempClone();
+    $clone->createReadme($twig);
     $clone->storeFiles();
     $tmpFolder = \OC_Helper::tmpFolder();
     $packagePath = $tmpFolder.'/'.$this->crateName;
@@ -141,12 +158,11 @@ class Crate extends BagIt {
     return $packagePath.'.zip';
   }    
 
-  private function createTempClone($readme_html) {
+  private function createTempClone() {
     $tmpFolder = \OC_Helper::tmpFolder();
     $tmpCrate = new Crate($tmpFolder, $this->crateName);
     $manifest = $this->getManifest();
     $tmpCrate->setManifest($manifest);
-    $this->createReadme($tmpFolder.'/'.$this->crateName, $readme_html);
     return $tmpCrate;
   }
 

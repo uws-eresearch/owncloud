@@ -10,9 +10,15 @@ class CrateManager {
      * @var API
      */
     private $api;
+
+    /**
+     * @var twig
+     */
+    private $twig;
     
-    public function __construct($api){
+    public function __construct($api, $twig){
         $this->api = $api;
+        $this->twig = $twig;
         if ($api->isLoggedIn()) {
             $this->ensureDefaultCrateExists();
             $this->ensureCrateIsSelected();
@@ -89,6 +95,11 @@ class CrateManager {
         }
     }
 
+    public function getReadme($crateName) {
+        $crate = $this->getCrate($crateName);
+        return $crate->getReadme($this->twig);
+    }
+
     private function getCrateRoot() {        
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot()", \OCP\Util::DEBUG);
         $userId = $this->api->getUserId();
@@ -135,9 +146,9 @@ class CrateManager {
         $crate->renameCrate($newCrateName);
     }
     
-    public function packageCrate($crateName, $readme_html){
+    public function packageCrate($crateName){
         $crate = $this->getCrate($crateName);
-        return $crate->packageCrate($readme_html);
+        return $crate->packageCrate($this->twig);
     }
 
     public function checkCrate($crateName) {
@@ -150,7 +161,6 @@ class CrateManager {
             \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - checking ".$filepath, \OCP\Util::DEBUG);
             $file_exist = file_exists($filepath); 
             if (!$file_exist) {
-                //$res[$filepath] = $file_exist; 
                 $res[basename($filepath)] = $file_exist; 
             }
         }

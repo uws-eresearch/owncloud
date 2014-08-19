@@ -26,7 +26,7 @@ class DIContainer extends BaseContainer {
         /* Managers */
                
         $this['CrateManager'] = function($c) {
-            return new CrateManager($c['API']);
+            return new CrateManager($c['API'], $c['Twig']);
         };
         
         $this['ConfigManager'] = function($c) {
@@ -54,7 +54,7 @@ class DIContainer extends BaseContainer {
         };
                
         $this['CrateController'] = function($c) {
-            return new CrateController($c['API'], $c['Request'], $c['Twig'], $c['CrateService'], $c['SetupService']);
+            return new CrateController($c['API'], $c['Request'], $c['CrateService'], $c['SetupService']);
         };
 
         $this['SearchController'] = function($c) {

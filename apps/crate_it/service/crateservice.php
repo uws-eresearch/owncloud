@@ -35,9 +35,9 @@ class CrateService {
     public function getCrateFiles($crateId) {
         return $this->crateManager->getCrateFiles($crateId);
     }
-    
-    public function getAllFiles($crateId) {
-        return $this->crateManager->getCrate($crateId)->getFlatList();
+
+    public function getReadme($crateName) {
+        return $this->crateManager->getReadme($crateName);   
     }
 
     public function createCrate($crateName, $description) {

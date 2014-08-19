@@ -22,11 +22,8 @@ class CrateController extends Controller {
      */
     private $crate_service;
     
-    public function __construct($api, $request, $twig, $crate_service, $setupService) {
+    public function __construct($api, $request, $crate_service, $setupService) {
         parent::__construct($api, $request);
-        // TODO: This is currently necessary to ensure that a seletect_crate is set
-        //       would be better refactored out
-        $this->twig = $twig;
         $setupService->loadParams();
         $this->crate_service = $crate_service;
     }
@@ -200,7 +197,7 @@ class CrateController extends Controller {
     }
     
     /**
-     * Paackage Crate as a Zip
+     * Package Crate as a Zip
      *
      * @CSRFExemption
      * @IsAdminExemption
@@ -208,23 +205,12 @@ class CrateController extends Controller {
      */
     public function packageCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
-        $readme_html = $this->getReadme($readme_html);
-        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate'], $readme_html);
+        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
         $filename = basename($packagePath);
         $response = new ZipDownloadResponse($packagePath, $filename);
         return $response;
     }
     
-    private function getReadme() {
-        \OCP\Util::writeLog('crate_it', "CrateController::getReadme()", \OCP\Util::DEBUG);
-        $crate_id = $_SESSION['selected_crate'];
-        $manifest = $this->crate_service->getItems($crate_id);
-        $manifest['crate_name'] = $crate_id;
-        $manifest['files'] = $this->crate_service->getAllFiles($crate_id);
-        $manifest['created_date'] = date("Y-m-d H:i:s");
-        $manifest['created_date_formatted'] = date("F jS, Y");
-        return $this->twig->render('readme.php', $manifest);        
-    }
 
     /**
      * README previewer - this is for debugging purposes.
@@ -235,8 +221,8 @@ class CrateController extends Controller {
      */
     public function readmePreview() {
         \OCP\Util::writeLog('crate_it', "CrateController::readmePreview()", \OCP\Util::DEBUG);
-        $raw_template = $this->getReadme();                    
-        return new TextResponse($raw_template, 'html');
+        $readme = $this->crate_service->getReadme($_SESSION['selected_crate']);
+        return new TextResponse($readme, 'html');
     }
 
 

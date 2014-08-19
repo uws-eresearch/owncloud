@@ -216,16 +216,14 @@ class CrateController extends Controller {
     }
     
     private function getReadme() {
+        \OCP\Util::writeLog('crate_it', "CrateController::getReadme()", \OCP\Util::DEBUG);
         $crate_id = $_SESSION['selected_crate'];
-        $model = array("crate_name" => $crate_id,
-                        "created_date" => date("Y-m-d H:i:s"),
-                        "created_date_formatted" => date("F jS, Y"),
-                        "description" => $this->crate_service->getDescription($crate_id),
-                        "creators" => $this->crate_service->getCreators($crate_id),
-                        "grants" => $this->crate_service->getGrants($crate_id),
-                        "files" => $this->crate_service->getAllFiles($crate_id));
-                        
-        return $this->twig->render('readme.php', $model);        
+        $manifest = $this->crate_service->getItems($crate_id);
+        $manifest['crate_name'] = $crate_id;
+        $manifest['files'] = $this->crate_service->getAllFiles($crate_id);
+        $manifest['created_date'] = date("Y-m-d H:i:s");
+        $manifest['created_date_formatted'] = date("F jS, Y");
+        return $this->twig->render('readme.php', $manifest);        
     }
 
     /**

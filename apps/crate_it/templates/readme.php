@@ -47,7 +47,7 @@
                             </tbody>
                         </table>
                   {% endif %}
-                  {% if grants %}
+                  {% if activities %}
                       <h1>Grants</h1>
                         <table border="1">
                             <thead>
@@ -59,31 +59,31 @@
                                 <th>Source</th>                             
                             </thead>
                             <tbody>
-                                {% for grant in grants %}  
+                                {% for activity in activities %}  
                                     <tr>
-                                        {% if grant.overrides.grant_number %}
-                                            <td>{{ grant.overrides.grant_number }}</td>  
+                                        {% if activity.overrides.grant_number %}
+                                            <td>{{ activity.overrides.grant_number }}</td>  
                                         {% else %}
-                                            <td>{{ grant.grant_number }}</td>
+                                            <td>{{ activity.grant_number }}</td>
                                         {% endif %}
                                         
-                                        {% if grant.overrides.title %}
-                                            <td>{{ grant.overrides.title }}</td>  
+                                        {% if activity.overrides.title %}
+                                            <td>{{ activity.overrides.title }}</td>  
                                         {% else %}
-                                            <td>{{ grant.title }}</td>
+                                            <td>{{ activity.title }}</td>
                                         {% endif %}
-                                        {% if grant.overrides.date %}
-                                            <td>{{ grant.overrides.date }}</td>
+                                        {% if activity.overrides.date %}
+                                            <td>{{ activity.overrides.date }}</td>
                                         {% else %}
-                                            <td>{{ grant.date }}</td>
+                                            <td>{{ activity.date }}</td>
                                         {% endif %}                                    
-                                        {% if grant.overrides.institution %}
-                                            <td>{{ grant.overrides.institution }}</td>  
+                                        {% if activity.overrides.institution %}
+                                            <td>{{ activity.overrides.institution }}</td>  
                                         {% else %}
-                                            <td>{{ grant.institution }}</td>
+                                            <td>{{ activity.institution }}</td>
                                         {% endif %}
-                                        <td>{{ grant.identifier}} </td>
-                                        <td>{{ grant.source}}</td>
+                                        <td>{{ activity.identifier}} </td>
+                                        <td>{{ activity.source}}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -116,8 +116,7 @@
                     </table>
                   </section>
                </section>
-               <h1>Organisational Information</h1>
-               <span>???</span>
+
                {% if files %}
                    <h1>Files</h1>
                      <table border="1">
@@ -132,8 +131,8 @@
                             {% for file_elem in files %}  
                                 <tr>
                                     <td>{{ file_elem.name }}</td>
-                                    <td>{{ file_elem.path }}/{{ file_elem.name }}</td>
-                                    <td><a href="file:///{{file_elem.path}}/{{file_elem.name}}">View</a></td>
+                                    <td>{{ file_elem.path }}{{ file_elem.name }}</td>
+                                    <td><a href="{{file_elem.filename}}">Download</a></td>
                                 </tr>
                             
                             {% endfor %}          

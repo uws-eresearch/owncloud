@@ -27,25 +27,9 @@ class CrateService {
         return $this->crateManager->addToCrate($crateId, $file);   
     }
     
+    // TODO: Rename to getManifest()
     public function getItems($crateId) {
         return $this->crateManager->getManifestData($crateId);
-    }
-    
-    // TODO: The following are all special cases that can probably be
-    //       reduced to getItems()
-    public function getDescription($crateId) {
-        $manifest = $this->getItems($crateId); 
-        return $manifest['description'];
-    }
-    
-    public function getCreators($crateId) {
-        $manifest = $this->getItems($crateId); 
-        return $manifest['creators'];
-    }
-    
-    public function getGrants($crateId) {
-        $manifest = $this->getItems($crateId); 
-        return $manifest['activities'];
     }
 
     public function getCrateFiles($crateId) {

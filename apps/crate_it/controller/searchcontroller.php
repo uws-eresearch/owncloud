@@ -9,6 +9,9 @@ use \OCA\AppFramework\Http;
 require 'apps/crate_it/lib/mint_connector.php';
 use \OCA\crate_it\lib\MintConnector;
 
+require 'apps/crate_it/lib/curl_request.php';
+use \OCA\crate_it\lib\CurlRequest;
+
 class SearchController extends Controller {
 
 
@@ -20,7 +23,7 @@ class SearchController extends Controller {
     public function __construct($api, $request, $configManager) {
       parent::__construct($api, $request);
       $config = $configManager->readConfig();
-      $this->searchProvider = new MintConnector($config['mint']['url']);
+      $this->searchProvider = new MintConnector($config['mint']['url'], new CurlRequest());
     }
 
 

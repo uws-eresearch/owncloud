@@ -16,8 +16,9 @@
                   <span property="http://schema.org/id">{{ crate_name }}</span>
                   <h1>Description</h1>
                   <span property="http://schema.org/description">{{ description | nl2br }}</span>
-                  {% if creators %}
+
                       <h1>Creators</h1>
+                      {% if creators %}
                         <table border="1">
                             <thead>
                                 <th>Name</th>
@@ -46,17 +47,31 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                  {% endif %}
-                  {% if activities %}
+                     {% else %}
+                     <span>None.</span>
+                     {% endif %}
+                     
                       <h1>Grants</h1>
+                      
+                      {% if activities %}
                         <table border="1">
                             <thead>
                                 <th>Grant Number</th>
-                                <th>Grant Title</th>
-                                <th>Year</th>
+                                <th>Grant Title</th>                              
+                                <th>Description</th>
+                                <th>Date Granted</th>
+                                <th>Date Submitted</th>
                                 <th>Institution</th>   
                                 <th>Identifier</th>
-                                <th>Source</th>                             
+                                <th>Source</th>     
+                                <th>Subject</th>
+                                <th>Format</th>
+                                <th>OAI Set</th>
+                                <th>Repository Name</th>
+                                <th>Repository Type</th>
+                                <th>Display Type</th>
+                                <th>Contributors</th>
+                                                        
                             </thead>
                             <tbody>
                                 {% for activity in activities %}  
@@ -72,22 +87,46 @@
                                         {% else %}
                                             <td>{{ activity.title }}</td>
                                         {% endif %}
+                                        
+                                        <td>{{activity.description}}</td>
+                                        
                                         {% if activity.overrides.date %}
                                             <td>{{ activity.overrides.date }}</td>
                                         {% else %}
                                             <td>{{ activity.date }}</td>
-                                        {% endif %}                                    
+                                        {% endif %}  
+                                        
+                                        <td>{{ activity.date_submitted}}</td>
+                                                                          
                                         {% if activity.overrides.institution %}
                                             <td>{{ activity.overrides.institution }}</td>  
                                         {% else %}
                                             <td>{{ activity.institution }}</td>
                                         {% endif %}
-                                        <td>{{ activity.identifier}} </td>
-                                        <td>{{ activity.source}}</td>
+                                        
+                                        <td>{{ activity.identifier }} </td>
+                                         
+                                        <td>{{ activity.source }}</td>
+                                        
+                                        <td>{{ activity.subject }}</td>
+                                        
+                                        <td>{{ activity.format }}</td>
+                                        
+                                        <td>{{ activity.oai_set }}</td>
+                                        
+                                        <td>{{ activity.repository_name }}</td>
+                                        
+                                        <td>{{ activity.repository_type }}</td>
+                                        
+                                        <td>{{ activity.display_type }}</td>
+                                        
+                                        <td>{{ activity.contributors }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
-                        </table>       
+                        </table>  
+                    {% else %}
+                     <span>None.</span>   
                     {% endif %}        
                   <h1>Software Information</h1>
                   <section property="http://purl.org/dc/terms/creator" typeof="http://schema.org/softwareApplication" resource="">
@@ -117,8 +156,9 @@
                   </section>
                </section>
 
-               {% if files %}
                    <h1>Files</h1>
+                     
+                   {% if files %}
                      <table border="1">
                       <thead>
                             <tr>
@@ -138,7 +178,9 @@
                             {% endfor %}          
                         </tbody>                       
                      </table>
-                 {% endif %}
+                  {% else %}
+                  <span>None.</span>
+                  {% endif %}
         </article>
     </body>
 </html>

@@ -382,7 +382,17 @@ function initSearchHandlers() {
       'title': 'dc_title',
       'date': 'dc_date',
       'institution': 'foaf_name',
-      'grant_number': 'grant_number'
+      'grant_number': 'grant_number',
+      'date_submitted': 'dc_date_submitted',
+      'description' : 'dc_description',
+      'contributors' :  'dc_contributor',
+      'repository_name' : 'repository_name',
+      'repository_type' : 'repository_type',
+      'oai_set' : 'oai_set',
+      'format' : 'dc_format',
+      'display_type' : 'display_type',
+      'subject' : 'dc_subject'
+       
     },
     displayFields: ['grant_number', 'date', 'title'],
     editFields: ['grant_number', 'date', 'title', 'institution'],

@@ -40,14 +40,14 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     selectedList = manifest[definition.manifestField];
     drawList($selectedUl, selectedList, 'fa-minus');
     _self.notifyListeners();
-  }
+  };
 
   var drawList = function($li, list, faIcon) {
     $li.empty();
     list.forEach(function(record) {
       var html = renderRecord(record, faIcon);
       $li.append(html);
-      var $toggleButton = $li.find('#' + record.id)
+      var $toggleButton = $li.find('#' + record.id);
       $toggleButton.click(function() {
         toggle(record.id);
       });

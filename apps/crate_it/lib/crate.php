@@ -60,11 +60,44 @@ class Crate extends BagIt {
     $manifest['files'] = $this->flatList();
     $manifest['created_date'] = date("Y-m-d H:i:s");
     $manifest['created_date_formatted'] = date("F jS, Y");
+    $vfs = &$manifest['vfs'][0];
+    $manifest['filetree'] = $this->buildFileTreeFromRoot($vfs);
     $htmlStr = $twig->render('readme.php', $manifest);
     $readmePath = $this->getDataDirectory()."/README.html";
     $this->writeFile($readmePath, $htmlStr);
   }
-
+  
+  private function buildFileTreeFromRoot($rootnode) {
+      $tree = '';
+      // if we get to this point, then the crate has files for sure, so no need to 
+      // check if children exists
+      $children = $rootnode['children'];
+      foreach($children as $child) {
+            $tree = $this->buildFileTreeHtml($child, $tree);
+      }
+      return '<ul>'.$tree.'</ul>';
+  }
+  
+  private function buildFileTreeHtml($node, $tree='') {        
+    if ($node['id'] == 'folder')
+    {
+        $text = $node['name'];
+        $tree = $tree."<li>$text</li><ul>";
+        $children = $node['children'];     
+        foreach($children as $child) {
+            $tree = $this->buildFileTreeHtml($child, $tree);
+        }
+        $tree = $tree.'</ul>';
+    }
+    else {
+        $text = $node['name'];
+        // $folderpath = $node['folderpath'] ? $node['folderpath'].'/' : '';
+        //$filepath = './'.$folderpath.$text;
+        $filename = $node['filename'];
+        $tree = $tree."<li><a href='./$filename'>$text</a></li>";  
+    }
+    return $tree;
+  }
 
   public function getManifest() {
     $manifest = $this->readFile($this->manifestPath);

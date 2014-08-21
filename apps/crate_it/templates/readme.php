@@ -104,8 +104,11 @@
                                             <td>{{ activity.institution }}</td>
                                         {% endif %}
                                         
-                                        <td>{{ activity.identifier }} </td>
-                                         
+                                        {% if activity.identifier[:5] == 'http:' or activity.identifier[:6] == 'https:' %}
+                                            <td><a href="{{activity.identifier}}">{{activity.identifier}}</a></td>
+                                        {% else %}
+                                            <td>{{ activity.identifier }} </td>
+                                        {% endif %}
                                         <td>{{ activity.source }}</td>
                                         
                                         <td>{{ activity.subject }}</td>
@@ -156,28 +159,9 @@
                   </section>
                </section>
 
-                   <h1>Files</h1>
-                     
-                   {% if files %}
-                     <table border="1">
-                      <thead>
-                            <tr>
-                                <th>File Name</th>
-                                <th>Path</th>
-                                <th>Link to file</th>
-                            <tr>
-                        </thead> 
-                        <tbody>                       
-                            {% for file_elem in files %}  
-                                <tr>
-                                    <td>{{ file_elem.name }}</td>
-                                    <td>{{ file_elem.path }}{{ file_elem.name }}</td>
-                                    <td><a href="{{file_elem.filename}}">Download</a></td>
-                                </tr>
-                            
-                            {% endfor %}          
-                        </tbody>                       
-                     </table>
+                  <h1>Files</h1>                    
+                  {% if files %}
+                     {{ filetree | raw }}
                   {% else %}
                   <span>None.</span>
                   {% endif %}

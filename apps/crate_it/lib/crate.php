@@ -155,11 +155,11 @@ class Crate extends BagIt {
   // TODO: If a file has been added to the crate multiple times this will give the wront size
   //       Look at using getFilePaths() instead
   public function getSize() {        
-    $files = $this->flatList();
+    $files = $this->getAllFilesAndFolders();
     \OCP\Util::writeLog('crate_it', "Crate::getSize() - Flat list: ".sizeof($files), \OCP\Util::DEBUG);
     $total = 0;
     foreach($files as $file) {
-      $total+= filesize($file['filename']);
+      $total+= filesize($file);
     }
     return $total;
   }

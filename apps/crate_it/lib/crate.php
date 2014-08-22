@@ -13,7 +13,7 @@ class Crate extends BagIt {
 
   public function __construct($crateRoot, $crateName, $description='') {
       \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.")", \OCP\Util::DEBUG);
-      parent::__construct($this->getAbsolutePath($crateRoot, $crateName));     
+      parent::__construct($this->getAbsolutePath($crateRoot, $crateName), true, false, false, null);     
       $this->crateName = $crateName;
       $this->crateRoot = $crateRoot;
       $this->manifestPath = $this->getDataDirectory().'/manifest.json';

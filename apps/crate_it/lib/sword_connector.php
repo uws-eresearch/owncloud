@@ -1,7 +1,8 @@
 <?php
 
 namespace OCA\crate_it\lib;
-require 'swordappv2-php-library/swordappclient.php';
+
+require '3rdparty/swordappv2-php-library/swordappclient.php';
 use \SWORDAPPClient;
 
 class SwordConnector {
@@ -15,12 +16,14 @@ class SwordConnector {
   private static $packagingFormat = 'http://purl.org/net/sword/package/SimpleZip';
 
   
-  function __construct($username, $password, $sdUri, $obo) {
+  function __construct($configManager) {
+    $config = $configManager->readConfig();
+    $sword = $config['sword'];
+    $this->username = $sword['username'];
+    $this->password = $sword['password'];
+    $this->sdUri = $sword['sd_uri'];
+    $this->obo = $sword['obo'];
     $this->swordClient = new SWORDAPPClient();
-    $this->username = $username;
-    $this->password = $password;
-    $this->sdUri = $sdUri;
-    $this->obo = $obo;
   }
   
   private function getServiceDocument() {

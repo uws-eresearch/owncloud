@@ -2,9 +2,7 @@
 
 namespace OCA\crate_it\Controller;
 
-require 'apps/crate_it/lib/sword_connector.php';
 use \OCA\crate_it\lib\SwordConnector;
-
 use \OCA\AppFramework\Controller\Controller;
 use \OCA\AppFramework\Http\JSONResponse;
 use \OCA\AppFramework\Http;
@@ -21,21 +19,16 @@ class PublishController extends Controller {
      */
     private $crateManager;
 
-
-
-    public function __construct($api, $request, $configManager, $crateManager) {
+    public function __construct($api, $request, $crateManager, $publisher) {
         parent::__construct($api, $request);
-        $config = $configManager->readConfig();
         $this->crateManager = $crateManager;
-        $sword = $config['sword'];
-        $this->publisher = new SwordConnector($sword['username'], $sword['password'], $sword['sd_uri'], $sword['obo']);
+        $this->publisher = $publisher;
     }
 
     public function getCollections() {
       \OCP\Util::writeLog('crate_it', "PublishController::getCollections()", \OCP\Util::DEBUG);
       return $this->publisher->getCollections();
     }
-
 
     /**
      * Publish crate
@@ -55,7 +48,7 @@ class PublishController extends Controller {
             $response = $this->publisher->publishCrate($package, $collection);
             $status = $response->sac_status;
             if($status == 201) {
-                $data['msg'] = "$status $crateName successfully published to $collection";
+                $data['msg'] = "$crateName successfully published to $collection";
             } else {
                 $data['msg'] = "Error: $status ".$reponse->sac_statusmessage;
             }

@@ -94,7 +94,8 @@ class Crate extends BagIt {
         // $folderpath = $node['folderpath'] ? $node['folderpath'].'/' : '';
         //$filepath = './'.$folderpath.$text;
         $filename = $node['filename'];
-        $tree = $tree."<li><a href='./$filename'>$text</a></li>";  
+        $rootfolder = $this->getRootFolderName();
+        $tree = $tree."<li><a href='./$rootfolder/$filename'>$text</a></li>";  
     }
     return $tree;
   }
@@ -199,16 +200,27 @@ class Crate extends BagIt {
     return $tmpCrate;
   }
 
+  private function getRootFolderName() {
+    // get root folder
+    $manifest = $this->getManifest();
+    $vfs = &$manifest['vfs'][0];
+    $rootfolder = $vfs['name'];  
+    \OCP\Util::writeLog("crate_it", "Crate::getRootFolderName() - $rootfolder", \OCP\Util::DEBUG);
+    return $rootfolder;
+  }
+  
   public function storeFiles() {
     \OCP\Util::writeLog("crate_it", "Crate::storeFiles() - started", \OCP\Util::DEBUG);
     $files = $this->getFilePaths();
     foreach ($files as $path) {
       $absPath = $this->getFullPath($path);
-      $this->addFile($absPath, $path);
+      $pathInsideRootFolder = $this->getRootFolderName().'/'.$path;
+      $this->addFile($absPath, $pathInsideRootFolder);
     }
     $this->update();
     \OCP\Util::writeLog("crate_it", "Crate::storeFiles() - finished", \OCP\Util::DEBUG);
   }
+  
 
   private function getFilePaths() {
     $flattened = $this->flatList();

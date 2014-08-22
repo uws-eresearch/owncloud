@@ -8,6 +8,7 @@ use \OCA\crate_it\Controller\PageController;
 use \OCA\crate_it\Controller\CrateController;
 use \OCA\crate_it\Controller\SearchController;
 use \OCA\crate_it\Controller\DownloadController;
+use \OCA\crate_it\Controller\PublishController;
 use \OCA\crate_it\Service\CrateService;
 use \OCA\crate_it\Service\SetupService;
 use \OCA\crate_it\Service\DownloadService;
@@ -66,7 +67,7 @@ class DIContainer extends BaseContainer {
         };
 
         $this['PublishController'] = function($c) {
-            return new PublishController($c['API'], $c['Request'], $c['ConfigManager']);
+            return new PublishController($c['API'], $c['Request'], $c['ConfigManager'], $c['CrateManager']);
         };
     }
 

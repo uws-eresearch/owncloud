@@ -11,6 +11,8 @@ class SwordConnector {
   private $password = NULL;
   private $sdUri = NULL;
   private $obo = NULL;
+  private static $contentType = 'application/zip';
+  private static $packagingFormat = 'http://purl.org/net/sword/package/SimpleZip';
 
   
   function __construct($username, $password, $sdUri, $obo) {
@@ -43,5 +45,10 @@ class SwordConnector {
     return $result;
   }
 
+
+  public function publishCrate($package, $collection) {
+    \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $collection)", \OCP\Util::DEBUG);
+    return $this->swordClient->deposit($collection, $this->username, $this->password, $this->obo, $package, self::$packagingFormat, self::$contentType, false);
+  }
 
 }

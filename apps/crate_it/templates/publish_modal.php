@@ -15,6 +15,7 @@
               </option>
             {% endfor %}
           </select>
+          <label style="color:red;display:none">Error: No collections available for publishing</label>
         </section>
         <div class="row publish-meta">
           <div class="col-3">

@@ -251,6 +251,14 @@ function initCrateActions() {
 
   });
 
+  if($('#publish-collection > option').length == 0) {
+    $('#publish-collection').next().css('display','inline');
+    $('#publishModal').find('.btn-primary').prop('disabled', true);
+  } else {
+    $('#publish-collection').next().css('display','none');
+    $('#publishModal').find('.btn-primary').prop('disabled', false);
+  }
+
   $('#publishModal').find('.btn-primary').click(function() {
     console.log('test');
     publishCrate($('#crates').val(), $('#publish-collection').val());

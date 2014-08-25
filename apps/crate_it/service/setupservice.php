@@ -19,10 +19,16 @@ class SetupService {
      */
     private $crate_manager;
     
-    public function __construct($api, $config_manager, $crate_manager){
+    /**
+     * @var Publisher
+     */
+    private $publisher;
+
+    public function __construct($api, $config_manager, $crate_manager, $publisher){
         $this->api = $api;
         $this->config_manager = $config_manager;
         $this->crate_manager = $crate_manager;
+        $this->publisher = $publisher;
     }
     
     // TODO: much of this could be pushed to javascript side and juse
@@ -82,10 +88,7 @@ class SetupService {
         //       (NOTE: the setup service gets called multiple times with each page load too!!)
         //       try memoizing the results or make it an ajax call
         if($sword['status'] == 'enabled') {
-            require 'apps/crate_it/lib/sword_connector.php';
-            $publisher = new \OCA\crate_it\lib\SwordConnector($sword['username'], $sword['password'], $sword['sd_uri'], $sword['obo']);
-            $params['collections'] = $publisher->getCollections();
-            // \OCP\Util::writeLog('crate_it', "Collections: ".print_r($params['collections']), \OCP\Util::DEBUG);
+            $params['collections'] = $this->publisher->getCollections();
         }
         return $params;
     }

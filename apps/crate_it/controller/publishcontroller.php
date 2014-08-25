@@ -50,9 +50,9 @@ class PublishController extends Controller {
             if($status == 201) {
                 $data['msg'] = "$crateName successfully published to $collection";
             } else {
-                $data['msg'] = "Error: $status ".$reponse->sac_statusmessage;
+                $data['msg'] = "Error: $response->sac_statusmessage ($status)";
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $status = 500;
             $data['msg'] = 'Error: '.$e->getMessage();
         }

@@ -1,6 +1,6 @@
 <?php
 
-require 'mock_util.php';
+require 'MockUtil.php';
 
 require 'lib/mint_connector.php';
 use OCA\crate_it\lib\MintConnector;

@@ -1,7 +1,8 @@
 <?php
 
 namespace OCA\crate_it\lib;
-require 'swordappv2-php-library/swordappclient.php';
+
+require '3rdparty/swordappv2-php-library/swordappclient.php';
 use \SWORDAPPClient;
 
 class SwordConnector {
@@ -11,14 +12,18 @@ class SwordConnector {
   private $password = NULL;
   private $sdUri = NULL;
   private $obo = NULL;
+  private static $contentType = 'application/zip';
+  private static $packagingFormat = 'http://purl.org/net/sword/package/SimpleZip';
 
   
-  function __construct($username, $password, $sdUri, $obo) {
+  function __construct($configManager) {
+    $config = $configManager->readConfig();
+    $sword = $config['sword'];
+    $this->username = $sword['username'];
+    $this->password = $sword['password'];
+    $this->sdUri = $sword['sd_uri'];
+    $this->obo = $sword['obo'];
     $this->swordClient = new SWORDAPPClient();
-    $this->username = $username;
-    $this->password = $password;
-    $this->sdUri = $sdUri;
-    $this->obo = $obo;
   }
   
   private function getServiceDocument() {
@@ -43,5 +48,10 @@ class SwordConnector {
     return $result;
   }
 
+
+  public function publishCrate($package, $collection) {
+    \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $collection)", \OCP\Util::DEBUG);
+    return $this->swordClient->deposit($collection, $this->username, $this->password, $this->obo, $package, self::$packagingFormat, self::$contentType, false);
+  }
 
 }

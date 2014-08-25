@@ -190,7 +190,7 @@ function initCrateActions() {
       url: c_url,
       type: 'get',
       dataType: 'json',
-      async: false,
+      async: false, // TODO: why not async?
       success: function(data) {
         manifest = data;
         reloadCrateData(data);
@@ -202,6 +202,30 @@ function initCrateActions() {
   });
 
   $('#download').click(downloadCrate);
+
+
+  var publishCrate = function(crateName, collection){
+    var c_url = OC.generateUrl('apps/crate_it/crate/publish');
+    // TODO: Delete the following, just used for testing because the test server
+    //       wont change it's url from localhost
+    // collection = collection.replace('localhost', '10.0.2.2');
+    var postData = {
+      'name': crateName, 
+      'collection': collection
+    };
+    $.ajax({
+      url: c_url,
+      type: 'post',
+      data: postData,
+      dataType: 'json',
+      success: function(data) {
+        displayNotification(data.msg);
+      },
+      error: function(data) {
+        displayError(data.statusText);
+      }
+    });
+  };
 
   $('#publish').click(function() {
     // TODO: Migrate to a single  client side shared model of the manifest
@@ -225,6 +249,20 @@ function initCrateActions() {
       $('#publish-activities').append(html);
     });
 
+  });
+
+  if($('#publish-collection > option').length == 0) {
+    $('#publish-collection').next().css('display','inline');
+    $('#publishModal').find('.btn-primary').prop('disabled', true);
+  } else {
+    $('#publish-collection').next().css('display','none');
+    $('#publishModal').find('.btn-primary').prop('disabled', false);
+  }
+
+  $('#publishModal').find('.btn-primary').click(function() {
+    console.log('test');
+    publishCrate($('#crates').val(), $('#publish-collection').val());
+    $('#publishModal').modal('hide');
   });
 
 

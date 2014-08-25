@@ -15,6 +15,7 @@
               </option>
             {% endfor %}
           </select>
+          <label style="color:red;display:none">Error: No collections available for publishing</label>
         </section>
         <div class="row publish-meta">
           <div class="col-3">
@@ -40,7 +41,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-success">Publish</button>
+        <button type="button" class="btn btn-primary">Publish</button>
       </div>
     </div>
   </div>

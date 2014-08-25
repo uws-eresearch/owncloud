@@ -77,3 +77,6 @@ $this->create('crate_it_preview', '/crate/preview')->get()->action(function($par
     App::main('CrateController', 'readmePreview', $params, new DIContainer());
 });
 
+$this->create('crate_it_publish', '/crate/publish')->post()->action(function($params) {
+    App::main('PublishController', 'publishCrate', $params, new DIContainer());
+});

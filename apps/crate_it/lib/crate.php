@@ -58,8 +58,9 @@ class Crate extends BagIt {
     $manifest = $this->getManifest();
     $manifest['crate_name'] = $this->crateName;
     $manifest['files'] = $this->flatList();
-    $manifest['created_date'] = date("Y-m-d H:i:s");
-    $manifest['created_date_formatted'] = date("F jS, Y");
+    date_default_timezone_set('Australia/Sydney');    
+    $manifest['created_date'] = date("Y-m-d H:i:s");   
+    $manifest['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
     $vfs = &$manifest['vfs'][0];
     $manifest['filetree'] = $this->buildFileTreeFromRoot($vfs);
     $git_res = $this->getVersion();

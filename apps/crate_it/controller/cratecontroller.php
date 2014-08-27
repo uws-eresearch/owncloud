@@ -24,7 +24,7 @@ class CrateController extends Controller {
     
     public function __construct($api, $request, $crate_service, $setupService) {
         parent::__construct($api, $request);
-        $setupService->loadParams();
+        $setupService->getParams();
         $this->crate_service = $crate_service;
     }
     

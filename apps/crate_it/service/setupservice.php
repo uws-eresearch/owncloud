@@ -2,6 +2,8 @@
 
 namespace OCA\crate_it\Service;
 
+
+
 class SetupService {
     
     /**
@@ -10,87 +12,83 @@ class SetupService {
     private $api;
     
     /**
-     * @var ConfigManager
-     */
-    private $config_manager;
-    
-    /**
      * @var CrateManager
      */
-    private $crate_manager;
+    private $crateManager;
     
     /**
      * @var Publisher
      */
     private $publisher;
 
-    public function __construct($api, $config_manager, $crate_manager, $publisher){
+    /**
+     * @var configParams
+     */
+    private static $params = array('description_length' => 6000, 'max_sword_mb' => 0, 'max_zip_mb' => 0,);
+
+    private static $loaded = false;
+
+
+    // TODO load all the params into an array 
+    // TODO: is $api ever used?
+    public function __construct($api, $crateManager, $publisher){
         $this->api = $api;
-        $this->config_manager = $config_manager;
-        $this->crate_manager = $crate_manager;
+        $this->crateManager = $crateManager;
         $this->publisher = $publisher;
     }
     
-    // TODO: much of this could be pushed to javascript side and juse
+
+    public function getParams() {
+        if(!self::$loaded) {
+            $this->loadParams();
+        }
+        return self::$params;
+    }
+
+    // TODO: much of this could be pushed to javascript side and just
     //       be loaded with the manifest
-    public function loadParams() {
-        $params = $this->loadConfigParams();
+    private function loadParams() {
+        $this->loadConfigParams();
+        $selectedCrate = $this->getSelectedCrate();
+        self::$params['selected_crate'] = $selectedCrate;
+        self::$params['collections'] = $this->publisher->getCollections();
+        self::$params['crates'] = $this->crateManager->getCrateList();
+    }
+    
+    private function getSelectedCrate() {
         if(!isset($_SESSION['selected_crate'])) {
             $_SESSION['selected_crate'] = 'default_crate';
         }
-        $selectedCrate = $_SESSION['selected_crate']; // set by the CrateManager
-        $manifestData = $this->crate_manager->getManifestData($selectedCrate);
-        $params['creators']  = empty($manifestData['creators'])? array() : array_values($manifestData['creators']);
-        $params['activities']  = empty($manifestData['activities'])? array() : array_values($manifestData['activities']);
-        $params['description'] = $manifestData['description'];        
-        $params['selected_crate'] = $selectedCrate;
-        $params['crates'] = $this->crate_manager->getCrateList();        
-        $params['bagged_files'] = $this->crate_manager->getCrateFiles($selectedCrate);
+        return $_SESSION['selected_crate'];
+    }
+
+    private function getReleaseInfo() {
         $git = array();
         // TODO: Paramaterise the git repo
-        exec('git --git-dir=/home/devel/owncloud/.git --work-tree=/home/devel/owncloud describe --tags', $git);
-        $git = explode('-', $git[0]);
-        $params['release'] = $git[0];
-        $params['commit'] = $git[2];
-        return $params;
+        // exec('git --git-dir=/home/devel/owncloud/.git --work-tree=/home/devel/owncloud describe --tags', $git);
+        // $git = explode('-', $git[0]);
+        // $params['release'] = $git[0];
+        // $params['commit'] = $git[2];
     }
-    
-    /**
-     * Create default crate if there are no crates
-     * throws exception when fails
-     */
-    public function createDefaultCrate()
-    {
-        // TODO: I don't think this method is used anymore
-        \OCP\Util::writeLog('crate_it', "Creaeting or getting default crate", 3);
-        $this->crate_manager->createCrate("default_crate", "");
-    }
+
 
     /**
      * Read from cr8it config file and load up params
      */
-    private function loadConfigParams()
-    {
-        $params = array();
-        $config = $this->config_manager->readConfig();  
-        // init values
-        $description_length = empty($config['description_length']) ? 6000 : $config['description_length'];
-        $max_sword_mb = empty($config['max_sword_mb']) ? 0 : $config['max_sword_mb'];
-        $max_zip_mb = empty($config['max_zip_mb']) ? 0 : $config['max_zip_mb'];
-        // load up array
-        $params['description_length'] = $description_length;
-        $params['max_sword_mb'] = $max_sword_mb;
-        $params['max_zip_mb'] = $max_zip_mb;
-        $sword = $config['sword'];
-        $params['sword_status'] = $sword['status'];
-        // TODO: this is really ugly, check if collections can be made config parameters
-        //       also, this slows down page load as it has to connect to another server
-        //       (NOTE: the setup service gets called multiple times with each page load too!!)
-        //       try memoizing the results or make it an ajax call
-        if($sword['status'] == 'enabled') {
-            $params['collections'] = $this->publisher->getCollections();
+    private function loadConfigParams() {
+        $config = $this->readConfig();
+        foreach($config as $key => $value) {
+            self::$params[$key] = $value;
         }
-        return $params;
+    }
+
+    private function readConfig() {
+        $config = NULL;
+        $configFile = \OC::$SERVERROOT . '/data/cr8it_config.json';
+        if (file_exists($configFile)) {
+          $config = json_decode(file_get_contents($configFile), true); // convert it to an array.
+        }
+        return $config;
     }
 
 }

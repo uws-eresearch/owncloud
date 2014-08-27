@@ -44,12 +44,10 @@
 
     <div class="pull-right">
 
-      {% if sword_status == "enabled" %}
-        <a id="publish" class="button" data-toggle="modal" data-target="#publishModal">
-          <i class="fa fa-envelope"></i>
-          Publish
-        </a>
-      {% endif %}
+      <a id="publish" class="button" data-toggle="modal" data-target="#publishModal">
+        <i class="fa fa-envelope"></i>
+        Publish
+      </a>
 
       <a id="check" class="button" data-toggle="modal" data-target="#checkCrateModal">
          <i class="fa fa-check-circle"></i>

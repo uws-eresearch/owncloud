@@ -30,8 +30,8 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
         }
         drawList($resultsUl, searchResultsList, 'fa-plus');
       },
-      error: function(data) {
-        $notification.text(data.statusText);
+      error: function(jqXHR) {
+        $notification.text(jqXHR.responseJSON.msg);
       }
     });
   };

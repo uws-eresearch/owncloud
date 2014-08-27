@@ -41,9 +41,9 @@ class SearchController extends Controller {
         $keywords = $this->params('keywords');
         try {
             $result = $this->searchProvider->search($type, $keywords);
-            $response = new JSONResponse ($result, 200);
-        } catch (Exception $e) {
-            $reponse = new JSONResponse (array('statusText' => $e-getMessage()), 404);
+            $response = new JSONResponse($result, 200);
+        } catch (\Exception $e) {
+            $response = new JSONResponse(array('msg' => $e->getMessage()), 500);
         }
         return $response;
     }

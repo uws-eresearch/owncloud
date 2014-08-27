@@ -15,7 +15,7 @@ use \OCA\crate_it\Service\DownloadService;
 use \OCA\crate_it\Manager\CrateManager;
 use \OCA\crate_it\Manager\ConfigManager;
 
-require 'lib\sword_connector.php';
+require 'lib/sword_connector.php';
 use \OCA\crate_it\lib\SwordConnector;
 
 
@@ -46,7 +46,7 @@ class DIContainer extends BaseContainer {
         /* Services */
 
         $this['SetupService'] = function($c) {
-            return new SetupService($c['API'], $c['ConfigManager'], $c['CrateManager'], $c['SwordConnector']);  
+            return new SetupService($c['API'], $c['CrateManager'], $c['SwordConnector']);  
         };
 
         $this['CrateService'] = function($c) {

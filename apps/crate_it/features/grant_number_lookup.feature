@@ -140,11 +140,25 @@ Feature: Search, add and remove grant number
         | add-grant-institution | College University |
         | add-grant-title       | Monkey Physics     |
       When I press "Add" on the popup dialog
+      # duplicate an entry
+      And I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123456             |
+        | add-grant-year        | 2009               |
+        | add-grant-institution | College University |
+        | add-grant-title       | Monkey Physics     |
+      And I press "Add" on the popup dialog
       Then I should see these entries in the selected grant number list
       | grant    | year | title             |
       | 123123   | 2007 | Anti Aging Creams |
       | 123456   | 2009 | Monkey Physics    |
+      | 123456   | 2009 | Monkey Physics    |
       When I remove grant "123456" from the selected list
+      Then I should see these entries in the selected grant number list
+      | grant    | year | title             |
+      | 123123   | 2007 | Anti Aging Creams |
+      | 123456   | 2009 | Monkey Physics    |
+      And I remove grant "123456" from the selected list
       Then I should see these entries in the selected grant number list
       | grant    | year | title             |
       | 123123   | 2007 | Anti Aging Creams |
@@ -214,6 +228,14 @@ Feature: Search, add and remove grant number
           | add-grant-institution | The Ponds Institute |
           | add-grant-title       | Anti Aging Creams   |
         When I press "Add" on the popup dialog
+        # Duplicate entry
+        When I click on "add-activity"
+        Then I fill in the following:
+          | add-grant-number      | 123123              |
+          | add-grant-year        | 2007                |
+          | add-grant-institution | The Ponds Institute |
+          | add-grant-title       | Anti Aging Creams   |
+        When I press "Add" on the popup dialog
         When I edit grant "123123"
         Then I fill in the following:
           | edit-activities-grant_number| 123456             |
@@ -223,6 +245,7 @@ Feature: Search, add and remove grant number
         When I press "Save" on the popup dialog
         Then I should see these entries in the selected grant number list
           | grant    | year | title             |
+          | 123123   | 2007 | Anti Aging Creams |
           | 123456   | 2009 | Monkey Physics    |
 
       #CRATEIT-185

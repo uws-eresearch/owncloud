@@ -109,14 +109,19 @@ Feature: Search, add and remove grant number
         | name       | email          |
         | Joe Bloggs | joe@bloggs.org |
     
-    #CRATEIT-177
+    #CRATEIT-177, CRATEIT-198
     Scenario: A user can remove a manually added creator
       When I click on "add-creator"
       And I fill in the following:
         | add-creator-name  | Joe Bloggs     |
         | add-creator-email | joe@bloggs.org |
       Then I press "Add" on the popup dialog
-      When I click on "add-creator"
+      And I click on "add-creator"
+      And I fill in the following:
+        | add-creator-name  | Elvis               |
+        | add-creator-email | elvis@graceland.org |
+      Then I press "Add" on the popup dialog
+      And I click on "add-creator"
       And I fill in the following:
         | add-creator-name  | Elvis               |
         | add-creator-email | elvis@graceland.org |
@@ -124,11 +129,17 @@ Feature: Search, add and remove grant number
       Then I should see these entries in the selected creators list
         | name       | email               |
         | Joe Bloggs | joe@bloggs.org      |   
+        | Elvis      | elvis@graceland.org |        
         | Elvis      | elvis@graceland.org |
       When I remove creator "elvis@graceland.org" from the selected list
       Then I should see these entries in the selected creators list
         | name       | email               |
-        | Joe Bloggs | joe@bloggs.org      |
+        | Joe Bloggs | joe@bloggs.org      |          
+        | Elvis      | elvis@graceland.org |
+      And I remove creator "elvis@graceland.org" from the selected list
+      Then I should see these entries in the selected creators list
+        | name       | email               |
+        | Joe Bloggs | joe@bloggs.org      |   
 
       #CRATEIT-177
       Scenario: A manually added creator name is mandatory

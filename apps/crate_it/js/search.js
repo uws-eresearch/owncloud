@@ -169,7 +169,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       return recordString;
     };
     recordString = getRecordString(record);
-    return hashString(recordString);
+    return hashString(recordString + String($.now()));
   }
 
   this.addRecord = function(overrides) {

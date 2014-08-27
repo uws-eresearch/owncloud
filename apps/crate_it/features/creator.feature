@@ -109,7 +109,7 @@ Feature: Search, add and remove grant number
         | name       | email          |
         | Joe Bloggs | joe@bloggs.org |
     
-    #CRATEIT-177, CRATEIT-198
+    #CRATEIT-177, CRATEIT-196
     Scenario: A user can remove a manually added creator
       When I click on "add-creator"
       And I fill in the following:

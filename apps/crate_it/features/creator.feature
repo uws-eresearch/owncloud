@@ -186,12 +186,19 @@ Feature: Search, add and remove grant number
           | name       | email               |
           | Elvis      | elvis@graceland.org |
 
-      #CRATEIT-183
+      #CRATEIT-183, CRATEIT-198
       Scenario: A user can edit a manually added creator
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
           | add-creator-email | joe@bloggs.org |
+        Then I press "Add" on the popup dialog
+        # duplicate an entry
+        And I click on "add-creator"
+        And I fill in the following:
+          | add-creator-name  | Joe Bloggs     |
+          | add-creator-email | joe@bloggs.org |
+        # create a new entry
         Then I press "Add" on the popup dialog
         When I edit creator "joe@bloggs.org"
         And I fill in the following:
@@ -200,6 +207,7 @@ Feature: Search, add and remove grant number
         Then I press "Save" on the popup dialog
         Then I should see these entries in the selected creators list
           | name       | email               |
+          | Joe Bloggs | joe@bloggs.org      |
           | Elvis      | elvis@graceland.org |
 
       #CRATEIT-183

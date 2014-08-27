@@ -141,7 +141,7 @@
                             </tr>
                             <tr>
                                 <td>Software Version</td>
-                                <td property="http://schema.org/softwareVersion">v0.1</td>
+                                <td property="http://schema.org/softwareVersion">{{ version }}</td>
                             </tr>
                             <tr>
                                 <td>URLs</td>

@@ -62,9 +62,18 @@ class Crate extends BagIt {
     $manifest['created_date_formatted'] = date("F jS, Y");
     $vfs = &$manifest['vfs'][0];
     $manifest['filetree'] = $this->buildFileTreeFromRoot($vfs);
+    $git_res = $this->getVersion();
+    $release = $git_res[0];
+    $commit = $git_res[2];
+    $manifest['version'] = "Release $release at commit $commit.";
     $htmlStr = $twig->render('readme.php', $manifest);
     $readmePath = $this->getDataDirectory()."/README.html";
     $this->writeFile($readmePath, $htmlStr);
+  }
+
+  private function getVersion() {
+    exec('git --git-dir=/home/devel/owncloud/.git --work-tree=/home/devel/owncloud describe --tags', $git);
+    return explode('-', $git[0]);
   }
   
   private function buildFileTreeFromRoot($rootnode) {

@@ -98,7 +98,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
 
   this.getSelected = function getSelected() {
     return selectedList.slice();
-  }
+  };
 
   function toggle(id) {
     var faIcon = 'fa-minus';
@@ -154,7 +154,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
         hash |= 0; // Convert to 32bit integer
       }
       return hash;
-    }
+    };
 
     var getRecordString = function(record) {
       var recordString;
@@ -167,7 +167,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
         }
       }
       return recordString;
-    }
+    };
     recordString = getRecordString(record);
     return hashString(recordString);
   }
@@ -179,7 +179,7 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     selectedList.push(record);
     var html = renderRecord(record, 'fa-minus');
     update(record, html, null, $selectedUl);
-  }
+  };
 
   function displayEditRecordModal(id) {
     var record = getRecord(id, 'selected');

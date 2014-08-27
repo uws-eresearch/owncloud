@@ -15,7 +15,7 @@ use \OCA\crate_it\Service\DownloadService;
 use \OCA\crate_it\Manager\CrateManager;
 use \OCA\crate_it\Manager\ConfigManager;
 
-require 'lib\sword_connector.php';
+require 'lib/sword_connector.php';
 use \OCA\crate_it\lib\SwordConnector;
 
 

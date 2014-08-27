@@ -90,10 +90,11 @@ class Crate extends BagIt {
         $tree = $tree.'</ul>';
     }
     else {
-        $text = $node['name'];
-        // $folderpath = $node['folderpath'] ? $node['folderpath'].'/' : '';
-        //$filepath = './'.$folderpath.$text;
-        $filename = $node['filename'];
+        // substitute ' ' with '_', since the downloaded files don't have
+        // ' ' in the name
+        $text = str_replace(' ', '_', $node['name']);
+        // change the filename part of the path to the 'underscored' version
+        $filename = str_replace($node['name'], $text, $node['filename']);
         $rootfolder = $this->getRootFolderName();
         $tree = $tree."<li><a href='./$rootfolder/$filename'>$text</a></li>";  
     }

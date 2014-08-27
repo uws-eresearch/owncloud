@@ -170,8 +170,13 @@ class Crate extends BagIt {
     $files = $this->getAllFilesAndFolders();
     \OCP\Util::writeLog('crate_it', "Crate::getSize() - Flat list: ".sizeof($files), \OCP\Util::DEBUG);
     $total = 0;
+    $checked = array();
     foreach($files as $file) {
-      $total+= filesize($file);
+      \OCP\Util::writeLog('crate_it', "Crate::getSize() - checking: ".$file, \OCP\Util::DEBUG);        
+      if (!in_array($file , $checked)) {
+          $total+= filesize($file);
+      } 
+      $checked[] = $file;
     }
     return $total;
   }

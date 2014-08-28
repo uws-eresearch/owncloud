@@ -42,22 +42,36 @@ class SwordConnector {
     $result = array();
     foreach($serviceDocuments as $endpoint => $serviceDocument) {
       if($serviceDocument->sac_statusmessage == 'OK') {
+        $collections = array();
         foreach($serviceDocument->sac_workspaces as $workspace) {
           foreach($workspace->sac_collections as $collection) {
-            $result["$endpoint: $workspace->sac_workspacetitle - $collection->sac_colltitle"] = $collection->sac_href;
+            $collections["$endpoint: $workspace->sac_workspacetitle - $collection->sac_colltitle"] = $collection->sac_href;
           }
         }
+        $result[$endpoint] = $collections;
       } else {
         // TODO: Log error and throw an appropriate exception
       }
     }
-    // var_dump($result);
     return $result;
   }
 
-  public function publishCrate($package, $collection) {
-    \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $collection)", \OCP\Util::DEBUG);
-    return $this->swordClient->deposit($collection, $this->username, $this->password, $this->obo, $package, self::$packagingFormat, self::$contentType, false);
+  public function publishCrate($package, $endpoint, $collection) {
+    \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $endpoint, $collection)", \OCP\Util::DEBUG);
+    $endpoint = $this->getEndpoint($endpoint);
+    // var_dump($endpoint);
+    return $this->swordClient->deposit($collection, $endpoint['username'], $endpoint['password'], $endpoint['obo'], $package, self::$packagingFormat, self::$contentType, false);
+  }
+
+  private function getEndpoint($name) {
+    $result = array();
+    foreach($this->endpoints as $endpoint) {
+      if($endpoint['name'] == $name) {
+        $result = $endpoint;
+        break;
+      }
+    }
+    return $result;
   }
 
 }

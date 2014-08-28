@@ -204,13 +204,14 @@ function initCrateActions() {
   $('#download').click(downloadCrate);
 
 
-  var publishCrate = function(crateName, collection){
+  var publishCrate = function(crateName, endpoint, collection){
     var c_url = OC.generateUrl('apps/crate_it/crate/publish');
     // TODO: Delete the following, just used for testing because the test server
     //       wont change it's url from localhost
     // collection = collection.replace('localhost', '10.0.2.2');
     var postData = {
-      'name': crateName, 
+      'name': crateName,
+      'endpoint': endpoint,
       'collection': collection
     };
     $.ajax({
@@ -260,8 +261,10 @@ function initCrateActions() {
   }
 
   $('#publishModal').find('.btn-primary').click(function() {
-    console.log('test');
-    publishCrate($('#crates').val(), $('#publish-collection').val());
+    var crateName = $('#crates').val();
+    var endpoint = $('#publish-collection option:selected').attr('data-endpoint');
+    var collection = $('#publish-collection').val();
+    publishCrate(crateName, endpoint, collection);
     $('#publishModal').modal('hide');
   });
 

@@ -9,10 +9,12 @@
         <section class="publish-body">
           <h3>Select Collection</h3>
           <select id="publish-collection">
-            {% for collection, href in collections %}
-              <option value="{{ href }}">
-                {{ collection }}
-              </option>
+            {% for endpoint, settings in collections %}
+              {% for collection, href in settings %}
+                <option value="{{ href }}" data-endpoint="{{ endpoint }}">
+                  {{ collection }}
+                </option>
+              {% endfor %}
             {% endfor %}
           </select>
           <label style="color:red;display:none">Error: No collections available for publishing</label>

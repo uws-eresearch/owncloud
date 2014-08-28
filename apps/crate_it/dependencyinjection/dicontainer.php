@@ -72,7 +72,7 @@ class DIContainer extends BaseContainer {
         };
 
         $this['PublishController'] = function($c) {
-            return new PublishController($c['API'], $c['Request'], $c['CrateManager'], $c['SwordConnector']);
+            return new PublishController($c['API'], $c['Request'], $c['CrateManager'], $c['SetupService'], $c['SwordConnector']);
         };
     }
 

@@ -30,3 +30,24 @@ Feature: Publish crates to an endpoint
     And I should see "123123"
     And I should see "2007"
     And I should see "Anti Aging Creams"
+
+    #CRATEIT-59
+    Scenario: A user sees a message confirming a successful publish
+      Given that I can publish a crate
+      When I click on "publish"
+      And I press "Publish" on the popup dialog
+      Then I should see "default_crate successfully published to test collection"
+
+    #CRATEIT-59
+    Scenario: A user can cancel publishing a crate
+      Given that I can publish a crate
+      When I click on "publish"
+      And I press "Cancel" on the popup dialog
+      Then I should not see "default_crate successfully published to test collection"
+
+    #CRATEIT-59
+    Scenario: A user sees an error message if there were problems publishing a crate
+      Given that I can not publish a crate
+      When I click on "publish"
+      And I press "Publish" on the popup dialog
+      Then I should see "Error: there were problems zipping the crate"

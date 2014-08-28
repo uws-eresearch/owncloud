@@ -1278,6 +1278,42 @@ JS;
         throw new Exception('Page not ready after '.($timeout/1000000).' seconds');
     }
 
+    /**
+     * @Given /^that I can publish a crate$/
+     */
+    public function thatICanPublishACrate() {
+        $js = <<<JS
+var c_url = OC.generateUrl('apps/crate_it/crate/publish');                     
+$.mockjax({
+    url: c_url,
+    type: 'post',
+    dataType: 'json',
+    responseText : {"msg":"default_crate successfully published to test collection"}
+  });
+JS;
+        $this->getSession()->executeScript($js);
+        $this->waitForPageToLoad();
+    }
+
+    /**
+     * @Given /^that I can not publish a crate$/
+     */
+    public function thatICanNotPublishACrate() {
+        $js = <<<JS
+var c_url = OC.generateUrl('apps/crate_it/crate/publish');                     
+$.mockjax({
+    url: c_url,
+    type: 'post',
+    dataType: 'json',
+    status: 500,
+    responseText : {"msg":"Error: there were problems zipping the crate"}
+  });
+JS;
+        $this->getSession()->executeScript($js);
+        $this->waitForPageToLoad();
+    }
+
+
     private function exec_sh_command($command) {
         if(getenv('TEST_ENV') == 'vagrant') {
             $command = self::$ssh_command."'$command'";

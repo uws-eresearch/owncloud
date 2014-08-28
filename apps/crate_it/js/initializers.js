@@ -222,8 +222,8 @@ function initCrateActions() {
       success: function(data) {
         displayNotification(data.msg);
       },
-      error: function(data) {
-        displayError(data.statusText);
+      error: function(jqXHR) {
+        displayNotification(jqXHR.responseJSON.msg);
       }
     });
   };

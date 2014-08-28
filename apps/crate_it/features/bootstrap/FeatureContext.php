@@ -1286,6 +1286,34 @@ JS;
         }
         exec($command);
     }
+    
+    /**
+     * @Given /^I have these files within the root folder$/
+     */
+    public function iHaveTheseFilesWithinTheRootFolder(TableNode $table)
+    {
+        $rows = $table->getHash();
+        foreach ($rows as $row)
+        {
+            $filename = $row['filename'];
+            $size = $row['size_in_bytes'];
+            $filepath = self::$file_root.$filename;
+            $command = "dd if=/dev/zero of=$filepath bs=$size count=1";
+            $this->exec_sh_command($command);
+        }
+    }
+
+    /**
+     * @Then /^the selected crate should have size "([^"]*)"$/
+     */
+    public function theSelectedCrateShouldHaveSize($arg1)
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//*[@id="crate_size_human"]';       
+        $el = $page->find('xpath', $xpath);
+        $size = $el->getHtml();
+        assertEquals($size, $arg1);
+    }
 
 }
 

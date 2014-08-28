@@ -26,18 +26,13 @@ class PageController extends Controller {
     public function index() {       
         \OCP\Util::writeLog('crate_it', "PageController::index()", \OCP\Util::DEBUG);         
         try {
-            $model = $this->setUpParams();
+            $model = $this->setup_service->getParams();
             return $this->render('index', $model);
         } catch (Exception $e) {
             // TODO handle exception
             \OCP\Util::writeLog('crate_it', "ERROR: " .$e->getMessage(), \OCP\Util::DEBUG);
         }
         
-    }
-    
-    private function setUpParams() {
-        $model = $this->setup_service->loadParams();
-        return $model;                          
     }
 
 }

@@ -8,50 +8,70 @@ use \SWORDAPPClient;
 class SwordConnector {
   
   private $swordClient = NULL;
-  private $username = NULL;
-  private $password = NULL;
-  private $sdUri = NULL;
-  private $obo = NULL;
   private static $contentType = 'application/zip';
   private static $packagingFormat = 'http://purl.org/net/sword/package/SimpleZip';
+  private $endpoints;
 
   
-  function __construct($configManager) {
-    $config = $configManager->readConfig();
-    $sword = $config['sword'];
-    $this->username = $sword['username'];
-    $this->password = $sword['password'];
-    $this->sdUri = $sword['sd_uri'];
-    $this->obo = $sword['obo'];
+  function __construct() {
     $this->swordClient = new SWORDAPPClient();
   }
-  
-  private function getServiceDocument() {
-    \OCP\Util::writeLog('crate_it', "SwordConnector::getServiceDocument()", \OCP\Util::DEBUG);
-    return $this->swordClient->servicedocument($this->sdUri, $this->username, $this->password, $this->obo);
+
+
+  public function setEndpoints($endpoints) {
+    $this->endpoints = $endpoints;
   }
 
-
-  public function getCollections() {
-    \OCP\Util::writeLog('crate_it', "SwordConnector::getCollections()", \OCP\Util::DEBUG);
-    $serviceDocument = $this->getServiceDocument();
+  private function getServiceDocuments() {
+    \OCP\Util::writeLog('crate_it', "SwordConnector::getServiceDocuments()", \OCP\Util::DEBUG);
     $result = array();
-    if($serviceDocument->sac_statusmessage == 'OK') {
-      foreach($serviceDocument->sac_workspaces as $workspace) {
-        foreach($workspace->sac_collections as $collection) {
-          $result["$workspace->sac_workspacetitle - $collection->sac_colltitle"] = $collection->sac_href;
-        }
+    foreach($this->endpoints as $endpoint) {
+      if($endpoint['enabled']) {
+        $serviceDocument = $this->swordClient->servicedocument($endpoint['sd uri'], $endpoint['username'], $endpoint['password'], $endpoint['obo']);
+        $result[$endpoint['name']] = $serviceDocument;
       }
-    } else {
-      // TODO: Log error and throw an appropriate exception
     }
     return $result;
   }
 
 
-  public function publishCrate($package, $collection) {
-    \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $collection)", \OCP\Util::DEBUG);
-    return $this->swordClient->deposit($collection, $this->username, $this->password, $this->obo, $package, self::$packagingFormat, self::$contentType, false);
+  public function getCollections() {
+    \OCP\Util::writeLog('crate_it', "SwordConnector::getCollections()", \OCP\Util::DEBUG);
+    // TODO: Push SD retrieval to constructor
+    $serviceDocuments = $this->getServiceDocuments();
+    $result = array();
+    foreach($serviceDocuments as $endpoint => $serviceDocument) {
+      if($serviceDocument->sac_statusmessage == 'OK') {
+        $collections = array();
+        foreach($serviceDocument->sac_workspaces as $workspace) {
+          foreach($workspace->sac_collections as $collection) {
+            $collections["$endpoint: $workspace->sac_workspacetitle - $collection->sac_colltitle"] = $collection->sac_href;
+          }
+        }
+        $result[$endpoint] = $collections;
+      } else {
+        // TODO: Log error and throw an appropriate exception
+      }
+    }
+    return $result;
+  }
+
+  public function publishCrate($package, $endpoint, $collection) {
+    \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $endpoint, $collection)", \OCP\Util::DEBUG);
+    $endpoint = $this->getEndpoint($endpoint);
+    // var_dump($endpoint);
+    return $this->swordClient->deposit($collection, $endpoint['username'], $endpoint['password'], $endpoint['obo'], $package, self::$packagingFormat, self::$contentType, false);
+  }
+
+  private function getEndpoint($name) {
+    $result = array();
+    foreach($this->endpoints as $endpoint) {
+      if($endpoint['name'] == $name) {
+        $result = $endpoint;
+        break;
+      }
+    }
+    return $result;
   }
 
 }

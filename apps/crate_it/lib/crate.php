@@ -38,7 +38,7 @@ class Crate extends BagIt {
         )
       )
     );
-    $this->writeFile($this->manifestPath, json_encode($entry));
+    file_put_contents($this->manifestPath, json_encode($entry));
     $this->update();
   }
   
@@ -47,7 +47,7 @@ class Crate extends BagIt {
   public function getReadme($twig) {
     $this->createReadme($twig);
     $readmePath = $this->getDataDirectory()."/README.html";
-    return $this->readFile($readmePath);
+    return file_get_contents($readmePath);
   }
 
   // TODO: Attempt to get own reference to TWIG rather than have it
@@ -69,7 +69,7 @@ class Crate extends BagIt {
     $manifest['version'] = "Release $release at commit $commit.";
     $htmlStr = $twig->render('readme.php', $manifest);
     $readmePath = $this->getDataDirectory()."/README.html";
-    $this->writeFile($readmePath, $htmlStr);
+    file_put_contents($readmePath, $htmlStr);
   }
 
   private function getVersion() {
@@ -112,13 +112,13 @@ class Crate extends BagIt {
   }
 
   public function getManifest() {
-    $manifest = $this->readFile($this->manifestPath);
+    $manifest = file_get_contents($this->manifestPath);
     return json_decode($manifest, true);
   }
 
   public function setManifest($manifest) {
     $manifest = json_encode($manifest);
-    $this->writeFile($this->manifestPath, $manifest);
+    file_put_contents($this->manifestPath, $manifest);
   }
 
   public function addToCrate($path) {
@@ -326,24 +326,8 @@ class Crate extends BagIt {
     );
     return $vfsEntry;
   }
-
-  // TODO: Move to utility class
-  private function writeFile($path, $contents) {
-    \OCP\Util::writeLog('crate_it', "Crate::writeToFile(".$path.")", \OCP\Util::DEBUG);
-    $fp = fopen($path, 'w');
-    fwrite($fp, $contents);
-    fclose($fp);
-  }
-
-  // TODO: Move to utility class
-  private function readFile($path) {
-    $fp = fopen($path, 'r');
-    $contents = file_get_contents($path);
-    fclose($fp);
-    return $contents;
-  }
   
-  // TODO: Move to utility class
+  // TODO: Get rid of this and just import \OC\Files\Filesystem
   private function getFullPath($path) {
     \OCP\Util::writeLog('crate_it', "CrateManager::getFullPath(".$path.")", \OCP\Util::DEBUG);
     return \OC\Files\Filesystem::getLocalFile($path);

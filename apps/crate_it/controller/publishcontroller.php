@@ -18,13 +18,19 @@ class PublishController extends Controller {
      * @var crateManager
      */
     private $crateManager;
+    
+    /**
+     * @var loggingService
+     */
+    private $loggingService;    
 
-    public function __construct($api, $request, $crateManager, $setupService, $publisher) {
+    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService) {
         parent::__construct($api, $request);
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
         $params = $setupService->getParams();
         $publisher->setEndpoints($params['publish endpoints']['sword']);
+        $this->loggingService = $loggingService;
     }
 
     public function getCollections() {
@@ -45,13 +51,17 @@ class PublishController extends Controller {
         $crateName = $this->params('name');
         $endpoint = $this->params('endpoint');
         $collection = $this->params('collection');
+        $this->loggingService->log("Attempting to publish crate $crateName to collection: $collection");
+        $this->loggingService->logManifest($crateName);
         $package = $this->crateManager->packageCrate($crateName);
+        $this->loggingService->logPackageStructure($package);
         $data = array();
         try {
+            $this->loggingService->log("Publishing crate $crateName..");
             $response = $this->publisher->publishCrate($package, $endpoint, $collection);
             $status = $response->sac_status;
-            if($status == 201) {
-                $data['msg'] = "$crateName successfully published to $collection";
+            if($status == 201) {                
+                $data['msg'] = "$crateName successfully published to $collection";               
             } else {
                 $data['msg'] = "Error: $response->sac_statusmessage ($status)";
             }
@@ -59,6 +69,8 @@ class PublishController extends Controller {
             $status = 500;
             $data['msg'] = 'Error: '.$e->getMessage();
         }
+        $this->loggingService->log($data['msg']);
+        $this->loggingService->logPublishedDetails($crateName);
         return new JSONResponse($data, $status);
     }
 

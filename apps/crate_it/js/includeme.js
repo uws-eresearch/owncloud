@@ -489,6 +489,7 @@ function validateCrateName($input, $error, $confirm) {
 
 //TODO use something like this when the pages loads
 function reloadCrateData(manifest) {
+  updateCrateSize();
   $('#description').text(manifest['description']);
   $('#files').remove();
   $('#container').after('<div id="files"></div>');

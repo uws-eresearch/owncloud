@@ -20,9 +20,9 @@ class SearchController extends Controller {
      */
     private $searchProvider;
 
-    public function __construct($api, $request, $configManager) {
+    public function __construct($api, $request, $setupService) {
       parent::__construct($api, $request);
-      $config = $configManager->readConfig();
+      $config = $setupService->getParams();
       $this->searchProvider = new MintConnector($config['mint']['url'], new CurlRequest());
     }
 

@@ -33,20 +33,16 @@ class DIContainer extends BaseContainer {
             return new CrateManager($c['API'], $c['Twig']);
         };
         
-        $this['ConfigManager'] = function($c) {
-            return new ConfigManager();  
-        };
-        
-        /* Misc */
+        /* Connectors */
 
         $this['SwordConnector'] = function($c) {
-            return new SwordConnector($c['ConfigManager']);
+            return new SwordConnector();
         };
 
         /* Services */
 
         $this['SetupService'] = function($c) {
-            return new SetupService($c['API'], $c['CrateManager'], $c['SwordConnector']);  
+            return new SetupService($c['CrateManager'], $c['SwordConnector']);  
         };
 
         $this['CrateService'] = function($c) {
@@ -68,7 +64,7 @@ class DIContainer extends BaseContainer {
         };
 
         $this['SearchController'] = function($c) {
-            return new SearchController($c['API'], $c['Request'], $c['ConfigManager']);
+            return new SearchController($c['API'], $c['Request'], $c['SetupService']);
         };
         
         $this['DownloadController'] = function($c) {

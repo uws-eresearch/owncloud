@@ -4,7 +4,6 @@ require 'MockController.php';
 require 'MockJSONResponse.php';
 require 'MockUtil.php';
 require 'controller/publishcontroller.php';
-require 'manager/configmanager.php';
 require 'manager/cratemanager.php';
 require 'lib/sword_connector.php';
 

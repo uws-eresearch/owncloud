@@ -8,34 +8,24 @@ use \SWORDAPPClient;
 class SwordConnector {
   
   private $swordClient = NULL;
-  // private $username = NULL;
-  // private $password = NULL;
-  // private $sdUri = NULL;
-  // private $obo = NULL;
   private static $contentType = 'application/zip';
   private static $packagingFormat = 'http://purl.org/net/sword/package/SimpleZip';
-  private $swordConfig;
+  private $endpoints;
 
   
-  function __construct($configManager) {
-    $config = $configManager->readConfig();
-    $this->swordConfig = $config['publish endpoints']['sword'];
-    // $this->username = $sword['username'];
-    // $this->password = $sword['password'];
-    // $this->sdUri = $sword['sd_uri'];
-    // $this->obo = $sword['obo'];
+  function __construct() {
     $this->swordClient = new SWORDAPPClient();
   }
-  
-  // private function getServiceDocument() {
-  //   \OCP\Util::writeLog('crate_it', "SwordConnector::getServiceDocument()", \OCP\Util::DEBUG);
-  //   return $this->swordClient->servicedocument($this->sdUri, $this->username, $this->password, $this->obo);
-  // }
+
+
+  public function setEndpoints($endpoints) {
+    $this->endpoints = $endpoints;
+  }
 
   private function getServiceDocuments() {
     \OCP\Util::writeLog('crate_it', "SwordConnector::getServiceDocuments()", \OCP\Util::DEBUG);
     $result = array();
-    foreach($this->swordConfig as $endpoint) {
+    foreach($this->endpoints as $endpoint) {
       if($endpoint['enabled']) {
         $serviceDocument = $this->swordClient->servicedocument($endpoint['sd uri'], $endpoint['username'], $endpoint['password'], $endpoint['obo']);
         $result[$endpoint['name']] = $serviceDocument;
@@ -64,7 +54,6 @@ class SwordConnector {
     // var_dump($result);
     return $result;
   }
-
 
   public function publishCrate($package, $collection) {
     \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $collection)", \OCP\Util::DEBUG);

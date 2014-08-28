@@ -7,11 +7,6 @@ namespace OCA\crate_it\Service;
 class SetupService {
     
     /**
-     * @var API
-     */
-    private $api;
-    
-    /**
      * @var CrateManager
      */
     private $crateManager;
@@ -28,11 +23,7 @@ class SetupService {
 
     private static $loaded = false;
 
-
-    // TODO load all the params into an array 
-    // TODO: is $api ever used?
-    public function __construct($api, $crateManager, $publisher){
-        $this->api = $api;
+    public function __construct($crateManager, $publisher){
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
     }
@@ -45,14 +36,15 @@ class SetupService {
         return self::$params;
     }
 
-    // TODO: much of this could be pushed to javascript side and just
-    //       be loaded with the manifest
+
     private function loadParams() {
         $this->loadConfigParams();
         $selectedCrate = $this->getSelectedCrate();
         self::$params['selected_crate'] = $selectedCrate;
+        $this->publisher->setEndpoints(self::$params['publish endpoints']['sword']);
         self::$params['collections'] = $this->publisher->getCollections();
         self::$params['crates'] = $this->crateManager->getCrateList();
+        $this->getReleaseInfo();
     }
     
     private function getSelectedCrate() {
@@ -64,17 +56,14 @@ class SetupService {
 
     private function getReleaseInfo() {
         $git = array();
-        // TODO: Paramaterise the git repo
-        // exec('git --git-dir=/home/devel/owncloud/.git --work-tree=/home/devel/owncloud describe --tags', $git);
-        // $git = explode('-', $git[0]);
-        // $params['release'] = $git[0];
-        // $params['commit'] = $git[2];
+        $params = self::$params['git'];
+        exec("git --git-dir={$params['git-dir']} --work-tree={$params['work-tree']} describe --tags", $git);
+        $git = explode('-', $git[0]);
+        self::$params['release'] = $git[0];
+        self::$params['commit'] = $git[2];
     }
 
 
-    /**
-     * Read from cr8it config file and load up params
-     */
     private function loadConfigParams() {
         $config = $this->readConfig();
         foreach($config as $key => $value) {

@@ -7,11 +7,9 @@ use \OCA\AppFramework\DependencyInjection\DIContainer as BaseContainer;
 use \OCA\crate_it\Controller\PageController;
 use \OCA\crate_it\Controller\CrateController;
 use \OCA\crate_it\Controller\SearchController;
-use \OCA\crate_it\Controller\DownloadController;
 use \OCA\crate_it\Controller\PublishController;
 use \OCA\crate_it\Service\CrateService;
 use \OCA\crate_it\Service\SetupService;
-use \OCA\crate_it\Service\DownloadService;
 use \OCA\crate_it\Manager\CrateManager;
 use \OCA\crate_it\Manager\ConfigManager;
 
@@ -48,9 +46,9 @@ class DIContainer extends BaseContainer {
         $this['CrateService'] = function($c) {
             return new CrateService($c['API'], $c['CrateManager']);  
         };
-        
-         $this['DownloadService'] = function($c) {
-            return new DownloadService($c['API']);  
+
+        $this['LoggingService'] = function($c) {
+            return new LoggingService($c['API'], $c['CrateManager']);  
         };
         
         /* Controllers */
@@ -67,12 +65,9 @@ class DIContainer extends BaseContainer {
             return new SearchController($c['API'], $c['Request'], $c['SetupService']);
         };
         
-        $this['DownloadController'] = function($c) {
-            return new DownloadController($c['API'], $c['Request'], $c['DownloadService']);
-        };
 
         $this['PublishController'] = function($c) {
-            return new PublishController($c['API'], $c['Request'], $c['CrateManager'], $c['SetupService'], $c['SwordConnector']);
+            return new PublishController($c['API'], $c['Request'], $c['CrateManager'], $c['SetupService'], $c['SwordConnector'], $c['LoggingService']);
         };
     }
 

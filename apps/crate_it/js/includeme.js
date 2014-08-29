@@ -38,6 +38,7 @@ function indentTree() {
 
 function attachModalHandlers($modal, confirmCallback) {
   var $confirm = $modal.find('.btn-primary');
+  var confirmDisabled = $confirm.prop('disabled');
 
   var clearInput = function() {
     var $input = $modal.find('input');
@@ -48,11 +49,11 @@ function attachModalHandlers($modal, confirmCallback) {
     if ($label) {
       $label.hide();
     }
-
   };
 
   $confirm.click(function() {
     confirmCallback();
+    $confirm.prop('disabled', confirmDisabled);
     $modal.modal('hide');
   });
 

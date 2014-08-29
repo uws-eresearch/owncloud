@@ -55,7 +55,7 @@
       </a>  
       
       <div class="btn-group">      
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <button type="button" class="dropdown-toggle" data-toggle="dropdown">
           <i class="fa fa-download"></i>
           Download
         </button>

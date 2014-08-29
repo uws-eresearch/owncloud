@@ -78,9 +78,9 @@ CrateIt.Validation = {
         }
       }
       if (valid) {
-        $submit.removeAttr('disabled');
+        $submit.prop('disabled', false);
       } else {
-        $submit.attr('disabled', 'disabled');
+        $submit.prop('disabled', true);
       }
     }
 

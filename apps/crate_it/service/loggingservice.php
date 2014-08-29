@@ -28,7 +28,7 @@ class LoggingService {
     }
     
     public function logManifest($crateName) {        
-        $manifest = $this->crateManager->getManifestData($crateName);
+        $manifest = $this->crateManager->getCrate($crateName)->getManifestFileContent();
         $text = $this->prettyPrint($manifest);
         $this->addToLog("Manifest JSON for crate '$crateName':");
         $this->addToLog($text);
@@ -120,7 +120,7 @@ class LoggingService {
                 $in_escape = true;
             }
             if( $new_line_level !== NULL ) {
-                $result .= "\n".str_repeat( "\t", $new_line_level );
+                $result .= "\n".str_repeat( "  ", $new_line_level );
             }
             $result .= $char.$post;
         }

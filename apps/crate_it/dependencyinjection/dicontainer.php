@@ -10,6 +10,7 @@ use \OCA\crate_it\Controller\SearchController;
 use \OCA\crate_it\Controller\PublishController;
 use \OCA\crate_it\Service\CrateService;
 use \OCA\crate_it\Service\SetupService;
+use \OCA\crate_it\Service\LoggingService;
 use \OCA\crate_it\Manager\CrateManager;
 use \OCA\crate_it\Manager\ConfigManager;
 

@@ -403,9 +403,9 @@ function initSearchHandlers() {
   addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Validation.RequiredValidator('Name'));
   addCreatorValidator.addValidator($('#add-creator-name'), new CrateIt.Validation.MaxLengthValidator('Name', 256));
 
-  var optionalEmailValidator = new CrateIt.Validation.OptionalValidator(new CrateIt.Validation.EmailValidator());
+  addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Validation.RequiredValidator('Email'));
   addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Validation.MaxLengthValidator('Email', 128));
-  addCreatorValidator.addValidator($('#add-creator-email'), optionalEmailValidator);
+  addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Validation.EmailValidator());
 
   // TODO: this doesn't need to be dynamically attached, maybe create a second helper
   $('#add-creator').click(function() {

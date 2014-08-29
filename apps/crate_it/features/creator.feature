@@ -155,15 +155,13 @@ Feature: Search, add and remove grant number
         Then I should see "Name must not be more than 256 characters"
         And the "Add" button in the popup dialog should be disabled
 
-      #CRATEIT-177
-      Scenario: A manually added creator email is optional
+      #CRATEIT-197
+      Scenario: A manually added creator email is mandatory
         When I click on "add-creator"
         And I fill in "add-creator-name" with "Elvis"
         And I fill in "add-creator-email" with "  "
-        Then I press "Add" on the popup dialog
-        Then I should see these entries in the selected creators list
-        | name  | email |
-        | Elvis |       |
+        Then I should see "Email is required"
+        And the "Add" button in the popup dialog should be disabled
 
       #CRATEIT-177
       Scenario: A manually added creator email has a maximum length of 128 characters

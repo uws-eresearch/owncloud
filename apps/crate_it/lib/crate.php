@@ -336,5 +336,9 @@ class Crate extends BagIt {
   private function getAbsolutePath($root, $basename) {
     return $root.'/'.$basename;
   }
+  
+  public function getManifestShaFilePath() {
+      return $this->manifest->getFileName();
+  }
 
 }

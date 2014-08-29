@@ -54,23 +54,26 @@ class PublishController extends Controller {
         $this->loggingService->log("Attempting to publish crate $crateName to collection: $collection");
         $this->loggingService->logManifest($crateName);
         $package = $this->crateManager->packageCrate($crateName);
-        $this->loggingService->logPackageStructure($package);
+        $zipname = basename($package);
+        $this->loggingService->log("Zipped content into '$zipname'");
         $data = array();
         try {
-            $this->loggingService->log("Publishing crate $crateName..");
+            $this->loggingService->log("Publishing crate $crateName ($zipname)..");
             $response = $this->publisher->publishCrate($package, $endpoint, $collection);
             $status = $response->sac_status;
             if($status == 201) {                
-                $data['msg'] = "$crateName successfully published to $collection";               
+                $data['msg'] = "$crateName successfully published to $collection";  
+                $this->loggingService->log($data['msg']);
+                $this->loggingService->logPublishedDetails($package, $crateName);             
             } else {
                 $data['msg'] = "Error: $response->sac_statusmessage ($status)";
+                 $this->loggingService->log($data['msg']);
             }
         } catch (\Exception $e) {
             $status = 500;
             $data['msg'] = 'Error: '.$e->getMessage();
+            $this->loggingService->log($data['msg']);
         }
-        $this->loggingService->log($data['msg']);
-        $this->loggingService->logPublishedDetails($crateName);
         return new JSONResponse($data, $status);
     }
 

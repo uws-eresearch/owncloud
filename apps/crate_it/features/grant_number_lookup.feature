@@ -387,3 +387,15 @@ Feature: Search, add and remove grant number
         And I fill in "edit-activities-title" with a long string of 257 characters
         Then I should see "Title must not be more than 256 characters"
         And the "Save" button in the popup dialog should be disabled
+
+    #CRATEIT-199
+    Scenario: A manually added a grant's fields are still mandatory after a previous add
+      When I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123123              |
+        | add-grant-year        | 2007                |
+        | add-grant-institution | The Ponds Institute |
+        | add-grant-title       | Anti Aging Creams   |
+      When I press "Add" on the popup dialog
+      When I click on "add-activity"
+      Then the "Add" button in the popup dialog should be disabled

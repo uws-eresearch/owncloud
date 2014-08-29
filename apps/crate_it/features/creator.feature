@@ -308,3 +308,12 @@ Feature: Search, add and remove grant number
           | name       | email               |
           | Elvis      | elvis@graceland.org |
 
+    #CRATEIT-199
+    Scenario: A manually added a creators's fields are still mandatory after a previous add
+      When I click on "add-creator"
+      Then I fill in the following:
+        | add-creator-name  | Joe Bloggs     |
+        | add-creator-email | joe@bloggs.org |
+      When I press "Add" on the popup dialog
+      When I click on "add-creator"
+      Then the "Add" button in the popup dialog should be disabled

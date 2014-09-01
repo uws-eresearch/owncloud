@@ -51,3 +51,14 @@ Feature: Publish crates to an endpoint
       When I click on "publish"
       And I press "Publish" on the popup dialog
       Then I should see "Error: there were problems zipping the crate"
+
+    #CRATEIT-59
+    Scenario: Publishing a crate checks for consistency
+      Given I have no files
+      And I have file "file.txt" within the root folder
+      And I go to the files page
+      When I add "file.txt" to the current crate
+      And I have no files
+      And I go to the crate_it page
+      When I click on "publish"
+      Then I should see "The following item no longer exists"

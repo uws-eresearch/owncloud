@@ -38,8 +38,10 @@
             </ul>
           </div>
         </div>
-
-
+        <div>
+          <span id="publish-consistency"></span>
+          <table id="publish-consistency-table" class="table table-striped"></table>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

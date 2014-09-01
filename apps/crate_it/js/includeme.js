@@ -82,7 +82,7 @@ function buildFileTree(data) {
       return 'url(' + OC.filePath('crate_it', 'img', 'crate.png') + ')';
     } else if (node.folder || node.id == 'folder') {
       icon = 'folder';
-    } else {
+    } else if(mime) {
       var mime_base = node.mime.split('/')[0];
       var mime = node.mime.replace(/\//, '-');
       if ($.inArray(mime, icon_set) > 0) {
@@ -90,6 +90,8 @@ function buildFileTree(data) {
       } else if ($.inArray(mime_base, icon_set) > 0) {
         icon = mime_base;
       }
+    } else {
+      icon = 'file';
     }
     return 'url(' + OC.imagePath('core', 'filetypes/' + icon + '.svg') + ')';
   };

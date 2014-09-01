@@ -59,7 +59,6 @@ function initCrateActions() {
               res = data.result;
               var key;
               for (key in res) {
-                // newRow = '<tr><td>' + key + '</td><td>' + res[key] + '</td></tr>';
                 newRow = '<tr><td>' + key + '</td>/tr>';
                  $("#check-results-table").last().append(newRow); 
               }
@@ -231,11 +230,31 @@ function initCrateActions() {
   $('#publish').click(function() {
     // TODO: Migrate to a single  client side shared model of the manifest
     // TODO: let this be handled by the search managers perhaps?
-
-    $('#publish-creators').children().remove();
+    $('#publish-consistency').text('');
+    $('#publish-consistency-table').empty();
+    var c_url = OC.generateUrl('apps/crate_it/crate/check');
+    $.ajax({
+        url: c_url,
+        type: 'get',
+        dataType: 'json',
+        async: false,
+        success: function(data) {
+          var inconsistencies = Object.keys(data.result);
+          if(inconsistencies.length > 0) {
+            $('#publish-consistency').text(data.msg);
+            for(var i = 0; i < inconsistencies.length ; i++) {
+              $("#publish-consistency-table").last().append('<tr><td>' + inconsistencies[i] + '</td>/tr>'); 
+            }
+          }
+        },
+        error: function(jqXHR) {
+          $('#publish-consistency').text('Unable ot determine crate consistency');
+        }
+    });
     
     $('#publish-description').text($('#description').text());
 
+    $('#publish-creators').children().remove();
     // TODO: create proper render functions
     var records = CreatorSearchManager.getSelected();
     records.forEach(function(record){

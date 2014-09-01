@@ -219,10 +219,10 @@ function initCrateActions() {
       data: postData,
       dataType: 'json',
       success: function(data) {
-        displayNotification(data.msg);
+        displayNotification(data.msg, 6000);
       },
       error: function(jqXHR) {
-        displayNotification(jqXHR.responseJSON.msg);
+        displayNotification(jqXHR.responseJSON.msg, 6000);
       }
     });
   };

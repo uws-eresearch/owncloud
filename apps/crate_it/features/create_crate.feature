@@ -84,3 +84,10 @@ Feature: Create and select a new crate
 	  And I click the new crate button
     Then the create crate modal should be clear of input and errors
   
+  #CRATEIT-199
+  Scenario: Create button is disabled after a previous cancel
+    When I click the new crate button
+    And I fill in "New Crate Name" with "default_crate"
+    And I press "Cancel" on the popup dialog
+    And I click the new crate button
+    Then the "Create" button in the popup dialog should be disabled

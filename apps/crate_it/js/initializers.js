@@ -147,6 +147,7 @@ function initCrateActions() {
     $('#crate_input_description').val('');
     $("#crate_name_validation_error").hide();
     $("#crate_description_validation_error").hide();
+    $(this).find('.btn-primary').prop('disabled', true);
   });
 
   $('#clearCrateModal').find('.btn-primary').click(function() {

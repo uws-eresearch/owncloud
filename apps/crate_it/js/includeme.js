@@ -53,12 +53,13 @@ function attachModalHandlers($modal, confirmCallback) {
 
   $confirm.click(function() {
     confirmCallback();
-    $confirm.prop('disabled', confirmDisabled);
     $modal.modal('hide');
   });
 
+
   $modal.on('hide.bs.modal', function() {
     $confirm.off('click');
+    $confirm.prop('disabled', confirmDisabled);
     clearInput();
   });
 

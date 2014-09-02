@@ -399,3 +399,15 @@ Feature: Search, add and remove grant number
       When I press "Add" on the popup dialog
       When I click on "add-activity"
       Then the "Add" button in the popup dialog should be disabled
+
+    #CRATEIT-199
+    Scenario: A manually added a grant's fields are still mandatory after a previous cancel
+      When I click on "add-activity"
+      Then I fill in the following:
+        | add-grant-number      | 123123              |
+        | add-grant-year        | 2007                |
+        | add-grant-institution | The Ponds Institute |
+        | add-grant-title       | Anti Aging Creams   |
+      When I press "Cancel" on the popup dialog
+      When I click on "add-activity"
+      Then the "Add" button in the popup dialog should be disabled

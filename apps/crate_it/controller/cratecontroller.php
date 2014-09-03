@@ -225,39 +225,4 @@ class CrateController extends Controller {
         return new TextResponse($readme, 'html');
     }
 
-
-    /**
-     * Check crate 
-     *
-     * @Ajax
-     * @CSRFExemption
-     * @IsAdminExemption
-     * @IsSubAdminExemption
-     */
-    public function checkCrate() {
-        \OCP\Util::writeLog('crate_it', "CrateController::checkCrate()", \OCP\Util::DEBUG);
-        try {
-            $selected_crate = $_SESSION['selected_crate'];
-            $result = $this->crate_service->checkCrate($selected_crate);
-            if (empty($result)) {
-                $msg = 'All items are valid.';
-            }
-            else if (sizeof($result) === 1) {
-                $msg = 'The following item no longer exists:';
-            }
-            else {
-                $msg = 'The following items no longer exist:';
-            }
-            return new JSONResponse(
-                array('msg' => $msg, 
-                      'result' => $result), 
-                200
-            );
-        } catch (Exception $e) {
-            return new JSONResponse (
-                array ($e->getMessage(), 'error' => $e),
-                $e->getCode()
-            );
-        }
-    }
 }

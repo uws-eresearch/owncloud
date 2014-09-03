@@ -8,6 +8,7 @@ use \OCA\crate_it\Controller\PageController;
 use \OCA\crate_it\Controller\CrateController;
 use \OCA\crate_it\Controller\SearchController;
 use \OCA\crate_it\Controller\PublishController;
+use \OCA\crate_it\Controller\CrateCheckController;
 use \OCA\crate_it\Service\CrateService;
 use \OCA\crate_it\Service\SetupService;
 use \OCA\crate_it\Service\LoggingService;
@@ -69,6 +70,10 @@ class DIContainer extends BaseContainer {
 
         $this['PublishController'] = function($c) {
             return new PublishController($c['API'], $c['Request'], $c['CrateManager'], $c['SetupService'], $c['SwordConnector'], $c['LoggingService']);
+        };
+        
+        $this['CrateCheckController'] = function($c) {
+            return new CrateCheckController($c['API'], $c['Request'], $c['CrateService'], $c['LoggingService']);
         };
     }
 

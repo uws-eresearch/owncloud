@@ -167,4 +167,9 @@ class CrateManager {
         return $res;
     }
     
+    public function getManifestFileContent($crateName) {
+        $crate = $this->getCrate($crateName);
+        return $crate->getManifestFileContent();
+    }
+    
 }

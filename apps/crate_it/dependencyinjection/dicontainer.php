@@ -17,6 +17,7 @@ use \OCA\crate_it\Manager\ConfigManager;
 require 'lib/sword_connector.php';
 use \OCA\crate_it\lib\SwordConnector;
 
+require 'lib/zipdownloadresponse.php';
 
 class DIContainer extends BaseContainer {
 

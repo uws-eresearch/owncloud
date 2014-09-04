@@ -4,6 +4,7 @@ namespace OCA\crate_it\lib;
 
 require '3rdparty/BagIt/bagit.php';
 use BagIt;
+use \OC\Files\Filesystem;
 
 class Crate extends BagIt {
 
@@ -283,7 +284,7 @@ class Crate extends BagIt {
   // TODO: There's currently no check for duplicates
   // TODO: root folder has isFolder set, so should other files folders
   private function addPath($path, &$vfs) {
-    \OCP\Util::writeLog('crate_it', "CrateManager::addPath(".$path.")", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog('crate_it', "Crate::addPath(".$path.")", \OCP\Util::DEBUG);
     if (\OC\Files\Filesystem::is_dir($path)) {
       $vfsEntry = $this->addFolderToCrate($path);
     } else {
@@ -327,9 +328,40 @@ class Crate extends BagIt {
     return $vfsEntry;
   }
   
+  public function generateEPUB($twig) {
+    \OCP\Util::writeLog('crate_it', "Crate::generateEPUB(".$path.")", \OCP\Util::DEBUG);
+    // $files = $this->flatList();
+    $files = $this->getPreviewPaths();
+    $params = array('files' => $files);
+    $epub = $twig->render('epub.php', $params);
+    $tmpFolder = \OC_Helper::tmpFolder();
+    $htmlPath = $tmpFolder.'/'.$this->crateName.'.html';
+    file_put_contents($htmlPath, $epub);
+    $htmlPath = str_replace(' ', '\ ', $htmlPath);
+    $epubPath = $tmpFolder.'/'.$this->crateName.'.epub';
+    $command = "ebook-convert $htmlPath $epubPath --no-default-epub-cover --level1-toc //h:h1 --level2-toc //h:h2 --level3-toc //h:h3";
+    exec($command, $retval);
+    return $epubPath;
+  }
+
+  private function getPreviewPaths() {
+    $files = $this->flatList();
+    $result = array();
+    foreach($files as $file) {
+      $path = Filesystem::getLocalFile($file['filename']);
+      $pathInfo = pathinfo($path);
+      $previewPath = $pathInfo['dirname'].'/_html/'.$pathInfo['basename'].'/index.html';
+      if(file_exists($previewPath)) {
+        $file['preview'] = $previewPath;
+        array_push($result, $file);
+      }
+    }
+    return $result;
+  }
+
   // TODO: Get rid of this and just import \OC\Files\Filesystem
   private function getFullPath($path) {
-    \OCP\Util::writeLog('crate_it', "CrateManager::getFullPath(".$path.")", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog('crate_it', "Crate::getFullPath(".$path.")", \OCP\Util::DEBUG);
     return \OC\Files\Filesystem::getLocalFile($path);
   }
 

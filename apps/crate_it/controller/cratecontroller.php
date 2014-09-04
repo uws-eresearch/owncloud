@@ -7,7 +7,6 @@ use \OCA\AppFramework\Http\JSONResponse;
 use \OCA\AppFramework\Http\TextResponse;
 use \OCA\AppFramework\Http;
 
-require 'apps/crate_it/lib/zipdownloadresponse.php';
 use OCA\crate_it\lib\ZipDownloadResponse;
 
 class CrateController extends Controller {
@@ -98,7 +97,7 @@ class CrateController extends Controller {
             $file = $this->params('file');
             \OCP\Util::writeLog('crate_it', "Adding ".$file, 3);
             $msg = $this->crate_service->addToBag($_SESSION['selected_crate'], $file);
-            return new JSONResponse ($msg, 200);
+            return new JSONResponse($msg);
         } catch(Exception $e)
         {
             return new JSONResponse(
@@ -136,7 +135,7 @@ class CrateController extends Controller {
     {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", \OCP\Util::DEBUG);
         $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
-        return new JSONResponse($data, 200);
+        return new JSONResponse($data);
     }
     
     /**
@@ -154,7 +153,7 @@ class CrateController extends Controller {
         $field = $this->params('field');
         $value = $this->params('value');
         $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
-        return new JSONResponse(array('description' => $value), 200);
+        return new JSONResponse(array('description' => $value));
     }
 
     /**
@@ -173,7 +172,7 @@ class CrateController extends Controller {
         $this->crate_service->deleteCrate($selected_crate);
         // TODO: No $data?
         $msg = 'Crate '.$selected_crate.' is deleted';
-        return new JSONResponse($msg, 200);
+        return new JSONResponse($msg);
     }
 
     /**
@@ -193,7 +192,7 @@ class CrateController extends Controller {
         $_SESSION['selected_crate'] = $newCrateName;
         session_commit();
         // TODO: No $data?
-        return new JSONResponse($data, 200);
+        return new JSONResponse($data);
     }
     
     /**
@@ -205,12 +204,42 @@ class CrateController extends Controller {
      */
     public function packageCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
-        $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
-        $filename = basename($packagePath);
-        $response = new ZipDownloadResponse($packagePath, $filename);
+        try {
+            $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
+            $filename = basename($packagePath);
+            $response = new ZipDownloadResponse($packagePath, $filename);
+        } catch(\Exception $e) {
+            $message = 'Internal Server Error: '.$e->getMessage();
+            \OCP\Util::writeLog('crate_it', $message, \OCP\Util::ERROR);
+            $response = new TextResponse($message);
+            $response->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
         return $response;
     }
-    
+  
+
+    /**
+     * Create ePub
+     *
+     * @CSRFExemption
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
+    public function generateEPUB() {
+        \OCP\Util::writeLog('crate_it', "CrateController::generateEPUB()", \OCP\Util::DEBUG);
+        try {
+            $epubPath = $this->crate_service->generateEPUB($_SESSION['selected_crate']);
+            $filename = basename($epubPath);
+            $response = new ZipDownloadResponse($epubPath, $filename);
+        } catch(\Exception $e) {
+            $message = 'Internal Server Error: '.$e->getMessage();
+            \OCP\Util::writeLog('crate_it', $message, \OCP\Util::ERROR);
+            $response = new TextResponse($message);
+            $response->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
+        return $response;
+    }
+
 
     /**
      * README previewer - this is for debugging purposes.
@@ -250,8 +279,7 @@ class CrateController extends Controller {
             }
             return new JSONResponse(
                 array('msg' => $msg, 
-                      'result' => $result), 
-                200
+                      'result' => $result)
             );
         } catch (Exception $e) {
             return new JSONResponse (

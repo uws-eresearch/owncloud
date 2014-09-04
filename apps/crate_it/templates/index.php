@@ -62,7 +62,7 @@
         <ul class="dropdown-menu">
           {% if previews == "on" %}
             <li>
-              <a id="epub" class="dropdown-btn">
+              <a id="epub" class="dropdown-btn" href="crate/epub">
                 <i class="fa fa-book"></i>
                  ePub
               </a>

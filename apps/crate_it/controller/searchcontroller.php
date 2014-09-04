@@ -6,10 +6,10 @@ use \OCA\AppFramework\Controller\Controller;
 use \OCA\AppFramework\Http\JSONResponse;
 use \OCA\AppFramework\Http;
 
-require 'apps/crate_it/lib/mint_connector.php';
+require 'lib/mint_connector.php';
 use \OCA\crate_it\lib\MintConnector;
 
-require 'apps/crate_it/lib/curl_request.php';
+require 'lib/curl_request.php';
 use \OCA\crate_it\lib\CurlRequest;
 
 class SearchController extends Controller {

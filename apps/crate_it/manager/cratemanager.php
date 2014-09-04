@@ -151,6 +151,12 @@ class CrateManager {
         return $crate->packageCrate($this->twig);
     }
 
+    public function generateEPUB($crateName){
+        \OCP\Util::writeLog('crate_it', "CrateManager::generateEPUB() - ".$crateName, \OCP\Util::DEBUG);
+        $crate = $this->getCrate($crateName);
+        return $crate->generateEPUB($this->twig);
+    }
+
     public function checkCrate($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);

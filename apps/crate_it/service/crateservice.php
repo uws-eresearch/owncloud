@@ -67,4 +67,8 @@ class CrateService {
     public function checkCrate($crateName) {
         return $this->crateManager->checkCrate($crateName);
     }
+
+    public function generateEPUB($crateName) {
+        return $this->crateManager->generateEPUB($crateName);
+    }
 }

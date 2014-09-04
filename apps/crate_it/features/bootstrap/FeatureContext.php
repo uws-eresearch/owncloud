@@ -472,6 +472,14 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @When /^I click the download button$/
+     */
+    public function iClickTheDownloadButton() {
+        $page = $this->getSession()->getPage();
+        $page->find('css', '.dropdown-toggle')->click();
+    }
+
+    /**
      * @Then /^I should see notice "([^"]*)"$/
      */
     public function iShouldSeeNotice($arg1)

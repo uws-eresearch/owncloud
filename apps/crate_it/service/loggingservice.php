@@ -62,7 +62,7 @@ class LoggingService {
     
     private function timestamp() {
         date_default_timezone_set('Australia/Sydney');  
-        $format="[d-m-Y T H:i:s P] ";
+        $format="[Y-m-d H:i:s P] ";
         //$offset=timezone_offset_get(new \DateTimeZone('Australia/Sydney'), new \DateTime());    
         $timestamp = date($format);  
         return $timestamp;

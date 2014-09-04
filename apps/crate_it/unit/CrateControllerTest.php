@@ -21,7 +21,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
   private $crateService;
 
   public function setUp() {
-    $this->crateService = $crateService = $this->getMockBuilder('OCA\crate_it\Service\CrateService')->disableOriginalConstructor()->setMethods(array('generateEPUB'))->getMock();
+    $this->crateService = $crateService = $this->getMockBuilder('OCA\crate_it\Service\CrateService')->disableOriginalConstructor()->setMethods(array('generateEPUB', 'packageCrate'))->getMock();
     $setupService = $this->getMockBuilder('OCA\crate_it\Service\SetupService')->disableOriginalConstructor()->setMethods(array('getParams'))->getMock();
     $this->crateController = new CrateController(NULL, NULL, $crateService, $setupService);
   }
@@ -44,5 +44,22 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, $actual);
   }
 
+  public function testPackageCrateSuccess() {
+    $_SESSION['selected_crate'] = 'test';
+    $this->crateService->method('packageCrate')->willReturn('/tmp/test.zip');
+    $expected = new ZipDownloadResponse('/tmp/test.zip', 'test.zip');
+    $actual = $this->crateController->packageCrate();
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testPackageCrateFailure() {
+    $_SESSION['selected_crate'] = 'test';
+    $message = 'Server has caught on fire';
+    $this->crateService->method('packageCrate')->will($this->throwException(new Exception($message)));
+    $expected = new TextResponse("Internal Server Error: $message");
+    $expected->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
+    $actual = $this->crateController->packageCrate();
+    $this->assertEquals($expected, $actual);
+  }
 
 }

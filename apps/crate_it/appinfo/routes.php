@@ -70,7 +70,7 @@ $this->create('crate_it_zip', '/crate/downloadzip')->get()->action(function($par
 });
 
 $this->create('crate_it_check', '/crate/check')->get()->action(function($params) {
-    App::main('CrateController', 'checkCrate', $params, new DIContainer());
+    App::main('CrateCheckController', 'checkCrate', $params, new DIContainer());
 });
 
 $this->create('crate_it_preview', '/crate/preview')->get()->action(function($params) {

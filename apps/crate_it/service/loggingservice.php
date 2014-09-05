@@ -28,16 +28,16 @@ class LoggingService {
     }
     
     public function logManifest($crateName) {        
-        $manifest = $this->crateManager->getCrate($crateName)->getManifestFileContent();
+        $manifest = $this->crateManager->getManifestFileContent($crateName);
         $text = $this->prettyPrint($manifest);
         $this->addToLog("Manifest JSON for crate '$crateName':");
         $this->addToLog($text);
     }
     
-    public function logPackageStructure($zip) {
+    public function logPublishedDetails($zip, $crateName) {
         $zipname = basename($zip);
         $this->addToLog("Package content for '$zipname':");
-        $this->addToLog("---------");
+        $this->addToLog("----start content-----");
         $za = new \ZipArchive(); 
 
         $za->open($zip); 
@@ -46,28 +46,25 @@ class LoggingService {
             $stat = $za->statIndex( $i );
             if ($stat['size']!=0) {
                 $this->addToLog($stat['name']);
+            }
+            if ($stat['name'] == '/manifest-sha1.txt') {
+                $sha_content = $za->getFromIndex($i);
             }        
         }
-        $this->addToLog("---------");
+        $this->addToLog("----end content-----");
         $checksum = sha1_file($zip);
         $this->addToLog("Checksum (SHA) for $zipname: $checksum");
-    }
-
-    public function logPublishedDetails($zip, $crateName) {
-        $this->logPackageStructure($zip);    
-        $crate = $this->crateManager->getCrate($crateName);
-        $sha_file = $crate->getManifestShaFilePath();
-        $sha_content = file_get_contents($sha_file);
-        $this->addToLog("manifest-sha1.txt for $crateName");
-        $this->addToLog("---------");
-        $this->addToLog($sha_content);
-        $this->addToLog("---------");
+        $this->addToLog("Content of $crateName's manifest-sha1.txt:");
+        $this->addToLog("----start file manifest-sha1.txt-----");
+        $this->addToLog("\n".$sha_content);
+        $this->addToLog("----end file-----");
     }
     
     private function timestamp() {
-        date_default_timezone_set('EST');
-        $date = date_create();
-        $timestamp = date_format($date, '[d-m-Y H:i:s] ');
+        date_default_timezone_set('Australia/Sydney');  
+        $format="[Y-m-d H:i:s P] ";
+        //$offset=timezone_offset_get(new \DateTimeZone('Australia/Sydney'), new \DateTime());    
+        $timestamp = date($format);  
         return $timestamp;
     }
 

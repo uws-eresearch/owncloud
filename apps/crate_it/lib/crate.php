@@ -369,10 +369,6 @@ class Crate extends BagIt {
     return $root.'/'.$basename;
   }
   
-  public function getManifestShaFilePath() {
-      return $this->manifest->getFileName();
-  }
-  
   public function getManifestFileContent() {
       return file_get_contents($this->manifestPath);
   }

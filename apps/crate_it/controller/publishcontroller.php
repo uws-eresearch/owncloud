@@ -64,13 +64,13 @@ class PublishController extends Controller {
             $response = $this->publisher->publishCrate($package, $endpoint, $collection);
             $status = $response->sac_status;
             if($status == 201) {                
-                $data['msg'] = "Crate '$crateName' successfully published to $collection!";  
+                $data['msg'] = "Crate '$crateName' successfully published to $collection";  
                 $this->loggingService->log($data['msg']);
                 $this->loggingService->logPublishedDetails($package, $crateName);             
             } else {
                 $this->loggingService->log("Publishing crate '$crateName' failed.");
                 $data['msg'] = "Error: $response->sac_statusmessage ($status)";
-                 $this->loggingService->log($data['msg']);
+                $this->loggingService->log($data['msg']);
             }
         } catch (\Exception $e) {
             $this->loggingService->log("Publishing crate '$crateName' failed.");            

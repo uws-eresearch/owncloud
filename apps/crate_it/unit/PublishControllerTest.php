@@ -7,6 +7,7 @@ require 'controller/publishcontroller.php';
 require 'manager/cratemanager.php';
 require 'lib/sword_connector.php';
 require 'service/setupservice.php';
+require 'service/loggingservice.php';
 
 
 use OCA\crate_it\Controller\PublishController;
@@ -18,10 +19,13 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
     private $publisher;
 
     public function setUp() {
-      $crateManager = $this->getMockBuilder('OCA\crate_it\Manager')->disableOriginalConstructor()->setMethods(array('packageCrate'))->getMock();
+      $crateManager = $this->getMockBuilder('OCA\crate_it\Manager')->disableOriginalConstructor()->setMethods(array('packageCrate', 'getManifestFileContent'))->getMock();
       $setupService = $this->getMockBuilder('OCA\crate_it\Service\SetupService')->disableOriginalConstructor()->setMethods(array('getParams'))->getMock();
       $this->publisher = $this->getMockBuilder('OCA\crate_it\lib\SwordConnector')->disableOriginalConstructor()->getMock();
-      $this->publishController = new PublishController(NULL, NULL, $crateManager, $setupService, $this->publisher);
+      $loggingService = $this->getMockBuilder('OCA\crate_it\Service\LoggingService')->disableOriginalConstructor()->setMethods(array('log', 'logManifest', 'logPublishedDetails'))->getMock();
+      $loggingService->method('log')->willReturn(NULL);
+      $loggingService->method('logManifest')->willReturn(NULL);
+      $this->publishController = new PublishController(NULL, NULL, $crateManager, $setupService, $this->publisher, $loggingService);
       $this->publishController->params = array('name' => 'test crate', 'endpoint' => 'test server', 'collection' => 'collection 123');
     }
 
@@ -29,7 +33,7 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
     public function testPublishCrateSuccess() {
       $response = $this->getMockBuilder('SWORDAPPResponse')->setConstructorArgs(array(201, NULL))->getMock();
       $this->publisher->method('publishCrate')->willReturn($response);
-      $expected = new JSONResponse(array('msg' => 'test crate successfully published to collection 123'), 201);
+      $expected = new JSONResponse(array('msg' => 'Crate \'test crate\' successfully published to collection 123'), 201);
       $actual = $this->publishController->publishCrate();
       $this->assertEquals($expected, $actual);
     }

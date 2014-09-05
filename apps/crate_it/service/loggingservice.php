@@ -19,25 +19,21 @@ class LoggingService {
         $this->logfile = $user_dir.'/publish.log';
     }
     
-    private function addToLog($text) {
-         file_put_contents($this->logfile, $this->timestamp().$text."\n", FILE_APPEND);
-    }
-    
     public function log($text) {
-       $this->addToLog($text);
+       file_put_contents($this->logfile, $this->timestamp().$text."\n", FILE_APPEND);
     }
     
     public function logManifest($crateName) {        
         $manifest = $this->crateManager->getManifestFileContent($crateName);
         $text = $this->prettyPrint($manifest);
-        $this->addToLog("Manifest JSON for crate '$crateName':");
-        $this->addToLog($text);
+        $this->log("Manifest JSON for crate '$crateName':");
+        $this->log($text);
     }
     
     public function logPublishedDetails($zip, $crateName) {
         $zipname = basename($zip);
-        $this->addToLog("Package content for '$zipname':");
-        $this->addToLog("----start content-----");
+        $this->log("Package content for '$zipname':");
+        $this->log("----start content-----");
         $za = new \ZipArchive(); 
 
         $za->open($zip); 
@@ -45,19 +41,19 @@ class LoggingService {
         for( $i = 0; $i < $za->numFiles; $i++ ){ 
             $stat = $za->statIndex( $i );
             if ($stat['size']!=0) {
-                $this->addToLog($stat['name']);
+                $this->log($stat['name']);
             }
             if ($stat['name'] == '/manifest-sha1.txt') {
                 $sha_content = $za->getFromIndex($i);
             }        
         }
-        $this->addToLog("----end content-----");
+        $this->log("----end content-----");
         $checksum = sha1_file($zip);
-        $this->addToLog("Checksum (SHA) for $zipname: $checksum");
-        $this->addToLog("Content of $crateName's manifest-sha1.txt:");
-        $this->addToLog("----start file manifest-sha1.txt-----");
-        $this->addToLog("\n".$sha_content);
-        $this->addToLog("----end file-----");
+        $this->log("Checksum (SHA) for $zipname: $checksum");
+        $this->log("Content of $crateName's manifest-sha1.txt:");
+        $this->log("----start file manifest-sha1.txt-----");
+        $this->log("\n".$sha_content);
+        $this->log("----end file-----");
     }
     
     private function timestamp() {

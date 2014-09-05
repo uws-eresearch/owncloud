@@ -81,7 +81,6 @@ class CrateManager {
         }
     }
 
-    // TODO: Currently not functioning correctly
     private function ensureCrateIsSelected() {
         $crateList = $this->getCrateList();
         if (!in_array($_SESSION['selected_crate'], $crateList)) {

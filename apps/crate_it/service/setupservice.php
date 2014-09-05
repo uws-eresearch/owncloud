@@ -44,6 +44,7 @@ class SetupService {
         $this->publisher->setEndpoints(self::$params['publish endpoints']['sword']);
         self::$params['collections'] = $this->publisher->getCollections();
         self::$params['crates'] = $this->crateManager->getCrateList();
+        $this->retrieveHelpDocs();
         $this->getReleaseInfo();
     }
     
@@ -61,6 +62,14 @@ class SetupService {
         $git = explode('-', $git[0]);
         self::$params['release'] = $git[0];
         self::$params['commit'] = $git[2];
+    }
+
+    private function retrieveHelpDocs() {
+        $help = file_get_contents(self::$params['help documents']);
+        if($help === FALSE) {
+            $help = '<section><p>Unable to load help at this time</p></section>';
+        }
+        self::$params['help'] = $help;
     }
 
 

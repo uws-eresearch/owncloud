@@ -46,11 +46,16 @@ class PublishController extends Controller {
         $data = array();
         if(!empty($_SESSION['last_published_status'])) {
             $subject = "Publish";
-            if(mail($address, 'Cr8it Publish Status Receipt', $_SESSION['last_published_status'], "From: no-reply@cr8it.app\n")) {
-                $data['msg'] = "Publish status sent to $address";
-                $status = 200;
-            } else {
-                $data['msg'] = 'Error: Unable to send email at this time';
+            try {
+                $content = $this->loggingService->getLog();
+                if(mail($address, 'Cr8it Publish Status Receipt', $content, "From: no-reply@cr8it.app\n")) {
+                    $data['msg'] = "Publish log sent to $address";
+                    $status = 200;
+                } else {
+                    throw new Exception('Unable to send email at this time');
+                }
+            } catch(\Exception $e) {
+                $data['msg'] = 'Error: '.$e->getMessage();
                 $status = 500;
             }
         } else {

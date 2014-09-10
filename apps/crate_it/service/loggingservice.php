@@ -31,7 +31,9 @@ class LoggingService {
     }
     
     public function logPublishedDetails($zip, $crateName) {
+        $filesize = filesize($zip);
         $zipname = basename($zip);
+        $this->log("Zipped file size for '$zipname': $filesize bytes");
         $this->log("Package content for '$zipname':");
         $this->log("----start content-----");
         $za = new \ZipArchive(); 
@@ -54,7 +56,7 @@ class LoggingService {
         $this->log("----start file manifest-sha1.txt-----");
         $this->log("\n".$sha_content);
         $this->log("----end file-----");
-    }
+    }   
     
     private function timestamp() {
         date_default_timezone_set('Australia/Sydney');  

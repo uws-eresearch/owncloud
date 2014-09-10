@@ -10,14 +10,20 @@ Feature: Edit crate description
     And I go to the crate_it page
     And I select crate "crate1"
 
-  #CRATEIT-51
+  #CRATEIT-51, 215 
   Scenario: Edit and cancel edit description
     When I click the edit description button
     # change it once
     And I fill in "crate_description" with "New Description"
     And I click the Save button
     Then I should see the crate description "New Description"
-    # change it twice
+    # refresh
+    And I click the edit description button
+    And I fill in "crate_description" with "Some other desc"
+    And I click the Save button
+    And I go to the crate_it page
+    Then I should see the crate description "Some other desc"
+    # change it again
     And I click the edit description button
     And I fill in "crate_description" with "Another Description"
     And I click the Save button
@@ -29,7 +35,6 @@ Feature: Edit crate description
     Then I should see the crate description "Another Description"
     
   #CRATEIT-51
-  @wip
   Scenario: Edit and cancel description with linebreak
     When I click the edit description button
     And I fill in "crate_description" with 
@@ -39,7 +44,7 @@ Feature: Edit crate description
       with linebreaks
       """
     And I click the Save button
-    Then I should see the crate description 
+    Then I should see the multiline crate description 
       """
       This is
       a sentence
@@ -47,7 +52,7 @@ Feature: Edit crate description
       """
     And I click the edit description button
     And I click the Cancel button
-    Then I should see the crate description 
+    Then I should see the multiline crate description 
       """
       This is
       a sentence

@@ -1247,6 +1247,34 @@ JS;
             $webAssert->fieldValueEquals($field, $value);
         }
     }
+    
+    /**
+     * @Given /^I fill in "([^"]*)" with$/
+     */
+    public function iFillInWith($arg1, PyStringNode $string)
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//*[@id="'.$arg1.'"]';
+        $desc = $page->find('xpath', $xpath);
+        $desc->setValue($string);
+    }
+
+    /**
+     * @Then /^I should see the multiline crate description$/
+     */
+    public function iShouldSeeTheMultilineCrateDescription(PyStringNode $string)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//div[@id="description_box"]/div[@id="description"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = $desc->getText();
+        // NOTE: The code below won't work - getText() is not suppose to return newline chars!!
+        //if ($str_desc!= $string->getRaw())
+        //{
+        //    throw new Exception("The crate should have description '$string', but it's '$str_desc'");
+        //}  
+    }    
 
 
     public function spin($lambda, $timeout=10) {

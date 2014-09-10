@@ -40,6 +40,26 @@ class PublishController extends Controller {
       return $this->publisher->getCollections();
     }
 
+
+    public function emailReceipt() {
+        $address = $this->params('address');
+        $data = array();
+        if(!empty($_SESSION['last_published_status'])) {
+            $subject = "Publish";
+            if(mail($address, 'Cr8it Publish Status Receipt', $_SESSION['last_published_status'], "From: no-reply@cr8it.app\n")) {
+                $data['msg'] = "Publish status sent to $address";
+                $status = 200;
+            } else {
+                $data['msg'] = 'Error: Unable to send email at this time';
+                $status = 500;
+            }
+        } else {
+            $data['msg'] = 'Error: No recently published crates';
+            $status = 500; // NOTE: should this be in the 400 range?
+        }
+        return new JSONResponse($data, $status);
+    }
+
     /**
      * Publish crate
      *
@@ -65,19 +85,20 @@ class PublishController extends Controller {
             $status = $response->sac_status;
             if($status == 201) {                
                 $data['msg'] = "Crate '$crateName' successfully published to $collection";  
-                $this->loggingService->log($data['msg']);
                 $this->loggingService->logPublishedDetails($package, $crateName);             
             } else {
                 $this->loggingService->log("Publishing crate '$crateName' failed.");
-                $data['msg'] = "Error: $response->sac_statusmessage ($status)";
+                $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: $response->sac_statusmessage ($status)";
                 $this->loggingService->log($data['msg']);
             }
         } catch (\Exception $e) {
             $this->loggingService->log("Publishing crate '$crateName' failed.");            
             $status = 500;
-            $data['msg'] = 'Error: '.$e->getMessage();
+            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: ".$e->getMessage();
             $this->loggingService->log($data['msg']);
         }
+        $_SESSION['last_published_status'] = $data['msg'];
+
         return new JSONResponse($data, $status);
     }
 

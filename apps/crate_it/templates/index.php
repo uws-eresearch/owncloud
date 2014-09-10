@@ -130,6 +130,8 @@
 
 {% include 'edit_activities_modal.php' %}
 
-{% include 'check_crate_modal.php' %}  
+{% include 'check_crate_modal.php' %}
+
+{% include 'publish_confirm_modal.php' %}
 
 {% include 'javascript_vars.php' %}

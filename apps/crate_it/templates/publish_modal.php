@@ -8,6 +8,7 @@
       <div class="modal-body">
         <section class="publish-body">
           <h3>Select Collection</h3>
+          <label for="publish-collection" class="element-invisible">Select Collection</label>
           <select id="publish-collection">
             {% for endpoint, settings in collections %}
               {% for collection, href in settings %}

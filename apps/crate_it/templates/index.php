@@ -28,7 +28,7 @@
     <a id="create" class="button" data-toggle="modal" data-target="#createCrateModal">
       <i class="fa fa-plus"></i>
     </a>
-
+    <label for="crates" class="element-invisible">Crate Selector</label>
     <select id="crates">
       
       {% for crate in crates %}  

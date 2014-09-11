@@ -657,3 +657,10 @@ font-size: 18px;
 .modal .publish-meta > div > ul > div  {
   margin-bottom: 10px;
 }
+
+/*  Accessibility class to hide elements but make them appear to screen readers  */
+.element-invisible {
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px);
+}

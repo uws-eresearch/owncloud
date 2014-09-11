@@ -6,6 +6,7 @@ require 'MockUtil.php';
 require 'controller/publishcontroller.php';
 require 'manager/cratemanager.php';
 require 'lib/sword_connector.php';
+require 'lib/mailer.php';
 require 'service/setupservice.php';
 require 'service/loggingservice.php';
 
@@ -17,16 +18,19 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
 
     private $publishController;
     private $publisher;
+    private $loggingService;
+    private $mailer;
 
     public function setUp() {
       $crateManager = $this->getMockBuilder('OCA\crate_it\Manager')->disableOriginalConstructor()->setMethods(array('packageCrate', 'getManifestFileContent'))->getMock();
       $setupService = $this->getMockBuilder('OCA\crate_it\Service\SetupService')->disableOriginalConstructor()->setMethods(array('getParams'))->getMock();
       $this->publisher = $this->getMockBuilder('OCA\crate_it\lib\SwordConnector')->disableOriginalConstructor()->getMock();
-      $loggingService = $this->getMockBuilder('OCA\crate_it\Service\LoggingService')->disableOriginalConstructor()->setMethods(array('log', 'logManifest', 'logPublishedDetails'))->getMock();
-      $loggingService->method('log')->willReturn(NULL);
-      $loggingService->method('logManifest')->willReturn(NULL);
-      $this->publishController = new PublishController(NULL, NULL, $crateManager, $setupService, $this->publisher, $loggingService);
-      $this->publishController->params = array('name' => 'test crate', 'endpoint' => 'test server', 'collection' => 'collection 123');
+      $this->loggingService = $this->getMockBuilder('OCA\crate_it\Service\LoggingService')->disableOriginalConstructor()->setMethods(array('log', 'logManifest', 'logPublishedDetails', 'getLog'))->getMock();
+      $this->loggingService->method('log')->willReturn(NULL);
+      $this->loggingService->method('logManifest')->willReturn(NULL);
+      $this->mailer = $this->getMockBuilder('OCA\crate_it\lib\Mailer')->setMethods(array('send'))->getMock();
+      $this->publishController = new PublishController(NULL, NULL, $crateManager, $setupService, $this->publisher, $this->loggingService, $this->mailer);
+      $this->publishController->params = array('name' => 'test crate', 'endpoint' => 'test server', 'collection' => 'collection 123', 'address' => 'test@test.org');
     }
 
 
@@ -42,7 +46,7 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
     public function testPublishCrateFailure() {
       $response = $this->getMockBuilder('SWORDAPPResponse')->setConstructorArgs(array(400, NULL))->getMock();
       $this->publisher->method('publishCrate')->willReturn($response);
-      $expected = new JSONResponse(array('msg' => 'Error: Bad request (400)'), 400);
+      $expected = new JSONResponse(array('msg' => "Error: failed to publish crate 'test crate' to collection 123: Bad request (400)"), 400);
       $actual = $this->publishController->publishCrate();
       $this->assertEquals($expected, $actual);
     }
@@ -50,9 +54,40 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
 
     public function testPublishCrateError() {
       $this->publisher->method('publishCrate')->will($this->throwException(new Exception('Something went wrong')));
-      $expected = new JSONResponse(array('msg' => 'Error: Something went wrong'), 500);
+      $expected = new JSONResponse(array('msg' => "Error: failed to publish crate 'test crate' to collection 123: Something went wrong"), 500);
       $actual = $this->publishController->publishCrate();
       $this->assertEquals($expected, $actual);
     }
 
+    public function testEmailReceiptSuccess() {
+      $_SESSION['last_published_status'] = 'Status';
+      $this->mailer->method('send')->willReturn(true);
+      $expected = new JSONResponse(array('msg' => 'Publish log sent to test@test.org'), 200);
+      $actual = $this->publishController->emailReceipt();
+      $this->assertEquals($expected, $actual);
+    }
+
+    public function testEmailReceiptFailNoLastPublished() {
+      $expected = new JSONResponse(array('msg' => 'Error: No recently published crates'), 500);
+      $actual = $this->publishController->emailReceipt();
+      $this->assertEquals($expected, $actual);
+    }
+
+    public function testEmailReceiptFailMailerError() {
+      $_SESSION['last_published_status'] = 'Status';
+      $this->mailer->method('send')->willReturn(false);
+      $expected = new JSONResponse(array('msg' => 'Error: Unable to send email at this time'), 500);
+      $actual = $this->publishController->emailReceipt();
+      $this->assertEquals($expected, $actual); 
+    }
+
+    public function testEmailReceiptFailLoggerError() {
+      $_SESSION['last_published_status'] = 'Status';
+      $this->mailer->method('send')->willReturn(false);
+      $this->loggingService->method('getLog')->will($this->throwException(new Exception('Something went wrong')));
+      $expected = new JSONResponse(array('msg' => 'Error: Something went wrong'), 500);
+      $actual = $this->publishController->emailReceipt();
+      $this->assertEquals($expected, $actual); 
+    }
 }
+

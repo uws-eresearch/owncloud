@@ -9,22 +9,12 @@ use \OCA\AppFramework\Http;
 
 class PublishController extends Controller {
 
-    /**
-     * @var $publisher
-     */
     private $publisher;
-
-    /**
-     * @var crateManager
-     */
     private $crateManager;
-    
-    /**
-     * @var loggingService
-     */
-    private $loggingService;    
+    private $loggingService;
+    private $mailer;
 
-    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService) {
+    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
         parent::__construct($api, $request);
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
@@ -33,6 +23,7 @@ class PublishController extends Controller {
         \OCP\Util::writeLog('crate_it', "PublishController::construct() - Publish enpoints: $endpoints", \OCP\Util::DEBUG);
         $publisher->setEndpoints($params['publish endpoints']['sword']);
         $this->loggingService = $loggingService;
+        $this->mailer = $mailer;
     }
 
     public function getCollections() {
@@ -42,17 +33,18 @@ class PublishController extends Controller {
 
 
     public function emailReceipt() {
-        $address = $this->params('address');
         $data = array();
         if(!empty($_SESSION['last_published_status'])) {
-            $subject = "Publish";
+            $to = $this->params('address');
+            $from = 'no-reply@cr8it.app';
+            $subject = 'Cr8it Publish Status Receipt';
             try {
                 $content = $this->loggingService->getLog();
-                if(mail($address, 'Cr8it Publish Status Receipt', $content, "From: no-reply@cr8it.app\n")) {
-                    $data['msg'] = "Publish log sent to $address";
+                if($this->mailer->send($to, $from, $subject, $content)) {
+                    $data['msg'] = "Publish log sent to $to";
                     $status = 200;
                 } else {
-                    throw new Exception('Unable to send email at this time');
+                    throw new \Exception('Unable to send email at this time');
                 }
             } catch(\Exception $e) {
                 $data['msg'] = 'Error: '.$e->getMessage();

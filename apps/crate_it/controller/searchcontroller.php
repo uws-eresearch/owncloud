@@ -31,7 +31,6 @@ class SearchController extends Controller {
      * Search
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */

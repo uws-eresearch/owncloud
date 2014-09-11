@@ -31,7 +31,6 @@ class CrateController extends Controller {
      * Create crate with name and description
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -57,7 +56,6 @@ class CrateController extends Controller {
      * Get crate items
      * 
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -84,7 +82,6 @@ class CrateController extends Controller {
      * Add To Crate
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -112,7 +109,6 @@ class CrateController extends Controller {
      * Get Crate Manifest
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -127,7 +123,6 @@ class CrateController extends Controller {
      * Get Crate Size
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -143,7 +138,6 @@ class CrateController extends Controller {
      * TODO change to not just return description but all fields?
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -160,7 +154,6 @@ class CrateController extends Controller {
      * Delete Crate
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -179,7 +172,6 @@ class CrateController extends Controller {
      * Rename Crate
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -197,8 +189,7 @@ class CrateController extends Controller {
     
     /**
      * Package Crate as a Zip
-     *
-     * @CSRFExemption
+     * 
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -220,7 +211,7 @@ class CrateController extends Controller {
 
     /**
      * Create ePub
-     *
+     *     
      * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
@@ -244,7 +235,6 @@ class CrateController extends Controller {
     /**
      * README previewer - this is for debugging purposes.
      *
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
@@ -259,7 +249,6 @@ class CrateController extends Controller {
      * Check crate 
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */

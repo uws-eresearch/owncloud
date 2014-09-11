@@ -61,7 +61,6 @@ class PublishController extends Controller {
      * Publish crate
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */

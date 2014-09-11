@@ -25,7 +25,6 @@ class CrateCheckController extends Controller {
      * Check crate 
      *
      * @Ajax
-     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */

@@ -56,6 +56,7 @@
                       </button>
                     </h6>
                     <div id="search_people_box" class="input-group">
+                      <label for="keyword_creator" class="element-invisible">Search Creators</label>
                       <input id="keyword_creator" class="form-control" type="text" name="keyword" placeholder="Search Creators..." />
                       <span class="input-group-btn">
                         <button id="search_people" class="btn btn-default" type="button">
@@ -104,6 +105,7 @@
                       </button>
                     </h6>
                     <div id="search_activity_box" class="input-group">
+                      <label for="keyword_activity" class="element-invisible">Search Grants</label>
                       <input id="keyword_activity" class="form-control" type="text" name="keyword_activity" placeholder="Search Grants..."/>
                       <span class="input-group-btn">
                         <button id="search_activity" class="btn btn-default" type="button" value="Search Grant Number">

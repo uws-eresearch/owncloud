@@ -155,6 +155,51 @@ class CrateManager {
         $crate = $this->getCrate($crateName);
         return $crate->generateEPUB($this->twig);
     }
+    
+    private function updateCrateCheckIcons($crateName) {        
+        $crate = $this->getCrate($crateName);
+        $manifest = $crate->getManifest();
+        $rootfolder = &$manifest['vfs'][0];
+        $children = &$rootfolder['children'];
+        $rootfolder['valid'] = var_export(true, true);        
+        $crate->setManifest($manifest);
+        foreach ($children as &$child) {
+            $valid = $this->validateNode($child, $crate, $manifest);
+            if (!$valid) {
+                $rootfolder['valid'] = var_export(false, true);
+                $crate->setManifest($manifest);
+            }
+        }       
+        \OCP\Util::writeLog('crate_it', "CrateManager::validateNode() - rootfolder is ".var_export($valid, true), \OCP\Util::DEBUG); 
+        
+    }
+    
+    private function validateNode(&$node, $crate, &$manifest) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::validateNode() - ".$node['name'], \OCP\Util::DEBUG); 
+        $valid = true;
+        $node['valid'] = var_export($valid, true);
+        $crate->setManifest($manifest);
+        if ($node['id'] == 'folder') {
+            $children = &$node['children'];
+            foreach($children as &$child) {
+                $valid = $this->validateNode($child, $crate, $manifest);
+                if (!$valid) {
+                    $node['valid'] = var_export(false, true);
+                    $crate->setManifest($manifest);
+                } 
+            }
+        }
+        else {
+            $filename = $node['filename'];
+            $filepath = \OC\Files\Filesystem::getLocalFile($filename);
+            $valid = file_exists($filepath); 
+            $node['valid'] = var_export($valid, true);
+            $crate->setManifest($manifest);
+        }
+        \OCP\Util::writeLog('crate_it', "CrateManager::validateNode() - ".$node['name']." is ".var_export($valid, true), \OCP\Util::DEBUG); 
+        
+        return $valid;
+    }
 
     public function checkCrate($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - ".$crateName, \OCP\Util::DEBUG);
@@ -169,6 +214,7 @@ class CrateManager {
                 $res[basename($filepath)] = $file_exist; 
             }
         }
+        $this->updateCrateCheckIcons($crateName);
         return $res;
     }
     

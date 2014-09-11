@@ -19,21 +19,20 @@ class CrateService {
         $this->crateManager = $crateManager;
     }
     
-    // TODO: settle on either crateName or crateId and be consistant
     // TODO: tidy up the message return types to be consistent
     // TODO: this class doesn't seem to do anything, could
     //       we remove this class altogether and just use CrateManager?
-    public function addToBag($crateId, $file) {
-        return $this->crateManager->addToCrate($crateId, $file);   
+    public function addToBag($crateName, $file) {
+        return $this->crateManager->addToCrate($crateName, $file);   
     }
     
     // TODO: Rename to getManifest()
-    public function getItems($crateId) {
-        return $this->crateManager->getManifestData($crateId);
+    public function getItems($crateName) {
+        return $this->crateManager->getManifestData($crateName);
     }
 
-    public function getCrateFiles($crateId) {
-        return $this->crateManager->getCrateFiles($crateId);
+    public function getCrateFiles($crateName) {
+        return $this->crateManager->getCrateFiles($crateName);
     }
 
     public function getReadme($crateName) {
@@ -44,12 +43,12 @@ class CrateService {
         return $this->crateManager->createCrate($crateName, $description);   
     }
     
-    public function getCrateSize($crateId) {
-        return $this->crateManager->getCrateSize($crateId);
+    public function getCrateSize($crateName) {
+        return $this->crateManager->getCrateSize($crateName);
     }
     
-    public function updateCrate($crateId, $field, $value) {
-        return $this->crateManager->updateCrate($crateId, $field, $value);
+    public function updateCrate($crateName, $field, $value) {
+        return $this->crateManager->updateCrate($crateName, $field, $value);
     }
 
     public function deleteCrate($crateName) {

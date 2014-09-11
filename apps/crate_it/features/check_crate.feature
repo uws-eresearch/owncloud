@@ -23,6 +23,11 @@ Feature:Check crate
     And I go to the crate_it page
     And I click on "check"
     Then I should see "All items are valid." in the modal
+    And I click on "confirm_checker"
+    Then I should see green ticks next to these items
+    | filename   |
+    | folder1    |
+    | file1.txt  |
     
   #CRATEIT-58
   Scenario: Check crate with some invalid items
@@ -39,6 +44,13 @@ Feature:Check crate
     | file1.txt |
     | file2.txt |
     Then I click on "confirm_checker"
+    Then I should see green ticks next to these items
+    | filename  |
+    | file0.txt |    
+    Then I should see red crosses next to these items
+    | filename  |
+    | file1.txt |
+    | file2.txt |    
     And I remove "file1.txt" 
     And I press "Remove" on the popup dialog
     And I click on "check"
@@ -47,6 +59,12 @@ Feature:Check crate
     | filename  |
     | file2.txt |
     Then I click on "confirm_checker"
+    Then I should see green ticks next to these items
+    | filename  |
+    | file0.txt |   
+    Then I should see red crosses next to these items
+    | filename  |
+    | file2.txt |        
     And I rename "file0.txt" to "file0" in the file system
     And I click on "check"
     Then I should see "The following items no longer exist:"
@@ -54,6 +72,11 @@ Feature:Check crate
     | filename  |
     | file0.txt |
     | file2.txt |
+    Then I click on "confirm_checker"
+    Then I should see red crosses next to these items
+    | filename  |
+    | file0.txt |
+    | file2.txt |          
     
   
   

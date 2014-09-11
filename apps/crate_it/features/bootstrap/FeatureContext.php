@@ -1386,6 +1386,36 @@ JS;
         $size = $el->getHtml();
         assertEquals($size, $arg1);
     }
+    
+    /**
+     * @Then /^I should see green ticks next to these items$/
+     */
+    public function iShouldSeeGreenTicksNextToTheseItems(TableNode $table)
+    {
+        $rows = $table->getHash();
+        $page = $this->getSession()->getPage();
+        foreach ($rows as $row)
+        {
+            $filename = $row['filename'];
+            $web_assert = new WebAssert($this->getSession());
+            $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-check-circle"]', $page);
+        }
+    }
+
+    /**
+     * @Then /^I should see red crosses next to these items$/
+     */
+    public function iShouldSeeRedCrossesNextToTheseItems(TableNode $table)
+    {
+        $rows = $table->getHash();
+        $page = $this->getSession()->getPage();
+        foreach ($rows as $row)
+        {
+            $filename = $row['filename'];
+            $web_assert = new WebAssert($this->getSession());
+            $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-times-circle"]', $page);
+        }
+    }
 
 }
 

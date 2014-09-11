@@ -129,10 +129,14 @@ function initCrateActions() {
     }
 
     displayNotification('Your download is being prepared. This might take some time if the files are big');
-    var c_url = OC.generateUrl('apps/crate_it/crate/downloadzip');
+    var c_url = OC.generateUrl('apps/crate_it/crate/downloadzip?requesttoken={requesttoken}', {requesttoken: oc_requesttoken});
     window.location = c_url;
   };
 
+  $('#checkCrateModal').on('hide.bs.modal', function() {
+    location.reload();
+  });
+  
   $('#crate_input_name').keyup(function() {
     var $input = $(this);
     var $error = $('#crate_name_validation_error');

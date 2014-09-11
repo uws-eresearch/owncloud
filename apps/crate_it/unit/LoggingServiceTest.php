@@ -22,7 +22,7 @@ class LoggingServiceTest extends PHPUnit_Framework_TestCase {
                              ->will($this->returnValue('test'));
                              
         $cm = $this->getMock('CrateManager', array('getManifestFileContent'));                          
-        $cm->expects($this->any())->method('getManifestFileContent')->will($this->returnValue($manifest));
+        $cm->expects($this->any())->method('getManifestFileContent')->will($this->returnValue($this->manifest));
         $this->logger = new LoggingService($api, $cm);   
     }
     
@@ -46,12 +46,12 @@ class LoggingServiceTest extends PHPUnit_Framework_TestCase {
         //$this->assertEquals(1, preg_match("/\[*\] $text/", $result));
     }
     
-    public function testLogPublishedDetails() {
-        $zip = 'unit/testdata/files.zip';
-        $this->logger->logPublishedDetails($zip, "new crate");
-        $result = file_get_contents('unit/data/test/publish.log');
-        print $result;
-    }
+    // public function testLogPublishedDetails() {
+    //     $zip = 'unit/testdata/files.zip';
+    //     $this->logger->logPublishedDetails($zip, "new crate");
+    //     $result = file_get_contents('unit/data/test/publish.log');
+    //     print $result;
+    // }
     
 }
     

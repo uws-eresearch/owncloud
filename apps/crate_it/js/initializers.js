@@ -220,13 +220,38 @@ function initCrateActions() {
       data: postData,
       dataType: 'json',
       success: function(data) {
-        displayNotification(data.msg, 6000);
+        confirmPublish(data.msg);
       },
       error: function(jqXHR) {
-        displayNotification(jqXHR.responseJSON.msg, 6000);
+        confirmPublish(jqXHR.responseJSON.msg);
       }
     });
   };
+
+
+  var confirmPublish = function(msg) {
+    $('#publish-confirm-status').text(msg);
+    $('#publishConfirmModal').modal('show');
+    $('#publish-confirm-email-send').click(function(){
+      var c_url = OC.generateUrl('apps/crate_it/crate/email');
+      $.ajax({
+        url: c_url,
+        type: 'post',
+        data: {address: $('#publish-confirm-email').val() },
+        dataType: 'json',
+        success: function(data) {
+          $('#publish-confirm-email-status').text(data.msg);
+        },
+        error: function(jqXHR) {
+          $('#publish-confirm-email-status').text(jqXHR.responseJSON.msg);
+        }
+      });
+    });
+  }
+
+  var $publishConfirmModal = $('#publishConfirmModal');
+  var publishConfirmValidator = new CrateIt.Validation.FormValidator($publishConfirmModal);
+  publishConfirmValidator.addValidator($('#publish-confirm-email'), new CrateIt.Validation.EmailValidator());
 
   $('#publish').click(function() {
     // TODO: Migrate to a single  client side shared model of the manifest

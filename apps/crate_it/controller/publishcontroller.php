@@ -9,22 +9,12 @@ use \OCA\AppFramework\Http;
 
 class PublishController extends Controller {
 
-    /**
-     * @var $publisher
-     */
     private $publisher;
-
-    /**
-     * @var crateManager
-     */
     private $crateManager;
-    
-    /**
-     * @var loggingService
-     */
-    private $loggingService;    
+    private $loggingService;
+    private $mailer;
 
-    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService) {
+    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
         parent::__construct($api, $request);
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
@@ -33,11 +23,38 @@ class PublishController extends Controller {
         \OCP\Util::writeLog('crate_it', "PublishController::construct() - Publish enpoints: $endpoints", \OCP\Util::DEBUG);
         $publisher->setEndpoints($params['publish endpoints']['sword']);
         $this->loggingService = $loggingService;
+        $this->mailer = $mailer;
     }
 
     public function getCollections() {
       \OCP\Util::writeLog('crate_it', "PublishController::getCollections()", \OCP\Util::DEBUG);
       return $this->publisher->getCollections();
+    }
+
+
+    public function emailReceipt() {
+        $data = array();
+        if(!empty($_SESSION['last_published_status'])) {
+            $to = $this->params('address');
+            $from = 'no-reply@cr8it.app';
+            $subject = 'Cr8it Publish Status Receipt';
+            try {
+                $content = $this->loggingService->getLog();
+                if($this->mailer->send($to, $from, $subject, $content)) {
+                    $data['msg'] = "Publish log sent to $to";
+                    $status = 200;
+                } else {
+                    throw new \Exception('Unable to send email at this time');
+                }
+            } catch(\Exception $e) {
+                $data['msg'] = 'Error: '.$e->getMessage();
+                $status = 500;
+            }
+        } else {
+            $data['msg'] = 'Error: No recently published crates';
+            $status = 500; // NOTE: should this be in the 400 range?
+        }
+        return new JSONResponse($data, $status);
     }
 
     /**
@@ -65,19 +82,20 @@ class PublishController extends Controller {
             $status = $response->sac_status;
             if($status == 201) {                
                 $data['msg'] = "Crate '$crateName' successfully published to $collection";  
-                $this->loggingService->log($data['msg']);
                 $this->loggingService->logPublishedDetails($package, $crateName);             
             } else {
                 $this->loggingService->log("Publishing crate '$crateName' failed.");
-                $data['msg'] = "Error: $response->sac_statusmessage ($status)";
+                $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: $response->sac_statusmessage ($status)";
                 $this->loggingService->log($data['msg']);
             }
         } catch (\Exception $e) {
             $this->loggingService->log("Publishing crate '$crateName' failed.");            
             $status = 500;
-            $data['msg'] = 'Error: '.$e->getMessage();
+            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: ".$e->getMessage();
             $this->loggingService->log($data['msg']);
         }
+        $_SESSION['last_published_status'] = $data['msg'];
+
         return new JSONResponse($data, $status);
     }
 

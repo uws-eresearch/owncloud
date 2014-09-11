@@ -18,6 +18,9 @@ use \OCA\crate_it\Manager\ConfigManager;
 require 'lib/sword_connector.php';
 use \OCA\crate_it\lib\SwordConnector;
 
+require 'lib/mailer.php';
+use \OCA\crate_it\lib\Mailer;
+
 require 'lib/zipdownloadresponse.php';
 
 class DIContainer extends BaseContainer {
@@ -54,6 +57,10 @@ class DIContainer extends BaseContainer {
             return new LoggingService($c['API'], $c['CrateManager']);  
         };
         
+        $this['Mailer'] = function($c) {
+            return new Mailer();  
+        };
+
         /* Controllers */
                                
         $this['PageController'] = function($c) {
@@ -70,7 +77,7 @@ class DIContainer extends BaseContainer {
         
 
         $this['PublishController'] = function($c) {
-            return new PublishController($c['API'], $c['Request'], $c['CrateManager'], $c['SetupService'], $c['SwordConnector'], $c['LoggingService']);
+            return new PublishController($c['API'], $c['Request'], $c['CrateManager'], $c['SetupService'], $c['SwordConnector'], $c['LoggingService'], $c['Mailer']);
         };
         
         $this['CrateCheckController'] = function($c) {

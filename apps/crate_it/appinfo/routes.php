@@ -85,3 +85,7 @@ $this->create('crate_it_publish', '/crate/publish')->post()->action(function($pa
     App::main('PublishController', 'publishCrate', $params, new DIContainer());
 });
 
+$this->create('crate_it_email_receipt', '/crate/email')->post()->action(function($params) {
+    App::main('PublishController', 'emailReceipt', $params, new DIContainer());
+});
+

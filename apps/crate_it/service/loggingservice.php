@@ -23,6 +23,14 @@ class LoggingService {
        file_put_contents($this->logfile, $this->timestamp().$text."\n", FILE_APPEND);
     }
     
+    public function getLog() {
+        $contents = file_get_contents($this->logfile);
+        if (!$contents) {
+            throw new Exception("Unable to write to log file");
+        }
+        return $contents;
+    }
+
     public function logManifest($crateName) {        
         $manifest = $this->crateManager->getManifestFileContent($crateName);
         $text = $this->prettyPrint($manifest);

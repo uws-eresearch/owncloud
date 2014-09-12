@@ -46,7 +46,6 @@ class SetupService {
         self::$params['crates'] = $this->crateManager->getCrateList();
         $manifestData = $this->crateManager->getManifestData($selectedCrate);
         self::$params['description'] = $manifestData['description'];  
-        $this->retrieveHelpDocs();
         $this->getReleaseInfo();
     }
     
@@ -66,18 +65,12 @@ class SetupService {
         self::$params['commit'] = $git[2];
     }
 
-    private function retrieveHelpDocs() {
-        $help = file_get_contents(self::$params['help documents']);
-        if($help === FALSE) {
-            $help = '<section><p>Unable to load help at this time</p></section>';
-        }
-        self::$params['help'] = $help;
-    }
-
 
     private function loadConfigParams() {
         $config = $this->readConfig();
         foreach($config as $key => $value) {
+            \OCP\Util::writeLog('crate_it', "SetupService::loadConfigParams() - loading $key:$value", \OCP\Util::DEBUG);         
+            
             self::$params[$key] = $value;
         }
     }

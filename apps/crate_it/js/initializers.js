@@ -1,5 +1,5 @@
 function loadTemplateVars() {
-  templateVars = {}
+  templateVars = {};
   $('#hidden_vars').children().each(function() {
     var $el = $(this);
     var key = $el.attr('id');
@@ -251,7 +251,7 @@ function initCrateActions() {
         }
       });
     });
-  }
+  };
 
   var $publishConfirmModal = $('#publishConfirmModal');
   var publishConfirmValidator = new CrateIt.Validation.FormValidator($publishConfirmModal);
@@ -317,6 +317,10 @@ function initCrateActions() {
     $('#publishModal').modal('hide');
   });
 
+  $('#userguide').click(function(event) {
+     event.preventDefault();
+     window.open($(this).attr("href"), "popupWindow", "width=600,height=600,scrollbars=yes");
+  });
 
 }
 

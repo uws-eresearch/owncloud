@@ -87,10 +87,26 @@
          Delete
       </a>
 
-      <a id="help_button" class="button" data-toggle="modal" data-target="#helpModal">
-        <i class="fa fa-question"></i>
-         Help
-      </a>
+      <div class="btn-group">      
+        <button type="button" class="dropdown-toggle" data-toggle="dropdown">
+          <i class="fa fa-question"></i>
+          Help
+        </button>
+        <ul class="dropdown-menu" style="right: 0;left: auto;">
+            <li>
+              <a id="help_button" class="dropdown-btn" data-toggle="modal" data-target="#helpModal">
+                <i class="fa fa-question"></i>
+                 About
+              </a>
+            </li>
+          <li>
+            <a id="userguide" href="{{ help_url }}" class="dropdown-btn">
+              <i class="fa fa-book"></i>
+               User Guide
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
 
   </div>

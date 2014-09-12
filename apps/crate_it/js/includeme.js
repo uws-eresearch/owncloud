@@ -409,7 +409,7 @@ function validateEmail($input, $error, $confirm) {
   var isEmail = function() {
     var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     return regex.test(email);
-  }
+  };
   if (!isEmail()) {
     $confirm.prop('disabled', true);
     $error.text('Not recognised as a valid email address');
@@ -422,7 +422,7 @@ function validateYear($input, $error, $confirm) {
   var isYear = function() {
     var regex = /^\d{4}$/;
     return regex.test(inputYear);
-  }
+  };
   var emptyYear = function() {
     return (!inputYear || /^\s*$/.test(inputYear));
   };

@@ -8,8 +8,6 @@
 
       <div class="modal-body">
 
-        {{ help | raw }}
-
         <h2 class="modal-title">About Cr8it</h2>
         <section>
           <p>Cr8it has been developed through a collaboration between the University of Newcastle, the University of Western Sydney, and Intersect Australia Ltd.</p>

@@ -21,14 +21,71 @@
  *
  */
 
-namespace OCA\Cr8it;
+namespace OCA\crate_it;
 
 use \OCA\AppFramework\App;
-use \OCA\Cr8it\DependencyInjection\DIContainer;
+use \OCA\crate_it\DependencyInjection\DIContainer;
 
-$this->create('myapp_index', '/')->action(
-		function($params){
-			// call the index method on the class PageController
-			App::main('PageController', 'index', $params, new DIContainer());
-		}
-);
+
+$this->create('crate_it_index', '/')->get()->action(function($params) {
+    // call the index method on the class PageController
+    App::main('PageController', 'index', $params, new DIContainer());
+});
+
+$this->create('crate_it_get_items', '/crate/get_items')->get()->action(function($params){
+    App::main('CrateController', 'getItems', $params, new DIContainer());
+});
+
+$this->create('crate_it_add', '/crate/add')->get()->action(function($params) {
+    App::main('CrateController', 'add', $params, new DIContainer());
+});
+
+$this->create('crate_it_get_crate_size', '/crate/get_crate_size')->get()->action(function($params) {
+    App::main('CrateController', 'getCrateSize', $params, new DIContainer());
+});
+
+$this->create('crate_it_update', '/crate/update')->post()->action(function($params) {
+    App::main('CrateController', 'updateCrate', $params, new DIContainer());
+});
+
+$this->create('crate_it_create', '/crate/create')->post()->action(function($params) {
+    App::main('CrateController', 'createCrate', $params, new DIContainer());
+});
+
+// NOTE: This route should possibly be changed to use the DELETE http method
+$this->create('crate_it_delete', '/crate/delete')->get()->action(function($params) {
+    App::main('CrateController', 'deleteCrate', $params, new DIContainer());
+});
+
+$this->create('crate_it_rename', '/crate/rename')->post()->action(function($params) {
+    App::main('CrateController', 'renameCrate', $params, new DIContainer());
+});
+
+$this->create('crate_it_search', '/crate/search')->post()->action(function($params) {
+    App::main('SearchController', 'search', $params, new DIContainer());
+});
+
+$this->create('crate_it_zip', '/crate/downloadzip')->get()->action(function($params) {
+    App::main('CrateController', 'packageCrate', $params, new DIContainer());
+});
+
+$this->create('crate_it_check', '/crate/check')->get()->action(function($params) {
+    App::main('CrateCheckController', 'checkCrate', $params, new DIContainer());
+});
+
+$this->create('crate_it_preview', '/crate/preview')->get()->action(function($params) {
+    App::main('CrateController', 'readmePreview', $params, new DIContainer());
+});
+
+$this->create('crate_it_epub', '/crate/epub')->get()->action(function($params) {
+    App::main('CrateController', 'generateEPUB', $params, new DIContainer());
+});
+
+$this->create('crate_it_publish', '/crate/publish')->post()->action(function($params) {
+    App::main('PublishController', 'publishCrate', $params, new DIContainer());
+});
+
+$this->create('crate_it_email_receipt', '/crate/email')->post()->action(function($params) {
+    App::main('PublishController', 'emailReceipt', $params, new DIContainer());
+});
+

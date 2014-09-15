@@ -10,6 +10,9 @@ vagrantfile-local:
                 lJkFXF1WEyOw:
                     host: '8080'
                     guest: '80'
+                adsfasdfdfs:
+                    host: '1080'
+                    guest: '1080'
         provider:
             virtualbox:
                 modifyvm:

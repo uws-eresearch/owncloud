@@ -235,6 +235,7 @@ class CrateController extends Controller {
     /**
      * README previewer - this is for debugging purposes.
      *
+     * @CSRFExemption
      * @IsAdminExemption
      * @IsSubAdminExemption
      */

@@ -836,9 +836,8 @@ JS;
 			$el->click();
 			return true;
 		});
-		sleep(1);
-		// clear mockjax
 		$this->getSession()->executeScript('$.mockjaxClear();');
+        $this->waitForPageToLoad();
     }
  
 
@@ -857,9 +856,8 @@ JS;
             $el->click();
             return true;
         });
-        sleep(1);
-        // clear mockjax
         $this->getSession()->executeScript('$.mockjaxClear();');
+        $this->waitForPageToLoad();
     }
 
 
@@ -990,6 +988,7 @@ JS;
             $button->click();
             return true;
         });
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -1385,6 +1384,17 @@ JS;
         $el = $page->find('xpath', $xpath);
         $size = $el->getHtml();
         assertEquals($size, $arg1);
+    }
+
+    /**
+     * @Given /^the "([^"]*)" button in the popup dialog should not be disabled$/
+     */
+    public function theButtonInThePopupDialogShouldNotBeDisabled($buttonText)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+        $web_assert = new WebAssert($this->getSession());
+        $web_assert->elementNotExists('xpath', '//button[text() = "'.$buttonText.'" and @disabled]', $el);
     }
 
 }

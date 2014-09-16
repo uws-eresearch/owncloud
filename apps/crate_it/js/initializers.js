@@ -391,7 +391,7 @@ function initSearchHandlers() {
       'email': 'Email'
     },
     displayFields: ['name', 'email'],
-    editFields: ['name', 'email'],
+    editFields: ['name', 'email', 'identifier'],
     editableRecords: ['manual', 'mint']
   };
 
@@ -403,6 +403,8 @@ function initSearchHandlers() {
   var creator$notification = $('#creators_search_notification');
   var creator$editModal = $('#editCreatorsModal');
 
+  // TODO: for add it's 'creator', but edit it's 'creators'
+  // logic works on field name, so make them call creators
   var editCreatorValidator = new CrateIt.Validation.FormValidator(creator$editModal);
   editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Validation.RequiredValidator('Name'));
   editCreatorValidator.addValidator($('#edit-creators-name'), new CrateIt.Validation.MaxLengthValidator('Name', 256));
@@ -411,6 +413,9 @@ function initSearchHandlers() {
   editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Validation.MaxLengthValidator('Email', 128));
   editCreatorValidator.addValidator($('#edit-creators-email'), new CrateIt.Validation.EmailValidator());
   
+  var editCreatorUrlValidator = new CrateIt.Validation.UrlValidator();
+  editCreatorValidator.addValidator($('#edit-creators-identifier'), new CrateIt.Validation.MaxLengthValidator('Identifier', 2000));
+  editCreatorValidator.addValidator($('#edit-creators-identifier'), new CrateIt.Validation.OptionalValidator(editCreatorUrlValidator));
 
   // TODO: add this to a namespace rather than exposing globally
   CreatorSearchManager = new SearchManager(creatorDefinition, creatorSelectedList, creator$resultsUl, creator$selectedUl, creator$notification, creator$editModal);
@@ -435,9 +440,11 @@ function initSearchHandlers() {
   var addCreator = function() {
     var name = $('#add-creator-name').val();
     var email = $('#add-creator-email').val();
+    var identifier = $('#add-creator-identifier').val();
     var overrides = {
       'name': name,
-      'email': email
+      'email': email,
+      'identifier': identifier
     };
     CreatorSearchManager.addRecord(overrides);
   };
@@ -451,6 +458,10 @@ function initSearchHandlers() {
   addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Validation.RequiredValidator('Email'));
   addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Validation.MaxLengthValidator('Email', 128));
   addCreatorValidator.addValidator($('#add-creator-email'), new CrateIt.Validation.EmailValidator());
+
+  var addCreatorUrlValidator = new CrateIt.Validation.UrlValidator();
+  addCreatorValidator.addValidator($('#add-creator-identifier'), new CrateIt.Validation.MaxLengthValidator('Identifier', 2000));
+  addCreatorValidator.addValidator($('#add-creator-identifier'), new CrateIt.Validation.OptionalValidator(addCreatorUrlValidator));
 
   // TODO: this doesn't need to be dynamically attached, maybe create a second helper
   $('#add-creator').click(function() {

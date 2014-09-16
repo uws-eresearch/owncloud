@@ -186,10 +186,13 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
     if (isEditable(record)) {
       var editPrefix = '#edit-' + definition.manifestField + '-';
       var originalPrefix = '#original-' + definition.manifestField;
+      var manualPrefix = '#manual-' + definition.manifestField;
       if (record.source == 'manual') {
         $(originalPrefix).hide();
+        $(manualPrefix).show();
       } else {
         $(originalPrefix).show();
+        $(manualPrefix).hide();
       }
       originalPrefix += '-';
       $(editPrefix + 'record').val(id);

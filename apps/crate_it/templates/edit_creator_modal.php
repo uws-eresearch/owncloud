@@ -25,6 +25,13 @@
         <p>
           <label style="color:red;display:none"></label>
         <p>
+        <div id="manual-creators">
+          <p>Creator Identifier URL</p>
+          <input id="edit-creators-identifier" type="text" class="modal-input"></input>
+          <p>
+            <label style="color:red;display:none"></label>
+          <p>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

@@ -59,6 +59,7 @@ class Crate extends BagIt {
     $manifest = $this->getManifest();
     $manifest['crate_name'] = $this->crateName;
     $manifest['files'] = $this->flatList();
+    $manifest['creators'] = $this->isCreatorIdUrl($manifest['creators']);
     date_default_timezone_set('Australia/Sydney');    
     $manifest['created_date'] = date("Y-m-d H:i:s");   
     $manifest['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
@@ -71,6 +72,22 @@ class Crate extends BagIt {
     $htmlStr = $twig->render('readme.php', $manifest);
     $readmePath = $this->getDataDirectory()."/README.html";
     file_put_contents($readmePath, $htmlStr);
+  }
+
+  // NOTE: workaround for non-functioning twig operators 'starts with' and 'matches'
+  private function isCreatorIdUrl($creators) {
+    $protocol = '/^https?\:\/\//';
+    foreach ($creators as &$creator) {
+      $uri =$creator['overrides']['identifier'];
+      $orUri = $creator['identifier'];
+      if(!empty($orUri) && preg_match($protocol, $orUri)) {
+        $creator['url'] = true;
+      } elseif(!empty($uri) && preg_match($protocol, $uri)) {
+        $creator['url'] = true;
+      }
+    }
+    // var_dump($creators);
+    return $creators;
   }
 
   private function getVersion() {
@@ -330,7 +347,6 @@ class Crate extends BagIt {
   
   public function generateEPUB($twig) {
     \OCP\Util::writeLog('crate_it', "Crate::generateEPUB(".$path.")", \OCP\Util::DEBUG);
-    // $files = $this->flatList();
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
     $epub = $twig->render('epub.php', $params);

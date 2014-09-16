@@ -63,9 +63,4 @@ Feature: Publish crates to an endpoint
       When I click on "publish"
       Then I should see "The following item no longer exists"
 
-    #CRATEIT-212
-    Scenario: A user can email the status of a publish to themselves
-      Given that I can publish a crate
-      When I click on "publish"
-      And I press "Publish" on the popup dialog
 

@@ -31,7 +31,13 @@ class PublishController extends Controller {
       return $this->publisher->getCollections();
     }
 
-
+    /**
+     * Email crate
+     *
+     * @Ajax
+     * @IsAdminExemption
+     * @IsSubAdminExemption
+     */
     public function emailReceipt() {
         $data = array();
         if(!empty($_SESSION['last_published_status'])) {

@@ -128,6 +128,18 @@ CrateIt.Validation = {
 
   },
 
+  UrlValidator: function() {
+    this.invalidMessage = 'Must be a valid URL';
+
+    var regex = /^https?:\/\/[a-z0-9-\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
+
+    this.isValid = function(value) {
+      return regex.test(value);
+    }
+
+  },
+
+
   OptionalValidator: function(validator) {
     this.invalidMessage = validator.invalidMessage;
 

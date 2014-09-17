@@ -59,7 +59,7 @@ function initCrateActions() {
               res = data.result;
               var key;
               for (key in res) {
-                newRow = '<tr><td>' + key + '</td>/tr>';
+                newRow = '<tr><td>' + key + '</td></tr>';
                  $("#check-results-table").last().append(newRow); 
               }
               

@@ -33,15 +33,16 @@ $(document).ready(function() {
     if (location.pathname.indexOf("files") != -1) {
         if (typeof FileActions !== 'undefined') {
             FileActions.register('all', 'Add to crate', OC.PERMISSION_READ, '', function(filename) {
-                var params = {
+                var payload = {
                     file: getFileName($('#dir').val(), filename)
                 };
-                var c_url = OC.generateUrl('apps/crate_it/crate/add?file={file}', params);
+                var c_url = OC.generateUrl('apps/crate_it/crate/add');
                 console.log(c_url);
                 $.ajax({
                     url: c_url,
-                    type: 'get',
+                    type: 'post',
                     dataType: 'json',
+                    data: payload,
                     complete: function(data) {
                         OC.Notification.show(data.responseJSON);
                         setTimeout(function() {

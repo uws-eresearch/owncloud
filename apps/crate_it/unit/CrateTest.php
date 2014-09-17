@@ -1,8 +1,8 @@
 <?php
 
-require 'MockUtil.php';
+require_once 'mocks/MockUtil.php';
 
-require 'lib/crate.php';
+require_once 'lib/crate.php';
 use OCA\crate_it\lib\Crate;
 
 class CrateTest extends PHPUnit_Framework_TestCase

@@ -1,13 +1,13 @@
 <?php
 
-require 'MockController.php';
-require 'MockZipDownloadResponse.php';
-require 'MockTextResponse.php';
-require 'MockUtil.php';
-require 'MockHttp.php';
-require 'service/setupservice.php';
-require 'service/crateservice.php';
-require 'controller/cratecontroller.php';
+require_once 'mocks/MockController.php';
+require_once 'mocks/MockZipDownloadResponse.php';
+require_once 'mocks/MockTextResponse.php';
+require_once 'mocks/MockUtil.php';
+require_once 'mocks/MockHttp.php';
+require_once 'service/setupservice.php';
+require_once 'service/crateservice.php';
+require_once 'controller/cratecontroller.php';
 
 use \OCA\crate_it\Controller\CrateController;
 use OCA\AppFramework\Http;

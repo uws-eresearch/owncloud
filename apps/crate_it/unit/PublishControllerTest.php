@@ -1,14 +1,14 @@
 <?php
 
-require 'MockController.php';
-require 'MockJSONResponse.php';
-require 'MockUtil.php';
-require 'controller/publishcontroller.php';
-require 'manager/cratemanager.php';
-require 'lib/sword_connector.php';
-require 'lib/mailer.php';
-require 'service/setupservice.php';
-require 'service/loggingservice.php';
+require_once 'mocks/MockController.php';
+require_once 'mocks/MockJSONResponse.php';
+require_once 'mocks/MockUtil.php';
+require_once 'controller/publishcontroller.php';
+require_once 'manager/cratemanager.php';
+require_once 'lib/sword_connector.php';
+require_once 'lib/mailer.php';
+require_once 'service/setupservice.php';
+require_once 'service/loggingservice.php';
 
 
 use OCA\crate_it\Controller\PublishController;

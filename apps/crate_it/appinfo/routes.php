@@ -36,7 +36,7 @@ $this->create('crate_it_get_items', '/crate/get_items')->get()->action(function(
     App::main('CrateController', 'getItems', $params, new DIContainer());
 });
 
-$this->create('crate_it_add', '/crate/add')->get()->action(function($params) {
+$this->create('crate_it_add', '/crate/add')->post()->action(function($params) {
     App::main('CrateController', 'add', $params, new DIContainer());
 });
 

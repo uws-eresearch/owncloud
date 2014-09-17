@@ -52,7 +52,7 @@
                                                     </a>
                                                 {% endif %}
                                             {% else %}
-                                                <span property="dc:identifier">{{ creator.overrides.identifier }}</span>
+                                                <span property="dc:identifier">{{ creator.identifier }}</span>
                                             {% endif %}
                                         </td>
                                         <td>{{ creator.source}}</td>

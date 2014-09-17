@@ -285,6 +285,7 @@ function updateCrateSize() {
     dataType: 'json',
     success: function(data) {
       $('#crate_size_human').text(data['human']);
+      $('#crate_size_human_publish').text(data['human']);
       crate_size_mb = data['size'] / (1024 * 1024);
       var msg = null;
       if (max_zip_mb > 0 && crate_size_mb > max_zip_mb) {

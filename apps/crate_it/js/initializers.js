@@ -262,6 +262,7 @@ function initCrateActions() {
     // TODO: let this be handled by the search managers perhaps?
     $('#publish-consistency').text('');
     $('#publish-consistency-table').empty();
+    updateCrateSize();
     var c_url = OC.generateUrl('apps/crate_it/crate/check');
     $.ajax({
         url: c_url,
@@ -271,9 +272,9 @@ function initCrateActions() {
         success: function(data) {
           var inconsistencies = Object.keys(data.result);
           if(inconsistencies.length > 0) {
-            $('#publish-consistency').text(data.msg);
+            $('#publish-consistency').text('[Consistency Check] ' + data.msg);
             for(var i = 0; i < inconsistencies.length ; i++) {
-              $("#publish-consistency-table").last().append('<tr><td>' + inconsistencies[i] + '</td>/tr>'); 
+              $("#publish-consistency-table").last().append('<tr><td>' + inconsistencies[i] + '</td></tr>'); 
             }
           }
         },

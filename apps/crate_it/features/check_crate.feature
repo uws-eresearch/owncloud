@@ -78,6 +78,54 @@ Feature:Check crate
     | file0.txt |
     | file2.txt |          
     
+  #CRATEIT-193
+  Scenario: Test deeply nested folder structure
+    Given I have folders "folder1/folder2/folder3/folder4"
+    And I have file "fileA.txt" within "folder1/folder2/folder3"
+    And I have file "fileB.txt" within "folder1/folder2/folder3"
+    And I have file "fileC.txt" within "folder1/folder2/folder3/folder4"
+    And I have file "fileD.txt" within "folder1/folder2/folder3/folder4"
+    And I have file "fileE.txt" within "folder1/folder2/folder3/folder4"
+    And I have file "fileF.txt" within "folder1/folder2/folder3/folder4"
+    And I add "file0.txt" to the current crate
+    And I add "file1.txt" to the current crate
+    And I add "folder1" to the current crate
+    And I go to the crate_it page
+    And I remove "folder1/folder2/folder3/folder4/fileD.txt" from the file system
+    And I click on "check"
+    Then I should see "The following item no longer exists:"
+    And I should see these files listed as invalid
+    | filename  |
+    | fileD.txt |
+    Then I click on "confirm_checker"
+    And I should see red crosses next to these items
+    | filename |
+    | folder1  |
+    | folder2  |
+    | folder3  |
+    | folder4  |
+    | fileD.txt|
+    | crate1   |
+    And I should see green ticks next to these items
+    | filename  |
+    | file0.txt |
+    | file1.txt |
+    | file2.txt |
+    | fileA.txt |
+    | fileB.txt |
+    | fileC.txt |
+    | fileE.txt |
+    | fileF.txt |
+    And I clear the crate
+    And I press "Clear" on the popup dialog
+    And I click on "check"
+    Then I should see "All items are valid." in the modal
+    And I click on "confirm_checker"
+    Then I should see green ticks next to these items
+    | filename |
+    | crate1   |
+  
+  
   
   
     

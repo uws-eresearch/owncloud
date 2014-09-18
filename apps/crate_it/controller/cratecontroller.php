@@ -66,11 +66,8 @@ class CrateController extends Controller {
             \OCP\Util::writeLog('crate_it', "selected_crate:: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
             $data = $this->crate_service->getItems($crateName);
             return new JSONResponse($data);
-        } catch (Exception $e) {
-            return new JSONResponse(
-                array('msg' => "Error getting manifest data", 'error' => $e),
-                $e->getCode()
-            );
+        } catch (\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
     

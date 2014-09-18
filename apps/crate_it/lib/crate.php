@@ -131,7 +131,13 @@ class Crate extends BagIt {
 
   public function getManifest() {
     $manifest = file_get_contents($this->manifestPath);
-    return json_decode($manifest, true);
+    if($manifest) {
+      $result = json_decode($manifest, true);
+    }
+    if(!$manifest or is_null($result)) {
+      throw new Exception("Error opening manifest.json");
+    }
+    return result;
   }
 
   public function setManifest($manifest) {

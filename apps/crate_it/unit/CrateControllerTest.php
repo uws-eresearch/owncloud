@@ -3,6 +3,7 @@
 require_once 'mocks/MockController.php';
 require_once 'mocks/MockZipDownloadResponse.php';
 require_once 'mocks/MockTextResponse.php';
+require_once 'mocks/MockJSONResponse.php';
 require_once 'mocks/MockUtil.php';
 require_once 'mocks/MockHttp.php';
 require_once 'service/setupservice.php';
@@ -19,7 +20,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   private $crateController;
   private $crateService;
-  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate');
+  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems');
 
   public function setUp() {
 
@@ -47,13 +48,23 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetItemsSuccess() {
-    $crateName = 'test';
-    $_SESSION['selected_crate'] = $crateName;
-    $this->crateService->method('createCrate')->willReturn($crateName);
-    $expected = new JSONResponse(array('crateName' => $crateName, 'crateDescription' => ''));
-    $actual = $this->crateController->createCrate();
+    $_SESSION['selected_crate'] = 'test';
+    $manifestData = array('files' => 'test');
+    $this->crateService->method('getItems')->willReturn($manifestData);
+    $expected = new JSONResponse($manifestData);
+    $actual = $this->crateController->getItems();
     $this->assertEquals($expected, $actual);
   }
+
+  public function testGetItemsFailure() {
+    $_SESSION['selected_crate'] = 'test';
+    $message = 'Server has caught on fire';
+    $this->crateService->method('getItems')->will($this->throwException(new Exception($message)));
+    $expected = new JSONResponse(array('msg' => $message), Http::STATUS_INTERNAL_SERVER_ERROR);
+    $actual = $this->crateController->getItems();
+    $this->assertEquals($expected, $actual);
+  }
+
 
   public function testGenerateEPUBSuccess() {
     $_SESSION['selected_crate'] = 'test';

@@ -124,7 +124,36 @@ Feature:Check crate
     Then I should see green ticks next to these items
     | filename |
     | crate1   |
-  
+    
+  #CRATEIT-222
+  Scenario: Empty folders should be valid 
+    Given I add "folder1" to the current crate
+    And I go to the crate_it page    
+    And I remove "folder1/folder2/file2.txt" from the file system
+    And I click on "check"
+    Then I should see these files listed as invalid
+    | filename |
+    | file2.txt |
+    Then I click on "confirm_checker"
+    And I should see red crosses next to these items
+    | filename  |
+    | file2.txt |
+    | folder1   |
+    | folder2   |
+    | crate1    | 
+    And I expand 'folder1'
+    And I expand 'folder2'
+    Then I remove "file2.txt"
+    And I press "Remove" on the popup dialog
+    And I click on "check"
+    Then I should see "All items are valid." in the modal
+    And I click on "confirm_checker"
+    Then I should see green ticks next to these items
+    | filename  |
+    | folder1   |
+    | folder2   |
+    | crate1    | 
+    
   
   
   

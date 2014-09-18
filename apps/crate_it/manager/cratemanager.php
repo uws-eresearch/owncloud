@@ -185,10 +185,10 @@ class CrateManager {
             $children = &$node['children'];
             foreach($children as &$child) {
                 $childValid = $this->validateNode($child, $crate, $manifest);
-                $valid = $valid && $childValid;
-                $node['valid'] = var_export($valid, true);
-                $crate->setManifest($manifest);                   
+                $valid = $valid && $childValid;                            
             }
+            $node['valid'] = var_export($valid, true);
+            $crate->setManifest($manifest);       
         }
         else {
             $filename = $node['filename'];

@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\AppFramework;
+namespace OCP\AppFramework;
 
 class Http {
   

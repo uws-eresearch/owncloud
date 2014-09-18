@@ -98,7 +98,7 @@ function initCrateActions() {
         displayNotification('Crate ' + crateName + ' successfully created', 6000);
       },
       error: function(data) {
-        displayError(data.statusText);
+        displayError(jqXHR.responseJSON.msg); // TODO: Make sure all ajax errors are this form instrad of data.msg
       }
     });
   };

@@ -5,7 +5,7 @@ namespace OCA\crate_it\Controller;
 use \OCA\AppFramework\Controller\Controller;
 use \OCA\AppFramework\Http\JSONResponse;
 use \OCA\AppFramework\Http\TextResponse;
-use \OCA\AppFramework\Http;
+use \OCP\AppFramework\Http;
 
 use OCA\crate_it\lib\ZipDownloadResponse;
 
@@ -43,12 +43,9 @@ class CrateController extends Controller {
             $msg = $this->crate_service->createCrate($name, $description);
             $_SESSION['selected_crate'] = $name;
             session_commit();
-            return new JSONResponse(array('crateName' => $msg, 'crateDescription' => $description), 200);
-        } catch (Exception $e) {
-            return new JSONResponse (
-                array ($e->getMessage(), 'error' => $e),
-                $e->getCode()
-            );
+            return new JSONResponse(array('crateName' => $msg, 'crateDescription' => $description));
+        } catch (\Exception $e) { // TODO: This is currently unreachable
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -68,7 +65,7 @@ class CrateController extends Controller {
             session_commit();
             \OCP\Util::writeLog('crate_it', "selected_crate:: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
             $data = $this->crate_service->getItems($crateName);
-            return new JSONResponse($data, 200);
+            return new JSONResponse($data);
         } catch (Exception $e) {
             return new JSONResponse(
                 array('msg' => "Error getting manifest data", 'error' => $e),

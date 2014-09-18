@@ -21,9 +21,16 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
   private $crateController;
   private $crateService;
   private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems');
+  private $exception;
+  private $textErrorResponse;
+  private $jsonErrorResponse;
 
   public function setUp() {
-
+    $errorMessage = 'Server has caught on fire';
+    $this->exception = new Exception($errorMessage);
+    $this->jsonErrorResponse = new JSONResponse(array('msg' => $errorMessage), Http::STATUS_INTERNAL_SERVER_ERROR);
+    $this->textErrorResponse = new TextResponse("Internal Server Error: $errorMessage");
+    $this->textErrorResponse->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
     $this->crateService = $crateService = $this->getMockBuilder('OCA\crate_it\Service\CrateService')->disableOriginalConstructor()->setMethods($this->crateServiceMethods)->getMock();
     $setupService = $this->getMockBuilder('OCA\crate_it\Service\SetupService')->disableOriginalConstructor()->setMethods(array('getParams'))->getMock();
     $this->crateController = new CrateController(NULL, NULL, $crateService, $setupService);
@@ -40,11 +47,9 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   public function testCreateCrateFailure() {
     $_SESSION['selected_crate'] = 'test';
-    $message = 'Server has caught on fire';
-    $this->crateService->method('createCrate')->will($this->throwException(new Exception($message)));
-    $expected = new JSONResponse(array('msg' => $message), Http::STATUS_INTERNAL_SERVER_ERROR);
+    $this->crateService->method('createCrate')->will($this->throwException($this->exception));
     $actual = $this->crateController->createCrate();
-    $this->assertEquals($expected, $actual);
+    $this->assertEquals($this->jsonErrorResponse, $actual);
   }
 
   public function testGetItemsSuccess() {
@@ -59,10 +64,9 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
   public function testGetItemsFailure() {
     $_SESSION['selected_crate'] = 'test';
     $message = 'Server has caught on fire';
-    $this->crateService->method('getItems')->will($this->throwException(new Exception($message)));
-    $expected = new JSONResponse(array('msg' => $message), Http::STATUS_INTERNAL_SERVER_ERROR);
+    $this->crateService->method('getItems')->will($this->throwException($this->exception));
     $actual = $this->crateController->getItems();
-    $this->assertEquals($expected, $actual);
+    $this->assertEquals($this->jsonErrorResponse, $actual);
   }
 
 
@@ -76,12 +80,9 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   public function testGenerateEPUBFailure() {
     $_SESSION['selected_crate'] = 'test';
-    $message = 'Server has caught on fire';
-    $this->crateService->method('generateEPUB')->will($this->throwException(new Exception($message)));
-    $expected = new TextResponse("Internal Server Error: $message");
-    $expected->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
+    $this->crateService->method('generateEPUB')->will($this->throwException($this->exception));
     $actual = $this->crateController->generateEPUB();
-    $this->assertEquals($expected, $actual);
+    $this->assertEquals($this->textErrorResponse, $actual);
   }
 
   public function testPackageCrateSuccess() {
@@ -95,11 +96,9 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
   public function testPackageCrateFailure() {
     $_SESSION['selected_crate'] = 'test';
     $message = 'Server has caught on fire';
-    $this->crateService->method('packageCrate')->will($this->throwException(new Exception($message)));
-    $expected = new TextResponse("Internal Server Error: $message");
-    $expected->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
+    $this->crateService->method('packageCrate')->will($this->throwException($this->exception));
     $actual = $this->crateController->packageCrate();
-    $this->assertEquals($expected, $actual);
+    $this->assertEquals($this->textErrorResponse, $actual);
   }
 
 }

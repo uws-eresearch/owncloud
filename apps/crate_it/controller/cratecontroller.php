@@ -79,24 +79,19 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function add()
-    {
+    public function add() {
         \OCP\Util::writeLog('crate_it', "CrateController::add()", \OCP\Util::DEBUG);
-        try
-        {
+        try {
             // TODO check if this error handling works
             $file = $this->params('file');
-            \OCP\Util::writeLog('crate_it', "Adding ".$file, 3);
+            \OCP\Util::writeLog('crate_it', "Adding ".$file, \OCP\Util::DEBUG);
+            // TODO: naming consistency, add vs addToBag vs addToCrate
             $msg = $this->crate_service->addToBag($_SESSION['selected_crate'], $file);
             return new JSONResponse($msg);
-        } catch(Exception $e)
-        {
+        } catch(\Exception $e) {
             return new JSONResponse(
-                array('msg' => "Error adding file", 'error' => $e),
-                $e->getCode()
-            );
+                array('msg' => "Error adding file"), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
-       
     }
     
     /**

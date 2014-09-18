@@ -135,14 +135,17 @@ class Crate extends BagIt {
       $result = json_decode($manifest, true);
     }
     if(!$manifest or is_null($result)) {
-      throw new Exception("Error opening manifest.json");
+      throw new \Exception("Error opening manifest.json");
     }
-    return result;
+    return $result;
   }
 
   public function setManifest($manifest) {
     $manifest = json_encode($manifest);
-    file_put_contents($this->manifestPath, $manifest);
+    $success = file_put_contents($this->manifestPath, $manifest);
+    if($manifest === false || $success === false) {
+      throw new \Exception("Error writing to manifest.json"); 
+    }
   }
 
   public function addToCrate($path) {

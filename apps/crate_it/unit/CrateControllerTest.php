@@ -69,7 +69,6 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($this->jsonErrorResponse, $actual);
   }
 
-
   public function testGenerateEPUBSuccess() {
     $_SESSION['selected_crate'] = 'test';
     $this->crateService->method('generateEPUB')->willReturn('/tmp/test.epub');

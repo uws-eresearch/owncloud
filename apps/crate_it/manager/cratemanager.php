@@ -116,7 +116,6 @@ class CrateManager {
         \OCP\Util::writeLog('crate_it', "Crate::addToCrate(".$crateName.','.$path.")", \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
         $crate->addToCrate($path);
-        return 'Added to crate '.$crateName;
     }
 
     public function getCrateSize($crateName) {

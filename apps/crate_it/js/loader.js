@@ -43,8 +43,8 @@ $(document).ready(function() {
                     type: 'post',
                     dataType: 'json',
                     data: payload,
-                    complete: function(data) {
-                        OC.Notification.show(data.responseJSON);
+                    complete: function(jqXHR) {
+                        OC.Notification.show(jqXHR.responseJSON.msg);
                         setTimeout(function() {
                             OC.Notification.hide();
                         }, 3000);

@@ -21,9 +21,8 @@ class CrateController extends Controller {
      */
     private $crate_service;
     
-    public function __construct($api, $request, $crate_service, $setupService) {
+    public function __construct($api, $request, $crate_service) {
         parent::__construct($api, $request);
-        $setupService->getParams();
         $this->crate_service = $crate_service;
     }
     
@@ -85,12 +84,12 @@ class CrateController extends Controller {
             // TODO check if this error handling works
             $file = $this->params('file');
             \OCP\Util::writeLog('crate_it', "Adding ".$file, \OCP\Util::DEBUG);
+            $crateName = $_SESSION['selected_crate'];
             // TODO: naming consistency, add vs addToBag vs addToCrate
-            $msg = $this->crate_service->addToBag($_SESSION['selected_crate'], $file);
-            return new JSONResponse($msg);
+            $this->crate_service->addToBag($crateName, $file);
+            return new JSONResponse(array('msg' => "$file added to crate $crateName"));
         } catch(\Exception $e) {
-            return new JSONResponse(
-                array('msg' => "Error adding file"), Http::STATUS_INTERNAL_SERVER_ERROR);
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
     

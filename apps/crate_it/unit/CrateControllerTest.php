@@ -20,7 +20,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   private $crateController;
   private $crateService;
-  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems');
+  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems', 'addToBag');
   private $exception;
   private $textErrorResponse;
   private $jsonErrorResponse;
@@ -32,8 +32,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
     $this->textErrorResponse = new TextResponse("Internal Server Error: $errorMessage");
     $this->textErrorResponse->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
     $this->crateService = $crateService = $this->getMockBuilder('OCA\crate_it\Service\CrateService')->disableOriginalConstructor()->setMethods($this->crateServiceMethods)->getMock();
-    $setupService = $this->getMockBuilder('OCA\crate_it\Service\SetupService')->disableOriginalConstructor()->setMethods(array('getParams'))->getMock();
-    $this->crateController = new CrateController(NULL, NULL, $crateService, $setupService);
+    $this->crateController = new CrateController(NULL, NULL, $crateService);
   }
 
   public function testCreateCrateSuccess() {
@@ -63,9 +62,23 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   public function testGetItemsFailure() {
     $_SESSION['selected_crate'] = 'test';
-    $message = 'Server has caught on fire';
     $this->crateService->method('getItems')->will($this->throwException($this->exception));
     $actual = $this->crateController->getItems();
+    $this->assertEquals($this->jsonErrorResponse, $actual);
+  }
+
+  public function testAddToCrateSuccess() {
+    $_SESSION['selected_crate'] = 'test';
+    $expected = new JSONResponse(array('msg' => ' added to crate test'));
+    $actual = $this->crateController->add();
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testAddToCrateFailure() {
+    $_SESSION['selected_crate'] = 'test';
+    $expected = new JSONResponse(array('msg' => ' added to crate test'));
+    $this->crateService->method('addToBag')->will($this->throwException($this->exception));
+    $actual = $this->crateController->add();
     $this->assertEquals($this->jsonErrorResponse, $actual);
   }
 

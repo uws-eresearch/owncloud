@@ -146,6 +146,7 @@ class CrateManager {
     }
     
     public function packageCrate($crateName){
+        $this->updateCrateCheckIcons($crateName);
         $crate = $this->getCrate($crateName);
         return $crate->packageCrate($this->twig);
     }

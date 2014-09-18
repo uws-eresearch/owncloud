@@ -199,11 +199,11 @@ function buildFileTree(data) {
       var valid = node.valid;
       if (valid == 'false') {
         $title = $div.find('.jqtree-title');
-        $title.prepend('<i class="fa fa-times-circle" style="color:red;  padding-right: 5px;"></i>');
+        $title.prepend('<i class="fa fa-times" style="color:red;  padding-right: 5px;"></i>');
       }   
       else if (valid == 'true') {
         $title = $div.find('.jqtree-title');
-        $title.prepend('<i class="fa fa-check-circle" style="color:green; padding-right: 5px;"></i>');  
+        $title.prepend('<i class="fa fa-check" style="color:green; padding-right: 5px;"></i>');  
       } 
       var type = node.id;
       if (type == 'rootfolder' || type == 'folder') {

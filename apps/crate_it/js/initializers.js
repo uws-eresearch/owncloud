@@ -61,8 +61,7 @@ function initCrateActions() {
               for (key in res) {
                 newRow = '<tr><td>' + key + '</td></tr>';
                  $("#check-results-table").last().append(newRow); 
-              }
-              
+              }              
           },
           error: function(data) {
               // TODO Format errors

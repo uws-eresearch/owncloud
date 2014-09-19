@@ -1,3 +1,13 @@
+
+function recalculateFileTreePosition() {
+    var barActionHeight = $('.bar-actions').height();
+    var titleHeight = parseInt(barActionHeight);    
+    $('#files').css('margin-top', titleHeight.toString() + 'px');    
+}
+
+$(window).resize(recalculateFileTreePosition);
+
+
 function setupEditDesriptionOp() {
   $('#crate_description').keyup(function() {
     var description_length = templateVars['description_length'];

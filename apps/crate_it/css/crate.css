@@ -203,6 +203,7 @@ left: auto;
 padding: 0;
 overflow: hidden;
 text-overflow: ellipsis;
+white-space:nowrap;
 max-width: 800px;
 	color: #000;
 	font-weight: bold;

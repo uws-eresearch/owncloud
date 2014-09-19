@@ -20,7 +20,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   private $crateController;
   private $crateService;
-  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems', 'addToBag');
+  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems', 'addToBag', 'getCrateSize');
   private $exception;
   private $textErrorResponse;
   private $jsonErrorResponse;
@@ -76,10 +76,18 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   public function testAddToCrateFailure() {
     $_SESSION['selected_crate'] = 'test';
-    $expected = new JSONResponse(array('msg' => ' added to crate test'));
     $this->crateService->method('addToBag')->will($this->throwException($this->exception));
     $actual = $this->crateController->add();
     $this->assertEquals($this->jsonErrorResponse, $actual);
+  }
+
+  public function testGetCrateSizeSuccess() {
+    $_SESSION['selected_crate'] = 'test';
+    $content = array('size' => 20, 'human' => '20 bytes');
+    $this->crateService->method('getCrateSize')->willReturn($content);
+    $expected = new JSONResponse($content);
+    $actual = $this->crateController->getCrateSize();
+    $this->assertEquals($expected, $actual);
   }
 
   public function testGenerateEPUBSuccess() {

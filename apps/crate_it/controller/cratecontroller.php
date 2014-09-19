@@ -55,7 +55,7 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function getItems()
+    public function getItems() // NOTE: this now return the entire manifest, should we change the name of the method?
     {
         \OCP\Util::writeLog('crate_it', "CrateController::get_items()", \OCP\Util::DEBUG);
         try {
@@ -92,20 +92,7 @@ class CrateController extends Controller {
             return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    /**
-     * Get Crate Manifest
-     *
-     * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
-     */
-    public function manifest()
-    {
-        \OCP\Util::writeLog('crate_it', "CrateController::manifest()", \OCP\Util::DEBUG);
-        $success = $this->crate_service->getManifest();
-        return new JSONResponse (array('msg'=>'OK'), $success);
-    }
+
     
     /**
      * Get Crate Size

@@ -104,8 +104,12 @@ class CrateController extends Controller {
     public function getCrateSize()
     {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", \OCP\Util::DEBUG);
-        $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
-        return new JSONResponse($data);
+        try {
+            $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
+            return new JSONResponse($data);
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
     
     /**
@@ -121,8 +125,12 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", \OCP\Util::DEBUG);
         $field = $this->params('field');
         $value = $this->params('value');
-        $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
-        return new JSONResponse(array('description' => $value));
+        try {
+            $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
+            return new JSONResponse(array('msg' => "$field successfully updated to $value"));
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

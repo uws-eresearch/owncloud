@@ -27,7 +27,7 @@ function drawCrateContents() {
       indentTree();
     },
     error: function(data) {
-      var e = data.statusText;
+      var e = data.statusText; // TODO: does nothing?
     }
   });
 }
@@ -97,8 +97,9 @@ function initCrateActions() {
         $('#crates').trigger('change');
         displayNotification('Crate ' + crateName + ' successfully created', 6000);
       },
-      error: function(data) {
-        displayError(jqXHR.responseJSON.msg); // TODO: Make sure all ajax errors are this form instrad of data.msg
+      error: function(jqXHR) {
+         // TODO: Make sure all ajax errors are this form instrad of data.msg
+         displayError(jqXHR.responseJSON.msg);
       }
     });
   };
@@ -114,9 +115,9 @@ function initCrateActions() {
         displayNotification('Crate ' + current_crate + ' deleted');
         location.reload();
       },
-      error: function(data) {
+      error: function(jqXHR) {
         // TODO: be consistent with response messages
-        displayError(data.statusText);
+        displayError(jqXHR.responseJSON.msg);
       }
     });
     $('#deleteCrateModal').modal('hide');
@@ -199,8 +200,8 @@ function initCrateActions() {
         manifest = data;
         reloadCrateData(data);
       },
-      error: function(data) {
-        displayError(data.statusText);
+      error: function(jqXHR) {
+        displayError(jqXHR.responseJSON.msg);
       }
     });
   });
@@ -360,8 +361,8 @@ function setupDescriptionOps() {
           $('#edit_description').removeClass('hidden');
           calulateHeights();
         },
-        error: function(data) {
-          displayError(data.statusText);
+        error: function(jqXHR) {
+          displayError(jqXHR.responseJSON.msg);
         }
       });
     });

@@ -20,7 +20,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   private $crateController;
   private $crateService;
-  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems', 'addToBag', 'getCrateSize');
+  private $crateServiceMethods = array('generateEPUB', 'packageCrate', 'createCrate', 'getItems', 'addToBag', 'getCrateSize', 'updateCrate');
   private $exception;
   private $textErrorResponse;
   private $jsonErrorResponse;
@@ -89,6 +89,28 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
     $actual = $this->crateController->getCrateSize();
     $this->assertEquals($expected, $actual);
   }
+
+  public function testGetCrateSizeFailure() {
+    $_SESSION['selected_crate'] = 'test';
+    $this->crateService->method('getCrateSize')->will($this->throwException($this->exception));
+    $actual = $this->crateController->getCrateSize();
+    $this->assertEquals($this->jsonErrorResponse, $actual);
+  }
+
+  public function testUpdateCrateSuccess() {
+    $_SESSION['selected_crate'] = 'test';
+    $expected = new JSONResponse(array('msg' => ' successfully updated to '));
+    $actual = $this->crateController->updateCrate();
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testUpdateCrateFailure() {
+    $_SESSION['selected_crate'] = 'test';
+    $this->crateService->method('updateCrate')->will($this->throwException($this->exception));
+    $actual = $this->crateController->updateCrate();
+    $this->assertEquals($this->jsonErrorResponse, $actual);
+  }
+
 
   public function testGenerateEPUBSuccess() {
     $_SESSION['selected_crate'] = 'test';

@@ -200,7 +200,7 @@ class Crate extends BagIt {
     $checked = array();
     foreach($files as $file) {
       \OCP\Util::writeLog('crate_it', "Crate::getSize() - checking: ".$file, \OCP\Util::DEBUG);        
-      if (!in_array($file , $checked)) {
+      if (!in_array($file, $checked)) {
           $total+= filesize($file);
       } 
       $checked[] = $file;

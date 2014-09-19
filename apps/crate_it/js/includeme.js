@@ -307,7 +307,7 @@ function updateCrateSize() {
       }
     },
     error: function(data) {
-      // do nothing - some owncloud ajax call somehow triggers this error block
+      displayError(jqXHR.responseJSON.msg);
     }
   });
 }

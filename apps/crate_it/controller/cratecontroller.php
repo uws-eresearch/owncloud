@@ -259,10 +259,7 @@ class CrateController extends Controller {
                       'result' => $result)
             );
         } catch (\Exception $e) {
-            return new JSONResponse (
-                array ($e->getMessage(), 'error' => $e),
-                $e->getCode()
-            );
+            return new JSONResponse (array($e->getMessage(), 'error' => $e), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 }

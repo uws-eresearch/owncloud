@@ -188,7 +188,10 @@ class Crate extends BagIt {
     \OCP\Util::writeLog('crate_it', "renameCrate($this->crateName, $newCrateName)", \OCP\Util::DEBUG);
     $oldCrateName = $this->getAbsolutePath($this->crateRoot, $this->crateName);
     $newCrateName = $this->getAbsolutePath($this->crateRoot, $newCrateName);
-    rename($oldCrateName, $newCrateName);
+    $success = rename($oldCrateName, $newCrateName);
+    if(!$success) {
+      throw new \Exception("Error renaming crate");
+    }
   }
 
   // TODO: If a file has been added to the crate multiple times this will give the wront size

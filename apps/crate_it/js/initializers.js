@@ -111,12 +111,10 @@ function initCrateActions() {
       type: 'get',
       dataType: 'json',
       success: function(data) {
-        // TODO: push notification messages to server side to data.msg
-        displayNotification('Crate ' + current_crate + ' deleted');
+        displayNotification(data.msg);
         location.reload();
       },
       error: function(jqXHR) {
-        // TODO: be consistent with response messages
         displayError(jqXHR.responseJSON.msg);
       }
     });
@@ -357,7 +355,7 @@ function setupDescriptionOps() {
         },
         success: function(data) {
           $('#description').html('');
-          $('#description').text(data.description);
+          $('#description').text(data.value);
           $('#edit_description').removeClass('hidden');
           calulateHeights();
         },

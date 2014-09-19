@@ -136,18 +136,15 @@ function buildFileTree(data) {
         data: {
           'newCrateName': newCrateName,
         },
-        success: function() {
+        success: function(data) {
           $('#crates > #' + oldName).val(newCrateName).attr('id', newCrateName).text(newCrateName);
-          // TODO: move messges to server side generations
-          var successMessage = 'Renamed ' + oldName + ' to ' + newCrateName;
           var errorMessage = oldName + ' not renamed';
           // TODO: try to do this withou a page reload
-          saveTree(successMessage, errorMessage, true);
+          saveTree(data.msg, errorMessage, true);
         },
-        error: function(data) {
+        error: function(jqXHR) {
           $tree.tree('updateNode', node, oldName);
-          displayError(oldName + ' not renamed');
-          // location.reload();
+          displayError(jqXHR.responseJSON.msg);
         }
       });
     };
@@ -306,7 +303,7 @@ function updateCrateSize() {
         $('#download').removeAttr("disabled");
       }
     },
-    error: function(data) {
+    error: function(jqXHR) {
       displayError(jqXHR.responseJSON.msg);
     }
   });
@@ -398,11 +395,7 @@ function activateRemoveCreatorButton(buttonObj) {
   });
 }
 
-// TODO: Possibly better off migrating to jQuery validation plugin
-//       see http://jqueryvalidation.org/documentation/
-
-
-
+// TODO: Migrate the clients of the following to the validations.js framework
 function validateEmail($input, $error, $confirm) {
   validateTextLength($input, $error, $confirm, 128);
   var email = $input.val();

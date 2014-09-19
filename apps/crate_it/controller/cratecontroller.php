@@ -127,7 +127,7 @@ class CrateController extends Controller {
         $value = $this->params('value');
         try {
             $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
-            return new JSONResponse(array('msg' => "$field successfully updated to $value"));
+            return new JSONResponse(array('msg' => "$field successfully updated", 'value' => $value));
         } catch(\Exception $e) {
             return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
@@ -142,13 +142,15 @@ class CrateController extends Controller {
      */
     public function deleteCrate() {
         // TODO: all of these methods always return successfully, which shouldn't happen
-        //       perhaps messages and response codes should be created by the CrateService?
+        //       unfortunately this means rewriting methods in the bagit library
         \OCP\Util::writeLog('crate_it', "CrateController::deleteCrate()", \OCP\Util::DEBUG);
         $selected_crate = $_SESSION['selected_crate'];
-        $this->crate_service->deleteCrate($selected_crate);
-        // TODO: No $data?
-        $msg = 'Crate '.$selected_crate.' is deleted';
-        return new JSONResponse($msg);
+        try {
+            $this->crate_service->deleteCrate($selected_crate);
+            return new JSONResponse(array('msg' => "Crate $selected_crate has been deleted"));
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -162,12 +164,14 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::renameCrate()", \OCP\Util::DEBUG);
         $oldCrateName = $_SESSION['selected_crate'];
         $newCrateName = $this->params('newCrateName');
-        $this->crate_service->renameCrate($oldCrateName, $newCrateName);
-        // TODO: need method for setting selected crate
-        $_SESSION['selected_crate'] = $newCrateName;
-        session_commit();
-        // TODO: No $data?
-        return new JSONResponse($data);
+        try {
+            $this->crate_service->renameCrate($oldCrateName, $newCrateName);
+            $_SESSION['selected_crate'] = $newCrateName;
+            session_commit();
+            return new JSONResponse(array('msg' => "Renamed $oldCrateName to $newCrateName"));
+        } catch (\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
     
     /**
@@ -254,7 +258,7 @@ class CrateController extends Controller {
                 array('msg' => $msg, 
                       'result' => $result)
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return new JSONResponse (
                 array ($e->getMessage(), 'error' => $e),
                 $e->getCode()

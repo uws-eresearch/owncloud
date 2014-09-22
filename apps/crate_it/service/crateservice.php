@@ -22,6 +22,7 @@ class CrateService {
     // TODO: tidy up the message return types to be consistent
     // TODO: this class doesn't seem to do anything, could
     //       we remove this class altogether and just use CrateManager?
+    // TODO: Make naming consistent addToBag vs addToCrate
     public function addToBag($crateName, $file) {
         return $this->crateManager->addToCrate($crateName, $file);   
     }

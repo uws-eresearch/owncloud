@@ -27,7 +27,7 @@ function drawCrateContents() {
       indentTree();
     },
     error: function(data) {
-      var e = data.statusText;
+      var e = data.statusText; // TODO: does nothing?
     }
   });
 }
@@ -96,8 +96,9 @@ function initCrateActions() {
         $('#crates').trigger('change');
         displayNotification('Crate ' + crateName + ' successfully created', 6000);
       },
-      error: function(data) {
-        displayError(data.statusText);
+      error: function(jqXHR) {
+         // TODO: Make sure all ajax errors are this form instrad of data.msg
+         displayError(jqXHR.responseJSON.msg);
       }
     });
   };
@@ -109,13 +110,11 @@ function initCrateActions() {
       type: 'get',
       dataType: 'json',
       success: function(data) {
-        // TODO: push notification messages to server side to data.msg
-        displayNotification('Crate ' + current_crate + ' deleted');
+        displayNotification(data.msg);
         location.reload();
       },
-      error: function(data) {
-        // TODO: be consistent with response messages
-        displayError(data.statusText);
+      error: function(jqXHR) {
+        displayError(jqXHR.responseJSON.msg);
       }
     });
     $('#deleteCrateModal').modal('hide');
@@ -198,8 +197,8 @@ function initCrateActions() {
         manifest = data;
         reloadCrateData(data);
       },
-      error: function(data) {
-        displayError(data.statusText);
+      error: function(jqXHR) {
+        displayError(jqXHR.responseJSON.msg);
       }
     });
   });
@@ -356,12 +355,12 @@ function setupDescriptionOps() {
         },
         success: function(data) {
           $('#description').html('');
-          $('#description').text(data.description);
+          $('#description').text(data.value);
           $('#edit_description').removeClass('hidden');
           calulateHeights();
         },
-        error: function(data) {
-          displayError(data.statusText);
+        error: function(jqXHR) {
+          displayError(jqXHR.responseJSON.msg);
         }
       });
     });

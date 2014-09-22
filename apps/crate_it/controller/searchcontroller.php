@@ -4,7 +4,7 @@ namespace OCA\crate_it\Controller;
 
 use \OCA\AppFramework\Controller\Controller;
 use \OCA\AppFramework\Http\JSONResponse;
-use \OCA\AppFramework\Http;
+use \OCP\AppFramework\Http;
 
 require 'lib/mint_connector.php';
 use \OCA\crate_it\lib\MintConnector;

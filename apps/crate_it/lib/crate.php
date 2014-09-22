@@ -137,12 +137,21 @@ class Crate extends BagIt {
 
   public function getManifest() {
     $manifest = file_get_contents($this->manifestPath);
-    return json_decode($manifest, true);
+    if($manifest) {
+      $result = json_decode($manifest, true);
+    }
+    if(!$manifest or is_null($result)) {
+      throw new \Exception("Error opening manifest.json");
+    }
+    return $result;
   }
 
   public function setManifest($manifest) {
     $manifest = json_encode($manifest);
-    file_put_contents($this->manifestPath, $manifest);
+    $success = file_put_contents($this->manifestPath, $manifest);
+    if($manifest === false || $success === false) {
+      throw new \Exception("Error writing to manifest.json"); 
+    }
   }
 
   public function addToCrate($path) {
@@ -185,7 +194,10 @@ class Crate extends BagIt {
     \OCP\Util::writeLog('crate_it', "renameCrate($this->crateName, $newCrateName)", \OCP\Util::DEBUG);
     $oldCrateName = $this->getAbsolutePath($this->crateRoot, $this->crateName);
     $newCrateName = $this->getAbsolutePath($this->crateRoot, $newCrateName);
-    rename($oldCrateName, $newCrateName);
+    $success = rename($oldCrateName, $newCrateName);
+    if(!$success) {
+      throw new \Exception("Error renaming crate");
+    }
   }
 
   // TODO: If a file has been added to the crate multiple times this will give the wront size
@@ -197,7 +209,7 @@ class Crate extends BagIt {
     $checked = array();
     foreach($files as $file) {
       \OCP\Util::writeLog('crate_it', "Crate::getSize() - checking: ".$file, \OCP\Util::DEBUG);        
-      if (!in_array($file , $checked)) {
+      if (!in_array($file, $checked)) {
           $total+= filesize($file);
       } 
       $checked[] = $file;
@@ -361,8 +373,12 @@ class Crate extends BagIt {
     file_put_contents($htmlPath, $epub);
     $htmlPath = str_replace(' ', '\ ', $htmlPath);
     $epubPath = $tmpFolder.'/'.$this->crateName.'.epub';
-    $command = "ebook-convert $htmlPath $epubPath --no-default-epub-cover --level1-toc //h:h1 --level2-toc //h:h2 --level3-toc //h:h3";
-    exec($command, $retval);
+    $command = "ebook-convert $htmlPath $epubPath --no-default-epub-cover --level1-toc //h:h1 --level2-toc //h:h2 --level3-toc //h:h3 2>&1";
+    exec($command, $output, $retval);
+    if($retval > 0) {
+      $message = implode("\n", $output);
+      throw new \Exception($message);
+    }
     return $epubPath;
   }
 

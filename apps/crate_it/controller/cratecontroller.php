@@ -5,7 +5,7 @@ namespace OCA\crate_it\Controller;
 use \OCA\AppFramework\Controller\Controller;
 use \OCA\AppFramework\Http\JSONResponse;
 use \OCA\AppFramework\Http\TextResponse;
-use \OCA\AppFramework\Http;
+use \OCP\AppFramework\Http;
 
 use OCA\crate_it\lib\ZipDownloadResponse;
 
@@ -21,9 +21,8 @@ class CrateController extends Controller {
      */
     private $crate_service;
     
-    public function __construct($api, $request, $crate_service, $setupService) {
+    public function __construct($api, $request, $crate_service) {
         parent::__construct($api, $request);
-        $setupService->getParams();
         $this->crate_service = $crate_service;
     }
     
@@ -43,12 +42,9 @@ class CrateController extends Controller {
             $msg = $this->crate_service->createCrate($name, $description);
             $_SESSION['selected_crate'] = $name;
             session_commit();
-            return new JSONResponse(array('crateName' => $msg, 'crateDescription' => $description), 200);
-        } catch (Exception $e) {
-            return new JSONResponse (
-                array ($e->getMessage(), 'error' => $e),
-                $e->getCode()
-            );
+            return new JSONResponse(array('crateName' => $msg, 'crateDescription' => $description));
+        } catch (\Exception $e) { // TODO: This is currently unreachable
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -59,7 +55,7 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function getItems()
+    public function getItems() // NOTE: this now return the entire manifest, should we change the name of the method?
     {
         \OCP\Util::writeLog('crate_it', "CrateController::get_items()", \OCP\Util::DEBUG);
         try {
@@ -68,12 +64,9 @@ class CrateController extends Controller {
             session_commit();
             \OCP\Util::writeLog('crate_it', "selected_crate:: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
             $data = $this->crate_service->getItems($crateName);
-            return new JSONResponse($data, 200);
-        } catch (Exception $e) {
-            return new JSONResponse(
-                array('msg' => "Error getting manifest data", 'error' => $e),
-                $e->getCode()
-            );
+            return new JSONResponse($data);
+        } catch (\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -85,39 +78,21 @@ class CrateController extends Controller {
      * @IsAdminExemption
      * @IsSubAdminExemption
      */
-    public function add()
-    {
+    public function add() {
         \OCP\Util::writeLog('crate_it', "CrateController::add()", \OCP\Util::DEBUG);
-        try
-        {
+        try {
             // TODO check if this error handling works
             $file = $this->params('file');
-            \OCP\Util::writeLog('crate_it', "Adding ".$file, 3);
-            $msg = $this->crate_service->addToBag($_SESSION['selected_crate'], $file);
-            return new JSONResponse($msg);
-        } catch(Exception $e)
-        {
-            return new JSONResponse(
-                array('msg' => "Error adding file", 'error' => $e),
-                $e->getCode()
-            );
+            \OCP\Util::writeLog('crate_it', "Adding ".$file, \OCP\Util::DEBUG);
+            $crateName = $_SESSION['selected_crate'];
+            // TODO: naming consistency, add vs addToBag vs addToCrate
+            $this->crate_service->addToBag($crateName, $file);
+            return new JSONResponse(array('msg' => "$file added to crate $crateName"));
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
-       
     }
-    
-    /**
-     * Get Crate Manifest
-     *
-     * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
-     */
-    public function manifest()
-    {
-        \OCP\Util::writeLog('crate_it', "CrateController::manifest()", \OCP\Util::DEBUG);
-        $success = $this->crate_service->getManifest();
-        return new JSONResponse (array('msg'=>'OK'), $success);
-    }
+
     
     /**
      * Get Crate Size
@@ -129,8 +104,12 @@ class CrateController extends Controller {
     public function getCrateSize()
     {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", \OCP\Util::DEBUG);
-        $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
-        return new JSONResponse($data);
+        try {
+            $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
+            return new JSONResponse($data);
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
     
     /**
@@ -146,8 +125,12 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", \OCP\Util::DEBUG);
         $field = $this->params('field');
         $value = $this->params('value');
-        $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
-        return new JSONResponse(array('description' => $value));
+        try {
+            $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
+            return new JSONResponse(array('msg' => "$field successfully updated", 'value' => $value));
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -159,13 +142,15 @@ class CrateController extends Controller {
      */
     public function deleteCrate() {
         // TODO: all of these methods always return successfully, which shouldn't happen
-        //       perhaps messages and response codes should be created by the CrateService?
+        //       unfortunately this means rewriting methods in the bagit library
         \OCP\Util::writeLog('crate_it', "CrateController::deleteCrate()", \OCP\Util::DEBUG);
         $selected_crate = $_SESSION['selected_crate'];
-        $this->crate_service->deleteCrate($selected_crate);
-        // TODO: No $data?
-        $msg = 'Crate '.$selected_crate.' is deleted';
-        return new JSONResponse($msg);
+        try {
+            $this->crate_service->deleteCrate($selected_crate);
+            return new JSONResponse(array('msg' => "Crate $selected_crate has been deleted"));
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -179,12 +164,14 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::renameCrate()", \OCP\Util::DEBUG);
         $oldCrateName = $_SESSION['selected_crate'];
         $newCrateName = $this->params('newCrateName');
-        $this->crate_service->renameCrate($oldCrateName, $newCrateName);
-        // TODO: need method for setting selected crate
-        $_SESSION['selected_crate'] = $newCrateName;
-        session_commit();
-        // TODO: No $data?
-        return new JSONResponse($data);
+        try {
+            $this->crate_service->renameCrate($oldCrateName, $newCrateName);
+            $_SESSION['selected_crate'] = $newCrateName;
+            session_commit();
+            return new JSONResponse(array('msg' => "Renamed $oldCrateName to $newCrateName"));
+        } catch (\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
     }
     
     /**
@@ -271,11 +258,8 @@ class CrateController extends Controller {
                 array('msg' => $msg, 
                       'result' => $result)
             );
-        } catch (Exception $e) {
-            return new JSONResponse (
-                array ($e->getMessage(), 'error' => $e),
-                $e->getCode()
-            );
+        } catch (\Exception $e) {
+            return new JSONResponse (array($e->getMessage(), 'error' => $e), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -408,3 +408,12 @@ Feature: Search, add and remove grant number
       When I edit creator "john@smith.com"
       Then I should not see "Creator Identifier URL"
 
+    #CRATEIT-224
+    Scenario: A creator edited from the mint does not display URL
+      Given I fill in "keyword_creator" with "John"
+      And I click the search creator button
+      And I add creator "1" to the list
+      When I edit creator "john@smith.com"
+      And I fill in "edit-creators-email" with "john@smith.org"
+      Then the "Save" button in the popup dialog should not be disabled
+

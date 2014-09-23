@@ -139,6 +139,19 @@ CrateIt.Validation = {
 
   },
 
+  // TODO: Redesign the edit creators pattern so we don't need to use this
+  //       This also causes the identifier to be copied into the overrides field
+  IgnoredWhenHiddenValidator: function(validator) {
+    this.invalidMessage = validator.invalidMessage;
+
+    this.isValid = function(value) {
+      var result = validator.isValid(value);
+      if (!$('#manual-creators').is(':visible')) {
+        result = true;
+      }
+      return result
+    }
+  },
 
   OptionalValidator: function(validator) {
     this.invalidMessage = validator.invalidMessage;

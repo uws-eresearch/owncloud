@@ -17,15 +17,15 @@
         "url": <your mint url here>
     },
     "publish endpoints": {
-        "sword": [
+        "sword": [{
             "name": "TEST",
-            "enabled": true,
+            "enabled": false,
             "sd uri": <test sword server uri here>,
             "username": <username>,
             "password": <password>,
             "obo": "obo"
         }, {
-            "name": "UWS",
+            "name": <server name here>,
             "enabled": false,
             "sd uri": <sword server uri here>,
             "username": <username>,

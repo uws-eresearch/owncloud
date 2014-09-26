@@ -8,6 +8,7 @@ Feature: Add files and folders to a crate
     And I have no files
     And I have folders "folder1/folder2"
     And I have file "file.txt" within the root folder
+    And I have file "\&" within the root folder
     And I have file "file2.txt" within "folder1/folder2"
     And I'm logged in to ownCloud as "test"
 
@@ -74,3 +75,8 @@ Feature: Add files and folders to a crate
     And I go to the crate_it page
     Then the default crate should not contain "folder1" anywhere
 
+  #CRATEIT-209
+  Scenario: A user can add a file to a crate
+    When I add "&" to the current crate
+    Then I go to the crate_it page
+    Then the default crate should contain "&" within the root folder

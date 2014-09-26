@@ -836,9 +836,8 @@ JS;
 			$el->click();
 			return true;
 		});
-		sleep(1);
-		// clear mockjax
 		$this->getSession()->executeScript('$.mockjaxClear();');
+        $this->waitForPageToLoad();
     }
  
 
@@ -857,9 +856,8 @@ JS;
             $el->click();
             return true;
         });
-        sleep(1);
-        // clear mockjax
         $this->getSession()->executeScript('$.mockjaxClear();');
+        $this->waitForPageToLoad();
     }
 
 
@@ -990,6 +988,7 @@ JS;
             $button->click();
             return true;
         });
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -1398,7 +1397,7 @@ JS;
         {
             $filename = $row['filename'];
             $web_assert = new WebAssert($this->getSession());
-            $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-check-circle"]', $page);
+            $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-check"]', $page);
         }
     }
 
@@ -1413,8 +1412,34 @@ JS;
         {
             $filename = $row['filename'];
             $web_assert = new WebAssert($this->getSession());
-            $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-times-circle"]', $page);
+            $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-times"]', $page);
         }
+    }
+
+    /**
+     * @Given /^the "([^"]*)" button in the popup dialog should not be disabled$/
+     */
+    public function theButtonInThePopupDialogShouldNotBeDisabled($buttonText)
+    {
+        $page = $this->getSession()->getPage();
+        $el = $page->find('css', '.modal.in');
+        $web_assert = new WebAssert($this->getSession());
+        $web_assert->elementNotExists('xpath', '//button[text() = "'.$buttonText.'" and @disabled]', $el);
+    }
+
+    /**
+     * @Given /^I expand \'([^\']*)\'$/
+     */
+    public function iExpand($arg1)
+    {
+        $this->spin(function($context) use ($arg1) {
+            $page = $context->getSession()->getPage();
+            $xpath = '//span[text()="'.$arg1.'"]/../a';       
+            $el = $page->find('xpath', $xpath);
+            $el->click();
+            return true;
+        });
+        
     }
 
 }

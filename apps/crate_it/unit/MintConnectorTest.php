@@ -1,11 +1,11 @@
 <?php
 
-require 'MockUtil.php';
+require_once 'mocks/MockUtil.php';
 
-require 'lib/mint_connector.php';
+require_once 'lib/mint_connector.php';
 use OCA\crate_it\lib\MintConnector;
 
-require 'lib/curl_wrapper.php';
+require_once 'lib/curl_wrapper.php';
 use OCA\crate_it\lib\CurlWrapper;
 
 class MintConnectorTest extends PHPUnit_Framework_TestCase {

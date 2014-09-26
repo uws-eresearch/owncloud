@@ -438,7 +438,11 @@ function BagIt_compressBag($dirname, $output, $method='tgz')
         $zip->open($output, ZIPARCHIVE::CREATE);
 
         foreach (rls($dirname) as $file) {
-            $zip->addFile($file, substr($file, strlen($dirname)));
+            $filename = substr($file, strlen($dirname));
+            // Strip the leading slash so that Windows Explorer native unzip
+            // too can understand the paths
+            $filepath = ltrim($filename, '/');
+            $zip->addFile($file, $filepath);
         }
 
         $zip->close();

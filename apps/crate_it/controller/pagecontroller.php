@@ -28,7 +28,7 @@ class PageController extends Controller {
         try {
             $model = $this->setup_service->getParams();
             return $this->render('index', $model);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // TODO handle exception
             \OCP\Util::writeLog('crate_it', "ERROR: " .$e->getMessage(), \OCP\Util::DEBUG);
         }

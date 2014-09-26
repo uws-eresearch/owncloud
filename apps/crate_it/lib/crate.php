@@ -59,6 +59,7 @@ class Crate extends BagIt {
     $manifest = $this->getManifest();
     $manifest['crate_name'] = $this->crateName;
     $manifest['files'] = $this->flatList();
+    $manifest['creators'] = $this->isCreatorIdUrl($manifest['creators']);
     date_default_timezone_set('Australia/Sydney');    
     $manifest['created_date'] = date("Y-m-d H:i:s");   
     $manifest['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
@@ -71,6 +72,22 @@ class Crate extends BagIt {
     $htmlStr = $twig->render('readme.php', $manifest);
     $readmePath = $this->getDataDirectory()."/README.html";
     file_put_contents($readmePath, $htmlStr);
+  }
+
+  // NOTE: workaround for non-functioning twig operators 'starts with' and 'matches'
+  private function isCreatorIdUrl($creators) {
+    $protocol = '/^https?\:\/\//';
+    foreach ($creators as &$creator) {
+      $uri =$creator['overrides']['identifier'];
+      $orUri = $creator['identifier'];
+      if(!empty($orUri) && preg_match($protocol, $orUri)) {
+        $creator['url'] = true;
+      } elseif(!empty($uri) && preg_match($protocol, $uri)) {
+        $creator['url'] = true;
+      }
+    }
+    // var_dump($creators);
+    return $creators;
   }
 
   private function getVersion() {
@@ -89,7 +106,7 @@ class Crate extends BagIt {
       return '<ul>'.$tree.'</ul>';
   }
   
-  private function buildFileTreeHtml($node, $tree='') {        
+  private function buildFileTreeHtml($node, $tree='') {           
     if ($node['id'] == 'folder')
     {
         $text = $node['name'];
@@ -107,19 +124,34 @@ class Crate extends BagIt {
         // change the filename part of the path to the 'underscored' version
         $filename = str_replace($node['name'], $text, $node['filename']);
         $rootfolder = $this->getRootFolderName();
-        $tree = $tree."<li><a href='./$rootfolder/$filename'>$text</a></li>";  
+        if ($node['valid'] == 'true')
+        {
+            $tree = $tree."<li><a href='./$rootfolder/$filename'>$text</a></li>";  
+        } else {
+            $tree = $tree."<li>$text (invalid)</li>";  
+        }
+        
     }
     return $tree;
   }
 
   public function getManifest() {
     $manifest = file_get_contents($this->manifestPath);
-    return json_decode($manifest, true);
+    if($manifest) {
+      $result = json_decode($manifest, true);
+    }
+    if(!$manifest or is_null($result)) {
+      throw new \Exception("Error opening manifest.json");
+    }
+    return $result;
   }
 
   public function setManifest($manifest) {
     $manifest = json_encode($manifest);
-    file_put_contents($this->manifestPath, $manifest);
+    $success = file_put_contents($this->manifestPath, $manifest);
+    if($manifest === false || $success === false) {
+      throw new \Exception("Error writing to manifest.json"); 
+    }
   }
 
   public function addToCrate($path) {
@@ -162,7 +194,10 @@ class Crate extends BagIt {
     \OCP\Util::writeLog('crate_it', "renameCrate($this->crateName, $newCrateName)", \OCP\Util::DEBUG);
     $oldCrateName = $this->getAbsolutePath($this->crateRoot, $this->crateName);
     $newCrateName = $this->getAbsolutePath($this->crateRoot, $newCrateName);
-    rename($oldCrateName, $newCrateName);
+    $success = rename($oldCrateName, $newCrateName);
+    if(!$success) {
+      throw new \Exception("Error renaming crate");
+    }
   }
 
   // TODO: If a file has been added to the crate multiple times this will give the wront size
@@ -174,7 +209,7 @@ class Crate extends BagIt {
     $checked = array();
     foreach($files as $file) {
       \OCP\Util::writeLog('crate_it', "Crate::getSize() - checking: ".$file, \OCP\Util::DEBUG);        
-      if (!in_array($file , $checked)) {
+      if (!in_array($file, $checked)) {
           $total+= filesize($file);
       } 
       $checked[] = $file;
@@ -330,7 +365,6 @@ class Crate extends BagIt {
   
   public function generateEPUB($twig) {
     \OCP\Util::writeLog('crate_it', "Crate::generateEPUB(".$path.")", \OCP\Util::DEBUG);
-    // $files = $this->flatList();
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
     $epub = $twig->render('epub.php', $params);
@@ -339,8 +373,12 @@ class Crate extends BagIt {
     file_put_contents($htmlPath, $epub);
     $htmlPath = str_replace(' ', '\ ', $htmlPath);
     $epubPath = $tmpFolder.'/'.$this->crateName.'.epub';
-    $command = "ebook-convert $htmlPath $epubPath --no-default-epub-cover --level1-toc //h:h1 --level2-toc //h:h2 --level3-toc //h:h3";
-    exec($command, $retval);
+    $command = "ebook-convert $htmlPath $epubPath --no-default-epub-cover --level1-toc //h:h1 --level2-toc //h:h2 --level3-toc //h:h3 2>&1";
+    exec($command, $output, $retval);
+    if($retval > 0) {
+      $message = implode("\n", $output);
+      throw new \Exception($message);
+    }
     return $epubPath;
   }
 

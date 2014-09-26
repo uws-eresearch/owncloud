@@ -327,3 +327,93 @@ Feature: Search, add and remove grant number
       When I press "Cancel" on the popup dialog
       When I click on "add-creator"
       Then the "Add" button in the popup dialog should be disabled
+
+    #CRATEIT-212
+    Scenario: A manually added creator identifier is optional
+      When I click on "add-creator"
+      Then I fill in the following:
+        | add-creator-name  | Joe Bloggs     |
+        | add-creator-email | joe@bloggs.org |
+      And I fill in "add-creator-identifier" with "   "
+      Then I should not see "Identifier is required"
+      And the "Add" button in the popup dialog should not be disabled
+
+    #CRATEIT-212
+    Scenario: A manually added creator identifier must be a URL
+      When I click on "add-creator"
+      Then I fill in the following:
+        | add-creator-name  | Joe Bloggs     |
+        | add-creator-email | joe@bloggs.org |
+      And I fill in "add-creator-identifier" with "test.org/test"
+      Then I should see "Must be a valid URL"
+      And the "Add" button in the popup dialog should be disabled
+      When I fill in "add-creator-identifier" with "http://test.org/test"
+      Then I should not see "Must be a valid URL"
+      Then the "Add" button in the popup dialog should not be disabled
+
+    #CRATEIT-212
+    Scenario: A manually added creator identifier must be less than 2001 characters
+      When I click on "add-creator"
+      Then I fill in the following:
+        | add-creator-name  | Joe Bloggs     |
+        | add-creator-email | joe@bloggs.org |
+      And I fill in "add-creator-identifier" with a long string of 2001 characters
+      Then I should see "Identifier must not be more than 2000 characters"
+      And the "Add" button in the popup dialog should be disabled
+
+    #CRATEIT-212
+    Scenario: A manually edited creator identifier is optional
+      When I click on "add-creator"
+      And I fill in the following:
+        | add-creator-name  | Joe Bloggs     |
+        | add-creator-email | joe@bloggs.org |
+      Then I press "Add" on the popup dialog
+      When I edit creator "joe@bloggs.org"
+      And I fill in "edit-creators-identifier" with "   "
+      Then I should not see "Identifier is required"
+      And the "Save" button in the popup dialog should not be disabled
+
+    #CRATEIT-212
+    Scenario: A manually edited creator identifier must be a URL
+      When I click on "add-creator"
+      And I fill in the following:
+        | add-creator-name  | Joe Bloggs     |
+        | add-creator-email | joe@bloggs.org |
+      Then I press "Add" on the popup dialog
+      When I edit creator "joe@bloggs.org"
+      And I fill in "edit-creators-identifier" with "test.org/test"
+      Then I should see "Must be a valid URL"
+      And the "Save" button in the popup dialog should be disabled
+      When I fill in "edit-creators-identifier" with "http://test.org/test"
+      Then I should not see "Must be a valid URL"
+      Then the "Save" button in the popup dialog should not be disabled
+
+    #CRATEIT-212
+    Scenario: A manually edited creator identifier must be less than 2001 characters
+      When I click on "add-creator"
+      And I fill in the following:
+        | add-creator-name  | Joe Bloggs     |
+        | add-creator-email | joe@bloggs.org |
+      Then I press "Add" on the popup dialog
+      When I edit creator "joe@bloggs.org"
+      And I fill in "edit-creators-identifier" with a long string of 2001 characters
+      Then I should see "Identifier must not be more than 2000 characters"
+      And the "Save" button in the popup dialog should be disabled
+
+    #CRATEIT-212
+    Scenario: A creator edited from the mint does not display URL
+      Given I fill in "keyword_creator" with "John"
+      And I click the search creator button
+      And I add creator "1" to the list
+      When I edit creator "john@smith.com"
+      Then I should not see "Creator Identifier URL"
+
+    #CRATEIT-224
+    Scenario: A creator edited from the mint does not display URL
+      Given I fill in "keyword_creator" with "John"
+      And I click the search creator button
+      And I add creator "1" to the list
+      When I edit creator "john@smith.com"
+      And I fill in "edit-creators-email" with "john@smith.org"
+      Then the "Save" button in the popup dialog should not be disabled
+

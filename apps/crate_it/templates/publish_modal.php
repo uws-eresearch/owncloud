@@ -23,7 +23,7 @@
         <div class="row publish-meta">
           <div class="col-3">
              <h4 class="margin-bottom">Description</h4>
-             <h6>Crate Size: <span id="crate_size_human" class="standard">6.4 MB</span></h6>
+             <h6>Crate Size: <span id="crate_size_human_publish" class="standard"></span></h6>
              <div id='publish-description'></div>
           </div>
 
@@ -39,7 +39,8 @@
             </ul>
           </div>
         </div>
-        <div>
+          
+        <div style="color:red; font-weight:bold;">
           <span id="publish-consistency"></span>
           <table id="publish-consistency-table" class="table table-striped"></table>
         </div>

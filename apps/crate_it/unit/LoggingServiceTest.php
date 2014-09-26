@@ -1,10 +1,10 @@
 <?php
  
-require 'MockOC.php';
+require_once 'mocks/MockOC.php';
 
-require 'service/loggingservice.php';
+require_once 'service/loggingservice.php';
 use OCA\crate_it\service\LoggingService;
-require 'manager/cratemanager.php';
+require_once 'manager/cratemanager.php';
 use OCA\crate_it\manager\CrateManager;
 
 

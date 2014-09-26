@@ -38,10 +38,23 @@
                                         {% if creator.overrides.email %}
                                             <td>{{ creator.overrides.email }}</td>  
                                         {% else %}
-                                            <td>{{ creator.email }}</td>
-                                            
+                                            <td>{{ creator.email }}</td>   
                                         {% endif %}
-                                        <td>{{ creator.identifier}} </td>
+                                        <td xmlns:dc="http://purl.org/dc/elements/1.1/">
+                                            {% if creator.url %}
+                                                {% if not creator.overrides.identifier is empty %}
+                                                    <a href="{{ creator.overrides.identifier }}">
+                                                        <span property="dc:identifier">{{ creator.overrides.identifier }}</span>
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{{ creator.identifier }}">
+                                                        <span property="dc:identifier">{{ creator.overrides.identifier }}</span>
+                                                    </a>
+                                                {% endif %}
+                                            {% else %}
+                                                <span property="dc:identifier">{{ creator.identifier }}</span>
+                                            {% endif %}
+                                        </td>
                                         <td>{{ creator.source}}</td>
                                     </tr>
                                 {% endfor %}

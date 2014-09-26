@@ -116,7 +116,6 @@ class CrateManager {
         \OCP\Util::writeLog('crate_it', "Crate::addToCrate(".$crateName.','.$path.")", \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
         $crate->addToCrate($path);
-        return 'Added to crate '.$crateName;
     }
 
     public function getCrateSize($crateName) {
@@ -146,6 +145,7 @@ class CrateManager {
     }
     
     public function packageCrate($crateName){
+        $this->updateCrateCheckIcons($crateName);
         $crate = $this->getCrate($crateName);
         return $crate->packageCrate($this->twig);
     }
@@ -160,15 +160,18 @@ class CrateManager {
         $crate = $this->getCrate($crateName);
         $manifest = $crate->getManifest();
         $rootfolder = &$manifest['vfs'][0];
-        $children = &$rootfolder['children'];
-        $rootfolder['valid'] = var_export(true, true);        
-        $crate->setManifest($manifest);
+        $children = &$rootfolder['children'];    
+        if ($children == null) {
+            $children = array();
+            $rootfolder['valid'] = var_export(true, true);
+            $crate->setManifest($manifest);
+        }   
+        $valid = true;
         foreach ($children as &$child) {
-            $valid = $this->validateNode($child, $crate, $manifest);
-            if (!$valid) {
-                $rootfolder['valid'] = var_export(false, true);
-                $crate->setManifest($manifest);
-            }
+            $childValid = $this->validateNode($child, $crate, $manifest);
+            $valid =$valid && $childValid;
+            $rootfolder['valid'] = var_export($valid, true);
+            $crate->setManifest($manifest);
         }       
         \OCP\Util::writeLog('crate_it', "CrateManager::validateNode() - rootfolder is ".var_export($valid, true), \OCP\Util::DEBUG); 
         
@@ -177,17 +180,14 @@ class CrateManager {
     private function validateNode(&$node, $crate, &$manifest) {
         \OCP\Util::writeLog('crate_it', "CrateManager::validateNode() - ".$node['name'], \OCP\Util::DEBUG); 
         $valid = true;
-        $node['valid'] = var_export($valid, true);
-        $crate->setManifest($manifest);
         if ($node['id'] == 'folder') {
             $children = &$node['children'];
             foreach($children as &$child) {
-                $valid = $this->validateNode($child, $crate, $manifest);
-                if (!$valid) {
-                    $node['valid'] = var_export(false, true);
-                    $crate->setManifest($manifest);
-                } 
+                $childValid = $this->validateNode($child, $crate, $manifest);
+                $valid = $valid && $childValid;                            
             }
+            $node['valid'] = var_export($valid, true);
+            $crate->setManifest($manifest);       
         }
         else {
             $filename = $node['filename'];

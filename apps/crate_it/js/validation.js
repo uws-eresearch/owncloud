@@ -128,6 +128,31 @@ CrateIt.Validation = {
 
   },
 
+  UrlValidator: function() {
+    this.invalidMessage = 'Must be a valid URL';
+
+    var regex = /^https?:\/\/[a-z0-9-\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
+
+    this.isValid = function(value) {
+      return regex.test(value);
+    }
+
+  },
+
+  // TODO: Redesign the edit creators pattern so we don't need to use this
+  //       This also causes the identifier to be copied into the overrides field
+  IgnoredWhenHiddenValidator: function(validator) {
+    this.invalidMessage = validator.invalidMessage;
+
+    this.isValid = function(value) {
+      var result = validator.isValid(value);
+      if (!$('#manual-creators').is(':visible')) {
+        result = true;
+      }
+      return result
+    }
+  },
+
   OptionalValidator: function(validator) {
     this.invalidMessage = validator.invalidMessage;
 

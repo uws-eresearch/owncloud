@@ -69,8 +69,7 @@ class SetupService {
     private function loadConfigParams() {
         $config = $this->readConfig();
         foreach($config as $key => $value) {
-            \OCP\Util::writeLog('crate_it', "SetupService::loadConfigParams() - loading $key:$value", \OCP\Util::DEBUG);         
-            
+            \OCP\Util::writeLog('crate_it', "SetupService::loadConfigParams() - loading $key:".json_encode($value), \OCP\Util::DEBUG);
             self::$params[$key] = $value;
         }
     }

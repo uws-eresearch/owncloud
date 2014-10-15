@@ -170,19 +170,19 @@ class Crate extends BagIt {
   }
 
   public function updateCrate($field, $value) {
-     \OCP\Util::writeLog("crate_it", "Crate::updateCrate($field, $value)", \OCP\Util::DEBUG);
-     $manifest = $this->getManifest();
-     if($value === NULL) {
-        if(is_array($manifest[$field])) {
-          $value = array();
-        } else {
-          $value = '';
-        }
-     }
-     $manifest[$field] = $value;
-     $this->setManifest($manifest);     
-     $this->update();
-     return true;
+    \OCP\Util::writeLog("crate_it", "Crate::updateCrate($field, ".json_encode($value).")", \OCP\Util::DEBUG);
+    $manifest = $this->getManifest();
+    if($value === NULL) {
+      if(is_array($manifest[$field])) {
+        $value = array();
+      } else {
+        $value = '';
+      }
+    }
+    $manifest[$field] = $value;
+    $this->setManifest($manifest);     
+    $this->update();
+    return true;
   }
 
   public function deleteCrate() {

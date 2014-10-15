@@ -364,7 +364,7 @@ class Crate extends BagIt {
   }
   
   public function generateEPUB($twig) {
-    \OCP\Util::writeLog('crate_it', "Crate::generateEPUB(".$path.")", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog('crate_it', "Crate::generateEPUB()", \OCP\Util::DEBUG);
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
     $epub = $twig->render('epub.php', $params);

@@ -330,7 +330,7 @@ class Crate extends BagIt {
 
   private function addFolderToCrate($folder) {
     $vfsEntry = array(
-      'name' => basename($folder) ,
+      'name' => basename($folder),
       'id' => 'folder', // TODO: change this to 'folder' => true, need to update js
       'children' => array(),
       'folderpath' => $folder

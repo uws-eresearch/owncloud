@@ -134,6 +134,14 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, $actual);
   }
 
+  public function testGenerateEPUBWithSpacesSuccess() {
+    $_SESSION['selected_crate'] = 'test';
+    $this->crateService->method('generateEPUB')->willReturn('/tmp/test with spaces.epub');
+    $expected = new ZipDownloadResponse('/tmp/test with spaces.epub', 'test with spaces.epub');
+    $actual = $this->crateController->generateEPUB();
+    $this->assertEquals($expected, $actual);
+  }
+
   public function testGenerateEPUBFailure() {
     $_SESSION['selected_crate'] = 'test';
     $this->crateService->method('generateEPUB')->will($this->throwException($this->exception));

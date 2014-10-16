@@ -373,7 +373,8 @@ class Crate extends BagIt {
     file_put_contents($htmlPath, $epub);
     $htmlPath = str_replace(' ', '\ ', $htmlPath);
     $epubPath = $tmpFolder.'/'.$this->crateName.'.epub';
-    $command = "ebook-convert $htmlPath $epubPath --no-default-epub-cover --level1-toc //h:h1 --level2-toc //h:h2 --level3-toc //h:h3 2>&1";
+    $command = "ebook-convert '$htmlPath' '$epubPath' --no-default-epub-cover --level1-toc //h:h1 --level2-toc //h:h2 --level3-toc //h:h3 2>&1";
+    $command = stripcslashes($command);
     exec($command, $output, $retval);
     if($retval > 0) {
       $message = implode("\n", $output);

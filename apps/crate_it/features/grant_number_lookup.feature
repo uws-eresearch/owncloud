@@ -65,7 +65,7 @@ Feature: Search, add and remove grant number
      Given I fill in "keyword_activity" with "123"
      When I click the search grant number button and get no results
      And I wait for 30 seconds
-     Then I should see "0 new results returned" #NOTE: takes a long time to show sometimes
+     Then I should see "0 new results returned"
      
    #CRATEIT-162
    Scenario: Click on 'Clear All' should remove all selected grant numbers

@@ -2,7 +2,7 @@
 
 namespace OCA\crate_it\Service;
 
-
+use OCA\crate_it\lib\Crate;
 
 class SetupService {
     
@@ -46,23 +46,16 @@ class SetupService {
         self::$params['crates'] = $this->crateManager->getCrateList();
         $manifestData = $this->crateManager->getManifestData($selectedCrate);
         self::$params['description'] = $manifestData['description'];  
-        $this->getReleaseInfo();
+        $info = \OC_App::getAppInfo('crate_it');
+        self::$params['version'] = $info['version'];
     }
+    
     
     private function getSelectedCrate() {
         if(!isset($_SESSION['selected_crate'])) {
             $_SESSION['selected_crate'] = 'default_crate';
         }
         return $_SESSION['selected_crate'];
-    }
-
-    private function getReleaseInfo() {
-        $git = array();
-        $params = self::$params['git'];
-        exec("git --git-dir={$params['git-dir']} --work-tree={$params['work-tree']} describe --tags", $git);
-        $git = explode('-', $git[0]);
-        self::$params['release'] = $git[0];
-        self::$params['commit'] = $git[2];
     }
 
 

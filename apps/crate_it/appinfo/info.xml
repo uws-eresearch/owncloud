@@ -2,11 +2,10 @@
 <info>
 	<id>crate_it</id>
 	<name>Cr8It</name>
-	<description>Simple file cart which act as a cart to hold files selected by the user to package, share etc.</description>
-	<version>0.1</version>
+	<description>Plugin for packaging files with metadata so that they can by published to an Institutional repository for curation.</description>
+	<version>1.0.01</version>
 	<licence>AGPL</licence>
-	<author>Lloyd Harischandra</author>
+	<author>Ilya Anisimoff, Veronica Luke, Sean Lin, and Lloyd Harischandra</author>
 	<require>6.0</require>
-	<shipped>true</shipped>
-	<default_enable/>
+	<shipped>false</shipped>
 </info>

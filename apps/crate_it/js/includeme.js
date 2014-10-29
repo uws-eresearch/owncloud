@@ -469,7 +469,7 @@ function validateTextLength($input, $error, $confirm, maxLength) {
 
 
 function validateCrateName($input, $error, $confirm) {
-  var inputName = $input.val();
+  var inputName = $input.val();    
   var crates = $.map($('#crates > option'), function(el, i) {
     return $(el).attr('id');
   });
@@ -479,6 +479,9 @@ function validateCrateName($input, $error, $confirm) {
   var existingName = function() {
     return crates.indexOf(inputName) > -1;
   };
+  
+  var regex = /[\/\\\<\>:\"\|?\*]/;
+  
   if (existingName() || emptyName()) {
     $confirm.prop('disabled', true);
     if (emptyName()) {
@@ -492,6 +495,10 @@ function validateCrateName($input, $error, $confirm) {
     $input.val(inputName.substr(0, 128));
     $error.show();
     $confirm.prop('disabled', false);
+  } else if (regex.test(inputName)) {
+    $confirm.prop('disabled', true);
+    $error.text("Invalid name. Illegal characters '\\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed");
+    $error.show();  
   } else {
     $confirm.prop('disabled', false);
     $error.hide();

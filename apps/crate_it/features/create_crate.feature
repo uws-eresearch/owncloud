@@ -33,6 +33,38 @@ Feature: Create and select a new crate
     And I fill in "New Crate Name" with "  "
     Then I should see "Crate name cannot be blank"
     And "Create" in the popup dialog should be diasbled
+  
+  #CRATEIT-45
+  Scenario: Ensure the crate name field cannot have illegal characters
+    When I click the new crate button
+    And I fill in "New Crate Name" with "something\\\/<>:\"|?*"
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something\\\/<>:\"|?"
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something\\\/<>:\"|"
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something\\\/<>:\""
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something\\\/<>:"
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something\\\/<>"
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something\\\/<"
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something\\"
+    Then I should see "Invalid name. Illegal characters '\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed"
+    And "Create" in the popup dialog should be diasbled
+    And I fill in "New Crate Name" with "something"
+    Then the create crate modal should be clear of input and errors
+    And I press "Create" on the popup dialog
+    Then I should see notice "Crate something successfully created"
 
   #CRATEIT-45
   Scenario: Ensure the crate name field has a max length of 128
@@ -81,7 +113,7 @@ Feature: Create and select a new crate
     When I click the new crate button
     And I fill in "New Crate Name" with "default_crate"
     And I press "Cancel" on the popup dialog
-	  And I click the new crate button
+	And I click the new crate button
     Then the create crate modal should be clear of input and errors
   
   #CRATEIT-199

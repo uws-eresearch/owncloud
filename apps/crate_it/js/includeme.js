@@ -527,7 +527,7 @@ function reloadCrateData(manifest) {
 function getMaifest() {
   var result = [];
   var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {
-    crateName: $('#crates').val()
+    crateName: encodeURIComponent($('#crates').val())
   });
   $.ajax({
     url: c_url,

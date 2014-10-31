@@ -9,20 +9,28 @@ class CrateManager {
     /**
      * @var API
      */
-    private $api;
+    //private $api;
 
     /**
      * @var twig
      */
     private $twig;
     
-    public function __construct($api, $twig){
+    /*public function __construct($api, $twig){
         $this->api = $api;
         $this->twig = $twig;
         if ($api->isLoggedIn()) {
             $this->ensureDefaultCrateExists();
             $this->ensureCrateIsSelected();
         }
+    }*/
+    
+    public function __construct(){
+    	//$this->twig = $twig;
+    	if (\OCP\USER::isLoggedIn()) {
+    		$this->ensureDefaultCrateExists();
+    		$this->ensureCrateIsSelected();
+    	}
     }
     
 
@@ -96,12 +104,15 @@ class CrateManager {
 
     public function getReadme($crateName) {
         $crate = $this->getCrate($crateName);
-        return $crate->getReadme($this->twig);
+        
+        //return $crate->getReadme($this->twig);
+        return $crate->getReadme();
     }
 
     private function getCrateRoot() {        
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot()", \OCP\Util::DEBUG);
-        $userId = $this->api->getUserId();
+        //$userId = $this->api->getUserId();
+        $userId = \OCP\User::getUser();
         $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
         return $baseDir.'/crates';
     }
@@ -147,13 +158,17 @@ class CrateManager {
     public function packageCrate($crateName){
         $this->updateCrateCheckIcons($crateName);
         $crate = $this->getCrate($crateName);
-        return $crate->packageCrate($this->twig);
+        
+        //return $crate->packageCrate($this->twig);
+        return $crate->packageCrate();
     }
 
     public function generateEPUB($crateName){
         \OCP\Util::writeLog('crate_it', "CrateManager::generateEPUB() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
-        return $crate->generateEPUB($this->twig);
+        
+        //return $crate->generateEPUB($this->twig);
+        return $crate->generateEPUB();
     }
     
     private function updateCrateCheckIcons($crateName) {        

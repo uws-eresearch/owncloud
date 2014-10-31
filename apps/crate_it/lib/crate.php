@@ -5,6 +5,7 @@ namespace OCA\crate_it\lib;
 require '3rdparty/BagIt/bagit.php';
 use BagIt;
 use \OC\Files\Filesystem;
+use OCP\AppFramework\Http\TemplateResponse;
 
 class Crate extends BagIt {
 
@@ -45,8 +46,8 @@ class Crate extends BagIt {
   
   // TODO: Convenience function for development, remove
   //       in production release?
-  public function getReadme($twig) {
-    $this->createReadme($twig);
+  public function getReadme() {
+    $this->createReadme();
     $readmePath = $this->getDataDirectory()."/README.html";
     return file_get_contents($readmePath);
   }
@@ -55,7 +56,7 @@ class Crate extends BagIt {
   //       passed as a parameter
   // TODO: Since the file is created directly, it bypasses the manifest,
   //       is that what we want?
-  private function createReadme($twig) {
+  private function createReadme() {
     $manifest = $this->getManifest();
     $manifest['crate_name'] = $this->crateName;
     $manifest['files'] = $this->flatList();
@@ -69,7 +70,11 @@ class Crate extends BagIt {
     $release = $git_res[0];
     $commit = $git_res[2];
     $manifest['version'] = "Release $release at commit $commit.";
-    $htmlStr = $twig->render('readme.php', $manifest);
+    
+    //$htmlStr = $twig->render('readme.php', $manifest);
+    $tempres = new TemplateResponse('crate_it', 'readme.php', $manifest);
+    $htmlStr = $tempres->render();
+    
     $readmePath = $this->getDataDirectory()."/README.html";
     file_put_contents($readmePath, $htmlStr);
   }
@@ -234,9 +239,9 @@ class Crate extends BagIt {
       return $res;
   }
   
-  public function packageCrate($twig) {
+  public function packageCrate() {
     $clone = $this->createTempClone();
-    $clone->createReadme($twig);
+    $clone->createReadme();
     $clone->storeFiles();
     $tmpFolder = \OC_Helper::tmpFolder();
     $packagePath = $tmpFolder.'/'.$this->crateName;
@@ -363,11 +368,15 @@ class Crate extends BagIt {
     return $vfsEntry;
   }
   
-  public function generateEPUB($twig) {
+  public function generateEPUB() {
     \OCP\Util::writeLog('crate_it', "Crate::generateEPUB(".$path.")", \OCP\Util::DEBUG);
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
-    $epub = $twig->render('epub.php', $params);
+    
+    //$epub = $twig->render('epub.php', $params);
+    $tempres = new TemplateResponse('crate_it', 'epub.php', $params);
+    $epub = $tempres->render();
+    
     $tmpFolder = \OC_Helper::tmpFolder();
     $htmlPath = $tmpFolder.'/'.$this->crateName.'.html';
     file_put_contents($htmlPath, $epub);

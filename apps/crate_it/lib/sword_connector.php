@@ -2,7 +2,7 @@
 
 namespace OCA\crate_it\lib;
 
-require '3rdparty/swordappv2-php-library/swordappclient.php';
+require __DIR__ . '/../3rdparty/swordappv2-php-library/swordappclient.php';
 use \SWORDAPPClient;
 
 class SwordConnector {

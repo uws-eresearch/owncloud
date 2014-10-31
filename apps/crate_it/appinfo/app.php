@@ -21,67 +21,60 @@
  *
  */
 
-namespace OCA\Cr8it;
+namespace OCA\crate_it\AppInfo;  
 
-// dont break owncloud when the appframework is not enabled
-if (\OCP\App::isEnabled('appframework')) {
-    // Check if the user is logged in
-    $api = new \OCA\AppFramework\Core\API('crate_it');
 
-    $api->addNavigationEntry(array(
+    \OCP\App::addNavigationEntry(array(   
         // the string under which your app will be referenced in owncloud
-        'id' => $api -> getAppName(),
+        'id' => 'crate_it',
     
         // sorting weight for the navigation. The higher the number,
         // the higher will it be listed in the navigation
         'order' => 250,
     
         // the route that will be shown on startup
-        'href' => $api -> linkToRoute("crate_it_index"),
+        'href' => \OCP\Util::linkToRoute('crate_it.page.index'),
     
         // the icon that will be shown in the navigation
-        "icon" => $api -> imagePath("milk-crate-grey.png"),
+        'icon' => \OCP\Util::imagePath('crate_it', 'milk-crate-grey.png'),
     
         // the title of your application. This will be used in the
         // navigation or on the settings page of your app
-        "name" => $api->getTrans()->t("Cr8It")
+        'name' => \OC_L10N::get('crate_it')->t('Cr8It')
         )
     );
-    //add project root folder to include path   
+    
+
+    //add project root folder to include path  //TODO do we need to do this?  
     $dir = dirname(dirname(__FILE__)) . '/';
     set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
  
     //add 3rdparty folder to include path   
-    $dir = dirname(dirname(__FILE__)) . '/3rdparty';
+    $dir = dirname(dirname(__FILE__)) . '/3rdparty';    
     set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
-           
+    
     //load the required files
-    $api->add3rdPartyScript('jeditable/jquery.jeditable');
-    $api->add3rdPartyScript('jqtree/tree.jquery');
-
-
-    $api->addScript('loader');
-    $api->addScript('includeme');
-    $api->addScript('validation');
-    $api->addScript('search');
-    $api->addScript('initializers');
+    \OCP\Util::addScript('crate_it/3rdparty/jquery_jeditable-1.7.3', 'jquery.jeditable'); 
+    \OCP\Util::addScript('crate_it/3rdparty/jqtree', 'tree.jquery');
+    
+    \OCP\Util::addScript('crate_it', 'loader');
+    \OCP\Util::addScript('crate_it', 'includeme');
+    \OCP\Util::addScript('crate_it', 'validation');
+    \OCP\Util::addScript('crate_it', 'search');
+    \OCP\Util::addScript('crate_it', 'initializers');
 
     // Font awesome
-    $api->addStyle('font-awesome');
-    $api->addStyle('font-awesome.overrides');
+    \OCP\Util::addStyle('crate_it', 'font-awesome');
+    \OCP\Util::addStyle('crate_it', 'font-awesome.overrides');
 
     // Bootstrap
-    $api->add3rdPartyStyle('bootstrap/bootstrap');
-    $api->add3rdPartyScript('bootstrap/bootstrap.min');
-    $api->addStyle('bootstrap.overrides');
+    \OCP\Util::addStyle('crate_it/3rdparty/bootstrap-3.2.0', 'bootstrap');
+    \OCP\Util::addScript('crate_it/3rdparty/bootstrap-3.2.0', 'bootstrap.min');
+    \OCP\Util::addStyle('crate_it', 'bootstrap.overrides');
 
-    $api->addStyle('crate');
-    $api->add3rdPartyStyle('jqtree/jqtree');
+    \OCP\Util::addStyle('crate_it', 'crate');
+    \OCP\Util::addStyle('crate_it/3rdparty/jqtree', 'jqtree');
 
     // For tests
-    $api->add3rdPartyScript('mockjax/jquery.mockjax');
+    \OCP\Util::addScript('crate_it/3rdparty/mockjax', 'jquery.mockjax');
 
-} else {
-    $msg = 'Can not enable the Cr8it app because the App Framework ' . 'App is disabled';
-    \OCP\Util::writeLog('crate_it', $msg, \OCP\Util::ERROR);
-}

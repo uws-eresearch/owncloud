@@ -21,17 +21,30 @@
  *
  */
 
-namespace OCA\crate_it;
+namespace OCA\crate_it\AppInfo;
 
-use \OCA\AppFramework\App;
-use \OCA\crate_it\DependencyInjection\DIContainer;
+// use \OCA\AppFramework\App;
+// use \OCA\crate_it\DependencyInjection\DIContainer;
 
+$application = new Application();
 
-$this->create('crate_it_index', '/')->get()->action(function($params) {
+/*$this->create('crate_it_index', '/')->get()->action(function($params) {
     // call the index method on the class PageController
     App::main('PageController', 'index', $params, new DIContainer());
-});
+});*/
 
+/*$application->registerRoutes($this, array(
+		'routes' => array(
+			array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
+		)
+));*/
+
+$application->registerRoutes($this, array('routes' => array(
+		array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
+		array('name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'),
+)));
+
+/*
 $this->create('crate_it_get_items', '/crate/get_items')->get()->action(function($params){
     App::main('CrateController', 'getItems', $params, new DIContainer());
 });
@@ -88,4 +101,4 @@ $this->create('crate_it_publish', '/crate/publish')->post()->action(function($pa
 $this->create('crate_it_email_receipt', '/crate/email')->post()->action(function($params) {
     App::main('PublishController', 'emailReceipt', $params, new DIContainer());
 });
-
+*/

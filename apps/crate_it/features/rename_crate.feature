@@ -50,3 +50,30 @@ Feature: Rename a crate from the Item Management root
     When I rename "new crate"
     Then I fill in "rename-crate" with a long string of 129 characters
     Then I should see error 'Crate name has reached the limit of 128 characters' in the modal
+
+  #CRATEIT-236
+  Scenario: Renaming a crate with special characters doesn't break it
+    When I click the new crate button
+    Then I fill in "New Crate Name" with "new crate"
+    When I press "Create" on the popup dialog
+    When I rename "new crate"
+    Then I fill in "rename-crate" with ", abc ."
+    When I press "Rename" on the popup dialog
+    Then the crate should have name ", abc ."
+    # rename again
+    Then I rename ", abc ."
+    Then I fill in "rename-crate" with "......"
+    # rename again
+    When I press "Rename" on the popup dialog
+    Then the crate should have name "......"
+    When I rename "......"
+    Then I fill in "rename-crate" with "?"
+    Then I should see "Invalid name. Illegal characters"
+    When I fill in "rename-crate" with ", abc . "
+    Then I press "Rename" on the popup dialog
+    Then the crate should have name ", abc ."
+    
+    
+    
+   
+         

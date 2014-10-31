@@ -702,15 +702,6 @@ class FeatureContext extends MinkContext
         $web_assert->elementExists('xpath', '//button[text() = "'.$buttonText.'" and @disabled]', $el);
     }
 
-	
-	public function grantNumberSectionCollapsed()
-	{
-		$page = $this->getSession()->getPage();
-		$xpath = '//div[@id="grant-numbers"]';
-		$el = $page->find('xpath', $xpath);
-		return !$el->isVisible();
-	}
-
     private function mockActivityLookup()
     {
         // TODO: Look at way to load mockjax dynamically so that is isn't loaded in production
@@ -808,19 +799,46 @@ JS;
     public function iExpandTheGrantNumberMetadataSection()
     {
 		$this->spin(function($context) {
-		    if ($context->grantNumberSectionCollapsed())
-			{
-	    		$page = $context->getSession()->getPage();
-				$xpath = '//a[@href="#grant-numbers"]/i';
-		        $expand_trigger = $page->find('xpath', $xpath);
-				$expand_trigger->click();
-			}
+    		$page = $context->getSession()->getPage();
+			$xpath = '//a[@href="#grant-numbers"]/i';
+	        $expand_trigger = $page->find('xpath', $xpath);
+			$expand_trigger->click();
+
 			return true;
 		});
         $this->waitForPageToLoad();
     }
 
-	
+    /**
+     * @Given /^I expand the creator metadata section$/
+     */
+    public function iExpandTheCreatorMetadataSection()
+    {
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $xpath = '//a[@href="#data-creators"]/i';
+            $expand_trigger = $page->find('xpath', $xpath);
+            $expand_trigger->click();
+            return true;
+        });
+        $this->waitForPageToLoad();
+    }
+
+    /**
+     * @Given /^I expand the description metadata section$/
+     */
+    public function iExpandTheDescriptionMetadataSection()
+    {
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $xpath = '//a[@href="#crate-information"]/i';
+            $expand_trigger = $page->find('xpath', $xpath);
+            $expand_trigger->click();
+            return true;
+        });
+        $this->waitForPageToLoad();
+    }
+    	
     /**
      * @Given /^I click the search grant number button$/
      */

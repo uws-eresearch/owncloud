@@ -47,7 +47,7 @@
                         </button>
                       </h6>
 
-                      <ul id="selected_creators">
+                      <ul id="selected_creators" class="metadata">
                       </ul>
 
                     <h6>Add New Data Creators
@@ -94,7 +94,7 @@
                         <i class="fa fa-times muted"></i>
                       </button>
                     </h6>
-                    <ul id="selected_activities"></ul>
+                    <ul id="selected_activities" class="metadata"></ul>
                     <!-- TODO: Be more consistent with naming, are they "grants" or "activities"? -->
                     </ul>
 

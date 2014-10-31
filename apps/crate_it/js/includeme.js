@@ -147,7 +147,7 @@ function buildFileTree(data) {
           'newCrateName': newCrateName,
         },
         success: function(data) {
-          $('#crates > #' + oldName).val(newCrateName).attr('id', newCrateName).text(newCrateName);
+          $('#crates option:selected').val(newCrateName).attr('id', newCrateName).text(newCrateName);
           var errorMessage = oldName + ' not renamed';
           // TODO: try to do this withou a page reload
           saveTree(data.msg, errorMessage, true);

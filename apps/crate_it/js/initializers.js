@@ -36,13 +36,13 @@ function drawCrateContents() {
 function initCrateActions() {
 
   var metadataEmpty = function() {
-    var result = false;
+    var isEmpty = true;
     $('.metadata').each(function() {
-      if ($(this).text() === '') {
-        result = true;
+      if ($(this).html() != "") {
+        isEmpty = isEmpty && false;
       }
     });
-    return result;
+    return isEmpty;
   };
   
   var checkCrate = function() {
@@ -168,7 +168,14 @@ function initCrateActions() {
 
   $('#deleteCrateModal').on('show.bs.modal', function() {
     var currentCrate = $('#crates').val();
-    $('#deleteCrateMsg').text('Crate ' + currentCrate + ' is not empty, proceed with deletion?');
+    if (!metadataEmpty() && !crateEmpty()) {
+        $('#deleteCrateMsg').text('Crate ' + currentCrate + ' has items and metadata, proceed with deletion?');
+    } else if (!metadataEmpty()) {
+        $('#deleteCrateMsg').text('Crate ' + currentCrate + ' has metadata, proceed with deletion?');
+    } else if (!crateEmpty()) {
+        $('#deleteCrateMsg').text('Crate ' + currentCrate + ' has items, proceed with deletion?');
+    }
+    
   });
 
   $('#deleteCrateModal').find('.btn-primary').click(deleteCrate);
@@ -176,7 +183,7 @@ function initCrateActions() {
   $('#delete').click(function() {
     if (metadataEmpty() && crateEmpty()) {
       deleteCrate();
-    } else {
+    } else {        
       $('#deleteCrateModal').modal('show');
     }
   });

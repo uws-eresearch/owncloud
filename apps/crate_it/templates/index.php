@@ -1,4 +1,4 @@
-{#
+<!--
   ownCloud - Cr8it App
 
   @author Lloyd Harischandra
@@ -17,7 +17,7 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-#}
+-->
 
 <div id="container" class="crateit">
 
@@ -30,17 +30,18 @@
     </a>
     <label for="crates" class="element-invisible">Crate Selector</label>
     <select id="crates">
-      
-      {% for crate in crates %}  
-         {% if selected_crate is sameas(crate) %} 
-            <option id="{{ crate }}" value="{{ crate }}" selected>
-         {% else %}
-            <option id="{{ crate }}" value="{{ crate }}">
-         {% endif %}
-         {{ crate }}
-          </option>
-      {% endfor %}
-    </select>
+    
+    <?php 
+    foreach ($_['crates'] as $crate) {
+    	if($_['selected_crate'] === $crate){ ?>
+			<option id="<?php p($crate);?>" value="<?php p($crate);?>" selected>
+		<?php 
+		}else { ?>
+		<option id="<?php p($crate);?>" value="<?php p($crate);?>">
+		<?php 
+		} p($crate); 
+	}?></option>
+	</select>
 
     <div class="pull-right">
 
@@ -60,14 +61,14 @@
           Download
         </button>
         <ul class="dropdown-menu">
-          {% if previews == "on" %}
+          <?php if($_['previews'] === "on"){ ?>
             <li>
               <a id="epub" class="dropdown-btn" href="crate/epub">
                 <i class="fa fa-book"></i>
                  ePub
               </a>
             </li>
-          {% endif %}
+          <?php } ?>
           <li>
             <a id="download" class="dropdown-btn">
               <i class="fa fa-archive"></i>
@@ -112,42 +113,46 @@
   </div>
 
 </div>
-{# end div container #}
+<!-- end div container -->
 
 <div id="files"></div>
 
-{% include 'metadata.php' %}       
+<?php 
 
-{% include 'help_modal.php' %}   
+print_unescaped($this->inc('metadata'));
 
-{% include 'publish_modal.php' %}   
+print_unescaped($this->inc('help_modal'));
 
-{% include 'create_crate_modal.php' %}   
+print_unescaped($this->inc('publish_modal'));
 
-{% include 'remove_crate_modal.php' %}   
+print_unescaped($this->inc('create_crate_modal'));
 
-{% include 'rename_item_modal.php' %}   
+print_unescaped($this->inc('remove_crate_modal'));
 
-{% include 'rename_crate_modal.php' %}   
+print_unescaped($this->inc('rename_item_modal'));
 
-{% include 'add_folder_modal.php' %}   
+print_unescaped($this->inc('rename_crate_modal'));
 
-{% include 'clear_crate_modal.php' %}   
+print_unescaped($this->inc('add_folder_modal'));  
 
-{% include 'delete_crate_modal.php' %}   
+print_unescaped($this->inc('clear_crate_modal'));  
 
-{% include 'clear_metadata_modal.php' %}  
+print_unescaped($this->inc('delete_crate_modal')); 
 
-{% include 'add_creator_modal.php' %}
+print_unescaped($this->inc('clear_metadata_modal')); 
 
-{% include 'edit_creator_modal.php' %}
+print_unescaped($this->inc('add_creator_modal'));
 
-{% include 'add_grant_modal.php' %}
+print_unescaped($this->inc('edit_creator_modal'));
 
-{% include 'edit_activities_modal.php' %}
+print_unescaped($this->inc('add_grant_modal'));
 
-{% include 'check_crate_modal.php' %}
+print_unescaped($this->inc('edit_activities_modal'));
 
-{% include 'publish_confirm_modal.php' %}
+print_unescaped($this->inc('check_crate_modal'));
 
-{% include 'javascript_vars.php' %}
+print_unescaped($this->inc('publish_confirm_modal'));
+
+print_unescaped($this->inc('javascript_vars'));
+
+?>

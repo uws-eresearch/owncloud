@@ -13,7 +13,7 @@
           <p>Cr8it has been developed through a collaboration between the University of Newcastle, the University of Western Sydney, and Intersect Australia Ltd.</p>
         </section>
         <section>
-          Release {{ release }} at commit {{ commit }}.
+          Release <?php p($_['release']);?> at commit <?php p($_['commit']);?>.
         </section>
       </div>
 

@@ -10,13 +10,12 @@
           <h3>Select Collection</h3>
           <label for="publish-collection" class="element-invisible">Select Collection</label>
           <select id="publish-collection">
-            {% for endpoint, settings in collections %}
-              {% for collection, href in settings %}
-                <option value="{{ href }}" data-endpoint="{{ endpoint }}">
-                  {{ collection }}
-                </option>
-              {% endfor %}
-            {% endfor %}
+            <?php foreach($_['collections'] as $collection) {
+            		foreach ($collection['settings'] as $setting) { ?>
+            			<option value="<?php p($setting['href']);?>" data-endpoint="<?php p($collection['endpoint']);?>">
+            <?php 	 	p($setting['collection']);
+					}
+            	  }	?></option>
           </select>
           <label style="color:red;display:none">Error: No collections available for publishing</label>
         </section>

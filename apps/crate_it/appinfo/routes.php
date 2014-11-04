@@ -42,6 +42,17 @@ $application = new Application();
 $application->registerRoutes($this, array('routes' => array(
 		array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
 		array('name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'),
+		array('name' => 'crate#get_items', 'url' => '/crate/get_items', 'verb' => 'GET'),
+		array('name' => 'crate#add', 'url' => '/crate/add', 'verb' => 'POST'),
+		array('name' => 'crate#get_crate_size', 'url' => '/crate/get_crate_size', 'verb' => 'GET'),
+		array('name' => 'crate#update_crate', 'url' => '/crate/update', 'verb' => 'POST'),
+		array('name' => 'crate#create_crate', 'url' => '/crate/create', 'verb' => 'POST'),
+		array('name' => 'crate#delete_crate', 'url' => '/crate/delete', 'verb' => 'GET'),
+		array('name' => 'crate#rename_crate', 'url' => '/crate/rename', 'verb' => 'POST'),
+		array('name' => 'crate#package_crate', 'url' => '/crate/downloadzip', 'verb' => 'GET'),
+		array('name' => 'crate#readme_preview', 'url' => '/crate/preview', 'verb' => 'GET'),
+		array('name' => 'crate#generate_ePUB', 'url' => '/crate/epub', 'verb' => 'GET'),
+		array('name' => 'crate#check_crate', 'url' => '/crate/check', 'verb' => 'GET'),
 )));
 
 /*

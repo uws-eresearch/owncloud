@@ -14,8 +14,7 @@ class CrateService {
      */
     private $crateManager;
     
-    public function __construct($api, $crateManager){
-        $this->api = $api;
+    public function __construct($crateManager){
         $this->crateManager = $crateManager;
     }
     

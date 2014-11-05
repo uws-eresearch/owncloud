@@ -1,8 +1,10 @@
 <?php
 
 namespace OCA\crate_it\Controller;
-use \OCA\AppFramework\Controller\Controller;
-use \OCA\AppFramework\Http\JSONResponse;
+
+use \OCP\IRequest;
+use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\JSONResponse;
 
 class CrateCheckController extends Controller {
     /**
@@ -15,8 +17,8 @@ class CrateCheckController extends Controller {
      */
     private $loggingService;
     
-    public function __construct($api, $request, $crateService, $loggingService) {
-        parent::__construct($api, $request);
+    public function __construct($appName, IRequest $request, $crateService, $loggingService) {
+        parent::__construct($appName, $request);
         $this->crateService = $crateService;
         $this->loggingService = $loggingService;
     }
@@ -25,8 +27,7 @@ class CrateCheckController extends Controller {
      * Check crate 
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function checkCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::checkCrate()", \OCP\Util::DEBUG);

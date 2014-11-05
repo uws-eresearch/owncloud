@@ -18,8 +18,10 @@ use \OCP\IContainer;
 
 use OCA\crate_it\Controller\PageController;
 use OCA\crate_it\Controller\CrateController;
+use OCA\crate_it\Controller\CrateCheckController;
 use OCA\crate_it\Service\SetupService;
 use OCA\crate_it\Service\CrateService;
+use OCA\crate_it\Service\LoggingService;
 use OCA\crate_it\Manager\CrateManager;
 
 require __DIR__ . '/../lib/sword_connector.php'; //TODO should load all required files using autoload.php (composer)
@@ -51,6 +53,15 @@ class Application extends App {
 			);
 		});
 		
+		$container->registerService('CrateCheckController', function(IContainer $c){
+			return new CrateCheckController(
+					$c->query('AppName'),
+					$c->query('Request'),
+					$c->query('CrateService'),
+					$c->query('LoggingService')
+			);
+		});
+		
 		/**
 		 * Services
 		 */
@@ -67,6 +78,13 @@ class Application extends App {
 			);
 		});
 		
+		$container->registerService('LoggingService', function(IContainer $c){
+			return new LoggingService(
+					$c->query('UserId'),
+					$c->query('CrateManager')
+			);
+		});
+		
 		/**
 		 * Managers
 		 */
@@ -79,6 +97,13 @@ class Application extends App {
 		 */
 		$container->registerService('SwordConnector', function(IContainer $c){
 			return new SwordConnector();
+		});
+		
+		/**
+		 * Core
+		 */
+		$container->registerService('UserId', function(IContainer $c) {
+			return \OCP\User::getUser();
 		});
 		
 	}

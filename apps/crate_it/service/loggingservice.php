@@ -12,9 +12,8 @@ class LoggingService {
     
     private $logfile;
     
-    public function __construct($api, $crateManager) {
+    public function __construct($userId, $crateManager) {
         $this->crateManager = $crateManager;
-        $userId = $api->getUserId();
         $user_dir = $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
         $this->logfile = $user_dir.'/publish.log';
     }

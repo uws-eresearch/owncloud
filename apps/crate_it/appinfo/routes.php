@@ -52,7 +52,7 @@ $application->registerRoutes($this, array('routes' => array(
 		array('name' => 'crate#package_crate', 'url' => '/crate/downloadzip', 'verb' => 'GET'),
 		array('name' => 'crate#readme_preview', 'url' => '/crate/preview', 'verb' => 'GET'),
 		array('name' => 'crate#generate_ePUB', 'url' => '/crate/epub', 'verb' => 'GET'),
-		array('name' => 'crate#check_crate', 'url' => '/crate/check', 'verb' => 'GET'),
+		array('name' => 'crate_check#check_crate', 'url' => '/crate/check', 'verb' => 'GET'),
 )));
 
 /*

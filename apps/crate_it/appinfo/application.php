@@ -19,6 +19,7 @@ use \OCP\IContainer;
 use OCA\crate_it\Controller\PageController;
 use OCA\crate_it\Controller\CrateController;
 use OCA\crate_it\Controller\CrateCheckController;
+use OCA\crate_it\Controller\SearchController;
 use OCA\crate_it\Service\SetupService;
 use OCA\crate_it\Service\CrateService;
 use OCA\crate_it\Service\LoggingService;
@@ -59,6 +60,14 @@ class Application extends App {
 					$c->query('Request'),
 					$c->query('CrateService'),
 					$c->query('LoggingService')
+			);
+		});
+		
+		$container->registerService('SearchController', function(IContainer $c){
+			return new SearchController(
+					$c->query('AppName'),
+					$c->query('Request'),
+					$c->query('SetupService')
 			);
 		});
 		

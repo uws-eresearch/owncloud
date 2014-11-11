@@ -80,3 +80,31 @@ Feature: Add files and folders to a crate
     When I add "&" to the current crate
     Then I go to the crate_it page
     Then the default crate should contain "&" within the root folder
+
+  #CRATEIT-239
+  Scenario: A user can add a file named _html to a crate
+    When I go to the crate_it page
+    And I have file "_html" within the root folder
+    And I go to the files page
+    When I add "_html" to the current crate
+    Then I go to the crate_it page
+    Then the default crate should contain "_html" within the root folder
+
+  #CRATEIT-239
+  Scenario: A user can not add a folder named _html to a crate
+    When I go to the crate_it page
+    And I have folders "_html"
+    And I go to the files page
+    When I add "_html" to the current crate
+    Then I go to the crate_it page
+    Then the default crate should not contain "_html" anywhere
+
+  #CRATEIT-239
+  Scenario: A nested _html folder is ignored when adding to a crate
+    When I go to the crate_it page
+    And I have folders "folder1/_html"
+    And I go to the files page
+    When I add "folder1" to the current crate
+    Then I go to the crate_it page
+    And I expand 'folder1'
+    Then the default crate should not contain "_html" anywhere

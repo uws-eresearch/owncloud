@@ -84,6 +84,9 @@ class CrateController extends Controller {
             // TODO check if this error handling works
             $file = $this->params('file');
             \OCP\Util::writeLog('crate_it', "Adding ".$file, \OCP\Util::DEBUG);
+            if($file == '_html' && \OC\Files\Filesystem::is_dir($file)) {
+                throw new \Exception("$file ignored by Crate it");
+            }
             $crateName = $_SESSION['selected_crate'];
             // TODO: naming consistency, add vs addToBag vs addToCrate
             $this->crate_service->addToBag($crateName, $file);

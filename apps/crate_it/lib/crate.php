@@ -325,24 +325,30 @@ class Crate extends BagIt {
     } else {
       $vfsEntry = $this->addFileToCrate($path);
     }
-    array_push($vfs, $vfsEntry);
+    if($vfsEntry !== NULL) {
+      array_push($vfs, $vfsEntry);
+    }
   }
 
   private function addFolderToCrate($folder) {
-    $vfsEntry = array(
-      'name' => basename($folder),
-      'id' => 'folder', // TODO: change this to 'folder' => true, need to update js
-      'children' => array(),
-      'folderpath' => $folder
-    );
-    $vfsContents = &$vfsEntry['children'];
-    $paths = \OC\Files\Filesystem::getDirectoryContent($folder);
-    foreach($paths as $path) {
-        $relativePath = substr($path['path'], strlen('files/'));
-        if (!strncmp($folder, "Shared", 6)) {
-            $relativePath = 'Shared/'.$relativePath;
-        }
-        $this->addPath($relativePath, $vfsContents);
+    $vfsEntry = NULL;
+    $name = basename($folder);
+    if($name !== '_html') {
+      $vfsEntry = array(
+        'name' => $name,
+        'id' => 'folder', // TODO: change this to 'folder' => true, need to update js
+        'children' => array(),
+        'folderpath' => $folder
+      );
+      $vfsContents = &$vfsEntry['children'];
+      $paths = \OC\Files\Filesystem::getDirectoryContent($folder);
+      foreach($paths as $path) {
+          $relativePath = substr($path['path'], strlen('files/'));
+          if (!strncmp($folder, "Shared", 6)) {
+              $relativePath = 'Shared/'.$relativePath;
+          }
+          $this->addPath($relativePath, $vfsContents);
+      }
     }
     return $vfsEntry;
   }

@@ -4,7 +4,8 @@ Feature: Search, add and remove grant number
   I want to add grant number related to the crate
   
   Background:
-    Given I have no crates
+    Given the browser is maximised
+    And I have no crates
     And I have crate "crate1"
     And I'm logged in to ownCloud as "test"
     And I go to the crate_it page

@@ -86,7 +86,6 @@ class Crate extends BagIt {
         $creator['url'] = true;
       }
     }
-    // var_dump($creators);
     return $creators;
   }
 
@@ -170,7 +169,7 @@ class Crate extends BagIt {
   }
 
   public function updateCrate($field, $value) {
-    \OCP\Util::writeLog("crate_it", "Crate::updateCrate($field, ".json_encode($value).")", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog("crate_it", "Crate::updateCrate($field, ".$value.")", \OCP\Util::DEBUG);
     $manifest = $this->getManifest();
     if($value === NULL) {
       if(is_array($manifest[$field])) {

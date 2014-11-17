@@ -354,7 +354,7 @@ function saveTree(successMessage, errorMessage, reload) {
     dataType: 'json',
     data: {
       'field': 'vfs',
-      'value': JSON.parse($tree.tree('toJson'))
+      'value': $tree.tree('toJson')
     },
     success: function(data) {
       if (successMessage) {

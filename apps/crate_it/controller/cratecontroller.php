@@ -128,6 +128,11 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", \OCP\Util::DEBUG);
         $field = $this->params('field');
         $value = $this->params('value');
+        // TODO: This is an ugly workaround to avoid the max_input_vars ceiling
+        // the vfs field is a json string inside a json object
+        if($field == 'vfs') {
+            $value = json_decode($value, true);
+        }
         try {
             $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
             return new JSONResponse(array('msg' => "$field successfully updated", 'value' => $value));

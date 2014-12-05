@@ -64,7 +64,7 @@ namespace OCA\crate_it\AppInfo;
     \OCP\Util::addScript('crate_it', 'initializers');
 
     // Font awesome
-    \OCP\Util::addStyle('crate_it', 'font-awesome');
+    \OCP\Util::addStyle('crate_it', 'font-awesome.min');
     \OCP\Util::addStyle('crate_it', 'font-awesome.overrides');
 
     // Bootstrap

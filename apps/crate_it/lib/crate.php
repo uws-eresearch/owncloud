@@ -72,7 +72,7 @@ class Crate extends BagIt {
     $manifest['version'] = "Release $release at commit $commit.";
     
     //$htmlStr = $twig->render('readme.php', $manifest);
-    $tempres = new TemplateResponse('crate_it', 'readme.php', $manifest);
+    $tempres = new TemplateResponse('crate_it', 'readme', $manifest);
     $htmlStr = $tempres->render();
     
     $readmePath = $this->getDataDirectory()."/README.html";

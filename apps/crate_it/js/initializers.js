@@ -206,15 +206,14 @@ function initCrateActions() {
   $('#download').click(downloadCrate);
 
 
-  var publishCrate = function(crateName, endpoint, collection){
+  var publishCrate = function(crateName, endpoint){
     var c_url = OC.generateUrl('apps/crate_it/crate/publish');
     // TODO: Delete the following, just used for testing because the test server
     //       wont change it's url from localhost
     // collection = collection.replace('localhost', '10.0.2.2');
     var postData = {
       'name': crateName,
-      'endpoint': endpoint,
-      'collection': collection
+      'endpoint': endpoint
     };
     $.ajax({
       url: c_url,
@@ -302,7 +301,7 @@ function initCrateActions() {
 
   if($('#publish-collection > option').length == 0) {
     $('#publish-collection').next().css('display','inline');
-    $('#publishModal').find('.btn-primary').prop('disabled', true);
+//    $('#publishModal').find('.btn-primary').prop('disabled', true);
   } else {
     $('#publish-collection').next().css('display','none');
     $('#publishModal').find('.btn-primary').prop('disabled', false);
@@ -310,9 +309,13 @@ function initCrateActions() {
 
   $('#publishModal').find('.btn-primary').click(function() {
     var crateName = $('#crates').val();
-    var endpoint = $('#publish-collection option:selected').attr('data-endpoint');
-    var collection = $('#publish-collection').val();
-    publishCrate(crateName, endpoint, collection);
+    //var endpoint = $('#publish-collection option:selected').attr('data-endpoint');
+    //var collection = $('#publish-collection').val();
+    //publishCrate(crateName, endpoint, collection);
+    
+    var endpoint = $('#publish-within').val();
+    publishCrate(crateName, endpoint);
+    
     $('#publishModal').modal('hide');
   });
 

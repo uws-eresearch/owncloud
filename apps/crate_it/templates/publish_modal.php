@@ -19,6 +19,14 @@
           </select>
           <label style="color:red;display:none">Error: No collections available for publishing</label>
         </section>
+        <!-- another section goes here for publish as dropdown. Anchoring is done using css  -->
+        <section class="publish-to">
+        	<h3>Publish to: </h3>
+        	<select id="publish-within">
+        		<option value="public">Published Open Access</option>
+        		<option value="private">Mediated Access</option>
+        	</select>
+        </section>
         <div class="row publish-meta">
           <div class="col-3">
              <h4 class="margin-bottom">Description</h4>

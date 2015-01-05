@@ -2,10 +2,10 @@
 
 namespace OCA\crate_it\Controller;
 
+use \OCP\IRequest;
+use \OCP\AppFramework\Controller;
 use \OCA\crate_it\lib\SwordConnector;
-use \OCA\AppFramework\Controller\Controller;
-use \OCA\AppFramework\Http\JSONResponse;
-use \OCA\AppFramework\Http;
+use \OCP\AppFramework\Http\JSONResponse;
 
 class PublishController extends Controller {
 
@@ -14,8 +14,8 @@ class PublishController extends Controller {
     private $loggingService;
     private $mailer;
 
-    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
-        parent::__construct($api, $request);
+    public function __construct($appName, IRequest $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
+        parent::__construct($appName, $request);
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
         $params = $setupService->getParams();
@@ -24,6 +24,27 @@ class PublishController extends Controller {
         $publisher->setEndpoints($params['publish endpoints']['sword']);
         $this->loggingService = $loggingService;
         $this->mailer = $mailer;
+        
+        //Make sure publications folder exists
+    	if (\OCP\USER::isLoggedIn()) {
+    		$this->ensurePublishFolderExists();
+    	}
+        
+    }
+    
+    private function ensurePublishFolderExists(){
+    	\OCP\Util::writeLog('crate_it', "publishcontroller::ensurePublishFolderExists()", \OCP\Util::DEBUG);
+    	$publicationsDir = $this->getPublicationsRoot();
+    	
+    	if (!file_exists($publicationsDir)) {
+    		mkdir($publicationsDir, 0755, true);
+    	}
+    }
+    
+    private function getPublicationsRoot(){
+    	$userId = \OCP\User::getUser();
+    	$publicationsDir = \OC::$SERVERROOT.'/data/'.$userId.'/publications';
+    	return $publicationsDir;
     }
 
     public function getCollections() {
@@ -35,8 +56,7 @@ class PublishController extends Controller {
      * Email crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function emailReceipt() {
         $data = array();
@@ -67,36 +87,59 @@ class PublishController extends Controller {
      * Publish crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
-    public function publishCrate() {
+    public function publishCrate($name, $endpoint) {
         \OCP\Util::writeLog('crate_it', "PublishController::publishCrate()", \OCP\Util::DEBUG);
+        
         $crateName = $this->params('name');
-        $endpoint = $this->params('endpoint');
-        $collection = $this->params('collection');
-        $this->loggingService->log("Attempting to publish crate $crateName to collection: $collection");
-        $this->loggingService->logManifest($crateName);
-        $package = $this->crateManager->packageCrate($crateName);
+        $this->loggingService->log("Attempting to publish crate $name to publications folder");
+        $this->loggingService->logManifest($name);
+        
+        $package = $this->crateManager->packageCrate($name);
         $zipname = basename($package);
         $this->loggingService->log("Zipped content into '$zipname'");
         $data = array();
         try {
-            $this->loggingService->log("Publishing crate $crateName ($zipname)..");
-            $response = $this->publisher->publishCrate($package, $endpoint, $collection);
-            $status = $response->sac_status;
-            if($status == 201) {                
-                $data['msg'] = "Crate '$crateName' successfully published to $collection";  
-                $this->loggingService->logPublishedDetails($package, $crateName);             
-            } else {
-                $this->loggingService->log("Publishing crate '$crateName' failed.");
-                $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: $response->sac_statusmessage ($status)";
-                $this->loggingService->log($data['msg']);
+            $this->loggingService->log("Publishing crate $name ($zipname)..");
+            
+            if($endpoint === 'public'){
+            	//write into public folder. 
+            	$public_folder = $this->getPublicationsRoot() . '/public-open-access';
+            	if(!file_exists($public_folder)){
+            		mkdir($public_folder, 0755, true);
+            	}
+            	$dest = $public_folder . '/' . $zipname;
+            	if(copy($package, $dest)){
+            		$data['msg'] = "Crate '$name' successfully published to public folder";
+            	}
+            	else{
+            		$this->loggingService->log("Publishing crate '$name' failed.");
+            		$data['msg'] = "Error: failed to copy $zipname ...";
+            		$this->loggingService->log($data['msg']);
+            	}
+            } 
+            else{
+            	//Write into private folder
+            	$private_folder = $this->getPublicationsRoot() . '/mediated-access';
+            	if(!file_exists($private_folder)){
+            		mkdir($private_folder, 0755, true);
+            	}
+            	$dest = $private_folder . '/' . $zipname;
+            	if(copy($package, $dest)){
+            		$data['msg'] = "Crate '$name' successfully published to private folder";
+            	}
+            	else{
+            		$this->loggingService->log("Publishing crate '$name' failed.");
+            		$data['msg'] = "Error: failed to copy $zipname ...";
+            		$this->loggingService->log($data['msg']);
+            	}
             }
+            
         } catch (\Exception $e) {
-            $this->loggingService->log("Publishing crate '$crateName' failed.");            
+            $this->loggingService->log("Publishing crate '$name' failed.");            
             $status = 500;
-            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: ".$e->getMessage();
+            $data['msg'] = "Error: failed to publish crate '$name' to publications folder: ".$e->getMessage();
             $this->loggingService->log($data['msg']);
         }
         $_SESSION['last_published_status'] = $data['msg'];

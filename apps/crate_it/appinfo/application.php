@@ -20,6 +20,7 @@ use OCA\crate_it\Controller\PageController;
 use OCA\crate_it\Controller\CrateController;
 use OCA\crate_it\Controller\CrateCheckController;
 use OCA\crate_it\Controller\SearchController;
+use OCA\crate_it\Controller\PublishController;
 use OCA\crate_it\Service\SetupService;
 use OCA\crate_it\Service\CrateService;
 use OCA\crate_it\Service\LoggingService;
@@ -27,6 +28,8 @@ use OCA\crate_it\Manager\CrateManager;
 
 require __DIR__ . '/../lib/sword_connector.php'; //TODO should load all required files using autoload.php (composer)
 use OCA\crate_it\lib\SwordConnector;
+
+use OCA\crate_it\lib\Mailer;
 
 class Application extends App {
 	
@@ -71,6 +74,18 @@ class Application extends App {
 			);
 		});
 		
+		$container->registerService('PublishController', function(IContainer $c){
+			return new PublishController(
+					$c->query('AppName'),
+					$c->query('Request'),
+					$c->query('CrateManager'),
+					$c->query('SetupService'),
+					$c->query('SwordConnector'),
+					$c->query('LoggingService'),
+					$c->query('Mailer')
+			);
+		});
+		
 		/**
 		 * Services
 		 */
@@ -92,6 +107,10 @@ class Application extends App {
 					$c->query('UserId'),
 					$c->query('CrateManager')
 			);
+		});
+		
+		$container->registerService('Mailer', function(IContainer $c){
+			return new Mailer();
 		});
 		
 		/**

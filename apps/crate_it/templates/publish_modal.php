@@ -6,7 +6,7 @@
         <h2 class="modal-title" id="publishModalLabel">Publish Crate</h2>
       </div>
       <div class="modal-body">
-        <section class="publish-body">
+        <!-- <section class="publish-body">
           <h3>Select Collection</h3>
           <label for="publish-collection" class="element-invisible">Select Collection</label>
           <select id="publish-collection">
@@ -18,7 +18,7 @@
             	  }	?></option>
           </select>
           <label style="color:red;display:none">Error: No collections available for publishing</label>
-        </section>
+        </section>-->
         <!-- another section goes here for publish as dropdown. Anchoring is done using css  -->
         <section class="publish-to">
         	<h3>Publish to: </h3>

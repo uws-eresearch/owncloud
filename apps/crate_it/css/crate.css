@@ -635,11 +635,11 @@ font-size: 18px;
 .margin-bottom {
   margin-bottom: 10px;
 }
-.modal section.publish-body {
+/*.modal section.publish-body {
   border-bottom: 1px solid #e5e5e5;
   padding-bottom:20px;
   margin-bottom:30px;
-}
+}*/
 .modal .row h6 {
   text-transform: uppercase;
   font-weight: bold;
@@ -659,9 +659,9 @@ font-size: 18px;
   margin-bottom: 10px;
 }
 
-/*  Accessibility class to hide elements but make them appear to screen readers  */
+/*  Accessibility class to hide elements but make them appear to screen readers  
 .element-invisible {
   position: absolute !important;
-  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px 1px 1px 1px);  IE6, IE7 
   clip: rect(1px, 1px, 1px, 1px);
-}
+}*/

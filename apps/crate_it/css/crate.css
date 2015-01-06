@@ -117,7 +117,7 @@ border-top:1px solid #dedede;
 .bar-actions {
 	position: fixed;
 	top: 45px;
-	left: 80px;
+	left: 0;
 	right: 0;
 /*	height: 44px;*/
 	background-color: #eee;
@@ -138,7 +138,7 @@ border-top:1px solid #dedede;
 	font-weight: normal;
 
 float: left;
-background: url(/owncloud/core/css/../img/breadcrumb.svg?2014-04-29T01:26:40Z) no-repeat right center;
+background: url(/core/core/css/../img/breadcrumb.svg?2014-04-29T01:26:40Z) no-repeat right center;
 height: 44px;
 }
 

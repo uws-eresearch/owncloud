@@ -97,11 +97,12 @@ class PublishController extends Controller {
         $this->loggingService->logManifest($name);
         
         $package = $this->crateManager->packageCrate($name);
-        $zipname = basename($package);
+        $zipname = basename($package, '.zip');
+        $zipname .= '_' . date("Y-m-d_H:i:s") . '.zip';
         $this->loggingService->log("Zipped content into '$zipname'");
         $data = array();
         try {
-            $this->loggingService->log("Publishing crate $name ($zipname)..");
+            $this->loggingService->log("Publishing crate $name as ($zipname)..");
             
             if($endpoint === 'public'){
             	//write into public folder. 
@@ -112,6 +113,7 @@ class PublishController extends Controller {
             	$dest = $public_folder . '/' . $zipname;
             	if(copy($package, $dest)){
             		$data['msg'] = "Crate '$name' successfully published to public folder";
+            		$this->loggingService->logPublishedDetails($dest, $name);
             	}
             	else{
             		$this->loggingService->log("Publishing crate '$name' failed.");
@@ -128,6 +130,7 @@ class PublishController extends Controller {
             	$dest = $private_folder . '/' . $zipname;
             	if(copy($package, $dest)){
             		$data['msg'] = "Crate '$name' successfully published to private folder";
+            		$this->loggingService->logPublishedDetails($dest, $name);
             	}
             	else{
             		$this->loggingService->log("Publishing crate '$name' failed.");

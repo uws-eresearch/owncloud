@@ -43,7 +43,7 @@ class PublishController extends Controller {
     
     private function getPublicationsRoot(){
     	$userId = \OCP\User::getUser();
-    	$publicationsDir = \OC::$SERVERROOT.'/data/'.$userId.'/publications';
+    	$publicationsDir = \OC::$SERVERROOT.'/data/'.$userId.'/files/publications';
     	return $publicationsDir;
     }
 

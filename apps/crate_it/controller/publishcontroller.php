@@ -12,9 +12,10 @@ class PublishController extends Controller {
     private $publisher;
     private $crateManager;
     private $loggingService;
+    private $shareService;
     private $mailer;
 
-    public function __construct($appName, IRequest $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
+    public function __construct($appName, IRequest $request, $crateManager, $setupService, $publisher, $loggingService, $shareService, $mailer) {
         parent::__construct($appName, $request);
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
@@ -23,6 +24,7 @@ class PublishController extends Controller {
         \OCP\Util::writeLog('crate_it', "PublishController::construct() - Publish enpoints: $endpoints", \OCP\Util::DEBUG);
         $publisher->setEndpoints($params['publish endpoints']['sword']);
         $this->loggingService = $loggingService;
+        $this->shareService = $shareService;
         $this->mailer = $mailer;
         
         //Make sure publications folder exists
@@ -112,7 +114,16 @@ class PublishController extends Controller {
             	}
             	$dest = $public_folder . '/' . $zipname;
             	if(copy($package, $dest)){
-            		$data['msg'] = "Crate '$name' successfully published to public folder";
+            		
+            		$fileInfo = \OC\Files\Filesystem::getFileInfo('publications/public-open-access/'.$zipname);
+            		$fileId = $fileInfo->getId();
+            		
+            		//publish successful. Now share it
+            		$token = $this->shareService->share('file', $fileId, \OCP\Share::SHARE_TYPE_LINK, '', \OCP\PERMISSION_READ, $zipname);
+            		$link = \OCP\Util::linkToPublic('files', true);
+            		$link .= '/' . $token;
+            		
+            		$data['msg'] = "Crate '$name' successfully published to public folder\nThe link to the published crate is '$link'";
             		$this->loggingService->logPublishedDetails($dest, $name);
             	}
             	else{

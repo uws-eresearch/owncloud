@@ -120,10 +120,10 @@ class PublishController extends Controller {
             		
             		//publish successful. Now share it
             		$token = $this->shareService->share('file', $fileId, \OCP\Share::SHARE_TYPE_LINK, null, \OCP\PERMISSION_READ, $zipname);
-            		$link = \OCP\Util::linkToAbsolute('', 'index.php');
-            		$link .= '/s/' . $token;
+            		$link = \OCP\Util::linkToPublic('files');
+            		$link .= '&t=' . $token;
             		
-            		$data['msg'] = "Crate '$name' successfully published to public folder\nThe link to the published crate is '$link'";
+            		$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is '$link'";
             		$this->loggingService->logPublishedDetails($dest, $name);
             	}
             	else{

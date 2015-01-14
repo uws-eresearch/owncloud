@@ -297,16 +297,19 @@ function updateCrateSize() {
       var msg = null;
       if (max_zip_mb > 0 && crate_size_mb > max_zip_mb) {
         msg = 'WARNING: Crate size exceeds zip file limit: ' + max_zip_mb + ' MB';
-        $('#download').attr("disabled", "disabled");
-        if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
+        $('#download').prop("disabled", true);
+        /*if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
           msg += ', and SWORD limit: ' + max_sword_mb + 'MB';
           $('#publish').attr("disabled", "disabled");
-        }
+        }*/
+        $('#publish-msg').text(msg + '. You still can publish by zipping the the crate. Please check to zip the crate and then publish.');
+        $('#publishModal').find('.btn-primary').prop('disabled', true);
         msg += '.';
-      } else if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
+      } 
+      /*else if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
         msg = 'WARNING: Crate size exceeds SWORD limit: ' + max_sword_mb + 'MB.';
-        $('#publish').attr("disabled", "disabled");
-      }
+        $('#publish').prop("disabled", true);
+      }*/
       if (msg) {
         displayNotification(msg, 6000);
       } else {
@@ -318,6 +321,18 @@ function updateCrateSize() {
       displayError(jqXHR.responseJSON.msg);
     }
   });
+}
+
+function isCrateSizeExceeded(crateSizeExceedCallback) {
+	$.ajax({
+	    url: 'crate/get_crate_size',
+	    type: 'get',
+	    dataType: 'json',
+	    success: crateSizeExceedCallback,
+	    error: function(jqXHR) {
+	      displayError(jqXHR.responseJSON.msg);
+	    }
+	});
 }
 
 function makeCrateListEditable() {

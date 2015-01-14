@@ -6,6 +6,8 @@
         <h2 class="modal-title" id="publishModalLabel">Publish Crate</h2>
       </div>
       <div class="modal-body">
+      	<section><p id="publish-msg"></p> 
+      	</section>
         <!-- <section class="publish-body">
           <h3>Select Collection</h3>
           <label for="publish-collection" class="element-invisible">Select Collection</label>
@@ -26,6 +28,7 @@
         		<option value="public">Published Open Access</option>
         		<option value="private">Mediated Access</option>
         	</select>
+        	<input id="publish-zip" type="checkbox">Publish as zip</input>
         </section>
         <div class="row publish-meta">
           <div class="col-3">

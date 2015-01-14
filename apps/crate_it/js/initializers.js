@@ -280,6 +280,8 @@ function initCrateActions() {
         }
     });
     
+    $('#publish-zip').prop('checked', false);
+    
     $('#publish-description').text($('#description').text());
 
     $('#publish-creators').children().remove();
@@ -306,6 +308,26 @@ function initCrateActions() {
     $('#publish-collection').next().css('display','none');
     $('#publishModal').find('.btn-primary').prop('disabled', false);
   }*/
+  
+  $('#publish-zip').click(function() {
+	  if($(this).is(":checked")) {
+		  $('#publishModal').find('.btn-primary').prop('disabled', false);
+	  }
+	  else {
+		  isCrateSizeExceeded(crateSizeExceedCallback);
+	  }
+  });
+  
+  function crateSizeExceedCallback(data) {
+	  var max_zip_mb = templateVars['max_zip_mb'];
+      crate_size_mb = data['size'] / (1024 * 1024);
+      if (max_zip_mb > 0 && crate_size_mb > max_zip_mb) {
+    	  $('#publishModal').find('.btn-primary').prop('disabled', true);
+      }
+      else {
+    	  $('#publishModal').find('.btn-primary').prop('disabled', false);
+      }
+  }
 
   $('#publishModal').find('.btn-primary').click(function() {
     var crateName = $('#crates').val();

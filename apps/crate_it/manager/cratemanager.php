@@ -155,12 +155,12 @@ class CrateManager {
         $crate->renameCrate($newCrateName);
     }
     
-    public function packageCrate($crateName){
+    public function packageCrate($crateName, $format){
         $this->updateCrateCheckIcons($crateName);
         $crate = $this->getCrate($crateName);
         
         //return $crate->packageCrate($this->twig);
-        return $crate->packageCrate();
+        return $crate->packageCrate($format);
     }
 
     public function generateEPUB($crateName){

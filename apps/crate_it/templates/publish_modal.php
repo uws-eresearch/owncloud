@@ -28,7 +28,7 @@
         		<option value="public">Published Open Access</option>
         		<option value="private">Mediated Access</option>
         	</select>
-        	<input id="publish-zip" type="checkbox">Publish as zip</input>
+        	<input id="publish-zip" type="checkbox">Publish as a bag</input>
         </section>
         <div class="row publish-meta">
           <div class="col-3">

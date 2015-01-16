@@ -60,7 +60,7 @@ class CrateService {
     }
     
     public function packageCrate($crateName) {
-        return $this->crateManager->packageCrate($crateName);
+        return $this->crateManager->packageCrate($crateName, 'zip');
     }
 
     public function checkCrate($crateName) {

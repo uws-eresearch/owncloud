@@ -302,7 +302,7 @@ function updateCrateSize() {
           msg += ', and SWORD limit: ' + max_sword_mb + 'MB';
           $('#publish').attr("disabled", "disabled");
         }*/
-        $('#publish-msg').text(msg + '. You still can publish by zipping the the crate. Please check to zip the crate and then publish.');
+        $('#publish-msg').text(msg + '. You still can publish the crate in bagit format. Please check to publish the crate as a bag and then publish.');
         $('#publishModal').find('.btn-primary').prop('disabled', true);
         msg += '.';
       } 

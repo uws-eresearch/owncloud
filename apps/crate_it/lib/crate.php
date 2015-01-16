@@ -239,14 +239,19 @@ class Crate extends BagIt {
       return $res;
   }
   
-  public function packageCrate() {
+  public function packageCrate($format) {
     $clone = $this->createTempClone();
     $clone->createReadme();
     $clone->storeFiles();
+    
+    if($format === 'bagit'){
+    	return $clone->crateRoot . '/' . $clone->crateName;
+    }
+    
     $tmpFolder = \OC_Helper::tmpFolder();
     $packagePath = $tmpFolder.'/'.$this->crateName;
-    $clone->package($packagePath, 'zip');
-    return $packagePath.'.zip';
+    $clone->package($packagePath, $format);
+    return $packagePath . '.' . $format;
   }    
 
   private function createTempClone() {

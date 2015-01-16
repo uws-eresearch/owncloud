@@ -86,76 +86,129 @@ class PublishController extends Controller {
     }
 
     /**
-     * Publish crate
+     * Publish crate and share the published url
      *
+     * @param string $name 
+     * @param string $endpoint
+     * @param bool $bagit
      * @Ajax
      * @NoAdminRequired
      */
-    public function publishCrate($name, $endpoint) {
+    public function publishCrate($name, $endpoint, $bagit) {
         \OCP\Util::writeLog('crate_it', "PublishController::publishCrate()", \OCP\Util::DEBUG);
         
         $crateName = $this->params('name');
         $this->loggingService->log("Attempting to publish crate $name to publications folder");
         $this->loggingService->logManifest($name);
-        
-        $package = $this->crateManager->packageCrate($name);
-        $zipname = basename($package, '.zip');
-        $zipname .= '_' . date("Y-m-d_H:i:s") . '.zip';
-        $this->loggingService->log("Zipped content into '$zipname'");
         $data = array();
+        
         try {
-            $this->loggingService->log("Publishing crate $name as ($zipname)..");
-            
-            if($endpoint === 'public'){
-            	//write into public folder. 
-            	$public_folder = $this->getPublicationsRoot() . '/public-open-access';
-            	if(!file_exists($public_folder)){
-            		mkdir($public_folder, 0755, true);
-            	}
-            	$dest = $public_folder . '/' . $zipname;
-            	if(copy($package, $dest)){
-            		
-            		$fileInfo = \OC\Files\Filesystem::getFileInfo('publications/public-open-access/'.$zipname);
-            		$fileId = $fileInfo->getId();
-            		
-            		//publish successful. Now share it
-            		$token = $this->shareService->share('file', $fileId, \OCP\Share::SHARE_TYPE_LINK, null, \OCP\PERMISSION_READ, $zipname);
-            		$link = \OCP\Util::linkToPublic('files');
-            		$link .= '&t=' . $token;
-            		
-            		$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is '$link'";
-            		$this->loggingService->logPublishedDetails($dest, $name);
-            	}
-            	else{
-            		$this->loggingService->log("Publishing crate '$name' failed.");
-            		$data['msg'] = "Error: failed to copy $zipname ...";
-            		$this->loggingService->log($data['msg']);
-            	}
-            } 
-            else{
-            	//Write into private folder
-            	$private_folder = $this->getPublicationsRoot() . '/mediated-access';
-            	if(!file_exists($private_folder)){
-            		mkdir($private_folder, 0755, true);
-            	}
-            	$dest = $private_folder . '/' . $zipname;
-            	if(copy($package, $dest)){
-            		$data['msg'] = "Crate '$name' successfully published to private folder";
-            		$this->loggingService->logPublishedDetails($dest, $name);
-            	}
-            	else{
-            		$this->loggingService->log("Publishing crate '$name' failed.");
-            		$data['msg'] = "Error: failed to copy $zipname ...";
-            		$this->loggingService->log($data['msg']);
-            	}
-            }
-            
+	        if($endpoint === 'public') {
+	        	$public_folder = $this->getPublicationsRoot() . '/public-open-access';
+	        	if(!file_exists($public_folder)){
+	        		if(!mkdir($public_folder, 0755, true)){
+	        			$data['msg'] = "Error: can not create the directory.";
+	        		}
+	        	}
+	        }
+	        else {
+	        	$private_folder = $this->getPublicationsRoot() . '/mediated-access';
+	        	if(!file_exists($private_folder)){
+	        		if(!mkdir($private_folder, 0755, true)){
+			        	$data['msg'] = "Error: can not create the directory.";
+	        		}
+	        	}
+	        }
+        
+	        if($bagit) {
+	        	$this->loggingService->log("Publishing crate $name as it is...");
+        		
+	        	$cratePath = $this->crateManager->packageCrate($name, 'bagit');
+        		$bagName = $name . '_' . date("Y-m-d_H:i:s");
+	        	
+	        	if($endpoint === 'public') {
+	        		$dest = $public_folder . '/' . $bagName;
+	        		if(rename($cratePath, $dest)){
+	        			
+	        			$fileInfo = \OC\Files\Filesystem::getFileInfo('publications/public-open-access/'.$bagName);
+	        			$fileId = $fileInfo->getId();
+	        			 
+	        			//publish successful. Now share it
+	        			$token = $this->shareService->share('folder', $fileId, \OCP\Share::SHARE_TYPE_LINK, null, \OCP\PERMISSION_READ, $bagName);
+	        			$link = \OCP\Util::linkToPublic('files');
+	        			$link .= '&t=' . $token;
+	        			 
+	        			$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is '$link'";
+	        			$this->loggingService->logPublishedDetails($dest, $name);
+	        		}
+	        		else {
+	        			$this->loggingService->log("Publishing crate '$name' failed.");
+	        			$data['msg'] = "Error: failed to copy $name ...";
+	        			$this->loggingService->log($data['msg']);
+	        		}
+	        	}
+	        	else {
+	        		$dest = $private_folder . '/' . $bagName;
+	        		if(rename($cratePath, $dest)){
+	        			$data['msg'] = "Crate '$name' successfully published to private folder";
+	        			$this->loggingService->logPublishedDetails($dest, $name);
+	        		}
+	        		else {
+	        			$this->loggingService->log("Publishing crate '$name' failed.");
+	        			$data['msg'] = "Error: failed to copy $name ...";
+	        			$this->loggingService->log($data['msg']);
+	        		}
+	        	}
+	        }
+	        else {
+		        $package = $this->crateManager->packageCrate($name, 'zip');
+		        $zipname = basename($package, '.zip');
+		        $zipname .= '_' . date("Y-m-d_H:i:s") . '.zip';
+		        $this->loggingService->log("Zipped content into '$zipname'");
+	            $this->loggingService->log("Publishing crate $name as ($zipname)..");
+	            
+	            if($endpoint === 'public'){
+	            	$dest = $public_folder . '/' . $zipname;
+	            	if(copy($package, $dest)){
+	            		
+	            		$fileInfo = \OC\Files\Filesystem::getFileInfo('publications/public-open-access/'.$zipname);
+	            		$fileId = $fileInfo->getId();
+	            		
+	            		//publish successful. Now share it
+	            		$token = $this->shareService->share('file', $fileId, \OCP\Share::SHARE_TYPE_LINK, null, \OCP\PERMISSION_READ, $zipname);
+	            		$link = \OCP\Util::linkToPublic('files');
+	            		$link .= '&t=' . $token;
+	            		
+	            		$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is '$link'";
+	            		$this->loggingService->logPublishedDetails($dest, $name);
+	            	}
+	            	else{
+	            		$this->loggingService->log("Publishing crate '$name' failed.");
+	            		$data['msg'] = "Error: failed to copy $zipname ...";
+	            		$this->loggingService->log($data['msg']);
+	            	}
+	            } 
+	            else{
+	            	$dest = $private_folder . '/' . $zipname;
+	            	if(copy($package, $dest)){
+	            		$data['msg'] = "Crate '$name' successfully published to private folder";
+	            		$this->loggingService->logPublishedDetails($dest, $name);
+	            	}
+	            	else{
+	            		$this->loggingService->log("Publishing crate '$name' failed.");
+	            		$data['msg'] = "Error: failed to copy $zipname ...";
+	            		$this->loggingService->log($data['msg']);
+	            	}
+	            }
+		            
+	        }
         } catch (\Exception $e) {
             $this->loggingService->log("Publishing crate '$name' failed.");            
             $status = 500;
             $data['msg'] = "Error: failed to publish crate '$name' to publications folder: ".$e->getMessage();
             $this->loggingService->log($data['msg']);
         }
+        
         $_SESSION['last_published_status'] = $data['msg'];
 
         return new JSONResponse($data, $status);

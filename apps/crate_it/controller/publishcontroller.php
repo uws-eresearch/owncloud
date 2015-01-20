@@ -128,7 +128,7 @@ class PublishController extends Controller {
 	        	
 	        	if($endpoint === 'public') {
 	        		$dest = $public_folder . '/' . $bagName;
-	        		if(rename($cratePath, $dest)){
+	        		if($this->recurse_copy($cratePath, $dest)){
 	        			
 	        			$fileInfo = \OC\Files\Filesystem::getFileInfo('publications/public-open-access/'.$bagName);
 	        			$fileId = $fileInfo->getId();
@@ -149,7 +149,7 @@ class PublishController extends Controller {
 	        	}
 	        	else {
 	        		$dest = $private_folder . '/' . $bagName;
-	        		if(rename($cratePath, $dest)){
+	        		if($this->recurse_copy($cratePath, $dest)){
 	        			$data['msg'] = "Crate '$name' successfully published to private folder";
 	        			$this->loggingService->logPublishedDetails($dest, $name);
 	        		}
@@ -210,8 +210,36 @@ class PublishController extends Controller {
         }
         
         $_SESSION['last_published_status'] = $data['msg'];
-
-        return new JSONResponse($data, $status);
-    }
-
+		return new JSONResponse ( $data, $status );
+	}
+	
+	private function recurse_copy($src, $dest) {
+		$result = true;
+		if (mkdir ( $dest, 0755, true )) {
+			if ($handle = opendir ( $src )) {
+				while ( false !== ($file = readdir ( $handle )) ) {
+					if (($file != '.') && ($file != '..')) {
+						if (is_dir ( $src . '/' . $file )) {
+							if ($this->recurse_copy ( $src . '/' . $file, $dest . '/' . $file )) {
+								continue;
+							} else {
+								$result = false;
+								break;
+							}
+						} else {
+							copy ( $src . '/' . $file, $dest . '/' . $file );
+						}
+					}
+				}
+				closedir ( $handle );
+			} else {
+				$this->loggingService->log ( "$src directory could not be opened." );
+				return false;
+			}
+		} else {
+			$this->loggingService->log ( "$dest directory cannot be created." );
+			return false;
+		}
+		return $result;
+	}
 }

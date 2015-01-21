@@ -121,7 +121,10 @@ function initCrateActions() {
   };
 
   var downloadCrate = function() {
-    if (treeHasNoFiles()) {
+	if($('#download').hasClass('disabled')){
+		return;
+	}    
+	else if (treeHasNoFiles()) {
       displayNotification('No items in the crate to package');
       return;
     }

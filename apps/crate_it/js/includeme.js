@@ -297,7 +297,7 @@ function updateCrateSize() {
       var msg = null;
       if (max_zip_mb > 0 && crate_size_mb > max_zip_mb) {
         msg = 'WARNING: Crate size exceeds zip file limit: ' + max_zip_mb + ' MB';
-        $('#download').prop("disabled", true);
+        $('#download').addClass("disabled");
         /*if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
           msg += ', and SWORD limit: ' + max_sword_mb + 'MB';
           $('#publish').attr("disabled", "disabled");
@@ -305,7 +305,10 @@ function updateCrateSize() {
         $('#publish-msg').text(msg + '. You still can publish the crate in bagit format. Please check to publish the crate as a bag and then publish.');
         $('#publishModal').find('.btn-primary').prop('disabled', true);
         msg += '.';
-      } 
+      }
+      else{
+    	  $('#download').removeClass("disabled");
+      }
       /*else if (max_sword_mb > 0 && crate_size_mb > max_sword_mb) {
         msg = 'WARNING: Crate size exceeds SWORD limit: ' + max_sword_mb + 'MB.';
         $('#publish').prop("disabled", true);
@@ -314,7 +317,6 @@ function updateCrateSize() {
         displayNotification(msg, 6000);
       } else {
         $('#publish').removeAttr("disabled");
-        $('#download').removeAttr("disabled");
       }
     },
     error: function(jqXHR) {

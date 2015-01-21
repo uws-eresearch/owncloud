@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body">
         <h4>Status</h4>
-        <span id="publish-confirm-status"></span>
+        <span id="publish-confirm-status"></span><a id="shared-link" target="_blank"></a>
         <h4>Email Status</h4>
         <p>Enter an email address to send the publish log to</p>
         <label for="publish-confirm-email" class="element-invisible">Email address</label>

@@ -138,7 +138,8 @@ class PublishController extends Controller {
 	        			$link = \OCP\Util::linkToPublic('files');
 	        			$link .= '&t=' . $token;
 	        			 
-	        			$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is '$link'";
+	        			$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is ";
+	        			$data['link'] = $link;
 	        			$this->loggingService->logPublishedDetails($dest, $name);
 	        		}
 	        		else {
@@ -179,7 +180,8 @@ class PublishController extends Controller {
 	            		$link = \OCP\Util::linkToPublic('files');
 	            		$link .= '&t=' . $token;
 	            		
-	            		$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is '$link'";
+	            		$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is ";
+	            		$data['link'] = $link;
 	            		$this->loggingService->logPublishedDetails($dest, $name);
 	            	}
 	            	else{

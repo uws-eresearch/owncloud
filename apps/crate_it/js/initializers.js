@@ -222,17 +222,23 @@ function initCrateActions() {
       data: postData,
       dataType: 'json',
       success: function(data) {
-        confirmPublish(data.msg);
+        confirmPublish(data.msg, data.link);
       },
       error: function(jqXHR) {
-        confirmPublish(jqXHR.responseJSON.msg);
+        confirmPublish(jqXHR.responseJSON.msg, null);
       }
     });
   };
 
 
-  var confirmPublish = function(msg) {
+  var confirmPublish = function(msg, link) {
     $('#publish-confirm-status').text(msg);
+    if(link){
+    	$('#shared-link').attr("href", link).text(link);
+    }
+    else{
+    	$('#shared-link').removeAttr("href").text("");
+    }
     $('#publishConfirmModal').modal('show');
     $('#publish-confirm-email-send').click(function(){
       var c_url = OC.generateUrl('apps/crate_it/crate/email');

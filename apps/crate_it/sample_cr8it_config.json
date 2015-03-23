@@ -2,7 +2,7 @@
     "max_sword_mb": 1,
     "max_zip_mb": 2000,
     "description_length": 6000,
-    "previews": "on",
+    "previews": "off",
     "fascinator": {
         "status": "off",
         "downloadURL": "http:\/\/localhost:9997\/portal\/default\/download\/",
@@ -12,9 +12,14 @@
             "path": "\/solr\/fascinator\/"
         }
     },
+    "search-provider": "mint",
     "mint": {
         "status": "enabled",
         "url": <your mint url here>
+    },
+    "fml": {
+        "status": "enabled",
+        "url": <your fml url here>
     },
     "publish endpoints": {
         "sword": [{

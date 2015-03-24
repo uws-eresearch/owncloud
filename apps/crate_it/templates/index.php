@@ -101,7 +101,7 @@
               </a>
             </li>
           <li>
-            <a id="userguide" href="{{ help_url }}" class="dropdown-btn">
+            <a id="userguide" href="<?php p($_['help_url']);?>" class="dropdown-btn">
               <i class="fa fa-book"></i>
                User Guide
             </a>

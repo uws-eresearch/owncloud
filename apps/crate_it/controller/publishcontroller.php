@@ -140,6 +140,7 @@ class PublishController extends Controller {
 	        			 
 	        			$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is ";
 	        			$data['link'] = $link;
+	        			$this->loggingService->log($data['msg'] . $link);
 	        			$this->loggingService->logPublishedDetails($dest, $name);
 	        		}
 	        		else {
@@ -152,6 +153,7 @@ class PublishController extends Controller {
 	        		$dest = $private_folder . '/' . $bagName;
 	        		if($this->recurse_copy($cratePath, $dest)){
 	        			$data['msg'] = "Crate '$name' successfully published to private folder";
+	        			$this->loggingService->log($data['msg']);
 	        			$this->loggingService->logPublishedDetails($dest, $name);
 	        		}
 	        		else {
@@ -182,6 +184,7 @@ class PublishController extends Controller {
 	            		
 	            		$data['msg'] = "Crate '$name' successfully published to public folder.The link to the published crate is ";
 	            		$data['link'] = $link;
+	            		$this->loggingService->log($data['msg'] . $link);
 	            		$this->loggingService->logPublishedDetails($dest, $name);
 	            	}
 	            	else{
@@ -194,6 +197,7 @@ class PublishController extends Controller {
 	            	$dest = $private_folder . '/' . $zipname;
 	            	if(copy($package, $dest)){
 	            		$data['msg'] = "Crate '$name' successfully published to private folder";
+	            		$this->loggingService->log($data['msg']);
 	            		$this->loggingService->logPublishedDetails($dest, $name);
 	            	}
 	            	else{

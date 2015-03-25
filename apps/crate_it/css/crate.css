@@ -408,6 +408,10 @@ border-top-right-radius: 0;
 	width: 230px !important;
 }
 
+.container-metadata .data-creators h6 {
+	background: grey;
+}
+
 .container-metadata .data-creators ul#creators {
 	padding: 0 0 20px 0;
 }
@@ -441,6 +445,10 @@ border-top-right-radius: 0;
 
 .container-metadata .grant-numbers ul#activities {
 	padding: 0 0 20px 0;
+}
+
+.container-metadata .grant-numbers h6 {
+	background: grey;
 }
 
 .container-metadata .grant-numbers li {

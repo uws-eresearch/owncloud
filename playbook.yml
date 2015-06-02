@@ -1,0 +1,51 @@
+---
+- hosts: all
+  tasks:
+
+  - name: Disable iptables
+    service: >
+      name=iptables
+      enabled=no
+      state=stopped
+    sudo: yes
+
+  - name: Remove yum priorities that results in downloading the wrong Owncloud versions
+    yum: >
+      name=yum-plugin-priorities
+      state=absent
+    sudo: yes
+
+  - name: Install EPEL repository
+    yum: >
+      name=http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+      state=present
+    sudo: yes
+
+  - name: Install REMI repository
+    yum: >
+      name=http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+      state=present
+    sudo: yes
+
+  - name: Install Owncloud
+    yum: name=owncloud-7.0.5-2.el6
+    sudo: yes
+
+  - name: Allow host OS to access server and configure Owncloud
+    file: >
+      src=/etc/httpd/conf.d/owncloud-access.conf.avail
+      dest=/etc/httpd/conf.d/z-owncloud-access.conf
+      state=link
+    sudo: yes
+
+  - name: Restart Apache
+    service: >
+      name=httpd
+      enabled=yes
+      state=restarted
+    sudo: yes
+
+
+# TODO: Move cr8it_config.json to correct folder
+# TODO: change owncloud 7 config from syslog to owncloud log
+# TODO: Turn on php error logging

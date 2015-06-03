@@ -5,16 +5,12 @@ namespace OCA\crate_it\Service;
 
 class LoggingService {
     
-    /**
-     * @var CrateManager
-     */
     private $crateManager;
-    
     private $logfile;
     
-    public function __construct($api, $crateManager) {
+    public function __construct($crateManager) {
         $this->crateManager = $crateManager;
-        $userId = $api->getUserId();
+        $userId = \OCP\User::getUser();
         $user_dir = $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
         $this->logfile = $user_dir.'/publish.log';
     }

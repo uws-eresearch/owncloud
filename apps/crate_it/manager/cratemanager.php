@@ -5,21 +5,9 @@ namespace OCA\crate_it\Manager;
 use OCA\crate_it\lib\Crate;
 
 class CrateManager {
-
-    /**
-     * @var API
-     */
-    private $api;
-
-    /**
-     * @var twig
-     */
-    private $twig;
     
-    public function __construct($api, $twig){
-        $this->api = $api;
-        $this->twig = $twig;
-        if ($api->isLoggedIn()) {
+    public function __construct(){
+        if (\OCP\User::isLoggedIn()) {
             $this->ensureDefaultCrateExists();
             $this->ensureCrateIsSelected();
         }
@@ -101,7 +89,7 @@ class CrateManager {
 
     private function getCrateRoot() {        
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot()", \OCP\Util::DEBUG);
-        $userId = $this->api->getUserId();
+        $userId = \OCP\User::getUser();
         $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
         return $baseDir.'/crates';
     }

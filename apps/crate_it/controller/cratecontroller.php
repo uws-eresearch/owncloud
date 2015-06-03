@@ -12,17 +12,12 @@ use OCA\crate_it\lib\ZipDownloadResponse;
 class CrateController extends Controller {
     
     /**
-     * @var $twig
-     */
-    private $twig;
-    
-    /**
      * @var $crate_service
      */
     private $crate_service;
     
-    public function __construct($api, $request, $crate_service) {
-        parent::__construct($api, $request);
+    public function __construct($appName, $request, $crate_service) {
+        parent::__construct($appName, $request);
         $this->crate_service = $crate_service;
     }
     

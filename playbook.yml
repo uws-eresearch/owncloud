@@ -38,6 +38,12 @@
       state=link
     sudo: yes
 
+  - name: Give Apache write access to Owncloud
+    file: >
+      path=/usr/share/owncloud
+      owner=apache
+      group=apache
+
   - name: Restart Apache
     service: >
       name=httpd

@@ -4,18 +4,9 @@ namespace OCA\crate_it\Service;
 
 class CrateService {
     
-    /**
-     * @var API
-     */
-    private $api;
-    
-    /**
-     * @var CrateManager
-     */
     private $crateManager;
     
-    public function __construct($api, $crateManager){
-        $this->api = $api;
+    public function __construct($crateManager){
         $this->crateManager = $crateManager;
     }
     

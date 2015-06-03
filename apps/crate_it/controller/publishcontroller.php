@@ -14,8 +14,8 @@ class PublishController extends Controller {
     private $loggingService;
     private $mailer;
 
-    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
-        parent::__construct($api, $request);
+    public function __construct($appName, $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
+        parent::__construct($appName, $request);
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
         $params = $setupService->getParams();

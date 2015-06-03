@@ -43,19 +43,13 @@ class Crate extends BagIt {
     $this->update();
   }
   
-  // TODO: Convenience function for development, remove
-  //       in production release?
-  public function getReadme($twig) {
-    $this->createReadme($twig);
+  public function getReadme() {
+    $this->createReadme();
     $readmePath = $this->getDataDirectory()."/README.html";
     return file_get_contents($readmePath);
   }
 
-  // TODO: Attempt to get own reference to TWIG rather than have it
-  //       passed as a parameter
-  // TODO: Since the file is created directly, it bypasses the manifest,
-  //       is that what we want?
-  private function createReadme($twig) {
+  private function createReadme() {
     $manifest = $this->getManifest();
     $manifest['crate_name'] = $this->crateName;
     $manifest['files'] = $this->flatList();
@@ -69,7 +63,7 @@ class Crate extends BagIt {
     $release = $git_res[0];
     $commit = $git_res[2];
     $manifest['version'] = "Release $release at commit $commit.";
-    $htmlStr = $twig->render('readme.php', $manifest);
+    $htmlStr = $this->renderTemplate('readme.php');
     $readmePath = $this->getDataDirectory()."/README.html";
     file_put_contents($readmePath, $htmlStr);
   }
@@ -233,9 +227,9 @@ class Crate extends BagIt {
       return $res;
   }
   
-  public function packageCrate($twig) {
+  public function packageCrate() {
     $clone = $this->createTempClone();
-    $clone->createReadme($twig);
+    $clone->createReadme();
     $clone->storeFiles();
     $tmpFolder = \OC_Helper::tmpFolder();
     $packagePath = $tmpFolder.'/'.$this->crateName;
@@ -368,11 +362,11 @@ class Crate extends BagIt {
     return $vfsEntry;
   }
   
-  public function generateEPUB($twig) {
+  public function generateEPUB() {
     \OCP\Util::writeLog('crate_it', "Crate::generateEPUB()", \OCP\Util::DEBUG);
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
-    $epub = $twig->render('epub.php', $params);
+    $epub = $this->renderTemplate('epub.php');
     $tmpFolder = \OC_Helper::tmpFolder();
     $htmlPath = $tmpFolder.'/'.$this->crateName.'.html';
     file_put_contents($htmlPath, $epub);
@@ -400,6 +394,14 @@ class Crate extends BagIt {
         array_push($result, $file);
       }
     }
+    return $result;
+  }
+
+  private function renderTemplate($template) {
+    ob_start();
+    include $template;
+    $result = ob_get_contents();
+    ob_clean();
     return $result;
   }
 

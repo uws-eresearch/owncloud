@@ -15,8 +15,8 @@ class CrateCheckController extends Controller {
      */
     private $loggingService;
     
-    public function __construct($api, $request, $crateService, $loggingService) {
-        parent::__construct($api, $request);
+    public function __construct($appName, $request, $crateService, $loggingService) {
+        parent::__construct($appName, $request);
         $this->crateService = $crateService;
         $this->loggingService = $loggingService;
     }

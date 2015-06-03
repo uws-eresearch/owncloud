@@ -4,21 +4,21 @@
     </head>
     <body>
         <article>
-            <h1>"{{ crate_name }}" Data Package README file</h1>
+            <h1>"<?php p($_['crate_name']) ?>" Data Package README file</h1>
             <section resource="creative work" typeof="http://schema.org/CreativeWork">
                   <h1>Package Title</h1>
-                  <span property="http://schema.org/name http://purl.org/dc/elements/1.1/title">{{ crate_name }}</span>
+                  <span property="http://schema.org/name http://purl.org/dc/elements/1.1/title"><?php p($_['crate_name']) ?></span>
                   <h1>Package Creation Date</h1>
-                  <span content="{{ created_date }}" property="http://schema.org/dateCreated">{{ created_date_formatted }}</span>
+                  <span content="<?php p($_['created_date']) ?>" property="http://schema.org/dateCreated"><?php p($_['created_date_formatted']) ?></span>
                   <h1>Package File Name</h1>
-                  <span property="http://schema.org/name">{{ crate_name }}.zip</span>
+                  <span property="http://schema.org/name"><?php p($_['crate_name']) ?>.zip</span>
                   <h1>ID</h1>
-                  <span property="http://schema.org/id">{{ crate_name }}</span>
+                  <span property="http://schema.org/id"><?php p($_['crate_name']) ?></span>
                   <h1>Description</h1>
-                  <span property="http://schema.org/description">{{ description | nl2br }}</span>
+                  <span property="http://schema.org/description"><?php p($_['description | nl2br']) ?></span>
 
                       <h1>Creators</h1>
-                      {% if creators %}
+                       <?php if(isset($_['creators'])) { ?>
                         <table border="1">
                             <thead>
                                 <th>Name</th>
@@ -27,46 +27,46 @@
                                 <th>Source</th>                          
                             </thead>
                             <tbody>
-                                {% for creator in creators %}  
+                                <?php foreach($_['creators'] as $creator) { ?>  
                                     <tr>
-                                        {% if creator.overrides.name %}
-                                            <td>{{ creator.overrides.name }}</td>  
-                                        {% else %}
-                                            <td>{{ creator.name }}</td>
-                                        {% endif %}
+<!--                                         <php if (creator.overrides.name) { ?>
+                                            <td><?php p($_['creator.overrides.name']) ?></td>  
+                                        <php } else { ?>
+                                            <td><?php p($_['creator.name']) ?></td>
+                                        <php } ?>
                                         
-                                        {% if creator.overrides.email %}
-                                            <td>{{ creator.overrides.email }}</td>  
-                                        {% else %}
-                                            <td>{{ creator.email }}</td>   
-                                        {% endif %}
+                                        <php if (creator.overrides.email) { ?>
+                                            <td><?php p($_['creator.overrides.email']) ?></td>  
+                                        <php } else { ?>
+                                            <td><?php p($_['creator.email']) ?></td>   
+                                        <php } ?>
                                         <td xmlns:dc="http://purl.org/dc/elements/1.1/">
-                                            {% if creator.url %}
-                                                {% if not creator.overrides.identifier is empty %}
-                                                    <a href="{{ creator.overrides.identifier }}">
-                                                        <span property="dc:identifier">{{ creator.overrides.identifier }}</span>
+                                            <php if (creator.url) { ?>
+                                                <php if (not creator.overrides.identifier is empty) { ?>
+                                                    <a href="<?php p($_['creator.overrides.identifier']) ?>">
+                                                        <span property="dc:identifier"><?php p($_['creator.overrides.identifier']) ?></span>
                                                     </a>
-                                                {% else %}
-                                                    <a href="{{ creator.identifier }}">
-                                                        <span property="dc:identifier">{{ creator.overrides.identifier }}</span>
+                                                <php } else { ?>
+                                                    <a href="<?php p($_['creator.identifier']) ?>">
+                                                        <span property="dc:identifier"><?php p($_['creator.overrides.identifier']) ?></span>
                                                     </a>
-                                                {% endif %}
-                                            {% else %}
-                                                <span property="dc:identifier">{{ creator.identifier }}</span>
-                                            {% endif %}
+                                                <php } ?>
+                                            <php } else { ?>
+                                                <span property="dc:identifier"><?php p($_['creator.identifier']) ?></span>
+                                            <php } ?>
                                         </td>
-                                        <td>{{ creator.source}}</td>
+                                        <td><?php p($_['creator.source']) ?></td> -->
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                     {% else %}
+                     <php } else { ?>
                      <span>None.</span>
-                     {% endif %}
+                     <php } ?>
                      
                       <h1>Grants</h1>
                       
-                      {% if activities %}
+                      <php if (activities) { ?>
                         <table border="1">
                             <thead>
                                 <th>Grant Number</th>
@@ -87,63 +87,56 @@
                                                         
                             </thead>
                             <tbody>
-                                {% for activity in activities %}  
+                                <?php foreach($_['activities'] as $activity) { ?>  
                                     <tr>
-                                        {% if activity.overrides.grant_number %}
-                                            <td>{{ activity.overrides.grant_number }}</td>  
-                                        {% else %}
-                                            <td>{{ activity.grant_number }}</td>
-                                        {% endif %}
+<!--                                         <php if($activity.overrides.grant_number) { ?>
+                                            <td><?php p($_['activity.overrides.grant_number']) ?></td>  
+                                        <php } else { ?>
+                                            <td><?php p($_['activity.grant_number']) ?></td>
+                                        <php } ?>
                                         
-                                        {% if activity.overrides.title %}
-                                            <td>{{ activity.overrides.title }}</td>  
-                                        {% else %}
-                                            <td>{{ activity.title }}</td>
-                                        {% endif %}
+                                        <php if (activity.overrides.title) { ?>
+                                            <td><?php p($_['activity.overrides.title']) ?></td>  
+                                        <php } else { ?>
+                                            <td><?php p($_['activity.title']) ?></td>
+                                        <php } ?>
                                         
-                                        <td>{{activity.description}}</td>
+                                        <td><?php p($_['activity.description']) ?></td>
                                         
-                                        {% if activity.overrides.date %}
-                                            <td>{{ activity.overrides.date }}</td>
-                                        {% else %}
-                                            <td>{{ activity.date }}</td>
-                                        {% endif %}  
+                                        <php if (activity.overrides.date) { ?>
+                                            <td><?php p($_['activity.overrides.date']) ?></td>
+                                        <php } else { ?>
+                                            <td><?php p($_['activity.date']) ?></td>
+                                        <php } ?>  
                                         
-                                        <td>{{ activity.date_submitted}}</td>
+                                        <td><?php p($_['activity.date_submitted']) ?></td>
                                                                           
-                                        {% if activity.overrides.institution %}
-                                            <td>{{ activity.overrides.institution }}</td>  
-                                        {% else %}
-                                            <td>{{ activity.institution }}</td>
-                                        {% endif %}
+                                        <php if (activity.overrides.institution) { ?>
+                                            <td><?php p($_['activity.overrides.institution']) ?></td>  
+                                        <php } else { ?>
+                                            <td><?php p($_['activity.institution']) ?></td>
+                                        <php } ?>
                                         
-                                        {% if activity.identifier[:5] == 'http:' or activity.identifier[:6] == 'https:' %}
-                                            <td><a href="{{activity.identifier}}">{{activity.identifier}}</a></td>
-                                        {% else %}
-                                            <td>{{ activity.identifier }} </td>
-                                        {% endif %}
-                                        <td>{{ activity.source }}</td>
-                                        
-                                        <td>{{ activity.subject }}</td>
-                                        
-                                        <td>{{ activity.format }}</td>
-                                        
-                                        <td>{{ activity.oai_set }}</td>
-                                        
-                                        <td>{{ activity.repository_name }}</td>
-                                        
-                                        <td>{{ activity.repository_type }}</td>
-                                        
-                                        <td>{{ activity.display_type }}</td>
-                                        
-                                        <td>{{ activity.contributors }}</td>
+                                        <php if (activity.identifier[:5] == 'http:' or activity.identifier[:6] == 'https:') { ?>
+                                            <td><a href="<?php p($_['activity.identifier']) ?>"><?php p($_['activity.identifier']) ?></a></td>
+                                        <php } else { ?>
+                                            <td><?php p($_['activity.identifier']) ?> </td>
+                                        <php } ?> -->
+                                        <td><?php p($_[$activity.source) ?></td>
+                                        <td><?php p($_[$activity.subject) ?></td>
+                                        <td><?php p($_[$activity.format) ?></td>
+                                        <td><?php p($_[$activity.oai_set) ?></td>
+                                        <td><?php p($_[$activity.repository_name) ?></td>
+                                        <td><?php p($_[$activity.repository_type) ?></td>
+                                        <td><?php p($_[$activity.display_type) ?></td>
+                                        <td><?php p($_[$activity.contributors) ?></td>
                                     </tr>
-                                {% endfor %}
+                                <?php } ?>
                             </tbody>
                         </table>  
-                    {% else %}
+                    <?php } else { ?>
                      <span>None.</span>   
-                    {% endif %}        
+                    <?php } ?>
                   <h1>Software Information</h1>
                   <section property="http://purl.org/dc/terms/creator" typeof="http://schema.org/softwareApplication" resource="">
                     <table border="1">
@@ -154,7 +147,7 @@
                             </tr>
                             <tr>
                                 <td>Software Version</td>
-                                <td property="http://schema.org/softwareVersion">{{ version }}</td>
+                                <td property="http://schema.org/softwareVersion"><?php p($_['version']) ?></td>
                             </tr>
                             <tr>
                                 <td>URLs</td>
@@ -173,11 +166,14 @@
                </section>
 
                   <h1>Files</h1>                    
-                  {% if files %}
-                     {{ filetree | raw }}
-                  {% else %}
-                  <span>None.</span>
-                  {% endif %}
+                   <?php 
+                      if($_[files]){
+                        print_unescaped($_['filetree']);
+                      }
+                      else{
+                        print_unescaped('<span>None.</span>');
+                      }
+                  ?>
         </article>
     </body>
 </html>

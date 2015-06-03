@@ -10,10 +10,10 @@
           <h3>Select Collection</h3>
           <label for="publish-collection" class="element-invisible">Select Collection</label>
           <select id="publish-collection">
-            <?php foreach($_['collections'] as $endpoint, settings) {
-              foreach($_['settings'] as $collection, href) { ?>
-                <option value="<?php p($_['href']) ?>" data-endpoint="<?php p($_['endpoint']) ?>">
-                  <?php p($_['collection']) ?>
+            <?php foreach($_['collections'] as $endpoint => $settings) {
+              foreach($settings as $collection => $href) { ?>
+                <option value="<?php p($href) ?>" data-endpoint="<?php p($endpoint) ?>">
+                  <?php p($collection) ?>
                 </option>
               <?php }
                 } ?>

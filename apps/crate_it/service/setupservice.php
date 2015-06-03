@@ -69,7 +69,8 @@ class SetupService {
 
     private function readConfig() {
         $config = NULL;
-        $configFile = \OC::$SERVERROOT . '/data/cr8it_config.json';
+        // $configFile = \OC::$SERVERROOT . '/data/cr8it_config.json';
+        $configFile = \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data').'/cr8it_config.json';
         if (file_exists($configFile)) {
           $config = json_decode(file_get_contents($configFile), true); // convert it to an array.
         }

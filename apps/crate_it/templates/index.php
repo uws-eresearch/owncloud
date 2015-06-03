@@ -11,12 +11,12 @@
     <select id="crates">
       
       <?php foreach($_['crates'] as $crate) {   
-          if selected_crate is sameas(crate) { ?>
-            <option id="<?php p($_['crate']) ?>" value="<?php p($_['crate']) ?>" selected>
+          if($_['selected_crate'] == $crate) { ?>
+            <option id="<?php p($crate) ?>" value="<?php p($crate) ?>" selected>
          <?php } else { ?>
-            <option id="<?php p($_['crate']) ?>" value="<?php p($_['crate']) ?>">
+            <option id="<?php p($crate) ?>" value="<?php p($crate) ?>">
         <?php }
-          p($_['crate']) ?>
+          p($crate) ?>
         </option>
       <?php } ?>
     </select>
@@ -39,7 +39,7 @@
           Download
         </button>
         <ul class="dropdown-menu">
-          <?php if previews == "on" ?>
+          <?php if($_['previews'] == "on") { ?>
             <li>
               <a id="epub" class="dropdown-btn" href="crate/epub">
                 <i class="fa fa-book"></i>
@@ -96,23 +96,23 @@
 <div id="files"></div>
 <?php
 
-  print_unescaped($this->inc('metadata.php'));       
-  print_unescaped($this->inc('help_modal.php'));   
-  print_unescaped($this->inc('publish_modal.php'));   
-  print_unescaped($this->inc('create_crate_modal.php'));   
-  print_unescaped($this->inc('remove_crate_modal.php'));   
-  print_unescaped($this->inc('rename_item_modal.php'));   
-  print_unescaped($this->inc('rename_crate_modal.php'));   
-  print_unescaped($this->inc('add_folder_modal.php'));   
-  print_unescaped($this->inc('clear_crate_modal.php'));   
-  print_unescaped($this->inc('delete_crate_modal.php'));   
-  print_unescaped($this->inc('clear_metadata_modal.php'));  
-  print_unescaped($this->inc('add_creator_modal.php'));
-  print_unescaped($this->inc('edit_creator_modal.php'));
-  print_unescaped($this->inc('add_grant_modal.php'));
-  print_unescaped($this->inc('edit_activities_modal.php'));
-  print_unescaped($this->inc('check_crate_modal.php'));
-  print_unescaped($this->inc('publish_confirm_modal.php'));
-  print_unescaped($this->inc('javascript_vars.php'));
+  print_unescaped($this->inc('metadata'));       
+  print_unescaped($this->inc('help_modal'));   
+  print_unescaped($this->inc('publish_modal'));   
+  print_unescaped($this->inc('create_crate_modal'));   
+  print_unescaped($this->inc('remove_crate_modal'));   
+  print_unescaped($this->inc('rename_item_modal'));   
+  print_unescaped($this->inc('rename_crate_modal'));   
+  print_unescaped($this->inc('add_folder_modal'));   
+  print_unescaped($this->inc('clear_crate_modal'));   
+  print_unescaped($this->inc('delete_crate_modal'));   
+  print_unescaped($this->inc('clear_metadata_modal'));  
+  print_unescaped($this->inc('add_creator_modal'));
+  print_unescaped($this->inc('edit_creator_modal'));
+  print_unescaped($this->inc('add_grant_modal'));
+  print_unescaped($this->inc('edit_activities_modal'));
+  print_unescaped($this->inc('check_crate_modal'));
+  print_unescaped($this->inc('publish_confirm_modal'));
+  print_unescaped($this->inc('javascript_vars'));
 
 ?>

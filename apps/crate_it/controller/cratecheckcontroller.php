@@ -5,14 +5,8 @@ use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 
 class CrateCheckController extends Controller {
-    /**
-     * @var $crateService
-     */
+
     private $crateService;
-    
-    /**
-     * @var $loggingService
-     */
     private $loggingService;
     
     public function __construct($appName, $request, $crateService, $loggingService) {
@@ -25,8 +19,7 @@ class CrateCheckController extends Controller {
      * Check crate 
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function checkCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::checkCrate()", \OCP\Util::DEBUG);
@@ -61,7 +54,7 @@ class CrateCheckController extends Controller {
             $this->loggingService->log("Error ($ecode) during Consistency Check");
             $this->loggingService->log($msg);            
             return new JSONResponse (
-                array ($msg, 'error' => $e),
+                array($msg, 'error' => $e),
                 $ecode
             );
         }

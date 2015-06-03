@@ -16,12 +16,13 @@ class PageController extends Controller {
         $this->setup_service = $setup_service;
     }
 
-    /**
+
+
+   /**
      * Home page index, displays default crate or last selected crate
      * 
-     * @CSRFExemption
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
+     * @NoCSRFRequired
      */
     public function index() {       
         \OCP\Util::writeLog('crate_it', "PageController::index()", \OCP\Util::DEBUG);         

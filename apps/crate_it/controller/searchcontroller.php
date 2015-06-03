@@ -14,10 +14,6 @@ use \OCA\crate_it\lib\CurlRequest;
 
 class SearchController extends Controller {
 
-
-    /**
-     * @var $searchProvider
-     */
     private $searchProvider;
 
     public function __construct($appName, $request, $setupService) {
@@ -31,8 +27,7 @@ class SearchController extends Controller {
      * Search
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function search() {
         \OCP\Util::writeLog('crate_it', "SearchController::search()", \OCP\Util::DEBUG);

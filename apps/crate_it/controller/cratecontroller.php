@@ -25,8 +25,7 @@ class CrateController extends Controller {
      * Create crate with name and description
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function createCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::create()", \OCP\Util::DEBUG);
@@ -47,8 +46,7 @@ class CrateController extends Controller {
      * Get crate items
      * 
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function getItems() // NOTE: this now return the entire manifest, should we change the name of the method?
     {
@@ -70,8 +68,7 @@ class CrateController extends Controller {
      * Add To Crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function add() {
         \OCP\Util::writeLog('crate_it', "CrateController::add()", \OCP\Util::DEBUG);
@@ -96,8 +93,7 @@ class CrateController extends Controller {
      * Get Crate Size
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function getCrateSize()
     {
@@ -115,8 +111,7 @@ class CrateController extends Controller {
      * TODO change to not just return description but all fields?
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function updateCrate()
     {
@@ -140,8 +135,7 @@ class CrateController extends Controller {
      * Delete Crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function deleteCrate() {
         // TODO: all of these methods always return successfully, which shouldn't happen
@@ -160,8 +154,7 @@ class CrateController extends Controller {
      * Rename Crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function renameCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::renameCrate()", \OCP\Util::DEBUG);
@@ -180,8 +173,7 @@ class CrateController extends Controller {
     /**
      * Package Crate as a Zip
      * 
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function packageCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
@@ -202,9 +194,8 @@ class CrateController extends Controller {
     /**
      * Create ePub
      *     
-     * @CSRFExemption
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoCSRFRequired
+     * @NoAdminRequired
      */
     public function generateEPUB() {
         \OCP\Util::writeLog('crate_it', "CrateController::generateEPUB()", \OCP\Util::DEBUG);
@@ -225,9 +216,8 @@ class CrateController extends Controller {
     /**
      * README previewer - this is for debugging purposes.
      *
-     * @CSRFExemption
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoCSRFRequired
+     * @NoAdminRequired
      */
     public function readmePreview() {
         \OCP\Util::writeLog('crate_it', "CrateController::readmePreview()", \OCP\Util::DEBUG);
@@ -240,8 +230,7 @@ class CrateController extends Controller {
      * Check crate 
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function checkCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::checkCrate()", \OCP\Util::DEBUG);

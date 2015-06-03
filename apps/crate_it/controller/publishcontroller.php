@@ -35,8 +35,7 @@ class PublishController extends Controller {
      * Email crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function emailReceipt() {
         $data = array();
@@ -67,8 +66,7 @@ class PublishController extends Controller {
      * Publish crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function publishCrate() {
         \OCP\Util::writeLog('crate_it', "PublishController::publishCrate()", \OCP\Util::DEBUG);

@@ -1,7 +1,7 @@
 <?php
 namespace OCA\crate_it\Controller;
 
-use \OCA\AppFramework\Controller\Controller;
+use \OCP\AppFramework\Controller;
 
 class PageController extends Controller {
     

@@ -12,7 +12,7 @@ require_once 'service/loggingservice.php';
 
 
 use OCA\crate_it\Controller\PublishController;
-use OCA\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\JSONResponse;
 
 class PublishControllerTest extends PHPUnit_Framework_TestCase {
 

@@ -1,8 +1,8 @@
 <?php
 
 namespace OCA\crate_it\Controller;
-use \OCA\AppFramework\Controller\Controller;
-use \OCA\AppFramework\Http\JSONResponse;
+use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\JSONResponse;
 
 class CrateCheckController extends Controller {
     /**

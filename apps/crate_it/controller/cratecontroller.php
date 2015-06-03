@@ -2,9 +2,9 @@
 
 namespace OCA\crate_it\Controller;
 
-use \OCA\AppFramework\Controller\Controller;
-use \OCA\AppFramework\Http\JSONResponse;
-use \OCA\AppFramework\Http\TextResponse;
+use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\JSONResponse;
+use \OCP\AppFramework\Http\TextResponse;
 use \OCP\AppFramework\Http;
 
 use OCA\crate_it\lib\ZipDownloadResponse;

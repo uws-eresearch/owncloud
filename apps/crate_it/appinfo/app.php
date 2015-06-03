@@ -24,27 +24,27 @@
 namespace OCA\Cr8it;
 
 // dont break owncloud when the appframework is not enabled
-if (\OCP\App::isEnabled('appframework')) {
+// if (\OCP\App::isEnabled('appframework')) {
     // Check if the user is logged in
-    $api = new \OCA\AppFramework\Core\API('crate_it');
+    $api = new \OC\AppFramework\Core\API('crate_it');
 
-    $api->addNavigationEntry(array(
+    \OCP\App::addNavigationEntry(array(
         // the string under which your app will be referenced in owncloud
-        'id' => $api -> getAppName(),
+        'id' => 'crate_it',
     
         // sorting weight for the navigation. The higher the number,
         // the higher will it be listed in the navigation
         'order' => 250,
     
         // the route that will be shown on startup
-        'href' => $api -> linkToRoute("crate_it_index"),
+        'href' => \OCP\Util::linkToRoute('crate_it.page.index'),
     
         // the icon that will be shown in the navigation
-        "icon" => $api -> imagePath("milk-crate-grey.png"),
+        "icon" => \OCP\Util::imagePath('crate_it', 'milk-crate-grey.png'),
     
         // the title of your application. This will be used in the
         // navigation or on the settings page of your app
-        "name" => $api->getTrans()->t("Cr8It")
+        'name' => \OC_L10N::get('crate_it')->t('Cr8It')
         )
     );
     //add project root folder to include path   
@@ -81,7 +81,7 @@ if (\OCP\App::isEnabled('appframework')) {
     // For tests
     $api->add3rdPartyScript('mockjax/jquery.mockjax');
 
-} else {
-    $msg = 'Can not enable the Cr8it app because the App Framework ' . 'App is disabled';
-    \OCP\Util::writeLog('crate_it', $msg, \OCP\Util::ERROR);
-}
+// } else {
+//     $msg = 'Can not enable the Cr8it app because the App Framework ' . 'App is disabled';
+//     \OCP\Util::writeLog('crate_it', $msg, \OCP\Util::ERROR);
+// }

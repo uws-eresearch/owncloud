@@ -12,8 +12,8 @@ require_once 'controller/cratecontroller.php';
 
 use \OCA\crate_it\Controller\CrateController;
 use OCP\AppFramework\Http;
-use OCA\AppFramework\Http\JSONResponse;
-use OCA\AppFramework\Http\TextResponse;
+use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\TextResponse;
 use OCA\crate_it\lib\ZipDownloadResponse;
 
 class CrateControllerTest extends PHPUnit_Framework_TestCase {

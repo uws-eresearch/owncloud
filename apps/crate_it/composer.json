@@ -1,10 +1,10 @@
 {
     "require": {
-        "behat/behat": "2.4.*@stable",
-        "behat/mink": "*",
-        "behat/mink-extension": "*",
-        "behat/mink-goutte-driver": "*",
-        "behat/mink-selenium2-driver": "*"
+        "behat/behat": "2.5.*@stable",
+        "behat/mink": "1.6.*@stable",
+        "behat/mink-extension": "@stable",
+        "behat/mink-goutte-driver": "@stable",
+        "behat/mink-selenium2-driver": "@stable"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.*"

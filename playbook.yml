@@ -55,3 +55,4 @@
 # TODO: Move cr8it_config.json to correct folder
 # TODO: change owncloud 7 config from syslog to owncloud log
 # TODO: Turn on php error logging
+# TODO: Copy vagrant guest ssh authorized_keys to root account so behat tests work

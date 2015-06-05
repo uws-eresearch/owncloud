@@ -90,8 +90,9 @@ class CrateManager {
     private function getCrateRoot() {        
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot()", \OCP\Util::DEBUG);
         $userId = \OCP\User::getUser();
-        $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
-        return $baseDir.'/crates';
+        $baseDir = \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data/');
+        $userDir = $baseDir.'/'.$userId;
+        return $userDir.'/crates';
     }
 
     public function getManifestData($crateName) {

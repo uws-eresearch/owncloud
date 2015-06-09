@@ -162,10 +162,8 @@ class FeatureContext extends MinkContext
     public function iAddToTheCurrentCrate($item) {
         $this->spin(function($context) use ($item) {
             $page = $context->getSession()->getPage();
-            // print("//span[starts-with(@class,'nametext')][text()='$item']");
             $el = $page->find('xpath', "//span[starts-with(@class,'nametext')][.='$item']");
             $el->mouseOver();
-            // print("//span[starts-with(@class,'nametext')][.='&']/following-sibling::*[starts-with(@class,'fileactions')]/a[@data-action='Add to crate']");
             $el = $page->find('xpath', "//span[starts-with(@class,'nametext')][.='$item']/following-sibling::*[starts-with(@class,'fileactions')]/a[@data-action='Add to crate']");
             if (!$el->isVisible()) {
                 throw new Exception('The element should be visible');
@@ -244,8 +242,6 @@ class FeatureContext extends MinkContext
             $actualOrder[] = $node->getText();
         }
 		$expectedOrder = explode(',',$items);
-        print_r($expectedOrder);
-        print_r($actualOrder);
 		$difference = array_diff($expectedOrder, $actualOrder);
 		if (count($difference) > 0) {
 			throw new Exception('The node order is "' .serialize($actualOrder). '" instead of "' .serialize($expectedOrder). '"');

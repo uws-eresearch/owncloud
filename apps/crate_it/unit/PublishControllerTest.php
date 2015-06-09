@@ -5,7 +5,7 @@ require_once 'mocks/MockJSONResponse.php';
 require_once 'mocks/MockUtil.php';
 require_once 'controller/publishcontroller.php';
 require_once 'manager/cratemanager.php';
-require_once 'lib/sword_connector.php';
+require_once 'lib/swordconnector.php';
 require_once 'lib/mailer.php';
 require_once 'service/setupservice.php';
 require_once 'service/loggingservice.php';

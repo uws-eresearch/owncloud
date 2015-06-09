@@ -1,6 +1,7 @@
 <?php
  
 require_once 'mocks/MockOC.php';
+require_once 'mocks/MockUser.php';
 
 require_once 'service/loggingservice.php';
 use OCA\crate_it\service\LoggingService;
@@ -16,14 +17,9 @@ class LoggingServiceTest extends PHPUnit_Framework_TestCase {
     
     protected function setUp() {                       
         shell_exec('mkdir -p unit/data/test');
-        $api = $this->getMock('API', array('getUserId'));    
-        $api->expects($this->once())
-                             ->method('getUserId')
-                             ->will($this->returnValue('test'));
-                             
         $cm = $this->getMock('CrateManager', array('getManifestFileContent'));                          
         $cm->expects($this->any())->method('getManifestFileContent')->will($this->returnValue($this->manifest));
-        $this->logger = new LoggingService($api, $cm);   
+        $this->logger = new LoggingService($cm);   
     }
     
     protected function tearDown() {       
@@ -34,24 +30,24 @@ class LoggingServiceTest extends PHPUnit_Framework_TestCase {
         $text = "test this";
         $this->logger->log($text);
         $result = file_get_contents('unit/data/test/publish.log');
-        print $result;
-        //$this->assertEquals(1, preg_match("/\[*\] $text/", $result));
+        // print $result;
+        $this->assertEquals(1, preg_match("/\[*\] $text/", $result));
     }
     
     public function testLogManifest() {
+        $this->markTestSkipped('must be revisited.');
         $text = $this->manifest;                       
         $this->logger->logManifest('new crate');
         $result = file_get_contents('unit/data/test/publish.log');
-        print $result;
-        //$this->assertEquals(1, preg_match("/\[*\] $text/", $result));
+        $this->assertEquals(1, preg_match("/\[*\] $text/", $result));
     }
     
-    // public function testLogPublishedDetails() {
-    //     $zip = 'unit/testdata/files.zip';
-    //     $this->logger->logPublishedDetails($zip, "new crate");
-    //     $result = file_get_contents('unit/data/test/publish.log');
-    //     print $result;
-    // }
+    public function testLogPublishedDetails() {
+        $this->markTestSkipped('must be revisited.');
+        $zip = 'unit/testdata/files.zip';
+        $this->logger->logPublishedDetails($zip, "new crate");
+        $result = file_get_contents('unit/data/test/publish.log');
+    }
     
 }
     

@@ -1,6 +1,6 @@
 <?php
 
-namespace OCP\AppFramework\Controller;
+namespace OCP\AppFramework;
 
 class Controller {
 

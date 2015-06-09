@@ -617,17 +617,13 @@ class FeatureContext extends MinkContext
     /**
      * @Then /^I fill in "([^"]*)" with a long string of (\d+) characters$/
      */
-    public function iFillInWithALongStringOfCharacters($arg1, $arg2)
-    {
-        $value = str_repeat('a', $arg2);
-		if (strlen($value) != $arg2)
-		{
+    public function iFillInWithALongStringOfCharacters($field, $stringLength) {
+        $value = str_repeat('a', $stringLength);
+		if (strlen($value) != $stringLength) {
 			throw new Exception('Repeat characters fail');
 		}
-		$page = $this->getSession()->getPage();
-		$xpath = '//*[@id="'.$arg1.'"]';
-        $desc = $page->find('xpath', $xpath);
-		$desc->setValue($value);
+        $script = "$('#$field').val('$value').keyup();";
+        $this->getSession()->executeScript($script);
     }
 	
     /**
@@ -1188,18 +1184,16 @@ JS;
     /**
      * @Given /^I remove "([^"]*)" from the file system$/
      */
-    public function iRemoveFromTheFileSystem($arg1)
-    {
-        $command = "rm -rf /var/www/html/owncloud/data/test/files/$arg1";
+    public function iRemoveFromTheFileSystem($item) {
+        $command = 'rm -rf '.self::$FILE_ROOT.$item;
         $this->exec_sh_command($command);
     }
 
     /**
      * @Given /^I rename "([^"]*)" to "([^"]*)" in the file system$/
      */
-    public function iRenameToInTheFileSystem($arg1, $arg2)
-    {
-        $command = "mv /var/www/html/owncloud/data/test/files/$arg1 /var/www/html/owncloud/data/test/files/$arg2";
+    public function iRenameToInTheFileSystem($oldName, $newName) {
+        $command = 'mv '.self::$FILE_ROOT.$oldName.' '.self::$FILE_ROOT.$newName;
         $this->exec_sh_command($command);
     }
 
@@ -1395,24 +1389,22 @@ JS;
     /**
      * @Then /^the selected crate should have size "([^"]*)"$/
      */
-    public function theSelectedCrateShouldHaveSize($arg1)
+    public function theSelectedCrateShouldHaveSize($expected)
     {
         $page = $this->getSession()->getPage();
         $xpath = '//*[@id="crate_size_human"]';       
         $el = $page->find('xpath', $xpath);
-        $size = $el->getHtml();
-        assertEquals($size, $arg1);
+        $actual = $el->getHtml();
+        assertEquals($expected, $actual);
     }
     
     /**
      * @Then /^I should see green ticks next to these items$/
      */
-    public function iShouldSeeGreenTicksNextToTheseItems(TableNode $table)
-    {
+    public function iShouldSeeGreenTicksNextToTheseItems(TableNode $table) {
         $rows = $table->getHash();
         $page = $this->getSession()->getPage();
-        foreach ($rows as $row)
-        {
+        foreach ($rows as $row) {
             $filename = $row['filename'];
             $web_assert = new WebAssert($this->getSession());
             $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-check"]', $page);

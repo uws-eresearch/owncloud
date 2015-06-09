@@ -467,7 +467,7 @@ function validateTextLength($input, $error, $confirm, maxLength) {
   }
 }
 
-
+// TODO: See if some of this can make use of the validation framework
 function validateCrateName($input, $error, $confirm) {
   var inputName = $input.val();    
   var crates = $.map($('#crates > option'), function(el, i) {
@@ -546,7 +546,6 @@ function getMaifest() {
   });
   return result;
 }
-
 
 function calulateHeights() {
   var tabsHeight = ($('.panel-heading').outerHeight() * ($('.panel-heading').length + 1)) + $('.collapse.info.in .panel-body').outerHeight();

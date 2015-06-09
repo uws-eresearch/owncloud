@@ -51,8 +51,33 @@
       state=restarted
     sudo: yes
 
+  - name: Install git
+    yum: name=git
+    sudo: yes
+
+  - name: Install Simple Sword Server for Testing
+    git: >
+      repo=https://github.com/swordapp/Simple-Sword-Server.git
+      dest=/usr/share/simple-sword-server
+
+  - name: Rename Simple Sword Server main entry point
+    command: >
+      mv /usr/share/simple-sword-server/sss/sss-1.0.py /usr/share/simple-sword-server/sss/sss.py
+
+  - name: Install python libraries
+    yum: name={{item}}
+    with_items:
+      - python-pip
+      - python-devel
+      - libxml2-devel
+      - libxslt-devel
+
+  - name: Install Simple Sword Server python dependencies
+    command: pip install web.py lxml
+    sudo: yes
 
 # TODO: Move cr8it_config.json to correct folder
 # TODO: change owncloud 7 config from syslog to owncloud log
 # TODO: Turn on php error logging
 # TODO: Copy vagrant guest ssh authorized_keys to root account so behat tests work
+# TODO: Update default cra8it config and start sword server so tests will work

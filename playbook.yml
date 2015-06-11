@@ -34,7 +34,7 @@
   - name: Allow host OS to access server and configure Owncloud
     file: >
       src=/etc/httpd/conf.d/owncloud-access.conf.avail
-      dest=/etc/httpd/conf.d/owncloud-access.conf
+      dest=/etc/httpd/conf.d/z-owncloud-access.conf
       state=link
     sudo: yes
 

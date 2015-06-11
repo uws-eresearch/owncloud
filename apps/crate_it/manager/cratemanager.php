@@ -84,7 +84,7 @@ class CrateManager {
 
     public function getReadme($crateName) {
         $crate = $this->getCrate($crateName);
-        return $crate->getReadme($this->twig);
+        return $crate->getReadme();
     }
 
     private function getCrateRoot() {        
@@ -136,13 +136,13 @@ class CrateManager {
     public function packageCrate($crateName){
         $this->updateCrateCheckIcons($crateName);
         $crate = $this->getCrate($crateName);
-        return $crate->packageCrate($this->twig);
+        return $crate->packageCrate();
     }
 
     public function generateEPUB($crateName){
         \OCP\Util::writeLog('crate_it', "CrateManager::generateEPUB() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
-        return $crate->generateEPUB($this->twig);
+        return $crate->generateEPUB();
     }
     
     private function updateCrateCheckIcons($crateName) {        

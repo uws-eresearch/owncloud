@@ -526,7 +526,7 @@ function reloadCrateData(manifest) {
 // There are many of async calls on page load that could probably all be reduced to this one
 function getMaifest() {
   var result = [];
-  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {
+  var c_url = OC.generateUrl('apps/crate_it/crate/get_manifest?crate_id={crateName}', {
     crateName: encodeURIComponent($('#crates').val())
   });
   $.ajax({

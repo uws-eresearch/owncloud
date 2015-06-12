@@ -54,7 +54,7 @@ class CrateManager {
     
     public function getCrateFiles($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateFiles(".$crateName.")", \OCP\Util::DEBUG);
-        $contents = $this->getManifestData($crateName);
+        $contents = $this->getManifest($crateName);
         return json_encode($contents['vfs']);
     }
 
@@ -95,8 +95,8 @@ class CrateManager {
         return $userDir.'/crates';
     }
 
-    public function getManifestData($crateName) {
-        \OCP\Util::writeLog('crate_it', "CrateManager::getManifestData(".$crateName.")", \OCP\Util::DEBUG);
+    public function getManifest($crateName) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::getManifest(".$crateName.")", \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
         return $crate->getManifest();
     }

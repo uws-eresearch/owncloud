@@ -44,7 +44,7 @@ class SetupService {
         $this->publisher->setEndpoints(self::$params['publish endpoints']['sword']);
         self::$params['collections'] = $this->publisher->getCollections();
         self::$params['crates'] = $this->crateManager->getCrateList();
-        $manifestData = $this->crateManager->getManifestData($selectedCrate);
+        $manifestData = $this->crateManager->getManifest($selectedCrate);
         self::$params['description'] = $manifestData['description'];  
         $info = \OC_App::getAppInfo('crate_it');
         self::$params['version'] = $info['version'];

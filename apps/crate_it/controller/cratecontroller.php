@@ -11,14 +11,11 @@ use OCA\crate_it\lib\ZipDownloadResponse;
 
 class CrateController extends Controller {
     
-    /**
-     * @var $crate_service
-     */
-    private $crate_service;
+    private $crateManager;
     
-    public function __construct($appName, $request, $crate_service) {
+    public function __construct($appName, $request, $crateManager) {
         parent::__construct($appName, $request);
-        $this->crate_service = $crate_service;
+        $this->crateManager = $crateManager;
     }
     
     /**
@@ -33,7 +30,7 @@ class CrateController extends Controller {
         $description = $this->params('description');
         try {
             // TODO: maybe this selection stuff should be in a switchcrate method
-            $msg = $this->crate_service->createCrate($name, $description);
+            $msg = $this->crateManager->createCrate($name, $description);
             $_SESSION['selected_crate'] = $name;
             session_commit();
             return new JSONResponse(array('crateName' => $msg, 'crateDescription' => $description));
@@ -48,15 +45,15 @@ class CrateController extends Controller {
      * @Ajax
      * @NoAdminRequired
      */
-    public function getItems() // NOTE: this now return the entire manifest, should we change the name of the method?
+    public function getManifest() // NOTE: this now return the entire manifest, should we change the name of the method?
     {
-        \OCP\Util::writeLog('crate_it', "CrateController::get_items()", \OCP\Util::DEBUG);
+        \OCP\Util::writeLog('crate_it', "CrateController::get_manifest()", \OCP\Util::DEBUG);
         try {
             $crateName = $this->params('crate_id');
             $_SESSION['selected_crate'] = $crateName;
             session_commit();
             \OCP\Util::writeLog('crate_it', "selected_crate:: ".$_SESSION['selected_crate'], \OCP\Util::DEBUG);
-            $data = $this->crate_service->getItems($crateName);
+            $data = $this->crateManager->getManifest($crateName);
             return new JSONResponse($data);
         } catch (\Exception $e) {
             return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -81,7 +78,7 @@ class CrateController extends Controller {
             }
             $crateName = $_SESSION['selected_crate'];
             // TODO: naming consistency, add vs addToBag vs addToCrate
-            $this->crate_service->addToBag($crateName, $file);
+            $this->crateManager->addToCrate($crateName, $file);
             return new JSONResponse(array('msg' => "$file added to crate $crateName"));
         } catch(\Exception $e) {
             return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -99,7 +96,7 @@ class CrateController extends Controller {
     {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateSize()", \OCP\Util::DEBUG);
         try {
-            $data = $this->crate_service->getCrateSize($_SESSION['selected_crate']);
+            $data = $this->crateManager->getCrateSize($_SESSION['selected_crate']);
             return new JSONResponse($data);
         } catch(\Exception $e) {
             return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -124,7 +121,7 @@ class CrateController extends Controller {
             $value = json_decode($value, true);
         }
         try {
-            $this->crate_service->updateCrate($_SESSION['selected_crate'], $field, $value);
+            $this->crateManager->updateCrate($_SESSION['selected_crate'], $field, $value);
             return new JSONResponse(array('msg' => "$field successfully updated", 'value' => $value));
         } catch(\Exception $e) {
             return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -143,7 +140,7 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::deleteCrate()", \OCP\Util::DEBUG);
         $selected_crate = $_SESSION['selected_crate'];
         try {
-            $this->crate_service->deleteCrate($selected_crate);
+            $this->crateManager->deleteCrate($selected_crate);
             return new JSONResponse(array('msg' => "Crate $selected_crate has been deleted"));
         } catch(\Exception $e) {
             return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -161,7 +158,7 @@ class CrateController extends Controller {
         $oldCrateName = $_SESSION['selected_crate'];
         $newCrateName = $this->params('newCrateName');
         try {
-            $this->crate_service->renameCrate($oldCrateName, $newCrateName);
+            $this->crateManager->renameCrate($oldCrateName, $newCrateName);
             $_SESSION['selected_crate'] = $newCrateName;
             session_commit();
             return new JSONResponse(array('msg' => "Renamed $oldCrateName to $newCrateName"));
@@ -178,7 +175,7 @@ class CrateController extends Controller {
     public function packageCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::packageCrate()", \OCP\Util::DEBUG);
         try {
-            $packagePath = $this->crate_service->packageCrate($_SESSION['selected_crate']);
+            $packagePath = $this->crateManager->packageCrate($_SESSION['selected_crate']);
             $filename = basename($packagePath);
             $response = new ZipDownloadResponse($packagePath, $filename);
         } catch(\Exception $e) {
@@ -200,7 +197,7 @@ class CrateController extends Controller {
     public function generateEPUB() {
         \OCP\Util::writeLog('crate_it', "CrateController::generateEPUB()", \OCP\Util::DEBUG);
         try {
-            $epubPath = $this->crate_service->generateEPUB($_SESSION['selected_crate']);
+            $epubPath = $this->crateManager->generateEPUB($_SESSION['selected_crate']);
             $filename = basename($epubPath);
             $response = new ZipDownloadResponse($epubPath, $filename);
         } catch(\Exception $e) {
@@ -221,7 +218,19 @@ class CrateController extends Controller {
      */
     public function readmePreview() {
         \OCP\Util::writeLog('crate_it', "CrateController::readmePreview()", \OCP\Util::DEBUG);
-        $readme = $this->crate_service->getReadme($_SESSION['selected_crate']);
+        $readme = $this->crateManager->getReadme($_SESSION['selected_crate']);
+        return new TextResponse($readme, 'html');
+    }
+
+    /**
+     * README previewer - this is for debugging purposes.
+     *
+     * @NoCSRFRequired
+     * @NoAdminRequired
+     */
+    public function xml() {
+        \OCP\Util::writeLog('crate_it', "CrateController::readmePreview()", \OCP\Util::DEBUG);
+        $readme = $this->crateManager->getReadme($_SESSION['selected_crate']);
         return new TextResponse($readme, 'html');
     }
 
@@ -236,14 +245,12 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::checkCrate()", \OCP\Util::DEBUG);
         try {
             $selected_crate = $_SESSION['selected_crate'];
-            $result = $this->crate_service->checkCrate($selected_crate);
+            $result = $this->crateManager->checkCrate($selected_crate);
             if (empty($result)) {
                 $msg = 'All items are valid.';
-            }
-            else if (sizeof($result) === 1) {
+            } else if (sizeof($result) === 1) {
                 $msg = 'The following item no longer exists:';
-            }
-            else {
+            } else {
                 $msg = 'The following items no longer exist:';
             }
             return new JSONResponse(

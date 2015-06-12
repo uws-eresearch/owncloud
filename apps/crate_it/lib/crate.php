@@ -100,8 +100,7 @@ class Crate extends BagIt {
   }
   
   private function buildFileTreeHtml($node, $tree='') {           
-    if ($node['id'] == 'folder')
-    {
+    if ($node['id'] == 'folder') {
         $text = $node['name'];
         $tree = $tree."<li>$text</li><ul>";
         $children = $node['children'];     
@@ -109,21 +108,18 @@ class Crate extends BagIt {
             $tree = $this->buildFileTreeHtml($child, $tree);
         }
         $tree = $tree.'</ul>';
-    }
-    else {
+    } else {
         // substitute ' ' with '_', since the downloaded files don't have
         // ' ' in the name
         $text = str_replace(' ', '_', $node['name']);
         // change the filename part of the path to the 'underscored' version
         $filename = str_replace($node['name'], $text, $node['filename']);
         $rootfolder = $this->getRootFolderName();
-        if ($node['valid'] == 'true')
-        {
+        if ($node['valid'] == 'true') {
             $tree = $tree."<li><a href='./$rootfolder/$filename'>$text</a></li>";  
         } else {
             $tree = $tree."<li>$text (invalid)</li>";  
         }
-        
     }
     return $tree;
   }

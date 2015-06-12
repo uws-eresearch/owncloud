@@ -32,8 +32,8 @@ $application = new Application();
 
 $application->registerRoutes($this, array('routes' => array(
     array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
-    array('name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'),
-    array('name' => 'crate#get_items', 'url' => '/crate/get_items', 'verb' => 'GET'),
+    array('name' => 'crate#xml', 'url' => '/xml', 'verb' => 'GET'),
+    array('name' => 'crate#get_manifest', 'url' => '/crate/get_manifest', 'verb' => 'GET'),
     array('name' => 'crate#add', 'url' => '/crate/add', 'verb' => 'POST'),
     array('name' => 'crate#get_crate_size', 'url' => '/crate/get_crate_size', 'verb' => 'GET'),
     array('name' => 'crate#update_crate', 'url' => '/crate/update', 'verb' => 'POST'),
@@ -54,7 +54,7 @@ $application->registerRoutes($this, array('routes' => array(
 //     App::main('PageController', 'index', $params, new DIContainer());
 // });
 
-// $this->create('crate_it_get_items', '/crate/get_items')->get()->action(function($params){
+// $this->create('crate_it_get_manifest', '/crate/get_manifest')->get()->action(function($params){
 //     App::main('CrateController', 'getItems', $params, new DIContainer());
 // });
 

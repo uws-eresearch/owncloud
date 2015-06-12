@@ -9,7 +9,6 @@ use \OCA\crate_it\Controller\CrateController;
 use \OCA\crate_it\Controller\SearchController;
 use \OCA\crate_it\Controller\PublishController;
 use \OCA\crate_it\Controller\CrateCheckController;
-use \OCA\crate_it\Service\CrateService;
 use \OCA\crate_it\Service\SetupService;
 use \OCA\crate_it\Service\LoggingService;
 use \OCA\crate_it\Manager\CrateManager;
@@ -41,7 +40,7 @@ class Application extends App {
             return new CrateController(
                     $c->query('AppName'),
                     $c->query('Request'),
-                    $c->query('CrateService')
+                    $c->query('CrateManager')
             );
         });
         
@@ -49,7 +48,7 @@ class Application extends App {
             return new CrateCheckController(
                     $c->query('AppName'),
                     $c->query('Request'),
-                    $c->query('CrateService'),
+                    $c->query('CrateManager'),
                     $c->query('LoggingService')
             );
         });
@@ -70,7 +69,6 @@ class Application extends App {
                     $c->query('SetupService'),
                     $c->query('SwordConnector'),
                     $c->query('LoggingService'),
-                    $c->query('ShareService'),
                     $c->query('Mailer')
             );
         });

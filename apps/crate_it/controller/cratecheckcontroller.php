@@ -6,12 +6,12 @@ use \OCP\AppFramework\Http\JSONResponse;
 
 class CrateCheckController extends Controller {
 
-    private $crateService;
+    private $crateManager;
     private $loggingService;
     
-    public function __construct($appName, $request, $crateService, $loggingService) {
+    public function __construct($appName, $request, $crateManager, $loggingService) {
         parent::__construct($appName, $request);
-        $this->crateService = $crateService;
+        $this->crateManager = $crateManager;
         $this->loggingService = $loggingService;
     }
     
@@ -26,14 +26,12 @@ class CrateCheckController extends Controller {
         try {
             $selected_crate = $_SESSION['selected_crate'];
             $this->loggingService->log("Beginning Consistency Check for crate '$selected_crate'..");
-            $result = $this->crateService->checkCrate($selected_crate);
+            $result = $this->crateManager->checkCrate($selected_crate);
             if (empty($result)) {
                 $msg = 'All items are valid.';
-            }
-            else if (sizeof($result) === 1) {
+            } else if (sizeof($result) === 1) {
                 $msg = 'The following item no longer exists:';
-            }
-            else {
+            } else {
                 $msg = 'The following items no longer exist:';
             }
             $this->loggingService->log("Consistency Check Result - $msg");

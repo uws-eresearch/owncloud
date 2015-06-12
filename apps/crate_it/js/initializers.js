@@ -14,7 +14,7 @@ function loadTemplateVars() {
 
 function drawCrateContents() {
   // TODO: maybe get rid of this and just use reloadCrateData
-  var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {
+  var c_url = OC.generateUrl('apps/crate_it/crate/get_manifest?crate_id={crateName}', {
     'crateName': encodeURIComponent(templateVars['selected_crate'])
   });
   $.ajax({
@@ -192,7 +192,7 @@ function initCrateActions() {
 
   $('#crates').change(function() {
     var id = $(this).val();
-    var c_url = OC.generateUrl('apps/crate_it/crate/get_items?crate_id={crateName}', {
+    var c_url = OC.generateUrl('apps/crate_it/crate/get_manifest?crate_id={crateName}', {
       crateName: encodeURIComponent(id)
     });
     $.ajax({

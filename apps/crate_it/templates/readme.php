@@ -1,24 +1,24 @@
 <html>
     <head>
-        <title>default_crate</title>
+        <title><?php p($_['crate_name']) ?></title>
     </head>
     <body>
         <article>
             <h1>"<?php p($_['crate_name']) ?>" Data Package README file</h1>
             <section resource="creative work" typeof="http://schema.org/CreativeWork">
                   <h1>Package Title</h1>
-                  <span property="http://schema.org/name http://purl.org/dc/elements/1.1/title"><?php p($_['crate_name']) ?></span>
+                  <span property="http://schema.org/name http://purl.org/dc/elements/1.1/title"><?php p($_['crate_name'])?></span>
                   <h1>Package Creation Date</h1>
-                  <span content="<?php p($_['created_date']) ?>" property="http://schema.org/dateCreated"><?php p($_['created_date_formatted']) ?></span>
+                  <span content="<?php p($_['created_date'])?>" property="http://schema.org/dateCreated"><?php p($_['created_date_formatted'])?></span>
                   <h1>Package File Name</h1>
-                  <span property="http://schema.org/name"><?php p($_['crate_name']) ?>.zip</span>
+                  <span property="http://schema.org/name"><?php p($_['crate_name'] . '.zip')?></span>
                   <h1>ID</h1>
-                  <span property="http://schema.org/id"><?php p($_['crate_name']) ?></span>
+                  <span property="http://schema.org/id"><?php p($_['crate_name'])?></span>
                   <h1>Description</h1>
-                  <span property="http://schema.org/description"><?php p($_['description | nl2br']) ?></span>
+                  <span property="http://schema.org/description"><?php p(nl2br($_['description']))?></span>
 
                       <h1>Creators</h1>
-                       <?php if(isset($_['creators'])) { ?>
+                      <?php if($_['creators']){?>
                         <table border="1">
                             <thead>
                                 <th>Name</th>
@@ -27,46 +27,56 @@
                                 <th>Source</th>                          
                             </thead>
                             <tbody>
-                                <?php foreach($_['creators'] as $creator) { ?>  
-                                    <tr>
-<!--                                         <php if (creator.overrides.name) { ?>
-                                            <td><?php p($_['creator.overrides.name']) ?></td>  
-                                        <php } else { ?>
-                                            <td><?php p($_['creator.name']) ?></td>
-                                        <php } ?>
-                                        
-                                        <php if (creator.overrides.email) { ?>
-                                            <td><?php p($_['creator.overrides.email']) ?></td>  
-                                        <php } else { ?>
-                                            <td><?php p($_['creator.email']) ?></td>   
-                                        <php } ?>
-                                        <td xmlns:dc="http://purl.org/dc/elements/1.1/">
-                                            <php if (creator.url) { ?>
-                                                <php if (not creator.overrides.identifier is empty) { ?>
-                                                    <a href="<?php p($_['creator.overrides.identifier']) ?>">
-                                                        <span property="dc:identifier"><?php p($_['creator.overrides.identifier']) ?></span>
-                                                    </a>
-                                                <php } else { ?>
-                                                    <a href="<?php p($_['creator.identifier']) ?>">
-                                                        <span property="dc:identifier"><?php p($_['creator.overrides.identifier']) ?></span>
-                                                    </a>
-                                                <php } ?>
-                                            <php } else { ?>
-                                                <span property="dc:identifier"><?php p($_['creator.identifier']) ?></span>
-                                            <php } ?>
-                                        </td>
-                                        <td><?php p($_['creator.source']) ?></td> -->
-                                    </tr>
-                                {% endfor %}
+                                <?php foreach ($_['creators'] as $creator) {
+                                    print_unescaped('<tr>');
+                                    if($creator['overrides']['name']){
+                                        print_unescaped('<td>');
+                                        p($creator['overrides']['name']);
+                                        print_unescaped('</td>');
+                                    }
+                                    else{
+                                        print_unescaped('<td>');
+                                        p($creator['name']);
+                                        print_unescaped('</td>');
+                                    }
+                                    
+                                    if($creator['overrides']['email']){
+                                        print_unescaped('<td>');
+                                        p($creator['overrides']['email']);
+                                        print_unescaped('</td>');
+                                    }
+                                    else{
+                                        print_unescaped('<td>');
+                                        p($creator['email']);
+                                        print_unescaped('</td>');
+                                    }
+                                    print_unescaped('<td xmlns:dc="http://purl.org/dc/elements/1.1/">');
+                                    if($creator['url']){
+                                        if(!empty($creator['overrides']['identifier'])){
+                                            print_unescaped('<a href="' . $creator['overrides']['identifier'] . '">');
+                                            print_unescaped('<span property="dc:identifier">' . $creator['overrides']['identifier'] . '</span></a>');
+                                        }
+                                        else{
+                                            print_unescaped('<a href="' . $creator['identifier'] .'">');
+                                            print_unescaped('<span property="dc:identifier">' . $creator['identifier'] .'</span></a>');
+                                        }
+                                    }
+                                    else{
+                                        print_unescaped('<span property="dc:identifier">' . $creator['identifier'] . '</span>');
+                                    }
+                                    print_unescaped('</td>');
+                                    print_unescaped('<td>' . $creator['source'] . '</td>');
+                                    print_unescaped('</tr>');
+                                }?>
+                      
                             </tbody>
                         </table>
-                     <php } else { ?>
+                     <?php } else {?>
                      <span>None.</span>
-                     <php } ?>
-                     
+                     <?php }?>
                       <h1>Grants</h1>
                       
-                      <php if (activities) { ?>
+                      <?php if($_['activities']){?>
                         <table border="1">
                             <thead>
                                 <th>Grant Number</th>
@@ -87,56 +97,115 @@
                                                         
                             </thead>
                             <tbody>
-                                <?php foreach($_['activities'] as $activity) { ?>  
-                                    <tr>
-<!--                                         <php if($activity.overrides.grant_number) { ?>
-                                            <td><?php p($_['activity.overrides.grant_number']) ?></td>  
-                                        <php } else { ?>
-                                            <td><?php p($_['activity.grant_number']) ?></td>
-                                        <php } ?>
-                                        
-                                        <php if (activity.overrides.title) { ?>
-                                            <td><?php p($_['activity.overrides.title']) ?></td>  
-                                        <php } else { ?>
-                                            <td><?php p($_['activity.title']) ?></td>
-                                        <php } ?>
-                                        
-                                        <td><?php p($_['activity.description']) ?></td>
-                                        
-                                        <php if (activity.overrides.date) { ?>
-                                            <td><?php p($_['activity.overrides.date']) ?></td>
-                                        <php } else { ?>
-                                            <td><?php p($_['activity.date']) ?></td>
-                                        <php } ?>  
-                                        
-                                        <td><?php p($_['activity.date_submitted']) ?></td>
-                                                                          
-                                        <php if (activity.overrides.institution) { ?>
-                                            <td><?php p($_['activity.overrides.institution']) ?></td>  
-                                        <php } else { ?>
-                                            <td><?php p($_['activity.institution']) ?></td>
-                                        <php } ?>
-                                        
-                                        <php if (activity.identifier[:5] == 'http:' or activity.identifier[:6] == 'https:') { ?>
-                                            <td><a href="<?php p($_['activity.identifier']) ?>"><?php p($_['activity.identifier']) ?></a></td>
-                                        <php } else { ?>
-                                            <td><?php p($_['activity.identifier']) ?> </td>
-                                        <php } ?> -->
-                                        <td><?php p($_[$activity.source) ?></td>
-                                        <td><?php p($_[$activity.subject) ?></td>
-                                        <td><?php p($_[$activity.format) ?></td>
-                                        <td><?php p($_[$activity.oai_set) ?></td>
-                                        <td><?php p($_[$activity.repository_name) ?></td>
-                                        <td><?php p($_[$activity.repository_type) ?></td>
-                                        <td><?php p($_[$activity.display_type) ?></td>
-                                        <td><?php p($_[$activity.contributors) ?></td>
-                                    </tr>
-                                <?php } ?>
+                                <?php foreach ($_['activities'] as $activity) {
+                                    print_unescaped('<tr>');
+                                    if($activity['overrides']['grant_number']){
+                                        print_unescaped('<td>');
+                                        p($activity['overrides']['grant_number']);
+                                        print_unescaped('</td>');
+                                    }
+                                    else{
+                                        print_unescaped('<td>');
+                                        p($activity['grant_number']);
+                                        print_unescaped('</td>');
+                                    }
+                                    
+                                    if($activity['overrides']['title']){
+                                        print_unescaped('<td>');
+                                        p($activity['overrides']['title']);
+                                        print_unescaped('</td>');
+                                    }
+                                    else{
+                                        print_unescaped('<td>');
+                                        p($activity['title']);
+                                        print_unescaped('</td>');
+                                    }
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['description']);
+                                    print_unescaped('</td>');
+                                    
+                                    if($activity['overrides']['date']){
+                                        print_unescaped('<td>');
+                                        p($activity['overrides']['date']);
+                                        print_unescaped('</td>');
+                                    }
+                                    else{
+                                        print_unescaped('<td>');
+                                        p($activity['date']);
+                                        print_unescaped('</td>');
+                                    }
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['date_submitted']);
+                                    print_unescaped('</td>');
+                                    
+                                    if($activity['overrides']['institution']){
+                                        print_unescaped('<td>');
+                                        p($activity['overrides']['institution']);
+                                        print_unescaped('</td>');
+                                    }
+                                    else{
+                                        print_unescaped('<td>');
+                                        p($activity['institution']);
+                                        print_unescaped('</td>');
+                                    }
+                                    
+                                    $activity_identifier = $activity['identifier'];
+                                    $http = substr($activity_identifier, 0, strlen('http')) === 'http';
+                                    $https = substr($activity_identifier, 0, strlen('https')) === 'https';
+                                    
+                                    if($http || $https){
+                                        print_unescaped('<td>');
+                                        print_unescaped('<a href="' . $activity_identifier . '">' . $activity_identifier . '</a>');
+                                        print_unescaped('</td>');
+                                    }
+                                    else{
+                                        print_unescaped('<td>');
+                                        print_unescaped($activity['identifier']);
+                                        print_unescaped('</td>');
+                                    }
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['source']);
+                                    print_unescaped('</td>');
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['subject']);
+                                    print_unescaped('</td>');
+
+                                    print_unescaped('<td>');
+                                    p($activity['format']);
+                                    print_unescaped('</td>');
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['oai_set']);
+                                    print_unescaped('</td>');
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['repository_name']);
+                                    print_unescaped('</td>');
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['repository_type']);
+                                    print_unescaped('</td>');
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['display_type']);
+                                    print_unescaped('</td>');
+                                    
+                                    print_unescaped('<td>');
+                                    p($activity['contributors']);
+                                    print_unescaped('</td>');
+                                    
+                                    print_unescaped('</tr>');
+                                }?>
+                            
                             </tbody>
-                        </table>  
-                    <?php } else { ?>
-                     <span>None.</span>   
-                    <?php } ?>
+                        </table> 
+                     <?php } else {?>
+                     <span>None.</span>
+                     <?php }?>        
                   <h1>Software Information</h1>
                   <section property="http://purl.org/dc/terms/creator" typeof="http://schema.org/softwareApplication" resource="">
                     <table border="1">
@@ -147,7 +216,7 @@
                             </tr>
                             <tr>
                                 <td>Software Version</td>
-                                <td property="http://schema.org/softwareVersion"><?php p($_['version']) ?></td>
+                                <td property="http://schema.org/softwareVersion"><?php p($_['version'])?></td>
                             </tr>
                             <tr>
                                 <td>URLs</td>
@@ -166,13 +235,13 @@
                </section>
 
                   <h1>Files</h1>                    
-                   <?php 
-                      if($_[files]){
-                        print_unescaped($_['filetree']);
-                      }
-                      else{
-                        print_unescaped('<span>None.</span>');
-                      }
+                  <?php 
+                  if($_['files']){
+                    print_unescaped($_['filetree']);
+                  }
+                  else{
+                    print_unescaped('<span>None.</span>');
+                  }
                   ?>
         </article>
     </body>

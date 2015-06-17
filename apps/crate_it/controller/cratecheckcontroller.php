@@ -4,6 +4,8 @@ namespace OCA\crate_it\Controller;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 
+
+// TODO: Remove this class and move checkCrate method to CrateController
 class CrateCheckController extends Controller {
 
     private $crateManager;

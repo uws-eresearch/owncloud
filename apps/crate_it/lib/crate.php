@@ -5,6 +5,7 @@ namespace OCA\crate_it\lib;
 require '3rdparty/BagIt/bagit.php';
 use BagIt;
 use \OC\Files\Filesystem;
+use \OCP\Template;
 
 class Crate extends BagIt {
 
@@ -63,7 +64,7 @@ class Crate extends BagIt {
     $release = $git_res[0];
     $commit = $git_res[2];
     $manifest['version'] = "Release $release at commit $commit.";
-    $htmlStr = $this->renderTemplate('readme.php');
+    $htmlStr = $this->renderTemplate('readme', $manifest);
     $readmePath = $this->getDataDirectory()."/README.html";
     file_put_contents($readmePath, $htmlStr);
   }
@@ -393,12 +394,14 @@ class Crate extends BagIt {
     return $result;
   }
 
-  private function renderTemplate($template) {
-    ob_start();
-    include $template;
-    $result = ob_get_contents();
-    ob_clean();
-    return $result;
+
+  private function renderTemplate($template, $variables) {
+    // TODO: Use util method to get appName
+    $template = new Template('crate_it', $template);
+    foreach ($variables as $key => $value) {
+      $template->assign($key, $value);
+    }
+    return $template->fetchPage();
   }
 
   // TODO: Get rid of this and just import \OC\Files\Filesystem

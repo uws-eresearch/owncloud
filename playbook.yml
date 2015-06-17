@@ -79,6 +79,7 @@
 
 # TODO: Move cr8it_config.json to correct folder
 # TODO: change owncloud 7 config from syslog to owncloud log
-# TODO: Turn on php error logging
+# TODO: Turn on php error logging 'syslog' to 'owncloud' in cr8it config.json
 # TODO: Copy vagrant guest ssh authorized_keys to root account so behat tests work
 # TODO: Update default cra8it config and start sword server so tests will work
+# TODO: Install calibre so ePub generation will work

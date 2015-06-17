@@ -3,17 +3,14 @@ namespace OCA\crate_it\Controller;
 
 use \OCP\AppFramework\Controller;
 
+// TODOL Perhaps fold this in with CrateController
 class PageController extends Controller {
     
-    
-    /**
-     * @var SetupService
-     */
-    private $setup_service;
+    private $setupService;
 
-    public function __construct($appName, $request, $setup_service) {
+    public function __construct($appName, $request, $setupService) {
         parent::__construct($appName, $request);
-        $this->setup_service = $setup_service;
+        $this->setupService = $setupService;
     }
 
 
@@ -27,7 +24,7 @@ class PageController extends Controller {
     public function index() {       
         \OCP\Util::writeLog('crate_it', "PageController::index()", \OCP\Util::DEBUG);         
         try {
-            $model = $this->setup_service->getParams();
+            $model = $this->setupService->getParams();
             return $this->render('index', $model);
         } catch (\Exception $e) {
             // TODO handle exception

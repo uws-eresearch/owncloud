@@ -363,7 +363,7 @@ class Crate extends BagIt {
     \OCP\Util::writeLog('crate_it', "Crate::generateEPUB()", \OCP\Util::DEBUG);
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
-    $epub = $this->renderTemplate('epub.php');
+    $epub = $this->renderTemplate('epub', $params);
     $tmpFolder = \OC_Helper::tmpFolder();
     $htmlPath = $tmpFolder.'/'.$this->crateName.'.html';
     file_put_contents($htmlPath, $epub);
@@ -395,10 +395,10 @@ class Crate extends BagIt {
   }
 
 
-  private function renderTemplate($template, $variables) {
+  private function renderTemplate($template, $params) {
     // TODO: Use util method to get appName
     $template = new Template('crate_it', $template);
-    foreach ($variables as $key => $value) {
+    foreach ($params as $key => $value) {
       $template->assign($key, $value);
     }
     return $template->fetchPage();

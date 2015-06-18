@@ -45,28 +45,42 @@ class Crate extends BagIt {
   }
   
   public function getReadme() {
-    $this->createReadme();
     $readmePath = $this->getDataDirectory()."/README.html";
     return file_get_contents($readmePath);
   }
 
   private function createReadme() {
-    $manifest = $this->getManifest();
-    $manifest['crate_name'] = $this->crateName;
-    $manifest['files'] = $this->flatList();
-    $manifest['creators'] = $this->isCreatorIdUrl($manifest['creators']);
+    $metadata = $this->createMetadata();
+    $html = $this->renderTemplate('readme', $metadata);
+    $readmePath = $this->getDataDirectory()."/README.html";
+    file_put_contents($readmePath, $html);
+  }
+
+  private function createMetadata() {
+    $metadata = $this->getManifest();
+    $metadata['crate_name'] = $this->crateName;
+    $metadata['files'] = $this->flatList();
+    $metadata['submitter'] = array('name' => \OCP\User::getUser();
+    $metadata['creators'] = $this->isCreatorIdUrl($metadata['creators']);
     date_default_timezone_set('Australia/Sydney');    
-    $manifest['created_date'] = date("Y-m-d H:i:s");   
-    $manifest['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
-    $vfs = &$manifest['vfs'][0];
-    $manifest['filetree'] = $this->buildFileTreeFromRoot($vfs);
-    $git_res = $this->getVersion();
+    $metadata['created_date'] = date("Y-m-d H:i:s");   
+    $metadata['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
+    $vfs = &$metadata['vfs'][0];
+    $metadata['filetree'] = $this->buildFileTreeFromRoot($vfs);
+    // TODO: relying on git is not good,
+    // get this info from appinfo
+    $git_res = $this->getVersion(); 
     $release = $git_res[0];
     $commit = $git_res[2];
-    $manifest['version'] = "Release $release at commit $commit.";
-    $htmlStr = $this->renderTemplate('readme', $manifest);
-    $readmePath = $this->getDataDirectory()."/README.html";
-    file_put_contents($readmePath, $htmlStr);
+    $metadata['version'] = "Release $release at commit $commit.";
+    return $metadata;
+  }
+
+
+  private function createXML($metadata) {
+    $metadata = $this->createMetadata();
+    $xml = $this->renderTemplate('xml', $metadata);
+    return $xml;
   }
 
   // NOTE: workaround for non-functioning twig operators 'starts with' and 'matches'
@@ -84,6 +98,7 @@ class Crate extends BagIt {
     return $creators;
   }
 
+  // TODO: get rid of this and just use the appinfo version
   private function getVersion() {
     exec('git --git-dir=/home/devel/owncloud/.git --work-tree=/home/devel/owncloud describe --tags', $git);
     return explode('-', $git[0]);

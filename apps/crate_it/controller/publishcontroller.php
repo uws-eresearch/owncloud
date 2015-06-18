@@ -41,6 +41,7 @@ class PublishController extends Controller {
         $data = array();
         if(!empty($_SESSION['last_published_status'])) {
             $to = $this->params('address');
+            // TODO: This should be configurable
             $from = 'no-reply@cr8it.app';
             $subject = 'Cr8it Publish Status Receipt';
             try {
@@ -100,6 +101,11 @@ class PublishController extends Controller {
         $_SESSION['last_published_status'] = $data['msg'];
 
         return new JSONResponse($data, $status);
+    }
+
+
+    public function publishAlert() {
+        // TODO
     }
 
 }

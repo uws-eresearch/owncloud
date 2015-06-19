@@ -14,7 +14,7 @@ use \OCA\crate_it\Service\LoggingService;
 use \OCA\crate_it\Manager\CrateManager;
 use \OCA\crate_it\Manager\ConfigManager;
 
-use \OCA\crate_it\lib\SwordConnector;
+use \OCA\crate_it\lib\SwordPublisher;
 use \OCA\crate_it\lib\Mailer;
 use \OCA\crate_it\lib\ZipDownloadResponse;
 
@@ -67,7 +67,7 @@ class Application extends App {
                     $c->query('Request'),
                     $c->query('CrateManager'),
                     $c->query('SetupService'),
-                    $c->query('SwordConnector'),
+                    $c->query('SwordPublisher'),
                     $c->query('LoggingService'),
                     $c->query('Mailer')
             );
@@ -79,7 +79,7 @@ class Application extends App {
         $container->registerService('SetupService', function($c){
             return new SetupService(
                 $c->query('CrateManager'),
-                $c->query('SwordConnector')
+                $c->query('SwordPublisher')
             );
         });
         
@@ -110,8 +110,8 @@ class Application extends App {
         /**
          * Connectors
          */
-        $container->registerService('SwordConnector', function($c){
-            return new SwordConnector();
+        $container->registerService('SwordPublisher', function($c){
+            return new SwordPublisher();
         });
         
         /**

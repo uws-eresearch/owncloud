@@ -2,7 +2,7 @@
 
 namespace OCA\crate_it\Controller;
 
-use \OCA\crate_it\lib\SwordConnector;
+use \OCA\crate_it\lib\SwordPublisher;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Http;
@@ -21,7 +21,7 @@ class PublishController extends Controller {
         $params = $setupService->getParams();
         $endpoints = $params['publish endpoints']['sword'];
         \OCP\Util::writeLog('crate_it', "PublishController::construct() - Publish enpoints: $endpoints", \OCP\Util::DEBUG);
-        $publisher->setEndpoints($params['publish endpoints']['sword']);
+        $publisher->registerEndpoint($params['publish endpoints']['sword']);
         $this->loggingService = $loggingService;
         $this->mailer = $mailer;
     }

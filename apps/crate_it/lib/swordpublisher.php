@@ -5,7 +5,7 @@ namespace OCA\crate_it\lib;
 require __DIR__ . '/../3rdparty/swordappv2-php-library/swordappclient.php';
 use \SWORDAPPClient;
 
-class SwordConnector {
+class SwordPublisher {
   
   private $swordClient = NULL;
   private static $contentType = 'application/zip';
@@ -18,12 +18,12 @@ class SwordConnector {
   }
 
 
-  public function setEndpoints($endpoints) {
+  public function registerEndpoint($endpoints) {
     $this->endpoints = $endpoints;
   }
 
   private function getServiceDocuments() {
-    \OCP\Util::writeLog('crate_it', "SwordConnector::getServiceDocuments()", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog('crate_it', "SwordPublisher::getServiceDocuments()", \OCP\Util::DEBUG);
     $result = array();
     foreach($this->endpoints as $endpoint) {
       if($endpoint['enabled'] && $this->checkAlive($endpoint['sd uri'])) {
@@ -36,7 +36,7 @@ class SwordConnector {
 
 
   public function getCollections() {
-    \OCP\Util::writeLog('crate_it', "SwordConnector::getCollections()", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog('crate_it', "SwordPublisher::getCollections()", \OCP\Util::DEBUG);
     // TODO: Push SD retrieval to constructor?
     $serviceDocuments = $this->getServiceDocuments();
     $result = array();
@@ -57,7 +57,7 @@ class SwordConnector {
   }
 
   public function publishCrate($package, $endpoint, $collection) {
-    \OCP\Util::writeLog('crate_it', "SwordConnector::publishCrate($package, $endpoint, $collection)", \OCP\Util::DEBUG);
+    \OCP\Util::writeLog('crate_it', "SwordPublisher::publishCrate($package, $endpoint, $collection)", \OCP\Util::DEBUG);
     $endpoint = $this->getEndpoint($endpoint);
     return $this->swordClient->deposit($collection, $endpoint['username'], $endpoint['password'], $endpoint['obo'], $package, self::$packagingFormat, self::$contentType, false);
   }

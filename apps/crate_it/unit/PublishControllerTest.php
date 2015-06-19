@@ -5,7 +5,7 @@ require_once 'mocks/MockJSONResponse.php';
 require_once 'mocks/MockUtil.php';
 require_once 'controller/publishcontroller.php';
 require_once 'manager/cratemanager.php';
-require_once 'lib/swordconnector.php';
+require_once 'lib/swordpublisher.php';
 require_once 'lib/mailer.php';
 require_once 'service/setupservice.php';
 require_once 'service/loggingservice.php';
@@ -24,7 +24,7 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
       $crateManager = $this->getMockBuilder('OCA\crate_it\Manager')->disableOriginalConstructor()->setMethods(array('packageCrate', 'getManifestFileContent'))->getMock();
       $setupService = $this->getMockBuilder('OCA\crate_it\Service\SetupService')->disableOriginalConstructor()->setMethods(array('getParams'))->getMock();
-      $this->publisher = $this->getMockBuilder('OCA\crate_it\lib\SwordConnector')->disableOriginalConstructor()->getMock();
+      $this->publisher = $this->getMockBuilder('OCA\crate_it\lib\SwordPublisher')->disableOriginalConstructor()->getMock();
       $this->loggingService = $this->getMockBuilder('OCA\crate_it\Service\LoggingService')->disableOriginalConstructor()->setMethods(array('log', 'logManifest', 'logPublishedDetails', 'getLog'))->getMock();
       $this->loggingService->method('log')->willReturn(NULL);
       $this->loggingService->method('logManifest')->willReturn(NULL);

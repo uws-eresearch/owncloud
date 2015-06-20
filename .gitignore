@@ -11,4 +11,4 @@ cr8it.sublime*
 apps/crate_it/vendor
 apps/crate_it/vendor/**/*
 .idea/**/*
-.apps/crate_it/.idea/**/*
+./apps/crate_it/.idea/**/*

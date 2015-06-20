@@ -60,7 +60,7 @@ class Crate extends BagIt {
     $metadata = $this->getManifest();
     $metadata['crate_name'] = $this->crateName;
     $metadata['files'] = $this->flatList();
-    $metadata['submitter'] = array('name' => \OCP\User::getUser();
+    $metadata['submitter'] = array('name' => \OCP\User::getUser());
     $metadata['creators'] = $this->isCreatorIdUrl($metadata['creators']);
     date_default_timezone_set('Australia/Sydney');    
     $metadata['created_date'] = date("Y-m-d H:i:s");   

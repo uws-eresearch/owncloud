@@ -10,9 +10,11 @@ class LoggingService {
     
     public function __construct($crateManager) {
         $this->crateManager = $crateManager;
+        // TODO: Refactor this into a utility module
         $userId = \OCP\User::getUser();
-        $user_dir = $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
-        $this->logfile = $user_dir.'/publish.log';
+        $baseDir = \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data/');
+        $userDir = $baseDir.'/'.$userId;
+        $this->logfile = $userDir.'/publish.log';
     }
     
     public function log($text) {

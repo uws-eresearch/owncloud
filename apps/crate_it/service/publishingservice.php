@@ -6,21 +6,35 @@ use OCA\crate_it\lib\SwordPublisher;
 
 class PublishingService {
 
-    private $endpoints = NULL;
+    private $publishers = array();
 
-    public function registerEndpoint($endpointsConfig) {
-        foreach ($endpointsConfig as $publisher => $endpoints) {
-            if ($publisher == 'sword') {
+    public function registerPublishers($endpointsConfig) {
+        foreach($endpointsConfig as $publisher => $endpoints) {
+            if($publisher == 'sword') {
                 foreach ($endpoints as $endpoint) {
-                    $this->registerSwordEndpoint($endpoint);
+                    if($endpoint['enabled']) {
+                        $this->registerSwordPublisher($endpoint);
+                    }
                 }
             }
         }
     }
 
-    private function registerSwordEndpoint($swordEndpoint) {
-
+    private function registerSwordPublisher($swordEndpoint) {
+        $this->publishers[$swordEndpoint['name']] = new SwordPublisher($swordEndpoint);
     }
 
+    public function getCollections() {
+        $result = array();
+        foreach($this->publishers as $name => $publisher) {
+            $collections = $publisher->getCollection();
+            $result[$name] = $collections;
+        }
+        return $result;
+    }
+
+    public function publishCrate($crate, $publisher, $collection) {
+        $this->publishers[$publisher]->publishCrate($crate, $collection);
+    }
 
 }

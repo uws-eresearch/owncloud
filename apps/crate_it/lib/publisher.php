@@ -1,14 +1,12 @@
-<? php
+<?php
 
-
-namespace \OCA\crate_it\lib;
-
+namespace OCA\crate_it\lib;
 
 Interface Publisher {
     
-    public function getCollections();
+    public function getCollection();
 
-    public function publishCrate();
+    public function publishCrate($package, $collection);
 
 }
 

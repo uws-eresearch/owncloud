@@ -22,15 +22,14 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function index() {       
-        \OCP\Util::writeLog('crate_it', "PageController::index()", \OCP\Util::DEBUG);         
+        \OCP\Util::writeLog('crate_it', "PageController::index()", \OCP\Util::DEBUG);
         try {
             $model = $this->setupService->getParams();
-            return $this->render('index', $model);
         } catch (\Exception $e) {
             // TODO handle exception
-            \OCP\Util::writeLog('crate_it', "ERROR: " .$e->getMessage(), \OCP\Util::DEBUG);
+            \OCP\Util::writeLog('crate_it', "ERROR: " .$e->getMessage(), \OCP\Util::ERROR);
         }
-        
+        return $this->render('index', $model);
     }
 
 }

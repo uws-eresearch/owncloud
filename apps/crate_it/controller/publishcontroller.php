@@ -19,9 +19,8 @@ class PublishController extends Controller {
         $this->crateManager = $crateManager;
         $this->publisher = $publisher;
         $params = $setupService->getParams();
-        $endpoints = $params['publish endpoints']['sword'];
-        \OCP\Util::writeLog('crate_it', "PublishController::construct() - Publish enpoints: $endpoints", \OCP\Util::DEBUG);
-        $publisher->registerEndpoint($params['publish endpoints']['sword']);
+        // TODO: Some dupication here with SetupService methods, try to refactor out
+        $this->publisher->registerPublishers($params['publish endpoints']);
         $this->loggingService = $loggingService;
         $this->mailer = $mailer;
     }

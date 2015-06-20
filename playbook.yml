@@ -44,13 +44,6 @@
       owner=apache
       group=apache
 
-  - name: Restart Apache
-    service: >
-      name=httpd
-      enabled=yes
-      state=restarted
-    sudo: yes
-
   - name: Install git
     yum: name=git
     sudo: yes
@@ -61,9 +54,19 @@
       dest=/usr/share/simple-sword-server
     sudo: yes
 
-  - name: Rename Simple Sword Server main entry point
-    command: >
-      mv /usr/share/simple-sword-server/sss/sss-1.0.py /usr/share/simple-sword-server/sss/sss.py
+  - name: Change directory permissions
+    file: >
+      path=/usr/share/simple-sword-server
+      owner=apache
+      group=apache
+      recurse=yes
+
+  - name: Overwrite Simple Sword Server with our own config
+    copy: >
+      src=sss.py
+      dest=/usr/share/simple-sword-server/sss/sss.py
+      owner=apache
+      group=apache
 
   - name: Install python libraries
     yum: name={{item}}
@@ -72,9 +75,25 @@
       - python-devel
       - libxml2-devel
       - libxslt-devel
+      - httpd-devel
+      - mod_wsgi
 
   - name: Install Simple Sword Server python dependencies
     command: pip install web.py lxml
+    sudo: yes
+
+  - name: Copy Simple Sword Server Apache config
+    copy: >
+      src=sss.conf
+      dest=/etc/httpd/conf.d/
+      owner=apache
+      group=apache
+
+  - name: Restart Apache
+    service: >
+      name=httpd
+      enabled=yes
+      state=restarted
     sudo: yes
 
 # TODO: Move cr8it_config.json to correct folder

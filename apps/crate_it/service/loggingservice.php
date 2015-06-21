@@ -63,11 +63,12 @@ class LoggingService {
         $this->log("\n".$sha_content);
         $this->log("----end file-----");
     }   
-    
+
+    // TODO: refactor to a util class so other classes can use this method
+    // e.g. folderpublisher
     private function timestamp() {
         date_default_timezone_set('Australia/Sydney');  
         $format="[Y-m-d H:i:s P] ";
-        //$offset=timezone_offset_get(new \DateTimeZone('Australia/Sydney'), new \DateTime());    
         $timestamp = date($format);  
         return $timestamp;
     }

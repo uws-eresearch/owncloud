@@ -2,39 +2,23 @@
 
 namespace OCA\crate_it\Service;
 
-use OCA\crate_it\lib\SwordPublisher;
-use OCA\crate_it\lib\FolderPublisher;
-
 class PublishingService {
 
     private $publishers = array();
 
     public function registerPublishers($endpointsConfig) {
         foreach($endpointsConfig as $publisher => $endpoints) {
-            if($publisher == 'sword') {
-                foreach ($endpoints as $endpoint) {
-                    if($endpoint['enabled']) {
-                        $this->registerSwordPublisher($endpoint);
-                    }
-                }
-            }
-            if($publisher == 'folder') {
-                foreach ($endpoints as $endpoint) {
-                    if($endpoint['enabled']) {
-                        $this->registerFolderPublisher($endpoint);
-                    }
+            foreach ($endpoints as $endpoint) {
+                if($endpoint['enabled']) {
+                    $this->registerPublisher($publisher, $endpoint);
                 }
             }
         }
     }
 
-    // TODO: lot of duplication here and in registerPublishers
-    private function registerSwordPublisher($swordEndpoint) {
-        $this->publishers[$swordEndpoint['name']] = new SwordPublisher($swordEndpoint);
-    }
-
-    private function registerFolderPublisher($folderEndpoint) {
-        $this->publishers[$folderEndpoint['name']] = new FolderPublisher($folderEndpoint);
+    private function registerPublisher($publisher, $endpoint) {
+        $className = 'OCA\crate_it\lib\\'.ucfirst($publisher).'Publisher';
+        $this->publishers[$endpoint['name']] = new $className($endpoint);
     }
 
     public function getCollections() {

@@ -4,6 +4,7 @@ namespace OCA\crate_it\lib;
 // TODO: find a cleaner way to import
 require __DIR__ . '/../3rdparty/swordappv2-php-library/swordappclient.php';
 use SWORDAPPClient;
+use WebDriver\Exception;
 
 class SwordPublisher implements Publisher {
 
@@ -49,8 +50,11 @@ class SwordPublisher implements Publisher {
 
     public function publishCrate($package, $collection) {
         \OCP\Util::writeLog('crate_it', "SwordPublisher::publishCrate($package, $this->endpoint, $collection)", \OCP\Util::DEBUG);
-        return $this->swordClient->deposit($collection, $this->endpoint['username'], $this->endpoint['password'],
+        $response = $this->swordClient->deposit($collection, $this->endpoint['username'], $this->endpoint['password'],
             $this->endpoint['obo'], $package, self::$packagingFormat, self::$contentType, false);
+        if ($response->sac_status != 201) {
+            throw \Exception("Error: failed to publish crate '".basname($package)."' to $collection: ");
+        }
     }
 
     private function checkAlive($uri) {

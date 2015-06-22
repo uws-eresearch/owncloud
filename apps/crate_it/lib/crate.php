@@ -67,12 +67,8 @@ class Crate extends BagIt {
     $metadata['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
     $vfs = &$metadata['vfs'][0];
     $metadata['filetree'] = $this->buildFileTreeFromRoot($vfs);
-    // TODO: relying on git is not good,
-    // get this info from appinfo
-    $git_res = $this->getVersion(); 
-    $release = $git_res[0];
-    $commit = $git_res[2];
-    $metadata['version'] = "Release $release at commit $commit.";
+    $version = \OCP\App::getAppVersion('crate_it');
+    $metadata['version'] = "Version $version.";
     return $metadata;
   }
 
@@ -96,12 +92,6 @@ class Crate extends BagIt {
       }
     }
     return $creators;
-  }
-
-  // TODO: get rid of this and just use the appinfo version
-  private function getVersion() {
-    exec('git --git-dir=/home/devel/owncloud/.git --work-tree=/home/devel/owncloud describe --tags', $git);
-    return explode('-', $git[0]);
   }
   
   private function buildFileTreeFromRoot($rootnode) {

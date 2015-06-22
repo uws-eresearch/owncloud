@@ -76,29 +76,21 @@ class PublishController extends Controller {
         $this->loggingService->log("Attempting to publish crate $crateName to collection: $collection");
         $this->loggingService->logManifest($crateName);
         $package = $this->crateManager->packageCrate($crateName);
-        $zipname = basename($package);
         $this->loggingService->log("Zipped content into '$zipname'");
         $data = array();
         try {
-            $this->loggingService->log("Publishing crate $crateName ($zipname)..");
-            $response = $this->publisher->publishCrate($package, $endpoint, $collection);
-            $status = $response->sac_status;
-            if($status == 201) {                
-                $data['msg'] = "Crate '$crateName' successfully published to $collection";  
-                $this->loggingService->logPublishedDetails($package, $crateName);             
-            } else {
-                $this->loggingService->log("Publishing crate '$crateName' failed.");
-                $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: $response->sac_statusmessage ($status)";
-                $this->loggingService->log($data['msg']);
-            }
+            $this->loggingService->log("Publishing crate $crateName (".basename($package).")..");
+            $this->publisher->publishCrate($package, $endpoint, $collection);
+            $data['msg'] = "Crate '$crateName' successfully published to $collection";
+            $this->loggingService->logPublishedDetails($package, $crateName);
+            $status = 201;
         } catch (\Exception $e) {
-            $this->loggingService->log("Publishing crate '$crateName' failed.");            
+            $this->loggingService->log("Publishing crate '$crateName' failed.");
+            $data['msg'] = $e->getMessage();
             $status = 500;
-            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: ".$e->getMessage();
-            $this->loggingService->log($data['msg']);
         }
+        $this->loggingService->log($data['msg']);
         $_SESSION['last_published_status'] = $data['msg'];
-
         return new JSONResponse($data, $status);
     }
 

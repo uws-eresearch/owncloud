@@ -30,6 +30,7 @@
     </creators>
  <?php } ?>
 <submitter>
-    <name><?php p($_['submitter']) ?></name>
+    <name></name>
+    <email></email>
 </submitter>
 </crate>

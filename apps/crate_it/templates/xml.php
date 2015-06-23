@@ -1,27 +1,31 @@
 <crate>
 <name><?php p($_['crate_name']) ?></name>
-<date><?php p($_['created_date_formatted'])?></date>
+<date><?php p($_['created_date'])?></date>
 <description><?php p($_['description'])?></description>
   <?php if($_['creators']){?>
     <creators>
-    <?php foreach ($_['creators'] as $creator) {
-        print_unescaped('<creator>');
-        print_unescaped('<name>');
-        if($creator['overrides']['name']){
-            p($creator['overrides']['name']);
-        } else {
-            p($creator['name']);
-        }
-        print_unescaped('</name>');
-        print_unescaped('<email>');
-        if($creator['overrides']['email']) {
-            p($creator['overrides']['email']);
-        } else {
-            p($creator['email']);
-        }
-        print_unescaped('</email>');
-        print_unescaped('</creator>');
-    }?>
+    <?php foreach ($_['creators'] as $creator) { ?>
+        <creator>
+            <?php
+            print_unescaped('<name>');
+            if($creator['overrides']['name']){
+                p($creator['overrides']['name']);
+            } else {
+                p($creator['name']);
+            }
+            print_unescaped('</name>');
+            ?>
+            <?php
+            print_unescaped('<email>');
+            if($creator['overrides']['email']) {
+                p($creator['overrides']['email']);
+            } else {
+                p($creator['email']);
+            }
+            print_unescaped('</email>');
+            ?>
+        </creator>
+    <?php } ?>
     </creators>
  <?php } ?>
 <submitter>

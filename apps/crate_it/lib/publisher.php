@@ -2,7 +2,7 @@
 
 namespace OCA\crate_it\lib;
 
-Interface Publisher {
+interface Publisher {
     
     public function getCollection();
 

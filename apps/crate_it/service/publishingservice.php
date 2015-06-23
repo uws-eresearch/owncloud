@@ -31,7 +31,7 @@ class PublishingService {
     }
 
     public function publishCrate($crate, $publisher, $collection) {
-        $this->publishers[$publisher]->publishCrate($crate, $collection);
+        return $this->publishers[$publisher]->publishCrate($crate, $collection);
     }
 
 }

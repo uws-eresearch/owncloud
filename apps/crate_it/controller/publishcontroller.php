@@ -9,25 +9,29 @@ use \OCP\AppFramework\Http;
 
 class PublishController extends Controller {
 
-    private $publisher;
+    private $publishingService;
+    private $alertingService;
     private $crateManager;
     private $loggingService;
     private $mailer;
 
-    public function __construct($appName, $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
+    public function __construct($appName, $request, $crateManager, $setupService, $publishingService, $alertingService, $loggingService, $mailer) {
         parent::__construct($appName, $request);
         $this->crateManager = $crateManager;
-        $this->publisher = $publisher;
-        $params = $setupService->getParams();
-        // TODO: Some dupication here with SetupService methods, try to refactor out
-        $this->publisher->registerPublishers($params['publish endpoints']);
+        $this->publishingService = $publishingService;
+        $this->alertingService = $alertingService;
         $this->loggingService = $loggingService;
         $this->mailer = $mailer;
+        $params = $setupService->getParams();
+        // TODO: Some duplication here with SetupService methods, try to refactor out
+        $this->publishingService->registerPublishers($params['publish endpoints']);
+        $this->alertingService->registerAlerters($params['alerts']);
+
     }
 
     public function getCollections() {
       \OCP\Util::writeLog('crate_it', "PublishController::getCollections()", \OCP\Util::DEBUG);
-      return $this->publisher->getCollections();
+      return $this->publishingService->getCollections();
     }
 
     /**
@@ -76,11 +80,13 @@ class PublishController extends Controller {
         $this->loggingService->log("Attempting to publish crate $crateName to collection: $collection");
         $this->loggingService->logManifest($crateName);
         $package = $this->crateManager->packageCrate($crateName);
-        $this->loggingService->log("Zipped content into '$zipname'");
+        $this->loggingService->log("Zipped content into '".basename($package)."'");
+        $metadata = $this->crateManager->createMetadata($crateName);
         $data = array();
         try {
             $this->loggingService->log("Publishing crate $crateName (".basename($package).")..");
-            $this->publisher->publishCrate($package, $endpoint, $collection);
+            $metadata['destination'] = $this->publishingService->publishCrate($package, $endpoint, $collection);
+            $this->alertingService->alert($metadata);
             $data['msg'] = "Crate '$crateName' successfully published to $collection";
             $this->loggingService->logPublishedDetails($package, $crateName);
             $status = 201;
@@ -94,9 +100,5 @@ class PublishController extends Controller {
         return new JSONResponse($data, $status);
     }
 
-
-    public function publishAlert() {
-        // TODO
-    }
 
 }

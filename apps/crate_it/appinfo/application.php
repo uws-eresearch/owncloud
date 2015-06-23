@@ -12,6 +12,7 @@ use \OCA\crate_it\Controller\CrateCheckController;
 use \OCA\crate_it\Service\SetupService;
 use \OCA\crate_it\Service\LoggingService;
 use \OCA\crate_it\service\PublishingService;
+use \OCA\crate_it\service\AlertingService;
 use \OCA\crate_it\Manager\CrateManager;
 use \OCA\crate_it\Manager\ConfigManager;
 
@@ -69,6 +70,7 @@ class Application extends App {
                     $c->query('CrateManager'),
                     $c->query('SetupService'),
                     $c->query('PublishingService'),
+                    $c->query('AlertingService'),
                     $c->query('LoggingService'),
                     $c->query('Mailer')
             );
@@ -95,7 +97,11 @@ class Application extends App {
                     $c->query('CrateManager')
             );
         });
-        
+
+        $container->registerService('AlertingService', function($c){
+            return new AlertingService();
+        });
+
         $container->registerService('Mailer', function($c){
             return new Mailer();
         });
@@ -106,10 +112,7 @@ class Application extends App {
         $container->registerService('CrateManager', function($c){
             return new CrateManager();
         });
-        
-        /**
-         * Connectors
-         */
+
         $container->registerService('PublishingService', function($c){
             return new PublishingService();
         });

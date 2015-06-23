@@ -5,7 +5,6 @@ namespace OCA\crate_it\lib;
 require '3rdparty/BagIt/bagit.php';
 use BagIt;
 use \OC\Files\Filesystem;
-use \OCP\Template;
 
 class Crate extends BagIt {
 
@@ -51,18 +50,19 @@ class Crate extends BagIt {
 
   private function createReadme() {
     $metadata = $this->createMetadata();
-    $html = $this->renderTemplate('readme', $metadata);
+    $html = Util::renderTemplate('readme', $metadata);
     $readmePath = $this->getDataDirectory()."/README.html";
     file_put_contents($readmePath, $html);
   }
 
-  private function createMetadata() {
+  public function createMetadata() {
     $metadata = $this->getManifest();
     $metadata['crate_name'] = $this->crateName;
     $metadata['files'] = $this->flatList();
     $metadata['submitter'] = array('name' => \OCP\User::getUser());
     $metadata['creators'] = $this->isCreatorIdUrl($metadata['creators']);
-    date_default_timezone_set('Australia/Sydney');    
+    // TODO: Update to use utility method
+    date_default_timezone_set('Australia/Sydney');
     $metadata['created_date'] = date("Y-m-d H:i:s");   
     $metadata['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
     $vfs = &$metadata['vfs'][0];
@@ -70,13 +70,6 @@ class Crate extends BagIt {
     $version = \OCP\App::getAppVersion('crate_it');
     $metadata['version'] = "Version $version.";
     return $metadata;
-  }
-
-
-  private function createXML($metadata) {
-    $metadata = $this->createMetadata();
-    $xml = $this->renderTemplate('xml', $metadata);
-    return $xml;
   }
 
   // NOTE: workaround for non-functioning twig operators 'starts with' and 'matches'
@@ -368,7 +361,7 @@ class Crate extends BagIt {
     \OCP\Util::writeLog('crate_it', "Crate::generateEPUB()", \OCP\Util::DEBUG);
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
-    $epub = $this->renderTemplate('epub', $params);
+    $epub = Util::renderTemplate('epub', $params);
     $tmpFolder = \OC_Helper::tmpFolder();
     $htmlPath = $tmpFolder.'/'.$this->crateName.'.html';
     file_put_contents($htmlPath, $epub);
@@ -397,16 +390,6 @@ class Crate extends BagIt {
       }
     }
     return $result;
-  }
-
-
-  private function renderTemplate($template, $params) {
-    // TODO: Use util method to get appName
-    $template = new Template('crate_it', $template);
-    foreach ($params as $key => $value) {
-      $template->assign($key, $value);
-    }
-    return $template->fetchPage();
   }
 
   // TODO: Get rid of this and just import \OC\Files\Filesystem

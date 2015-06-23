@@ -55,6 +55,8 @@ class SwordPublisher implements Publisher {
         if ($response->sac_status != 201) {
             throw \Exception("Error: failed to publish crate '".basname($package)."' to $collection: ");
         }
+        // TODO: return that actual deposited item URL,
+        return $collection;
     }
 
     private function checkAlive($uri) {

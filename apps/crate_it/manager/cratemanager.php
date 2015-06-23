@@ -58,6 +58,11 @@ class CrateManager {
         return json_encode($contents['vfs']);
     }
 
+    public function createMetadata($crateName) {
+        $crate = $this->getCrate($crateName);
+        return $crate->createMetadata();
+    }
+
     private function ensureDefaultCrateExists() {
         $crateRoot = $this->getCrateRoot();
         if (!file_exists($crateRoot)) {

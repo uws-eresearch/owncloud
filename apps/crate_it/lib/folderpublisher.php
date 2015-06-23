@@ -26,16 +26,11 @@ class FolderPublisher implements Publisher {
     public function publishCrate($package, $collection) {
         \OCP\Util::writeLog('crate_it', "FolderPublisher::publishCrate()", \OCP\Util::DEBUG);
         $basename = basename($package, '.zip');
-        $timestamp = $this->getTimestamp();
+        $timestamp = Util::getTimestamp();
         $destination = $collection.$basename."_$timestamp.zip";
         \OCP\Util::writeLog('crate_it', "Publishing to $destination", \OCP\Util::DEBUG);
         rename($package, $destination);
+        return $destination;
     }
 
-    private function getTimestamp() {
-        date_default_timezone_set('Australia/Sydney');
-        $format="YmdHis";
-        $timestamp = date($format);
-        return $timestamp;
-    }
 }

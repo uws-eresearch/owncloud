@@ -54,9 +54,9 @@ namespace OCA\Cr8it;
     //add 3rdparty folder to include path   
     $dir = dirname(dirname(__FILE__)) . '/3rdparty';
     set_include_path(get_include_path() . PATH_SEPARATOR . $dir);
-           
+
     //load the required files
-    \OCP\Util::addScript('crate_it', 'jquery.jeditable'); 
+    \OCP\Util::addScript('crate_it', 'jquery.jeditable');
     \OCP\Util::addScript('crate_it', 'tree.jquery');
     
     \OCP\Util::addScript('crate_it', 'loader');

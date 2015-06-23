@@ -1,42 +1,43 @@
 {
-    "max_sword_mb": 1,
-    "max_zip_mb": 2000,
-    "description_length": 6000,
-    "previews": "on",
-    "fascinator": {
-        "status": "off",
-        "downloadURL": "http:\/\/localhost:9997\/portal\/default\/download\/",
-        "solr": {
-            "host": "localhost",
-            "port": 9997,
-            "path": "\/solr\/fascinator\/"
-        }
-    },
-    "mint": {
-        "status": "enabled",
-        "url": <your mint url here>
-    },
-    "publish endpoints": {
-        "sword": [{
-            "name": "TEST",
-            "enabled": false,
-            "sd uri": <test sword server uri here>,
-            "username": <username>,
-            "password": <password>,
-            "obo": "obo"
-        }, {
-            "name": <server name here>,
-            "enabled": false,
-            "sd uri": <sword server uri here>,
-            "username": <username>,
-            "password": <password>,
-            "obo": "obo"
-        }]
-    },
-    "git": {
-		"git-dir": "/home/devel/owncloud/.git",
-		"work-tree": "/home/devel/owncloud"
-    },
-   "help_url": "http://htmlpreview.github.io/?https://github.com/IntersectAustralia/cr8it_doc/master/online-help.html"
-
+  "max_sword_mb": 1,
+  "max_zip_mb": 2000,
+  "description_length": 6000,
+  "previews": "off",
+  "fascinator": {
+    "status": "off",
+    "downloadURL": "http://localhost:9997/portal/default/download/",
+    "solr": {
+      "host": "localhost",
+      "port": 9997,
+      "path": "/solr/fascinator/"
+    }
+  },
+  "mint": {
+    "status": "enabled",
+    "url": "http://basset.uws.edu.au:9001/mint"
+  },
+  "publish endpoints": {
+    "sword": [{
+      "name": "Sword Example",
+      "enabled": false,
+      "sd uri": "http://127.0.0.1/sss/sd-uri",
+      "username": "sword",
+      "password": "sword",
+      "obo": "obo"
+    }],
+    "folder": [{
+      "name": "Folder Example",
+      "enabled": true,
+      "path": "/var/lib/owncloud/data/publish/",
+      "url prefix": "file://"
+    }]
+  },
+  "alerts": {
+    "redbox": [{
+      "name": "ReDBOX Example",
+      "enabled": true,
+      "path": "/var/lib/owncloud/data/alerts/"
+    }]
+  },
+  "help_url": "http://htmlpreview.github.io/?https://github.com/IntersectAustralia/cr8it_doc/master/online-help.html"
 }

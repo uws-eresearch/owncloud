@@ -30,7 +30,7 @@ class FolderPublisher implements Publisher {
         $destination = $collection.$basename."_$timestamp.zip";
         \OCP\Util::writeLog('crate_it', "Publishing to $destination", \OCP\Util::DEBUG);
         rename($package, $destination);
-        return $destination;
+        return "file://$destination";
     }
 
 }

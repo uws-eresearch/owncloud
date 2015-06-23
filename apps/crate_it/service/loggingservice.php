@@ -20,7 +20,12 @@ class LoggingService {
     public function log($text) {
        file_put_contents($this->logfile, $this->timestamp().$text."\n", FILE_APPEND);
     }
-    
+
+    // Used for testing
+    public function setLog($logfile) {
+        $this->logfile = $logfile;
+    }
+
     public function getLog() {
         $contents = file_get_contents($this->logfile);
         if (!$contents) {

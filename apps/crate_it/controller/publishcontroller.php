@@ -92,7 +92,7 @@ class PublishController extends Controller {
             $status = 201;
         } catch (\Exception $e) {
             $this->loggingService->log("Publishing crate '$crateName' failed.");
-            $data['msg'] = $e->getMessage();
+            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: {$e->getMessage()}";
             $status = 500;
         }
         $this->loggingService->log($data['msg']);

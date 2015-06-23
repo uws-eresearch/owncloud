@@ -85,7 +85,7 @@ class PublishController extends Controller {
         $data = array();
         try {
             $this->loggingService->log("Publishing crate $crateName (".basename($package).")..");
-            $metadata['destination'] = $this->publishingService->publishCrate($package, $endpoint, $collection);
+            $metadata['location'] = $this->publishingService->publishCrate($package, $endpoint, $collection);
             $this->alertingService->alert($metadata);
             $data['msg'] = "Crate '$crateName' successfully published to $collection";
             $this->loggingService->logPublishedDetails($package, $crateName);

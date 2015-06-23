@@ -1,6 +1,7 @@
 <crate>
 <name><?php p($_['crate_name']) ?></name>
 <date><?php p($_['created_date'])?></date>
+<locaation>file://<?php p($_['location'])?></locaation>
 <description><?php p($_['description'])?></description>
   <?php if($_['creators']){?>
     <creators>

@@ -5,24 +5,27 @@ namespace OCA\crate_it\Service;
 
 class LoggingService {
     
-    /**
-     * @var CrateManager
-     */
     private $crateManager;
-    
     private $logfile;
     
-    public function __construct($api, $crateManager) {
+    public function __construct($crateManager) {
         $this->crateManager = $crateManager;
-        $userId = $api->getUserId();
-        $user_dir = $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
-        $this->logfile = $user_dir.'/publish.log';
+        // TODO: Refactor this into a utility module
+        $userId = \OCP\User::getUser();
+        $baseDir = \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data/');
+        $userDir = $baseDir.'/'.$userId;
+        $this->logfile = $userDir.'/publish.log';
     }
     
     public function log($text) {
        file_put_contents($this->logfile, $this->timestamp().$text."\n", FILE_APPEND);
     }
-    
+
+    // Used for testing
+    public function setLog($logfile) {
+        $this->logfile = $logfile;
+    }
+
     public function getLog() {
         $contents = file_get_contents($this->logfile);
         if (!$contents) {
@@ -65,11 +68,12 @@ class LoggingService {
         $this->log("\n".$sha_content);
         $this->log("----end file-----");
     }   
-    
+
+    // TODO: refactor to a util class so other classes can use this method
+    // e.g. folderpublisher
     private function timestamp() {
         date_default_timezone_set('Australia/Sydney');  
         $format="[Y-m-d H:i:s P] ";
-        //$offset=timezone_offset_get(new \DateTimeZone('Australia/Sydney'), new \DateTime());    
         $timestamp = date($format);  
         return $timestamp;
     }

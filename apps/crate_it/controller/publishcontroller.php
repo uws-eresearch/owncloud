@@ -2,46 +2,49 @@
 
 namespace OCA\crate_it\Controller;
 
-use \OCA\crate_it\lib\SwordConnector;
-use \OCA\AppFramework\Controller\Controller;
-use \OCA\AppFramework\Http\JSONResponse;
-use \OCA\AppFramework\Http;
+use \OCA\crate_it\lib\SwordPublisher;
+use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\JSONResponse;
+use \OCP\AppFramework\Http;
 
 class PublishController extends Controller {
 
-    private $publisher;
+    private $publishingService;
+    private $alertingService;
     private $crateManager;
     private $loggingService;
     private $mailer;
 
-    public function __construct($api, $request, $crateManager, $setupService, $publisher, $loggingService, $mailer) {
-        parent::__construct($api, $request);
+    public function __construct($appName, $request, $crateManager, $setupService, $publishingService, $alertingService, $loggingService, $mailer) {
+        parent::__construct($appName, $request);
         $this->crateManager = $crateManager;
-        $this->publisher = $publisher;
-        $params = $setupService->getParams();
-        $endpoints = $params['publish endpoints']['sword'];
-        \OCP\Util::writeLog('crate_it', "PublishController::construct() - Publish enpoints: $endpoints", \OCP\Util::DEBUG);
-        $publisher->setEndpoints($params['publish endpoints']['sword']);
+        $this->publishingService = $publishingService;
+        $this->alertingService = $alertingService;
         $this->loggingService = $loggingService;
         $this->mailer = $mailer;
+        $params = $setupService->getParams();
+        // TODO: Some duplication here with SetupService methods, try to refactor out
+        $this->publishingService->registerPublishers($params['publish endpoints']);
+        $this->alertingService->registerAlerters($params['alerts']);
+
     }
 
     public function getCollections() {
       \OCP\Util::writeLog('crate_it', "PublishController::getCollections()", \OCP\Util::DEBUG);
-      return $this->publisher->getCollections();
+      return $this->publishingService->getCollections();
     }
 
     /**
      * Email crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function emailReceipt() {
         $data = array();
         if(!empty($_SESSION['last_published_status'])) {
             $to = $this->params('address');
+            // TODO: This should be configurable
             $from = 'no-reply@cr8it.app';
             $subject = 'Cr8it Publish Status Receipt';
             try {
@@ -67,8 +70,7 @@ class PublishController extends Controller {
      * Publish crate
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function publishCrate() {
         \OCP\Util::writeLog('crate_it', "PublishController::publishCrate()", \OCP\Util::DEBUG);
@@ -78,30 +80,25 @@ class PublishController extends Controller {
         $this->loggingService->log("Attempting to publish crate $crateName to collection: $collection");
         $this->loggingService->logManifest($crateName);
         $package = $this->crateManager->packageCrate($crateName);
-        $zipname = basename($package);
-        $this->loggingService->log("Zipped content into '$zipname'");
+        $this->loggingService->log("Zipped content into '".basename($package)."'");
+        $metadata = $this->crateManager->createMetadata($crateName);
         $data = array();
         try {
-            $this->loggingService->log("Publishing crate $crateName ($zipname)..");
-            $response = $this->publisher->publishCrate($package, $endpoint, $collection);
-            $status = $response->sac_status;
-            if($status == 201) {                
-                $data['msg'] = "Crate '$crateName' successfully published to $collection";  
-                $this->loggingService->logPublishedDetails($package, $crateName);             
-            } else {
-                $this->loggingService->log("Publishing crate '$crateName' failed.");
-                $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: $response->sac_statusmessage ($status)";
-                $this->loggingService->log($data['msg']);
-            }
+            $this->loggingService->log("Publishing crate $crateName (".basename($package).")..");
+            $metadata['location'] = $this->publishingService->publishCrate($package, $endpoint, $collection);
+            $this->alertingService->alert($metadata);
+            $data['msg'] = "Crate '$crateName' successfully published to $collection";
+            $this->loggingService->logPublishedDetails($package, $crateName);
+            $status = 201;
         } catch (\Exception $e) {
-            $this->loggingService->log("Publishing crate '$crateName' failed.");            
+            $this->loggingService->log("Publishing crate '$crateName' failed.");
+            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: {$e->getMessage()}";
             $status = 500;
-            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: ".$e->getMessage();
-            $this->loggingService->log($data['msg']);
         }
+        $this->loggingService->log($data['msg']);
         $_SESSION['last_published_status'] = $data['msg'];
-
         return new JSONResponse($data, $status);
     }
+
 
 }

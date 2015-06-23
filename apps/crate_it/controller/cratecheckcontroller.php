@@ -1,23 +1,19 @@
 <?php
 
 namespace OCA\crate_it\Controller;
-use \OCA\AppFramework\Controller\Controller;
-use \OCA\AppFramework\Http\JSONResponse;
+use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\JSONResponse;
 
+
+// TODO: Remove this class and move checkCrate method to CrateController
 class CrateCheckController extends Controller {
-    /**
-     * @var $crateService
-     */
-    private $crateService;
-    
-    /**
-     * @var $loggingService
-     */
+
+    private $crateManager;
     private $loggingService;
     
-    public function __construct($api, $request, $crateService, $loggingService) {
-        parent::__construct($api, $request);
-        $this->crateService = $crateService;
+    public function __construct($appName, $request, $crateManager, $loggingService) {
+        parent::__construct($appName, $request);
+        $this->crateManager = $crateManager;
         $this->loggingService = $loggingService;
     }
     
@@ -25,22 +21,19 @@ class CrateCheckController extends Controller {
      * Check crate 
      *
      * @Ajax
-     * @IsAdminExemption
-     * @IsSubAdminExemption
+     * @NoAdminRequired
      */
     public function checkCrate() {
         \OCP\Util::writeLog('crate_it', "CrateController::checkCrate()", \OCP\Util::DEBUG);
         try {
             $selected_crate = $_SESSION['selected_crate'];
             $this->loggingService->log("Beginning Consistency Check for crate '$selected_crate'..");
-            $result = $this->crateService->checkCrate($selected_crate);
+            $result = $this->crateManager->checkCrate($selected_crate);
             if (empty($result)) {
                 $msg = 'All items are valid.';
-            }
-            else if (sizeof($result) === 1) {
+            } else if (sizeof($result) === 1) {
                 $msg = 'The following item no longer exists:';
-            }
-            else {
+            } else {
                 $msg = 'The following items no longer exist:';
             }
             $this->loggingService->log("Consistency Check Result - $msg");
@@ -61,7 +54,7 @@ class CrateCheckController extends Controller {
             $this->loggingService->log("Error ($ecode) during Consistency Check");
             $this->loggingService->log($msg);            
             return new JSONResponse (
-                array ($msg, 'error' => $e),
+                array($msg, 'error' => $e),
                 $ecode
             );
         }

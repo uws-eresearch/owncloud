@@ -13,7 +13,7 @@
           <p>Cr8it has been developed through a collaboration between the University of Newcastle, the University of Western Sydney, and Intersect Australia Ltd.</p>
         </section>
         <section>
-          Version {{ version }}.
+          Version <?php p($_['version']) ?>.
         </section>
       </div>
 

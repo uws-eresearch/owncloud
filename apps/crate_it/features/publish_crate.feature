@@ -38,7 +38,6 @@ Feature: Publish crates to an endpoint
       When I click on "publish"
       And I press "Publish" on the popup dialog
       Then I should see "default_crate successfully published to test collection"
-      And I wait for 10 seconds
 
     #CRATEIT-59
     Scenario: A user can cancel publishing a crate

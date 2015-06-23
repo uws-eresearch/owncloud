@@ -43,35 +43,33 @@ class Crate extends BagIt {
     $this->update();
   }
   
-  // TODO: Convenience function for development, remove
-  //       in production release?
-  public function getReadme($twig) {
-    $this->createReadme($twig);
+  public function getReadme() {
     $readmePath = $this->getDataDirectory()."/README.html";
     return file_get_contents($readmePath);
   }
 
-  // TODO: Attempt to get own reference to TWIG rather than have it
-  //       passed as a parameter
-  // TODO: Since the file is created directly, it bypasses the manifest,
-  //       is that what we want?
-  private function createReadme($twig) {
-    $manifest = $this->getManifest();
-    $manifest['crate_name'] = $this->crateName;
-    $manifest['files'] = $this->flatList();
-    $manifest['creators'] = $this->isCreatorIdUrl($manifest['creators']);
-    date_default_timezone_set('Australia/Sydney');    
-    $manifest['created_date'] = date("Y-m-d H:i:s");   
-    $manifest['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
-    $vfs = &$manifest['vfs'][0];
-    $manifest['filetree'] = $this->buildFileTreeFromRoot($vfs);
-    $git_res = $this->getVersion();
-    $release = $git_res[0];
-    $commit = $git_res[2];
-    $manifest['version'] = "Release $release at commit $commit.";
-    $htmlStr = $twig->render('readme.php', $manifest);
+  private function createReadme() {
+    $metadata = $this->createMetadata();
+    $html = Util::renderTemplate('readme', $metadata);
     $readmePath = $this->getDataDirectory()."/README.html";
-    file_put_contents($readmePath, $htmlStr);
+    file_put_contents($readmePath, $html);
+  }
+
+  public function createMetadata() {
+    $metadata = $this->getManifest();
+    $metadata['crate_name'] = $this->crateName;
+    $metadata['files'] = $this->flatList();
+    $metadata['submitter'] = array('name' => \OCP\User::getUser());
+    $metadata['creators'] = $this->isCreatorIdUrl($metadata['creators']);
+    // TODO: Update to use utility method
+    date_default_timezone_set('Australia/Sydney');
+    $metadata['created_date'] = date("Y-m-d H:i:s");   
+    $metadata['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
+    $vfs = &$metadata['vfs'][0];
+    $metadata['filetree'] = $this->buildFileTreeFromRoot($vfs);
+    $version = \OCP\App::getAppVersion('crate_it');
+    $metadata['version'] = "Version $version.";
+    return $metadata;
   }
 
   // NOTE: workaround for non-functioning twig operators 'starts with' and 'matches'
@@ -88,11 +86,6 @@ class Crate extends BagIt {
     }
     return $creators;
   }
-
-  private function getVersion() {
-    exec('git --git-dir=/home/devel/owncloud/.git --work-tree=/home/devel/owncloud describe --tags', $git);
-    return explode('-', $git[0]);
-  }
   
   private function buildFileTreeFromRoot($rootnode) {
       $tree = '';
@@ -106,8 +99,7 @@ class Crate extends BagIt {
   }
   
   private function buildFileTreeHtml($node, $tree='') {           
-    if ($node['id'] == 'folder')
-    {
+    if ($node['id'] == 'folder') {
         $text = $node['name'];
         $tree = $tree."<li>$text</li><ul>";
         $children = $node['children'];     
@@ -115,21 +107,18 @@ class Crate extends BagIt {
             $tree = $this->buildFileTreeHtml($child, $tree);
         }
         $tree = $tree.'</ul>';
-    }
-    else {
+    } else {
         // substitute ' ' with '_', since the downloaded files don't have
         // ' ' in the name
         $text = str_replace(' ', '_', $node['name']);
         // change the filename part of the path to the 'underscored' version
         $filename = str_replace($node['name'], $text, $node['filename']);
         $rootfolder = $this->getRootFolderName();
-        if ($node['valid'] == 'true')
-        {
+        if ($node['valid'] == 'true') {
             $tree = $tree."<li><a href='./$rootfolder/$filename'>$text</a></li>";  
         } else {
             $tree = $tree."<li>$text (invalid)</li>";  
         }
-        
     }
     return $tree;
   }
@@ -233,9 +222,9 @@ class Crate extends BagIt {
       return $res;
   }
   
-  public function packageCrate($twig) {
+  public function packageCrate() {
     $clone = $this->createTempClone();
-    $clone->createReadme($twig);
+    $clone->createReadme();
     $clone->storeFiles();
     $tmpFolder = \OC_Helper::tmpFolder();
     $packagePath = $tmpFolder.'/'.$this->crateName;
@@ -368,11 +357,11 @@ class Crate extends BagIt {
     return $vfsEntry;
   }
   
-  public function generateEPUB($twig) {
+  public function generateEPUB() {
     \OCP\Util::writeLog('crate_it', "Crate::generateEPUB()", \OCP\Util::DEBUG);
     $files = $this->getPreviewPaths();
     $params = array('files' => $files);
-    $epub = $twig->render('epub.php', $params);
+    $epub = Util::renderTemplate('epub', $params);
     $tmpFolder = \OC_Helper::tmpFolder();
     $htmlPath = $tmpFolder.'/'.$this->crateName.'.html';
     file_put_contents($htmlPath, $epub);

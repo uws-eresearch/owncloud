@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\AppFramework\Http;
+namespace OCP\AppFramework\Http;
 
 class TextResponse {
   

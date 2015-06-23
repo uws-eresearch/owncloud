@@ -2,7 +2,7 @@
 
 namespace OCA\crate_it\lib;
 
-use \OCA\AppFramework\Http\DownloadResponse;
+use \OCP\AppFramework\Http\DownloadResponse;
 /**
  * Prompts the user to download the a textfile.
  */

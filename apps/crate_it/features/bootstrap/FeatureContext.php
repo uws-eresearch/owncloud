@@ -25,9 +25,10 @@ require_once 'vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
 class FeatureContext extends MinkContext
 {
 
-    private static $file_root = '/var/www/html/owncloud/data/test/files/';
-    private static $crate_root = '/var/www/html/owncloud/data/test/crates/';
-    private static $ssh_command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 ';
+
+    private static $FILE_ROOT = '/var/lib/owncloud/data/test/files/';
+    private static $CRATE_ROOT = '/var/lib/owncloud/data/test/crates/';
+    private static $SSH_COMMAND = 'vagrant ssh -c ';
 
     /**
      * Initializes context.
@@ -49,6 +50,7 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -116,7 +118,7 @@ class FeatureContext extends MinkContext
      * @Given /^I have folders? "([^"]*)"$/
      */
     public function iHaveFolders($folders) {
-        $command = 'mkdir -m 755 -p '.self::$file_root.$folders;
+        $command = 'mkdir -m 755 -p '.self::$FILE_ROOT.$folders;
         $this->exec_sh_command($command);
     }
 
@@ -126,7 +128,7 @@ class FeatureContext extends MinkContext
     public function iHaveFileWithin($file, $folder)
     {
         $folder = (!empty($folder) ? $folder.'/' : $folder);
-        $command = 'touch '.self::$file_root.$folder.$file;
+        $command = 'touch '.self::$FILE_ROOT.$folder.$file;
         $this->exec_sh_command($command);
     }
 
@@ -160,17 +162,14 @@ class FeatureContext extends MinkContext
     public function iAddToTheCurrentCrate($item) {
         $this->spin(function($context) use ($item) {
             $page = $context->getSession()->getPage();
-            // $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//label')->click();
-            $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//label');
+            $el = $page->find('xpath', "//span[starts-with(@class,'nametext')][.='$item']");
+            $el->mouseOver();
+            $el = $page->find('xpath', "//span[starts-with(@class,'nametext')][.='$item']/following-sibling::*[starts-with(@class,'fileactions')]/a[@data-action='Add to crate']");
             if (!$el->isVisible()) {
                 throw new Exception('The element should be visible');
             }
             $el->click();
-            $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//a[@data-action="Add to crate"]');
-            if (!$el->isVisible()) {
-                throw new Exception('The element should be visible');
-            }
-            $el->click();
+            $context->waitForPageToLoad();
             return true;	
         });
     }
@@ -234,20 +233,18 @@ class FeatureContext extends MinkContext
     /**
      * @Then /^the default crate should contain "([^"]*)" within the root folder, in that order$/
      */
-    public function theDefaultCrateShouldContainWithinTheRootFolderInThatOrder($arg1)
-    {
+    public function theDefaultCrateShouldContainWithinTheRootFolderInThatOrder($items) {
         $page = $this->getSession()->getPage();
-    	$web_assert = new WebAssert($this->getSession());
+    	// $web_assert = new WebAssert($this->getSession());
 		$nodes = $page->findAll('xpath', '//div[@id="files"]/ul/li/ul/li/div/span');
-        $node_order = array();
+        $actualOrder = array();
         foreach ($nodes as $node) {
-            $node_order[] = $node->getText();
+            $actualOrder[] = $node->getText();
         }
-		$expected_order = explode(',',$arg1);
-		$difference = array_diff($node_order, $expected_order);
-		if ( count($difference) > 0)
-		{
-			throw new Exception('The node order is "' .serialize($node_order). '" instead of "' .serialize($expected_order). '"');
+		$expectedOrder = explode(',',$items);
+		$difference = array_diff($expectedOrder, $actualOrder);
+		if (count($difference) > 0) {
+			throw new Exception('The node order is "' .serialize($actualOrder). '" instead of "' .serialize($expectedOrder). '"');
 		}
     }
 	
@@ -271,7 +268,7 @@ class FeatureContext extends MinkContext
      * @Given /^I have no files$/
      */
     public function iHaveNoFiles() {
-        $command = "rm -rf /var/www/html/owncloud/data/test/files/*";
+        $command = 'rm -rf '.self::$FILE_ROOT.'*';
         $this->exec_sh_command($command);
     }
 
@@ -435,12 +432,12 @@ class FeatureContext extends MinkContext
     public function iHaveCrate($crateName) {
         // $mainfest = '{"description":"","creators":[],"activities":[],"vfs":[{"id":"rootfolder","name":"'.$crateName.'","folder":true,"children":[]}]}';
         $mainfest = '"{\"description\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
-        $data_path = self::$crate_root.$crateName.'/data';
+        $data_path = self::$CRATE_ROOT.$crateName.'/data';
         $command = "mkdir -m 755 -p $data_path\\";
         $this->exec_sh_command($command);
         $command = "echo $mainfest | sudo tee $data_path/manifest.json";
         $this->exec_sh_command($command);
-        $command = 'chown -R apache:apache '.self::$crate_root;
+        $command = 'chown -R apache:apache '.self::$CRATE_ROOT;
         $this->exec_sh_command($command);
     }
 
@@ -448,7 +445,7 @@ class FeatureContext extends MinkContext
      * @Given /^I have no crates$/
      */
     public function iHaveNoCrates() {
-        $command = 'rm -rf '.self::$crate_root;
+        $command = 'rm -rf '.self::$CRATE_ROOT;
         $this->exec_sh_command($command);
     }
 
@@ -616,17 +613,13 @@ class FeatureContext extends MinkContext
     /**
      * @Then /^I fill in "([^"]*)" with a long string of (\d+) characters$/
      */
-    public function iFillInWithALongStringOfCharacters($arg1, $arg2)
-    {
-        $value = str_repeat('a', $arg2);
-		if (strlen($value) != $arg2)
-		{
+    public function iFillInWithALongStringOfCharacters($field, $stringLength) {
+        $value = str_repeat('a', $stringLength);
+		if (strlen($value) != $stringLength) {
 			throw new Exception('Repeat characters fail');
 		}
-		$page = $this->getSession()->getPage();
-		$xpath = '//*[@id="'.$arg1.'"]';
-        $desc = $page->find('xpath', $xpath);
-		$desc->setValue($value);
+        $script = "$('#$field').val('$value').keyup();";
+        $this->getSession()->executeScript($script);
     }
 	
     /**
@@ -1187,18 +1180,16 @@ JS;
     /**
      * @Given /^I remove "([^"]*)" from the file system$/
      */
-    public function iRemoveFromTheFileSystem($arg1)
-    {
-        $command = "rm -rf /var/www/html/owncloud/data/test/files/$arg1";
+    public function iRemoveFromTheFileSystem($item) {
+        $command = 'rm -rf '.self::$FILE_ROOT.$item;
         $this->exec_sh_command($command);
     }
 
     /**
      * @Given /^I rename "([^"]*)" to "([^"]*)" in the file system$/
      */
-    public function iRenameToInTheFileSystem($arg1, $arg2)
-    {
-        $command = "mv /var/www/html/owncloud/data/test/files/$arg1 /var/www/html/owncloud/data/test/files/$arg2";
+    public function iRenameToInTheFileSystem($oldName, $newName) {
+        $command = 'mv '.self::$FILE_ROOT.$oldName.' '.self::$FILE_ROOT.$newName;
         $this->exec_sh_command($command);
     }
 
@@ -1368,7 +1359,7 @@ JS;
 
     private function exec_sh_command($command) {
         if(getenv('TEST_ENV') == 'vagrant') {
-            $command = self::$ssh_command."'$command'";
+            $command = self::$SSH_COMMAND."'$command'";
         } else {
             $command = 'sudo '.$command;
         }
@@ -1385,7 +1376,7 @@ JS;
         {
             $filename = $row['filename'];
             $size = $row['size_in_bytes'];
-            $filepath = self::$file_root.$filename;
+            $filepath = self::$FILE_ROOT.$filename;
             $command = "dd if=/dev/zero of=$filepath bs=$size count=1";
             $this->exec_sh_command($command);
         }
@@ -1394,24 +1385,22 @@ JS;
     /**
      * @Then /^the selected crate should have size "([^"]*)"$/
      */
-    public function theSelectedCrateShouldHaveSize($arg1)
+    public function theSelectedCrateShouldHaveSize($expected)
     {
         $page = $this->getSession()->getPage();
         $xpath = '//*[@id="crate_size_human"]';       
         $el = $page->find('xpath', $xpath);
-        $size = $el->getHtml();
-        assertEquals($size, $arg1);
+        $actual = $el->getHtml();
+        assertEquals($expected, $actual);
     }
     
     /**
      * @Then /^I should see green ticks next to these items$/
      */
-    public function iShouldSeeGreenTicksNextToTheseItems(TableNode $table)
-    {
+    public function iShouldSeeGreenTicksNextToTheseItems(TableNode $table) {
         $rows = $table->getHash();
         $page = $this->getSession()->getPage();
-        foreach ($rows as $row)
-        {
+        foreach ($rows as $row) {
             $filename = $row['filename'];
             $web_assert = new WebAssert($this->getSession());
             $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-check"]', $page);

@@ -2,8 +2,6 @@
 
 namespace OCA\crate_it\Service;
 
-use OCA\crate_it\lib\Crate;
-
 class SetupService {
     
     private $crateManager;

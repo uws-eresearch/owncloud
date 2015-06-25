@@ -45,6 +45,10 @@
           <table id="publish-consistency-table" class="table table-striped"></table>
         </div>
       </div>
+      <div class="modal-body">
+          NOTE: Publishing a large crate my take some time, please be patient while Cr8it works in
+          the background. You can elect to receive email notifications about your crate's status
+          once you click "Publish".</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary">Publish</button>

@@ -3,6 +3,8 @@
 namespace OCA\crate_it\Service;
 
 
+use OCA\crate_it\lib\Util;
+
 class LoggingService {
     
     private $crateManager;
@@ -10,11 +12,8 @@ class LoggingService {
     
     public function __construct($crateManager) {
         $this->crateManager = $crateManager;
-        // TODO: Refactor this into a utility module
-        $userId = \OCP\User::getUser();
-        $baseDir = \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data/');
-        $userDir = $baseDir.'/'.$userId;
-        $this->logfile = $userDir.'/publish.log';
+        $userPath = Util::getUserPath();
+        $this->logfile = $userPath.'/publish.log';
     }
     
     public function log($text) {

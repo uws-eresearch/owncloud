@@ -2,6 +2,8 @@
 
 namespace OCA\crate_it\Service;
 
+use OCA\crate_it\lib\Util;
+
 class SetupService {
     
     private $crateManager;
@@ -60,7 +62,7 @@ class SetupService {
 
     private function readConfig() {
         $config = NULL;
-        $configFile = \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data').'/cr8it_config.json';
+        $configFile = Util::joinPaths(Util::getDataPath(),'cr8it_config.json');
         // TODO: Throw a better error when there is invalid json or the config is not found
         if (file_exists($configFile)) {
           $config = json_decode(file_get_contents($configFile), true); // convert it to an array.

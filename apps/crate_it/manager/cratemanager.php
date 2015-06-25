@@ -3,6 +3,7 @@
 namespace OCA\crate_it\Manager;
 
 use OCA\crate_it\lib\Crate;
+use OCA\crate_it\lib\Util;
 
 class CrateManager {
     
@@ -94,10 +95,7 @@ class CrateManager {
 
     private function getCrateRoot() {        
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot()", \OCP\Util::DEBUG);
-        $userId = \OCP\User::getUser();
-        $baseDir = \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data/');
-        $userDir = $baseDir.'/'.$userId;
-        return $userDir.'/crates';
+        return Util::joinPaths(Util::getUserPath(), 'crates');
     }
 
     public function getManifest($crateName) {

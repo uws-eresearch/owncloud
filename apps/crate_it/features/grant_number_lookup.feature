@@ -65,6 +65,8 @@ Feature: Search, add and remove grant number
    Scenario: Server returns no results should trigger a notification
      Given I fill in "keyword_activity" with "123"
      When I click the search grant number button and get no results
+     # TODO: Add another spin function
+     And I wait for 8 seconds
      Then I should see "0 new results returned"
      
    #CRATEIT-162

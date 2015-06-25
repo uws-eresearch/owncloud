@@ -887,9 +887,9 @@ JS;
             $el->click();
             return true;
         });
-        sleep(2);
         // clear mockjax
         $this->getSession()->executeScript('$.mockjaxClear();');
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -1452,7 +1452,6 @@ JS;
      * @Given /^the browser is maximised$/
      */
     public function theBrowserIsMaximised() {
-        // $this->waitForPageToLoad();
         $width = $this->getSession()->evaluateScript('return screen.width;');
         $height = $this->getSession()->evaluateScript('return screen.height;');
         $this->getSession()->getDriver()->resizeWindow($width, $height, 'current');

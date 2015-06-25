@@ -14,10 +14,10 @@ class Crate extends BagIt {
 
     public function __construct($crateRoot, $crateName, $description = '') {
         \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.")", \OCP\Util::DEBUG);
-        parent::__construct($this->getAbsolutePath($crateRoot, $crateName), true, false, false, null);
         $this->crateName = $crateName;
         $this->crateRoot = $crateRoot;
-        $this->manifestPath = $this->getDataDirectory().'/manifest.json';
+        parent::__construct($this->getAbsolutePath($crateName), true, false, false, null);
+        $this->manifestPath = Util::joinPaths($this->getDataDirectory(), 'manifest.json');
         if(!file_exists($this->manifestPath)) {
             $this->createManifest($description);
         }
@@ -63,8 +63,8 @@ class Crate extends BagIt {
         $metadata['creators'] = $this->isCreatorIdUrl($metadata['creators']);
         // TODO: Update to use utility method
         date_default_timezone_set('Australia/Sydney');
-        $metadata['created_date'] = date("Y-m-d H:i:s");
-        $metadata['created_date_formatted'] = date("F jS, Y - H:i:s (T)");
+        $metadata['created_date'] = Util::getTimestamp("Y-m-d H:i:s");
+        $metadata['created_date_formatted'] = Util::getTimestamp("F jS, Y - H:i:s (T)");
         $vfs = &$metadata['vfs'][0];
         $metadata['filetree'] = $this->buildFileTreeFromRoot($vfs);
         $metadata['version'] = "Version ".\OCP\App::getAppVersion('crate_it');
@@ -189,8 +189,8 @@ class Crate extends BagIt {
 
     public function renameCrate($newCrateName) {
         \OCP\Util::writeLog('crate_it', "renameCrate($this->crateName, $newCrateName)", \OCP\Util::DEBUG);
-        $oldCrateName = $this->getAbsolutePath($this->crateRoot, $this->crateName);
-        $newCrateName = $this->getAbsolutePath($this->crateRoot, $newCrateName);
+        $oldCrateName = $this->getAbsolutePath($this->crateName);
+        $newCrateName = $this->getAbsolutePath($newCrateName);
         $success = rename($oldCrateName, $newCrateName);
         if(!$success) {
             throw new \Exception("Error renaming crate");
@@ -236,7 +236,7 @@ class Crate extends BagIt {
         $clone->createReadme();
         $clone->storeFiles();
         $tmpFolder = \OC_Helper::tmpFolder();
-        $packagePath = $tmpFolder.'/'.$this->crateName;
+        $packagePath = Util::joinPaths($tmpFolder, $this->crateName);
         $clone->package($packagePath, 'zip');
         return $packagePath.'.zip';
     }
@@ -391,7 +391,7 @@ class Crate extends BagIt {
         foreach($files as $file) {
             $path = Filesystem::getLocalFile($file['filename']);
             $pathInfo = pathinfo($path);
-            $previewPath = $pathInfo['dirname'].'/_html/'.$pathInfo['basename'].'/index.html';
+            $previewPath = Util::joinPaths($pathInfo['dirname'],'_html', $pathInfo['basename'], 'index.html');
             if(file_exists($previewPath)) {
                 $file['preview'] = $previewPath;
                 array_push($result, $file);
@@ -406,8 +406,8 @@ class Crate extends BagIt {
         return \OC\Files\Filesystem::getLocalFile($path);
     }
 
-    private function getAbsolutePath($root, $basename) {
-        return $root.'/'.$basename;
+    private function getAbsolutePath($basename) {
+        return Util::joinPaths($this->crateRoot, $basename);
     }
 
     public function getManifestFileContent() {

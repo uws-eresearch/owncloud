@@ -1,7 +1,7 @@
 <crate>
     <name><?php p($_['crate_name']) ?></name>
     <date><?php p($_['created_date']) ?></date>
-    <location><?php p($_['location']) ?></location>
+    <location><?php print_unescaped($_['location']) ?></location>
     <description><?php p($_['description']) ?></description>
     <?php if ($_['creators']) { ?>
         <creators>

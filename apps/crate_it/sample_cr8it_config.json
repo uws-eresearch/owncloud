@@ -39,5 +39,6 @@
       "path": "/var/lib/owncloud/data/alerts/"
     }]
   },
-  "help_url": "http://htmlpreview.github.io/?https://github.com/IntersectAustralia/cr8it_doc/master/online-help.html"
+  "help_url": "http://htmlpreview.github.io/?https://github.com/IntersectAustralia/cr8it_doc/master/online-help.html",
+  "crate path": "/var/lib/owncloud/data/"
 }

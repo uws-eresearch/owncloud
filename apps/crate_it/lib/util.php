@@ -22,14 +22,23 @@ class Util {
         return $timestamp;
     }
 
+    public static function getConfig() {
+        $configFile = Util::joinPaths(Util::getDataPath(),'cr8it_config.json');
+        // TODO: Throw a better error when there is invalid json or the config is not found
+        if (file_exists($configFile)) {
+            $config = json_decode(file_get_contents($configFile), true);
+        }
+        return $config;
+    }
+
     public static function getDataPath() {
         return \OCP\Config::getSystemValue('datadirectory', \OC::$SERVERROOT.'/data');
     }
 
     public static function getUserPath() {
         $userId = \OCP\User::getUser();
-        $dataPath = Util::getDataPath();
-        return Util::joinPaths($dataPath, $userId);
+        $config = Util::getConfig();
+        return Util::joinPaths($config['crate path'], $userId);
     }
 
     public static function joinPaths() {

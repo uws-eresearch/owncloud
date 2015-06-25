@@ -52,7 +52,7 @@ class SetupService {
 
 
     private function loadConfigParams() {
-        $config = $this->readConfig();
+        $config = Util::getConfig();
         // TODO: No error handling if config is null
         foreach($config as $key => $value) {
             \OCP\Util::writeLog('crate_it', "SetupService::loadConfigParams() - loading $key:".json_encode($value), \OCP\Util::DEBUG);
@@ -60,15 +60,6 @@ class SetupService {
         }
     }
 
-    private function readConfig() {
-        $config = NULL;
-        $configFile = Util::joinPaths(Util::getDataPath(),'cr8it_config.json');
-        // TODO: Throw a better error when there is invalid json or the config is not found
-        if (file_exists($configFile)) {
-          $config = json_decode(file_get_contents($configFile), true); // convert it to an array.
-        }
-        return $config;
-    }
 
 }
 

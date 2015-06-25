@@ -30,7 +30,7 @@ class FolderPublisher implements Publisher {
         $destination = $collection.$basename."_$timestamp.zip";
         \OCP\Util::writeLog('crate_it', "Publishing to $destination", \OCP\Util::DEBUG);
         rename($package, $destination);
-        return "{$this->endpoint['url prefix']}$destination";
+        return $this->endpoint['url prefix'].$collection.rawurlencode($basename)."_$timestamp.zip";
     }
 
 }

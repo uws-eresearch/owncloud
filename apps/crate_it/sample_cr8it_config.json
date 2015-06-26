@@ -1,6 +1,7 @@
 {
   "max_sword_mb": 1,
   "max_zip_mb": 2000,
+  "publish_warning_mb": 2000,
   "description_length": 6000,
   "previews": "off",
   "fascinator": {

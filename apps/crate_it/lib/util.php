@@ -52,6 +52,11 @@ class Util {
         return preg_replace('#/+#', '/', join('/', $paths));
     }
 
+    public static function startsWith($haystack, $needle) {
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
+    }
+
     public static function prettyPrint($json) {
         $result = '';
         $level = 0;

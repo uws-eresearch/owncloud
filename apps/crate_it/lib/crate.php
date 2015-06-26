@@ -5,6 +5,7 @@ namespace OCA\crate_it\lib;
 require '3rdparty/BagIt/bagit.php';
 use BagIt;
 use OC\Files\Filesystem;
+//use OCP\Util;
 
 class Crate extends BagIt {
 
@@ -339,9 +340,12 @@ class Crate extends BagIt {
             $vfsContents = &$vfsEntry['children'];
             $paths = \OC\Files\Filesystem::getDirectoryContent($folder);
             foreach($paths as $path) {
-                $relativePath = substr($path['path'], strlen('files/'));
-                if(!strncmp($folder, "Shared", 6)) {
-                    $relativePath = 'Shared/'.$relativePath;
+                $relativePath = $path['path'];
+                if(Util::startsWith($relativePath, 'files/')) {
+                    $relativePath = substr($path['path'], strlen('files/'));
+                    if(!strncmp($folder, "Shared", 6)) {
+                        $relativePath = 'Shared/'.$relativePath;
+                    }
                 }
                 $this->addPath($relativePath, $vfsContents);
             }
@@ -351,9 +355,7 @@ class Crate extends BagIt {
 
 
     private function addFileToCrate($file) {
-        \OCP\Util::writeLog('crate_it', "XX File: $file", \OCP\Util::DEBUG);
         $fullPath = $this->getFullPath($file);
-        \OCP\Util::writeLog('crate_it', "XX Fullpath: $fullPath", \OCP\Util::DEBUG);
         $id = md5($fullPath);
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $fullPath);

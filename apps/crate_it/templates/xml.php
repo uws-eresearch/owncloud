@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<my:my:RedboxCollection xmlns:my="http://schemas.microsoft.com/office/infopath/2003/myXSD/2011-09-26T07:17:47"
+<my:RedboxCollection xmlns:my="http://schemas.microsoft.com/office/infopath/2003/myXSD/2011-09-26T07:17:47"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xmlns:xd="http://schemas.microsoft.com/office/infopath/2003">
+<my:Type>dataset</my:Type>
+<my:WorkflowSource>Owncloud-Cr8it</my:WorkflowSource>
 <my:crate>
     <my:name><?php p($_['crate_name']) ?></my:name>
     <my:date><?php p($_['created_date']) ?></my:date>

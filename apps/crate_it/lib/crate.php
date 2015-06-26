@@ -351,7 +351,9 @@ class Crate extends BagIt {
 
 
     private function addFileToCrate($file) {
+        \OCP\Util::writeLog('crate_it', "XX File: $file", \OCP\Util::DEBUG);
         $fullPath = $this->getFullPath($file);
+        \OCP\Util::writeLog('crate_it', "XX Fullpath: $fullPath", \OCP\Util::DEBUG);
         $id = md5($fullPath);
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $fullPath);

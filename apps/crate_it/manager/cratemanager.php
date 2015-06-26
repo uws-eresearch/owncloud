@@ -196,18 +196,17 @@ class CrateManager {
     public function checkCrate($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
-        
         $files = $crate->getAllFilesAndFolders();     
-        $res = array();
+        $result = array();
         foreach ($files as $filepath) {
             \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - checking ".$filepath, \OCP\Util::DEBUG);
             $file_exist = file_exists($filepath); 
             if (!$file_exist) {
-                $res[basename($filepath)] = $file_exist; 
+                $result[basename($filepath)] = $file_exist;
             }
         }
         $this->updateCrateCheckIcons($crateName);
-        return $res;
+        return $result;
     }
     
     public function getManifestFileContent($crateName) {

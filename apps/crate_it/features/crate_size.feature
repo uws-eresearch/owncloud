@@ -14,6 +14,7 @@ Feature: Crate Size Update
     | file4.txt | 8192          |
     | file5.txt | 1048576       |
     And I'm logged in to ownCloud as "test"
+    And I go to the files page
 
     #CRATEIT-205
     Scenario: Crate size updates when adding and removing files

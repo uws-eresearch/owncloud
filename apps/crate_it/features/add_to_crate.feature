@@ -11,6 +11,7 @@ Feature: Add files and folders to a crate
     And I have file "\&" within the root folder
     And I have file "file2.txt" within "folder1/folder2"
     And I'm logged in to ownCloud as "test"
+    And I go to the files page
 
   #CRATEIT-46
   Scenario: A user can add a file to a crate

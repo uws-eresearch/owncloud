@@ -28,7 +28,7 @@
     sudo: yes
 
   - name: Install Owncloud
-    yum: name=owncloud-7.0.5-2.el6
+    yum: name=owncloud-7.0.7-1.el6
     sudo: yes
 
   - name: Allow host OS to access server and configure Owncloud
@@ -43,6 +43,7 @@
       path=/usr/share/owncloud
       owner=apache
       group=apache
+    sudo: yes
 
   - name: Install git
     yum: name=git
@@ -60,6 +61,7 @@
       owner=apache
       group=apache
       recurse=yes
+    sudo: yes
 
   - name: Overwrite Simple Sword Server with our own config
     copy: >
@@ -67,6 +69,7 @@
       dest=/usr/share/simple-sword-server/sss/sss.py
       owner=apache
       group=apache
+    sudo: yes
 
   - name: Install python libraries
     yum: name={{item}}
@@ -77,6 +80,7 @@
       - libxslt-devel
       - httpd-devel
       - mod_wsgi
+    sudo: yes
 
   - name: Install Simple Sword Server python dependencies
     command: pip install web.py lxml
@@ -88,6 +92,13 @@
       dest=/etc/httpd/conf.d/
       owner=apache
       group=apache
+    sudo: yes
+
+  - name: Install sample cr8it config
+    copy: >
+      dest=/var/lib/owncloud/data/cr8it_config.json
+      src=./apps/crate_it/sample_cr8it_config.json
+    sudo: yes
 
   - name: Restart Apache
     service: >

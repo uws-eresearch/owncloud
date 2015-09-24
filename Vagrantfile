@@ -74,10 +74,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # SHELL
 
   config.ssh.username = 'root'
-  #config.ssh.insert_key = 'true'
-  #config.ssh.password = 'vagrant'
+  config.ssh.insert_key = 'true'
+  config.ssh.password = 'vagrant'
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook.yml"
+    ansible.verbose = 'v'
   end
 end

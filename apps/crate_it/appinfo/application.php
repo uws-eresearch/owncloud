@@ -19,6 +19,7 @@ use \OCA\crate_it\Manager\ConfigManager;
 
 use \OCA\crate_it\lib\Mailer;
 use \OCA\crate_it\lib\ZipDownloadResponse;
+use \OCA\crate_it\lib\XSendFileDownloadResponse;
 
 class Application extends App {
     

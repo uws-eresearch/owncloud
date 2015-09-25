@@ -42,6 +42,10 @@ class Util {
         return Util::joinPaths($config['crate path'], $userId);
     }
 
+    public static function getTempPath() {
+        return Util::joinPaths(sys_get_temp_dir(), 'cr8it', 'crates');
+    }
+
     public static function joinPaths() {
         $paths = array();
         foreach(func_get_args() as $arg) {

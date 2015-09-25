@@ -2,6 +2,7 @@
 
 require_once 'mocks/MockController.php';
 require_once 'mocks/MockZipDownloadResponse.php';
+require_once 'mocks/MockXSendFileDownloadResponse.php';
 require_once 'mocks/MockTextResponse.php';
 require_once 'mocks/MockJSONResponse.php';
 require_once 'mocks/MockUtil.php';
@@ -18,6 +19,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TextResponse;
 use OCA\crate_it\lib\ZipDownloadResponse;
+use OCA\crate_it\lib\XSendFileDownloadResponse;
 
 class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
@@ -155,7 +157,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
   public function testPackageCrateSuccess() {
     $_SESSION['selected_crate'] = 'test';
     $this->crateManager->method('packageCrate')->willReturn('/tmp/test.zip');
-    $expected = new ZipDownloadResponse('/tmp/test.zip', 'test.zip');
+    $expected = new XSendFileDownloadResponse('/tmp/test.zip', 'test.zip');
     $actual = $this->crateController->packageCrate();
     $this->assertEquals($expected, $actual);
   }

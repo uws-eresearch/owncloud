@@ -232,11 +232,10 @@ class Crate extends BagIt {
         return $res;
     }
 
-    public function packageCrate() {
+    public function packageCrate($tmpFolder) {
         $clone = $this->createTempClone();
         $clone->createReadme();
         $clone->storeFiles();
-        $tmpFolder = \OC_Helper::tmpFolder();
         $packagePath = Util::joinPaths($tmpFolder, $this->crateName);
         $clone->package($packagePath, 'zip');
         return $packagePath.'.zip';

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'mocks/MockUtil.php';
+require_once 'mocks/MockConfig.php';
 require_once 'lib/crate.php';
 require_once 'lib/util.php';
 

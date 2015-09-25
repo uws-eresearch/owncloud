@@ -8,6 +8,7 @@ use \OCP\AppFramework\Http\TextResponse;
 use \OCP\AppFramework\Http;
 
 use OCA\crate_it\lib\ZipDownloadResponse;
+use OCA\crate_it\lib\XSendFileDownloadResponse;
 
 class CrateController extends Controller {
     
@@ -177,7 +178,7 @@ class CrateController extends Controller {
         try {
             $packagePath = $this->crateManager->packageCrate($_SESSION['selected_crate']);
             $filename = basename($packagePath);
-            $response = new ZipDownloadResponse($packagePath, $filename);
+            $response = new XSendFileDownloadResponse($packagePath, $filename);
         } catch(\Exception $e) {
             $message = 'Internal Server Error: '.$e->getMessage();
             \OCP\Util::writeLog('crate_it', $message, \OCP\Util::ERROR);

@@ -139,7 +139,11 @@ class CrateManager {
     public function packageCrate($crateName){
         $this->updateCrateCheckIcons($crateName);
         $crate = $this->getCrate($crateName);
-        return $crate->packageCrate();
+        $tempdir = Util::joinPaths(Util::getTempPath(), \OCP\User::getUser());
+        if (!file_exists($tempdir)) {
+            mkdir($tempdir, 0755, true);
+        }
+        return $crate->packageCrate($tempdir);
     }
 
     public function generateEPUB($crateName){

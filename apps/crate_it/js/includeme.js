@@ -286,6 +286,7 @@ function updateCrateSize() {
     var maxSwordMB = templateVars['max_sword_mb'];
     var maxZipMB = templateVars['max_zip_mb'];
     var publishWarningMB = templateVars['publish_warning_mb'];
+    var swordEnabled = templateVars['sword_enabled'].trim() == 'true';
     $.ajax({
         url: 'crate/get_crate_size',
         type: 'get',
@@ -304,7 +305,7 @@ function updateCrateSize() {
             // don't seem to prevent large crates from being published.
             // There should also be a check to see if sword is actually enabled in
             // the cr8it_config.json, and perhaps allow other publishers to set limits too
-            if (maxSwordMB > 0 && crate_size_mb > maxSwordMB) {
+            if (swordEnabled && maxSwordMB > 0 && crate_size_mb > maxSwordMB) {
                 warnings.push('exceeds SWORD limit');
                 disablePublish = true;
                 notify = true;

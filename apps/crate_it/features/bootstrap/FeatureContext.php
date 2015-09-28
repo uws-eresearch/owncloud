@@ -25,7 +25,7 @@ require_once 'vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
 class FeatureContext extends MinkContext
 {
 
-
+    private static $DATA_ROOT = '/var/lib/owncloud/data/';
     private static $FILE_ROOT = '/var/lib/owncloud/data/test/files/';
     private static $CRATE_ROOT = '/var/lib/owncloud/data/test/crates/';
     private static $SSH_COMMAND = 'vagrant ssh -c ';
@@ -1363,7 +1363,10 @@ JS;
         } else {
             $command = 'sudo '.$command;
         }
-        exec($command);
+        exec($command,$output);
+        if ($output != '') {
+            return $output;
+        }
     }
     
     /**
@@ -1457,5 +1460,35 @@ JS;
         $this->getSession()->getDriver()->resizeWindow($width, $height, 'current');
     }
 
+
+    /**
+     * @Given /^I have no published crates$/
+     */
+    public function iHaveNoPublishedCrates() {
+        $command = 'rm -rf '.self::$DATA_ROOT.'/publish/'.'*test*';
+        $this->exec_sh_command($command);
+    }
+
+    /**
+     * @Given /^I have no redbox alerts$/
+     */
+    public function iHaveNoRedboxAlerts() {
+        $command = 'rm -rf '.self::$DATA_ROOT.'/alerts/'.'*test*';
+        $this->exec_sh_command($command);
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field WorkflowSource with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveFieldWorkflowSourceWithValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:WorkflowSource>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $workflowsource= $this->exec_sh_command($command)[0];
+        if ($workflowsource != $arg2)
+        {
+            throw new Exception("The redbox alert xml file should have tag WorkflowSource with value '$arg2', but it's '$workflowsource'");
+        }
+
+    }
 }
 

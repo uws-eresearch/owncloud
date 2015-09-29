@@ -46,11 +46,11 @@ class PublishController extends Controller {
             $to = $this->params('address');
             // TODO: This should be configurable
             $from = 'no-reply@cr8it.app';
-            $subject = 'Cr8it Publish Status Receipt';
+            $subject = 'Cr8it Submit Status Receipt';
             try {
                 $content = $this->loggingService->getLog();
                 if($this->mailer->send($to, $from, $subject, $content)) {
-                    $data['msg'] = "Publish log sent to $to";
+                    $data['msg'] = "Submit log sent to $to";
                     $status = 200;
                 } else {
                     throw new \Exception('Unable to send email at this time');

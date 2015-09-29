@@ -1152,6 +1152,17 @@ JS;
         $xpath = '//input[@id="save_description"]';
         $page->find('xpath', $xpath)->click();
     }
+
+    /**
+     * @Given /^I click the save editor button$/
+     */
+    public function iClickTheSaveEditorButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//button[@id="save_editor"]';
+        $page->find('xpath', $xpath)->click();
+        $this->waitForPageToLoad();
+    }
     
     /**
      * @Given /^I click the Cancel button$/

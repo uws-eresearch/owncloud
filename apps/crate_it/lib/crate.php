@@ -302,7 +302,8 @@ class Crate extends BagIt {
                         'id' => $entry['id'],
                         'path' => $path,
                         'name' => $entry['name'],
-                        'filename' => $entry['filename']
+                        'filename' => $entry['filename'],
+                        'size' => $entry['size']
                     );
                     array_push($flat, $flat_entry);
                 } elseif(array_key_exists('children', $entry)) {
@@ -359,11 +360,13 @@ class Crate extends BagIt {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $fullPath);
         finfo_close($finfo);
+        $size = filesize($fullPath);
         $vfsEntry = array(
             'id' => $id,
             'name' => basename($file),
             'filename' => $file,
-            'mime' => $mime
+            'mime' => $mime,
+            'size' => $size
         );
         return $vfsEntry;
     }

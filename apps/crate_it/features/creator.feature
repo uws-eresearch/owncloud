@@ -231,10 +231,10 @@ Feature: Search, add and remove creators
         And I click the search creator button
         And I add creator "john@smith.com" to the selected list
         When I edit creator "john@smith.com"
-        And I fill in the following:
-          | edit-creators-name  | Elvis               |
-          | edit-creators-email | elvis@graceland.org |
-        Then I press "Save" on the popup dialog
+        And I fill in "edit-creators-name" with "Elvis"
+        And I fill in "edit-creators-email" with ""
+        And I fill in "edit-creators-email" with "elvis@graceland.org"
+        Then I click the save editor button
         When I edit creator "elvis@graceland.org"
         Then I should see the following:
           | original-creators-name | Prof John Smith     |
@@ -275,7 +275,8 @@ Feature: Search, add and remove creators
         Then I press "Add" on the popup dialog
         When I edit creator "joe@bloggs.org"
         And I fill in "edit-creators-name" with "Elvis"
-        And I fill in "edit-creators-email" with "  "
+        And I fill in "edit-creators-email" with ""
+        And I wait for 2 seconds
         Then I should see "Email is required"
 
       #CRATEIT-183
@@ -300,6 +301,7 @@ Feature: Search, add and remove creators
         Then I press "Add" on the popup dialog
         When I edit creator "joe@bloggs.org"
         And I fill in "edit-creators-name" with "Elvis"
+        And I fill in "edit-creators-email" with ""
         And I fill in "edit-creators-email" with "elvis"
         Then I should see "Must be a valid email address"
         And the "Save" button in the popup dialog should be disabled

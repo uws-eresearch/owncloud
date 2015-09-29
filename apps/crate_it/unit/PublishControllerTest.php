@@ -37,14 +37,14 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
 
     public function testPublishCrateSuccess() {
       $this->publishingService->method('publishCrate')->willReturn('path');
-      $expected = new JSONResponse(array('msg' => 'Crate \'test crate\' successfully published to collection 123'), 201);
+      $expected = new JSONResponse(array('msg' => 'Crate \'test crate\' successfully submitted to collection 123'), 201);
       $actual = $this->publishController->publishCrate();
       $this->assertEquals($expected, $actual);
     }
 
     public function testPublishCrateFailure() {
       $this->publishingService->method('publishCrate')->will($this->throwException(new Exception('Something went wrong')));
-      $expected = new JSONResponse(array('msg' => "Error: failed to publish crate 'test crate' to collection 123: Something went wrong"), 500);
+      $expected = new JSONResponse(array('msg' => "Error: failed to submit crate 'test crate' to collection 123: Something went wrong"), 500);
       $actual = $this->publishController->publishCrate();
       $this->assertEquals($expected, $actual);
     }
@@ -58,7 +58,7 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEmailReceiptFailNoLastPublished() {
-      $expected = new JSONResponse(array('msg' => 'Error: No recently published crates'), 500);
+      $expected = new JSONResponse(array('msg' => 'Error: No recently submitted crates'), 500);
       $actual = $this->publishController->emailReceipt();
       $this->assertEquals($expected, $actual);
     }

@@ -60,7 +60,7 @@ class PublishController extends Controller {
                 $status = 500;
             }
         } else {
-            $data['msg'] = 'Error: No recently published crates';
+            $data['msg'] = 'Error: No recently submitted crates';
             $status = 500; // NOTE: should this be in the 400 range?
         }
         return new JSONResponse($data, $status);
@@ -77,22 +77,22 @@ class PublishController extends Controller {
         $crateName = $this->params('name');
         $endpoint = $this->params('endpoint');
         $collection = $this->params('collection');
-        $this->loggingService->log("Attempting to publish crate $crateName to collection: $collection");
+        $this->loggingService->log("Attempting to submit crate $crateName to collection: $collection");
         $this->loggingService->logManifest($crateName);
         $package = $this->crateManager->packageCrate($crateName);
         $this->loggingService->log("Zipped content into '".basename($package)."'");
         $metadata = $this->crateManager->createMetadata($crateName);
         $data = array();
         try {
-            $this->loggingService->log("Publishing crate $crateName (".basename($package).")..");
+            $this->loggingService->log("Submitting crate $crateName (".basename($package).")..");
             $metadata['location'] = $this->publishingService->publishCrate($package, $endpoint, $collection);
             $this->alertingService->alert($metadata);
-            $data['msg'] = "Crate '$crateName' successfully published to $collection";
+            $data['msg'] = "Crate '$crateName' successfully submitted to $collection";
             $this->loggingService->logPublishedDetails($package, $crateName);
             $status = 201;
         } catch (\Exception $e) {
-            $this->loggingService->log("Publishing crate '$crateName' failed.");
-            $data['msg'] = "Error: failed to publish crate '$crateName' to $collection: {$e->getMessage()}";
+            $this->loggingService->log("Submitting crate '$crateName' failed.");
+            $data['msg'] = "Error: failed to submit crate '$crateName' to $collection: {$e->getMessage()}";
             $status = 500;
         }
         $this->loggingService->log($data['msg']);

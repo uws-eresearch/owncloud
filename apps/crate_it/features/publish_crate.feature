@@ -38,22 +38,22 @@ Feature: Publish crates to an endpoint
     Scenario: A user sees a message confirming a successful publish
       Given that I can publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
-      Then I should see "default_crate successfully published to test collection"
+      And I press "Submit" on the popup dialog
+      Then I should see "default_crate successfully submitted to test collection"
 
     #CRATEIT-59
     Scenario: A user can cancel publishing a crate
       Given that I can publish a crate
       When I click on "publish"
       And I press "Cancel" on the popup dialog
-      Then I should not see "default_crate successfully published to test collection"
+      Then I should not see "default_crate successfully submitted to test collection"
 
     #CRATEIT-59
     #CRATEIT-212
     Scenario: A user sees an error message if there were problems publishing a crate
       Given that I can not publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
+      And I press "Submit" on the popup dialog
       Then I should see "Error: there were problems zipping the crate"
 
     #CRATEIT-59
@@ -71,8 +71,8 @@ Feature: Publish crates to an endpoint
     Scenario: Publish confirm allows user to enter email address for confirmation
       Given that I can not publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
-      Then I should see "Enter an email address to send the publish log to"
+      And I press "Submit" on the popup dialog
+      Then I should see "Enter an email address to send the submit log to"
       Then the "Send" button in the popup dialog should be disabled
       When I fill in "publish-confirm-email" with "test@test.org"
       Then the "Send" button in the popup dialog should not be disabled
@@ -81,7 +81,7 @@ Feature: Publish crates to an endpoint
     Scenario: Publish confirm email address must be valid
       Given that I can not publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
+      And I press "Submit" on the popup dialog
       When I fill in "publish-confirm-email" with "sdfd"
       Then I should see "Must be a valid email address"
       Then the "Send" button in the popup dialog should be disabled
@@ -92,6 +92,6 @@ Feature: Publish crates to an endpoint
       And I fill in "New Crate Name" with "feature_test_crate"
       Then I press "Create" on the popup dialog
       When I click on "publish"
-      And I press "Publish" on the popup dialog
+      And I press "Submit" on the popup dialog
       Then redbox alerts xml file "feature_test_crate" should have field WorkflowSource with value "Owncloud-Cr8it"
 

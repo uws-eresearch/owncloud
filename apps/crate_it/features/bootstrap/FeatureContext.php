@@ -1331,7 +1331,7 @@ $.mockjax({
     url: c_url,
     type: 'post',
     dataType: 'json',
-    responseText : {"msg":"default_crate successfully published to test collection"}
+    responseText : {"msg":"default_crate successfully submitted to test collection"}
   });
 JS;
         $this->getSession()->executeScript($js);

@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h2 class="modal-title" id="publishModalLabel">Publish Crate</h2>
+        <h2 class="modal-title" id="publishModalLabel">Submit Crate</h2>
       </div>
       <div class="modal-body">
         <section class="publish-body">
@@ -46,12 +46,12 @@
         </div>
       </div>
       <div class="modal-body">
-          NOTE: Publishing a large crate my take some time, please be patient while Cr8it works in
+          NOTE: Submitting a large crate my take some time, please be patient while Cr8it works in
           the background. You can elect to receive email notifications about your crate's status
-          once you click "Publish".</div>
+          once you click "Submit".</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Publish</button>
+        <button type="button" class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>

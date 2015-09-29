@@ -25,7 +25,7 @@
 
       <a id="publish" class="button" data-toggle="modal" data-target="#publishModal">
         <i class="fa fa-envelope"></i>
-        Publish
+        Submit
       </a>
 
       <a id="check" class="button" data-toggle="modal" data-target="#checkCrateModal">

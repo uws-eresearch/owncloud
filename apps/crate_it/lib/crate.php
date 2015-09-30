@@ -58,7 +58,7 @@ class Crate extends BagIt {
     }
 
     public function createMetadata() {
-        $metadata = $this->applyOverrides($this->getManifest());
+        $metadata = $this->getManifest();
         $metadata['crate_name'] = $this->crateName;
         $metadata['files'] = $this->flatList();
         $metadata['creators'] = $this->isCreatorIdUrl($metadata['creators']);
@@ -69,19 +69,6 @@ class Crate extends BagIt {
         $vfs = &$metadata['vfs'][0];
         $metadata['filetree'] = $this->buildFileTreeFromRoot($vfs);
         $metadata['version'] = "Version ".\OCP\App::getAppVersion('crate_it');
-        return $metadata;
-    }
-
-    private function applyOverrides($metadata) {
-        $fieldSet = array('creators', 'grants');
-        foreach($fieldSet as $field) {
-            if(isset($metadata[$field['overrides']]) || array_key_exists($field['overrides'], $metadata)) {
-                \OCP\Util::writeLog("crate_it", "OR: ".$metadata[$field['overrides']], \OCP\Util::DEBUG);
-                foreach($field['overrides'] as $key => $value) {
-                    $field[$key] = $value;
-                }
-            }
-        }
         return $metadata;
     }
 

@@ -14,12 +14,23 @@
     <?php if ($_['creators']) { ?>
         <my:Creators>
             <?php foreach ($_['creators'] as $creator) { ?>
+                <?php $isOverride = isset($creator["overrides"]) ?>
                 <my:Creator>
                     <my:CreatorName>
-                        <?php print_unescaped($creator['name']) ?>
+                        <?php if ($isOverride) {
+                            print_unescaped($creator['overrides']['name']);
+                        } else {
+                            print_unescaped($creator['name']);
+                        }
+                        ?>
                     </my:CreatorName>
                     <my:CreatorEmail>
-                        <?php print_unescaped($creator['email']) ?>
+                        <?php if ($isOverride) {
+                            print_unescaped($creator['overrides']['email']);
+                        } else {
+                            print_unescaped($creator['email']);
+                        }
+                        ?>
                     </my:CreatorEmail>
                 </my:Creator>
             <?php } ?>
@@ -28,12 +39,23 @@
     <?php if ($_['activities']) { ?>
         <my:GrantNumbers>
             <?php foreach ($_['activities'] as $activity) { ?>
+                <?php $isOverride = isset($activity["overrides"]) ?>
                 <my:GrantNumber>
                     <my:GrantNumberID>
-                        <?php print_unescaped($activity['grant_number']) ?>
+                        <?php if ($isOverride) {
+                            print_unescaped($activity['overrides']['grant_number']);
+                        } else {
+                            print_unescaped($activity['grant_number']);
+                        }
+                        ?>
                     </my:GrantNumberID>
                     <my:GrantNumberDescription>
-                        <?php print_unescaped($activity['title']) ?>
+                        <?php if ($isOverride) {
+                            print_unescaped($activity['overrides']['title']);
+                        } else {
+                            print_unescaped($activity['title']);
+                        }
+                        ?>
                     </my:GrantNumberDescription>
                 </my:GrantNumber>
             <?php } ?>

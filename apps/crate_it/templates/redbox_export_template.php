@@ -62,7 +62,8 @@
         </my:GrantNumbers>
     <?php } ?>
     <my:Submitter>
-        <my:SubmitterEmail><?php p($_['submitter']) ?></my:SubmitterEmail>
+        <my:SubmitterDisplayname><?php p($_['submitter']['displayname']) ?></my:SubmitterDisplayname>
+        <my:SubmitterEmail><?php p($_['submitter']['email']) ?></my:SubmitterEmail>
     </my:Submitter>
     <my:Contents>
         <?php foreach ($_['files'] as $file) { ?>

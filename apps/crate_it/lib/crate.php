@@ -29,7 +29,10 @@ class Crate extends BagIt {
         $description = NULL ? '' : $description;
         $entry = array(
             'description' => $description,
-            'submitter' => \OCP\Config::getUserValue(\OCP\User::getUser(), 'settings', 'email'),
+            'submitter' => array(
+                'email' => \OCP\Config::getUserValue(\OCP\User::getUser(), 'settings', 'email', ''),
+                'displayname' => \OCP\User::getDisplayName(),
+            ),
             'creators' => array(),
             'activities' => array(),
             'vfs' => array(
@@ -41,7 +44,7 @@ class Crate extends BagIt {
                 )
             )
         );
-        file_put_contents($this->manifestPath, json_encode($entry));
+        $this->setManifest($entry);
         $this->update();
     }
 

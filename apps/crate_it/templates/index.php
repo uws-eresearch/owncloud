@@ -114,5 +114,6 @@
   print_unescaped($this->inc('check_crate_modal'));
   print_unescaped($this->inc('publish_confirm_modal'));
   print_unescaped($this->inc('javascript_vars'));
+  print_unescaped($this->inc('publishing_crate_modal'));
 
 ?>

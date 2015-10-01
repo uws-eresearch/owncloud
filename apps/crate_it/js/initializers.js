@@ -215,23 +215,25 @@ function initCrateActions() {
 
   var publishCrate = function(crateName, endpoint, collection){
     var c_url = OC.generateUrl('apps/crate_it/crate/publish');
-    // TODO: Delete the following, just used for testing because the test server
-    //       wont change it's url from localhost
-    // collection = collection.replace('localhost', '10.0.2.2');
     var postData = {
       'name': crateName,
       'endpoint': endpoint,
       'collection': collection
     };
+
+    $("div#publishingCrateModal").modal();
+
     $.ajax({
       url: c_url,
       type: 'post',
       data: postData,
       dataType: 'json',
       success: function(data) {
+        $("div#publishingCrateModal").modal("hide");
         confirmPublish(data.msg);
       },
       error: function(jqXHR) {
+        $("div#publishingCrateModal").modal("hide");
         confirmPublish(jqXHR.responseJSON.msg);
       }
     });
@@ -319,8 +321,8 @@ function initCrateActions() {
     var crateName = $('#crates').val();
     var endpoint = $('#publish-collection option:selected').attr('data-endpoint');
     var collection = $('#publish-collection').val();
-    publishCrate(crateName, endpoint, collection);
     $('#publishModal').modal('hide');
+    publishCrate(crateName, endpoint, collection);
   });
 
   $('#userguide').click(function(event) {

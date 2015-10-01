@@ -12,7 +12,7 @@ class RedboxAlerter implements Alerter {
     }
 
     public function alert($metadata) {
-        $xml = Util::renderTemplate('xml', $metadata);
+        $xml = Util::renderTemplate('redbox_export_template', $metadata);
         $timestamp = Util::getTimestamp();
         $filePath = $this->endpoint['path']."{$timestamp}_{$metadata['crate_name']}.xml";
         file_put_contents($filePath, $xml);

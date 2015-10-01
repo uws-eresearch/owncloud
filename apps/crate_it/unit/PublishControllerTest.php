@@ -52,7 +52,7 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
     public function testEmailReceiptSuccess() {
       $_SESSION['last_published_status'] = 'Status';
       $this->mailer->method('send')->willReturn(true);
-      $expected = new JSONResponse(array('msg' => 'Publish log sent to test@test.org'), 200);
+      $expected = new JSONResponse(array('msg' => 'Submit log sent to test@test.org'), 200);
       $actual = $this->publishController->emailReceipt();
       $this->assertEquals($expected, $actual);
     }

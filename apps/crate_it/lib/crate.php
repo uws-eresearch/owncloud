@@ -29,7 +29,10 @@ class Crate extends BagIt {
         $description = NULL ? '' : $description;
         $entry = array(
             'description' => $description,
-            'submitter' => \OCP\Config::getUserValue(\OCP\User::getUser(), 'settings', 'email'),
+            'submitter' => array(
+                'email' => \OCP\Config::getUserValue(\OCP\User::getUser(), 'settings', 'email', ''),
+                'displayname' => \OCP\User::getDisplayName(),
+            ),
             'creators' => array(),
             'activities' => array(),
             'vfs' => array(
@@ -41,7 +44,7 @@ class Crate extends BagIt {
                 )
             )
         );
-        file_put_contents($this->manifestPath, json_encode($entry));
+        $this->setManifest($entry);
         $this->update();
     }
 
@@ -58,7 +61,7 @@ class Crate extends BagIt {
     }
 
     public function createMetadata() {
-        $metadata = $this->applyOverrides($this->getManifest());
+        $metadata = $this->getManifest();
         $metadata['crate_name'] = $this->crateName;
         $metadata['files'] = $this->flatList();
         $metadata['creators'] = $this->isCreatorIdUrl($metadata['creators']);
@@ -69,19 +72,6 @@ class Crate extends BagIt {
         $vfs = &$metadata['vfs'][0];
         $metadata['filetree'] = $this->buildFileTreeFromRoot($vfs);
         $metadata['version'] = "Version ".\OCP\App::getAppVersion('crate_it');
-        return $metadata;
-    }
-
-    private function applyOverrides($metadata) {
-        $fieldSet = array('creators', 'grants');
-        foreach($fieldSet as $field) {
-            if(isset($metadata[$field['overrides']]) || array_key_exists($field['overrides'], $metadata)) {
-                \OCP\Util::writeLog("crate_it", "OR: ".$metadata[$field['overrides']], \OCP\Util::DEBUG);
-                foreach($field['overrides'] as $key => $value) {
-                    $field[$key] = $value;
-                }
-            }
-        }
         return $metadata;
     }
 
@@ -302,7 +292,8 @@ class Crate extends BagIt {
                         'id' => $entry['id'],
                         'path' => $path,
                         'name' => $entry['name'],
-                        'filename' => $entry['filename']
+                        'filename' => $entry['filename'],
+                        'size' => $entry['size']
                     );
                     array_push($flat, $flat_entry);
                 } elseif(array_key_exists('children', $entry)) {
@@ -359,11 +350,13 @@ class Crate extends BagIt {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $fullPath);
         finfo_close($finfo);
+        $size = filesize($fullPath);
         $vfsEntry = array(
             'id' => $id,
             'name' => basename($file),
             'filename' => $file,
-            'mime' => $mime
+            'mime' => $mime,
+            'size' => $size
         );
         return $vfsEntry;
     }

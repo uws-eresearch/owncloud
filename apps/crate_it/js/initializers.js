@@ -385,6 +385,46 @@ function setupDescriptionOps() {
   });
 }
 
+function setupRetentionPeriodOps() {
+  //generate radio button list
+  var radio_button_list = ['<input type="radio" name="data_retention_period" id="radio1" value="1"> <label id="radio1-label" for="radio1">1</label>',
+    '<input type="radio" name="data_retention_period" id="radio3" value="10"> <label id="radio3-label" for="radio3">10</label>',
+    '<input type="radio" name="data_retention_period" id="radio4" value="15"> <label id="radio4-label" for="radio4">15</label>',
+    '<input type="radio" name="data_retention_period" id="radio5" value="25"> <label id="radio5-label" for="radio1">25</label>',
+    '<input type="radio" name="data_retention_period" id="radio6" value="Perpetuity"> <label id="radio6-label" for="radio6">Perpetuity</label>'];
+
+  var html = '';
+  for (i = 0; i< radio_button_list.length;i++) {
+    html += radio_button_list[i]+'<br>';
+  }
+  html += '<input id="save_retention_period" type="button" value="Save" />' +
+      '<input id="cancel_retention_period" type="button" value="Cancel" />';
+
+  //if there is a d_r_p, show that value, otherwise create a field:value pair use radio1 and store this pair for the crate
+  
+  /*
+  * 1. create a field:value pair from rabio button 1 and write this pair to manifest.json
+  * 2. store this pair to a js var
+  * 3. display this var to the page
+  * */
+
+
+  $('#choose_retention_period').click(function(event) {
+    //the checked one should be stored and shown in the list
+    //var old_retention_period = $('#retention_period_choice').text();
+    $('#retention_period_value').text('');
+    $('#retention_period_value').html(html);
+    $('#radio1').attr("checked",true);
+    $('#choose_retention_period').addClass('hidden');
+
+    $('#cancel_retention_period').click(function(event) {
+
+      $('#retention_period_value').html('');
+      //$('#retention_period_choice').text(old_retention_period);
+      $('#choose_retention_period').removeClass('hidden');
+    });
+  });
+}
 
 function initSearchHandlers() {
   // TODO: prefix this with var to close scope when not dubugging

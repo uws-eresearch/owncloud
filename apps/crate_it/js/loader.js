@@ -58,6 +58,7 @@ $(document).ready(function() {
         initCrateActions();
         updateCrateSize();
         setupDescriptionOps();
+        setupRetentionPeriodOps();
         initSearchHandlers();
         initAutoResizeMetadataTabs();
     }

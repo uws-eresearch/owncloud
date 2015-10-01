@@ -38,6 +38,11 @@
             <ul id="publish-activities">
             </ul>
           </div>
+
+          <div class="col-3">
+            <h4 class="margin-bottom">Data Retention Period</h4>
+            <div id='publish-retention-period'></div>
+          </div>
         </div>
           
         <div style="color:red; font-weight:bold;">

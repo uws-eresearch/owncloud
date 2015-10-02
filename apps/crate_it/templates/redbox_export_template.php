@@ -7,7 +7,7 @@
     <my:ID><?php p($_['crate_name']) ?></my:ID>
     <my:DateCreated><?php p($_['created_date']) ?></my:DateCreated>
     <my:Description><?php p($_['description']) ?></my:Description>
-    <my:DateRetentionPeriod><?php p($_['data_retention_period']) ?></my:DateRetentionPeriod>
+    <my:DataRetentionPeriod><?php p($_['data_retention_period']) ?></my:DataRetentionPeriod>
     <my:URL><?php print_unescaped($_['location']) ?></my:URL>
     <my:Type>dataset</my:Type>
     <my:WorkflowSource>Owncloud-Cr8IT</my:WorkflowSource>

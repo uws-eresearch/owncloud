@@ -95,3 +95,13 @@ Feature: Publish crates to an endpoint
       And I press "Submit" on the popup dialog
       Then redbox alerts xml file "feature_test_crate" should have field WorkflowSource with value "Owncloud-Cr8IT"
 
+      #CRATEIT-269
+    Scenario: Data retention period exists in Redbox xml file
+      When I click the new crate button
+      And I fill in "New Crate Name" with "feature_test_crate"
+      Then I press "Create" on the popup dialog
+      When I click on "publish"
+      And I press "Submit" on the popup dialog
+      Then redbox alerts xml file "feature_test_crate" should have field DataRetentionPeriod with value "Perpetuity"
+
+

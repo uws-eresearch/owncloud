@@ -431,7 +431,7 @@ class FeatureContext extends MinkContext
      */
     public function iHaveCrate($crateName) {
         // $mainfest = '{"description":"","creators":[],"activities":[],"vfs":[{"id":"rootfolder","name":"'.$crateName.'","folder":true,"children":[]}]}';
-        $mainfest = '"{\"description\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
+        $mainfest = '"{\"description\":\"\",\"data_retention_period\":\"Perpetuity\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
         $data_path = self::$CRATE_ROOT.$crateName.'/data';
         $command = "mkdir -m 755 -p $data_path\\";
         $this->exec_sh_command($command);
@@ -1498,6 +1498,105 @@ JS;
         if ($workflowsource != $arg2)
         {
             throw new Exception("The redbox alert xml file should have tag WorkflowSource with value '$arg2', but it's '$workflowsource'");
+        }
+
+    }
+
+    /**
+     * @Then /^the selected crate should have data retention period "([^"]*)"$/
+     */
+    public function theSelectedCrateShouldHaveDataRetentionPeriod($expected)
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//*[@id="retention_period_value"]';
+        $el = $page->find('xpath', $xpath);
+        $actual = $el->getHtml();
+        assertEquals($expected, $actual);
+    }
+
+    /**
+     * @When /^I click the edit data retention period button$/
+     */
+    public function iClickTheEditDataRetentionPeriodButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//button[@id="choose_retention_period"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @When /^I check the radio button "([^"]*)"$/
+     */
+    public function iCheckTheRadioButton($radioButtonText) {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@value='.$radioButtonText.']';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click the Save button for data retention period$/
+     */
+    public function iClickTheSaveButtonForDataRetentionPeriod()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="save_retention_period"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I should see the crate data retention period as "([^"]*)"$/
+     */
+    public function iShouldSeeTheCrateDataRetentionPeriodAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//div[@id="retention_peroid_list"]/div[@id="retention_period_value"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        if ($str_desc!= $arg1)
+        {
+            throw new Exception("The crate should have description '$arg1', but it's '$str_desc'");
+        }
+    }
+
+    /**
+     * @Given /^I click to wrap Information$/
+     */
+    public function iClickToWrapInformation()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="crate-information-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+    /**
+     * @Given /^I click to wrap Creators$/
+     */
+    public function iClickToWrapCreators()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="data-creators-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+    /**
+     * @Given /^I click to wrap Grants$/
+     */
+    public function iClickToWrapGrants()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="grant-numbers-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field DataRetentionPeriod with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveFieldDataRetentionPeriodWithValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:DataRetentionPeriod>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $workflowsource= $this->exec_sh_command($command)[0];
+        if ($workflowsource != $arg2)
+        {
+            throw new Exception("The redbox alert xml file should have tag DataRetentionPeriod with value '$arg2', but it's '$workflowsource'");
         }
 
     }

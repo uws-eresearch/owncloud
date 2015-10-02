@@ -71,7 +71,7 @@ class CrateManager {
         }
         $crateList = $this->getCrateList();
         if(empty($crateList)) {
-            $this->createCrate('default_crate', '');
+            $this->createCrate('default_crate', '','Perpetuity');
         }
     }
 

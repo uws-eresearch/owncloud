@@ -5,7 +5,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#meta-data" href="#crate-information">
+                    <a data-toggle="collapse" data-parent="#meta-data" href="#crate-information" id="crate-information-head">
                         Crate Information
                         <i class="pull-right fa fa-caret-down"></i>
                     </a>
@@ -37,7 +37,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#meta-data" href="#data-creators">
+                    <a data-toggle="collapse" data-parent="#meta-data" href="#data-creators" id="data-creators-head">
                         Data Creators
                         <i class="pull-right fa fa-caret-down"></i>
                     </a>
@@ -81,7 +81,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#meta-data" href="#grant-numbers">
+                    <a data-toggle="collapse" data-parent="#meta-data" href="#grant-numbers" id="grant-numbers-head">
                         Grants
                         <i class="pull-right fa fa-caret-up"></i>
                     </a>

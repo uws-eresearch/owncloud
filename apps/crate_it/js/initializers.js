@@ -408,11 +408,12 @@ function setupRetentionPeriodOps() {
 
   $('#choose_retention_period').click(function(event) {
     var old_retention_period = $('#retention_period_value').text();//this does the same thing
+
     $('#retention_period_value').text('');
     $('#retention_period_value').html(html);
+    $('#choose_retention_period').addClass('hidden');
     //get the id of radio button with text as old_retention_period and check it
     $("input[value=" + old_retention_period + "]").prop('checked', true);
-
     $('#save_retention_period').click(function(event) {
       var c_url = OC.generateUrl('apps/crate_it/crate/update');
       $.ajax({

@@ -351,7 +351,7 @@ function setupDescriptionOps() {
   });
 
   $('#edit_description').click(function(event) {
-    var old_description = $('#description').text();//this value add some char infront of the text
+    var old_description = $('#description').text();
     $('#description').text('');
     $('#description').html('<textarea id="crate_description" maxlength="' + description_length + '" style="width: 40%;" placeholder="Enter a description of the research data package for this Crate">' + old_description + '</textarea><br/><div id="edit_description_validation_error" style="color:red;"></div><input id="save_description" type="button" value="Save" /><input id="cancel_description" type="button" value="Cancel" />');
     setupEditDesriptionOp();
@@ -392,7 +392,7 @@ function setupDescriptionOps() {
 }
 
 function setupRetentionPeriodOps() {
-  //generate radio button list
+
   var radio_button_list = ['<input type="radio" name="retention_radio" id="radio1" value="1">1',
     '<input type="radio" name="retention_radio" id="radio3" value="10"> 10',
     '<input type="radio" name="retention_radio" id="radio4" value="15"> 15',
@@ -412,7 +412,7 @@ function setupRetentionPeriodOps() {
     $('#retention_period_value').text('');
     $('#retention_period_value').html(html);
     $('#choose_retention_period').addClass('hidden');
-    //get the id of radio button with text as old_retention_period and check it
+
     $("input[value=" + old_retention_period + "]").prop('checked', true);
     $('#save_retention_period').click(function(event) {
       var c_url = OC.generateUrl('apps/crate_it/crate/update');
@@ -428,7 +428,7 @@ function setupRetentionPeriodOps() {
           $('#retention_period_value').html('');
           $('#retention_period_value').text(data.value);
           $('#choose_retention_period').removeClass('hidden');
-          //calulateHeights();
+
         },
         error: function(jqXHR) {
           displayError(jqXHR.responseJSON.msg);

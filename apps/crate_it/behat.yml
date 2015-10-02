@@ -14,7 +14,7 @@ phantomjs:
       class:  'FeatureContext'
   extensions:
     Behat\MinkExtension\Extension:
-      base_url: 'http://localhost:8080'
+      base_url: 'http://localhost'
       goutte: ~
       selenium2:
         wd_host: "http://localhost:8643/wd/hub"

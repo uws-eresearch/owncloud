@@ -23,7 +23,6 @@ function drawCrateContents() {
     dataType: 'json',
     success: function(data) {
       manifest = data;
-      reloadCrateData(data);
       $tree = buildFileTree(data);
       indentTree();
     },

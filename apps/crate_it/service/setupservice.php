@@ -37,7 +37,8 @@ class SetupService {
         self::$params['collections'] = $this->publisher->getCollections();
         self::$params['crates'] = $this->crateManager->getCrateList();
         $manifestData = $this->crateManager->getManifest($selectedCrate);
-        self::$params['description'] = $manifestData['description'];  
+        self::$params['description'] = $manifestData['description'];
+        self::$params['data_retention_period'] = $manifestData['data_retention_period'];
         $info = \OC_App::getAppInfo('crate_it');
         self::$params['version'] = $info['version'];
     }

@@ -21,9 +21,7 @@
                                     placeholder="Edit"><i class="fa fa-edit"></i></button>
                         </h6>
                         <div id="description" style="white-space: pre-wrap;"
-                             class="metadata">
-                            <?php p($_['description']) ?>
-                        </div>
+                             class="metadata"><?php p($_['description'].trim()) ?></div>
                     </div>
                     <div class='crate-size'>
                         <h6 class="info">
@@ -145,9 +143,7 @@
                                     placeholder="Choose"><i class="fa fa-edit"></i></button>
                         </h6>
                         <div id="retention_period_value" style="white-space: pre-wrap;"
-                             class="metadata">
-                            <?php p($_['data_retention_period']) ?>
-                        </div>
+                             class="metadata"><?php p($_['data_retention_period']) ?></div>
                     </div>
                 </div>
             </div>

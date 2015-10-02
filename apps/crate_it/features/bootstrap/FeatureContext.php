@@ -1375,9 +1375,8 @@ JS;
             $command = 'sudo '.$command;
         }
         exec($command,$output);
-        if ($output != '') {
-            return $output;
-        }
+        return $output;
+
     }
     
     /**
@@ -1484,7 +1483,7 @@ JS;
      * @Given /^I have no redbox alerts$/
      */
     public function iHaveNoRedboxAlerts() {
-        $command = 'rm -rf '.self::$DATA_ROOT.'/alerts/'.'*test*';
+        $command = 'rm -rf '.self::$DATA_ROOT.'/alerts/'.'*test*.xml';
         $this->exec_sh_command($command);
     }
 
@@ -1593,10 +1592,10 @@ JS;
     public function redboxAlertsXmlFileShouldHaveFieldDataRetentionPeriodWithValue($arg1, $arg2)
     {
         $command = 'grep -oPm1 "(?<=:DataRetentionPeriod>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
-        $workflowsource= $this->exec_sh_command($command)[0];
-        if ($workflowsource != $arg2)
+        $retention= $this->exec_sh_command($command)[0];
+        if ($retention != $arg2)
         {
-            throw new Exception("The redbox alert xml file should have tag DataRetentionPeriod with value '$arg2', but it's '$workflowsource'");
+            throw new Exception("The redbox alert xml file should have tag Data Retention Period with value '$arg2', but it's '$retention'");
         }
 
     }

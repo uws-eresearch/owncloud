@@ -130,7 +130,7 @@
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#meta-data" href="#data-retention-period">
-                        Date Retention Period
+                        Date Retention Period(year)
                         <i class="pull-right fa fa-caret-down"></i>
                     </a>
                 </h4>
@@ -140,13 +140,13 @@
                 <div class="panel-body">
                     <div id='retention_peroid_list'>
                         <h6>
-                            SELECTED RETENTION PERIOD
+                            SELECTED RETENTION PERIOD(YEAR)
                             <button id="choose_retention_period" class="pull-right trans-button" type="button"
                                     placeholder="Choose"><i class="fa fa-edit"></i></button>
                         </h6>
                         <div id="retention_period_value" style="white-space: pre-wrap;"
                              class="metadata">
-                            <?php p($_['retention_period_value']) ?>
+                            <?php p($_['data_retention_period']) ?>
                         </div>
                     </div>
                 </div>

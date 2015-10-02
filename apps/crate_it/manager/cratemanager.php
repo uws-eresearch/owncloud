@@ -16,10 +16,10 @@ class CrateManager {
     
 
     // TODO: getCrate and createCrate do just about the same thing, perhaps they can be rolled into one
-    public function createCrate($crateName, $description) {
-        \OCP\Util::writeLog('crate_it', "CrateManager::createCrate($crateName, $description)", \OCP\Util::DEBUG);
+    public function createCrate($crateName, $description, $data_retention_period) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::createCrate($crateName, $description, $data_retention_period)", \OCP\Util::DEBUG);
         $crateRoot = $this->getCrateRoot();
-        new Crate($crateRoot, $crateName, $description);
+        new Crate($crateRoot, $crateName, $description, $data_retention_period);
         // TODO: Just returns a parameter that was passed?
         return $crateName;
     }

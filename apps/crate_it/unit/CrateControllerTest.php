@@ -44,7 +44,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
     $crateName = 'test';
     $_SESSION['selected_crate'] = $crateName;
     $this->crateManager->method('createCrate')->willReturn($crateName);
-    $expected = new JSONResponse(array('crateName' => $crateName, 'crateDescription' => ''));
+    $expected = new JSONResponse(array('crateName' => $crateName, 'crateDescription' => '', 'crateDataRetentionPeriod' => 'Perpetuity'));
     $actual = $this->crateController->createCrate();
     $this->assertEquals($expected, $actual);
   }

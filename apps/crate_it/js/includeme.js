@@ -531,12 +531,14 @@ function validateCrateName($input, $error, $confirm) {
 
 //TODO use something like this when the pages loads
 function reloadCrateData(manifest) {
+    $('#retention_period_value').text(manifest['data_retention_period']);
     updateCrateSize();
     $('#description').text(manifest['description']);
     $('#files').remove();
     $('#container').after('<div id="files"></div>');
     // Make sure edit description icon shows up on startup
     $('#edit_description').removeClass('hidden');
+    $('#choose_retention_period').removeClass('hidden');
     buildFileTree(manifest);
     indentTree();
     // TODO Have a registry of search managers and loop over them

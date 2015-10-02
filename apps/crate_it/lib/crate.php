@@ -13,22 +13,24 @@ class Crate extends BagIt {
     private $crateName;
     private $crateRoot;
 
-    public function __construct($crateRoot, $crateName, $description = '') {
-        \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.")", \OCP\Util::DEBUG);
+    public function __construct($crateRoot, $crateName, $description = '', $data_retention_period = 'Perpetuity') {
+        \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.','.$data_retention_period.")", \OCP\Util::DEBUG);
         $this->crateName = $crateName;
         $this->crateRoot = $crateRoot;
         parent::__construct($this->getAbsolutePath($crateName), true, false, false, null);
         $this->manifestPath = Util::joinPaths($this->getDataDirectory(), 'manifest.json');
         if(!file_exists($this->manifestPath)) {
-            $this->createManifest($description);
+            $this->createManifest($description, $data_retention_period);
         }
     }
 
-    private function createManifest($description) {
-        \OCP\Util::writeLog('crate_it', "Crate::createManifest(".$description.")", \OCP\Util::DEBUG);
+    private function createManifest($description,$data_retention_period) {
+        \OCP\Util::writeLog('crate_it', "Crate::createManifest(".$description.",".$data_retention_period.")", \OCP\Util::DEBUG);
         $description = NULL ? '' : $description;
+        $data_retention_period = NULL ? 'Perpetuity': $data_retention_period;
         $entry = array(
             'description' => $description,
+            'data_retention_period' => $data_retention_period,
             'submitter' => array(
                 'email' => \OCP\Config::getUserValue(\OCP\User::getUser(), 'settings', 'email', ''),
                 'displayname' => \OCP\User::getDisplayName(),

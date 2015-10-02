@@ -1494,8 +1494,8 @@ JS;
     public function redboxAlertsXmlFileShouldHaveFieldWorkflowSourceWithValue($arg1, $arg2)
     {
         $command = 'grep -oPm1 "(?<=:WorkflowSource>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
-        $workflowsource= $this->exec_sh_command($command)[0];
-        if ($workflowsource != $arg2)
+        $workflowsource= $this->exec_sh_command($command);
+        if ($workflowsource[0] != $arg2)
         {
             throw new Exception("The redbox alert xml file should have tag WorkflowSource with value '$arg2', but it's '$workflowsource'");
         }

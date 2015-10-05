@@ -38,7 +38,7 @@ function initCrateActions() {
   var metadataEmpty = function() {
     var isEmpty = true;
     $('.metadata').each(function() {
-      if ($(this).html() != "") {
+      if ($(this).attr('id') != 'retention_period_value' && $(this).html() != "") {
         isEmpty = isEmpty && false;
       }
     });

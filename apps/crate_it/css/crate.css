@@ -665,3 +665,13 @@ font-size: 18px;
   clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
   clip: rect(1px, 1px, 1px, 1px);
 }
+#publish-description {
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#description {
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

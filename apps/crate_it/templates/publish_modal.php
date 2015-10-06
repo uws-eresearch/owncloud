@@ -21,25 +21,25 @@
           <label style="color:red;display:none">Error: No collections available for publishing</label>
         </section>
         <div class="row publish-meta">
-          <div class="col-3">
+          <div class="col-4">
              <h4 class="margin-bottom">Description</h4>
              <h6>Crate Size: <span id="crate_size_human_publish" class="standard"></span></h6>
              <div id='publish-description'></div>
           </div>
 
-          <div class="col-3">
+          <div class="col-4">
             <h4 class="margin-bottom">Creators</h4>
             <ul id="publish-creators">
             </ul>
           </div>
 
-          <div class="col-3">
+          <div class="col-4">
             <h4 class="margin-bottom">Grant Numbers</h4>
             <ul id="publish-activities">
             </ul>
           </div>
 
-          <div class="col-3">
+          <div class="col-4">
             <h4 class="margin-bottom">Data Retention Period(year)</h4>
             <div id='publish-data-retention-period'></div>
           </div>

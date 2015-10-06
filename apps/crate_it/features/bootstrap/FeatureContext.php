@@ -1552,10 +1552,7 @@ JS;
         $xpath = '//div[@id="retention_peroid_list"]/div[@id="retention_period_value"]';
         $desc = $page->find('xpath', $xpath);
         $str_desc = (string)$desc->getText() ;
-        if ($str_desc!= $arg1)
-        {
-            throw new Exception("The crate should have description '$arg1', but it's '$str_desc'");
-        }
+        assertEquals($arg1, $str_desc);
     }
 
     /**
@@ -1593,10 +1590,7 @@ JS;
     {
         $command = 'grep -oPm1 "(?<=:DataRetentionPeriod>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
         $retention= $this->exec_sh_command($command)[0];
-        if ($retention != $arg2)
-        {
-            throw new Exception("The redbox alert xml file should have tag Data Retention Period with value '$arg2', but it's '$retention'");
-        }
+        assertEquals($arg2, $retention);
 
     }
 }

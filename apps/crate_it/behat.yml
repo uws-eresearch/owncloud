@@ -7,14 +7,11 @@ default:
       goutte: ~
       selenium2: ~
 
-phantomjs:
+jenkins:
   filters:
     tags: ~@wip
-  context:
-      class:  'FeatureContext'
   extensions:
     Behat\MinkExtension\Extension:
       base_url: 'http://localhost'
       goutte: ~
-      selenium2:
-        wd_host: "http://localhost:8643/wd/hub"
+      selenium2: ~

@@ -1589,8 +1589,8 @@ JS;
     public function redboxAlertsXmlFileShouldHaveFieldDataRetentionPeriodWithValue($arg1, $arg2)
     {
         $command = 'grep -oPm1 "(?<=:DataRetentionPeriod>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
-        $retention= $this->exec_sh_command($command)[0];
-        assertEquals($arg2, $retention);
+        $retention= $this->exec_sh_command($command);
+        assertEquals($arg2, $retention[0]);
 
     }
 }

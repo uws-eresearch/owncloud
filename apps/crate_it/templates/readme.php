@@ -52,14 +52,13 @@
                     print_unescaped('<td>'.$creator['source'].'</td>');
                     print_unescaped('</tr>');
                 } ?>
-
                 </tbody>
             </table>
         <?php } else { ?>
             <span>None.</span>
+
         <?php } ?>
         <h1>Grants</h1>
-
         <?php if ($_['activities']) { ?>
             <table border="1">
                 <thead>
@@ -78,7 +77,6 @@
                 <th>Repository Type</th>
                 <th>Display Type</th>
                 <th>Contributors</th>
-
                 </thead>
                 <tbody>
                 <?php foreach ($_['activities'] as $activity) {
@@ -150,11 +148,11 @@
 
                     print_unescaped('</tr>');
                 } ?>
-
                 </tbody>
             </table>
         <?php } else { ?>
             <span>None.</span>
+
         <?php } ?>
         <h1>Software Information</h1>
         <section property="http://purl.org/dc/terms/creator" typeof="http://schema.org/softwareApplication" resource="">

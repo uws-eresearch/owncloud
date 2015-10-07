@@ -6,6 +6,7 @@ use \OCA\crate_it\lib\SwordPublisher;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Http;
+use \OCA\crate_it\lib\Util;
 
 class PublishController extends Controller {
 
@@ -14,6 +15,14 @@ class PublishController extends Controller {
     private $crateManager;
     private $loggingService;
     private $mailer;
+
+    private function setEmailContent($html) {
+        $text = strip_tags($html);
+        $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+        $content = preg_replace("/&#?[a-z0-9]{2,8};/i","",$text );
+        $content = join("\n", array_map("ltrim", explode("\n", $content )));
+        return $content;
+    }
 
     public function __construct($appName, $request, $crateManager, $setupService, $publishingService, $alertingService, $loggingService, $mailer) {
         parent::__construct($appName, $request);
@@ -82,6 +91,13 @@ class PublishController extends Controller {
         $package = $this->crateManager->packageCrate($crateName);
         $this->loggingService->log("Zipped content into '".basename($package)."'");
         $metadata = $this->crateManager->createMetadata($crateName);
+
+        $to = $metadata['submitter']['email'];
+        $from = 'no-reply@cr8it.app';
+        $subject = 'Cr8it Submit Status Receipt';
+        $readme = Util::renderTemplate('readme', $metadata);
+        $content = $this->setEmailContent($readme);
+
         $data = array();
         try {
             $this->loggingService->log("Submitting crate $crateName (".basename($package).")..");
@@ -89,6 +105,10 @@ class PublishController extends Controller {
             $this->alertingService->alert($metadata);
             $data['msg'] = "Crate '$crateName' successfully submitted to $collection";
             $this->loggingService->logPublishedDetails($package, $crateName);
+            if($to != '')
+            {
+                $this->mailer->send($to, $from, $subject, $content);
+            }
             $status = 201;
         } catch (\Exception $e) {
             $this->loggingService->log("Submitting crate '$crateName' failed.");

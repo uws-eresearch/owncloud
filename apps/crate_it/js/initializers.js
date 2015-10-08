@@ -393,6 +393,7 @@ function setupDescriptionOps() {
 function setupRetentionPeriodOps() {
 
   var radio_button_list = ['<input type="radio" name="retention_radio" id="radio1" value="1">1',
+    '<input type="radio" name="retention_radio" id="radio2" value="5"> 5',
     '<input type="radio" name="retention_radio" id="radio3" value="10"> 10',
     '<input type="radio" name="retention_radio" id="radio4" value="15"> 15',
     '<input type="radio" name="retention_radio" id="radio5" value="25"> 25',

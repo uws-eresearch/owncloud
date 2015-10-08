@@ -1,7 +1,9 @@
 <?php
 
 namespace OCA\crate_it\Controller;
+require 'vendor/autoload.php';
 
+use Html2Text\Html2Text;
 use \OCA\crate_it\lib\SwordPublisher;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
@@ -18,10 +20,7 @@ class PublishController extends Controller {
 
     private function setEmailContent($metadata) {
         $html = Util::renderTemplate('readme', $metadata);
-        $text = strip_tags($html);
-        $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
-        $content = preg_replace("/&#?[a-z0-9]{2,8};/i","",$text );
-        $content = join("\n", array_map("ltrim", explode("\n", $content )));
+        $content = Html2Text::convert($html);
         return $content;
     }
 
@@ -58,7 +57,7 @@ class PublishController extends Controller {
             $from = 'no-reply@cr8it.app';
             $subject = 'Cr8it Submit Status Receipt';
             try {
-                $metadata = apc_fetch('metadata');
+                $metadata = apc_fetch('publish_metadata');
                 $content = $this->setEmailContent($metadata);
 
                 if($this->mailer->send($to, $from, $subject, $content)) {
@@ -95,7 +94,7 @@ class PublishController extends Controller {
         $this->loggingService->log("Zipped content into '".basename($package)."'");
         $metadata = $this->crateManager->createMetadata($crateName);
 
-        apc_store('metadata', $metadata);
+        apc_store('publish_metadata', $metadata);
 
         $to = $metadata['submitter']['email'];
         $from = 'no-reply@cr8it.app';

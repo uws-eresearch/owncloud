@@ -9,7 +9,7 @@
         <h4>Status</h4>
         <span id="publish-confirm-status"></span>
         <h4>Email Status</h4>
-        <p>Enter an email address to send the submit log to</p>
+        <p>Enter an email address to send the readme to</p>
         <label for="publish-confirm-email" class="element-invisible">Email address</label>
         <input id="publish-confirm-email" type="text" class="modal-input"></input>
         <p>

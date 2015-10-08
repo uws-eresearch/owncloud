@@ -16,7 +16,8 @@ class PublishController extends Controller {
     private $loggingService;
     private $mailer;
 
-    private function setEmailContent($html) {
+    private function setEmailContent($metadata) {
+        $html = Util::renderTemplate('readme', $metadata);
         $text = strip_tags($html);
         $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
         $content = preg_replace("/&#?[a-z0-9]{2,8};/i","",$text );
@@ -57,7 +58,9 @@ class PublishController extends Controller {
             $from = 'no-reply@cr8it.app';
             $subject = 'Cr8it Submit Status Receipt';
             try {
-                $content = $this->loggingService->getLog();
+                $metadata = apc_fetch('metadata');
+                $content = $this->setEmailContent($metadata);
+
                 if($this->mailer->send($to, $from, $subject, $content)) {
                     $data['msg'] = "Submit log sent to $to";
                     $status = 200;
@@ -92,11 +95,12 @@ class PublishController extends Controller {
         $this->loggingService->log("Zipped content into '".basename($package)."'");
         $metadata = $this->crateManager->createMetadata($crateName);
 
+        apc_store('metadata', $metadata);
+
         $to = $metadata['submitter']['email'];
         $from = 'no-reply@cr8it.app';
         $subject = 'Cr8it Submit Status Receipt';
-        $readme = Util::renderTemplate('readme', $metadata);
-        $content = $this->setEmailContent($readme);
+        $content = $this->setEmailContent($metadata);
 
         $data = array();
         try {

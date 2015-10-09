@@ -1,9 +1,7 @@
 <?php
 
 namespace OCA\crate_it\Controller;
-require 'vendor/autoload.php';
 
-use Html2Text\Html2Text;
 use \OCA\crate_it\lib\SwordPublisher;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
@@ -19,8 +17,7 @@ class PublishController extends Controller {
     private $mailer;
 
     private function setEmailContent($metadata) {
-        $html = Util::renderTemplate('readme', $metadata);
-        $content = Html2Text::convert($html);
+        $content = Util::renderTemplate('readme', $metadata);
         return $content;
     }
 
@@ -60,7 +57,7 @@ class PublishController extends Controller {
                 $metadata = apc_fetch('publish_metadata');
                 $content = $this->setEmailContent($metadata);
 
-                if($this->mailer->send($to, $from, $subject, $content)) {
+                if($this->mailer->sendHtml($to, $from, $subject, $content)) {
                     $data['msg'] = "Submit log sent to $to";
                     $status = 200;
                 } else {
@@ -110,7 +107,7 @@ class PublishController extends Controller {
             $this->loggingService->logPublishedDetails($package, $crateName);
             if($to != '')
             {
-                $this->mailer->send($to, $from, $subject, $content);
+                $this->mailer->sendHtml($to, $from, $subject, $content);
             }
             $status = 201;
         } catch (\Exception $e) {

@@ -40,7 +40,7 @@
           </div>
 
           <div class="col-4">
-            <h4 class="margin-bottom">Data Retention Period(year)</h4>
+            <h4 class="margin-bottom">Data Retention Period (year)</h4>
             <div id='publish-data-retention-period'></div>
           </div>
         </div>

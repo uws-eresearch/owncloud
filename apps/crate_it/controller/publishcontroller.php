@@ -50,11 +50,11 @@ class PublishController extends Controller {
         $data = array();
         if(!empty($_SESSION['last_published_status'])) {
             $to = $this->params('address');
+            $metadata = $this->params('metadata');
             // TODO: This should be configurable
             $from = 'no-reply@cr8it.app';
             $subject = 'Cr8it Submit Status Receipt';
             try {
-                $metadata = apc_fetch('publish_metadata');
                 $content = $this->setEmailContent($metadata);
 
                 if($this->mailer->sendHtml($to, $from, $subject, $content)) {
@@ -91,12 +91,9 @@ class PublishController extends Controller {
         $this->loggingService->log("Zipped content into '".basename($package)."'");
         $metadata = $this->crateManager->createMetadata($crateName);
 
-        apc_store('publish_metadata', $metadata);
-
         $to = $metadata['submitter']['email'];
         $from = 'no-reply@cr8it.app';
         $subject = 'Cr8it Submit Status Receipt';
-        $content = $this->setEmailContent($metadata);
 
         $data = array();
         try {
@@ -107,6 +104,8 @@ class PublishController extends Controller {
             $this->loggingService->logPublishedDetails($package, $crateName);
             if($to != '')
             {
+                $content = $this->setEmailContent($metadata);
+                $data['metadata'] = $metadata;
                 $this->mailer->sendHtml($to, $from, $subject, $content);
             }
             $status = 201;

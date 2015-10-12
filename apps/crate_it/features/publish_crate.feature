@@ -72,7 +72,7 @@ Feature: Publish crates to an endpoint
       Given that I can not publish a crate
       When I click on "publish"
       And I press "Submit" on the popup dialog
-      Then I should see "Enter an email address to send the submit log to"
+      Then I should see "Enter an email address to send the submission report to"
       Then the "Send" button in the popup dialog should be disabled
       When I fill in "publish-confirm-email" with "test@test.org"
       Then the "Send" button in the popup dialog should not be disabled

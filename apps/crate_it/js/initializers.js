@@ -232,17 +232,19 @@ function initCrateActions() {
       dataType: 'json',
       success: function(data) {
         $("div#publishingCrateModal").modal("hide");
-        confirmPublish(data.msg);
+        confirmPublish(data);
       },
       error: function(jqXHR) {
         $("div#publishingCrateModal").modal("hide");
-        confirmPublish(jqXHR.responseJSON.msg);
+        confirmPublish(jqXHR.responseJSON);
       }
     });
   };
 
 
-  var confirmPublish = function(msg) {
+  var confirmPublish = function(data) {
+    var msg = data.msg;
+    var metadata = data.metadata;
     $('#publish-confirm-status').text(msg);
     $('#publishConfirmModal').modal('show');
     $('#publish-confirm-email-send').click(function(){
@@ -250,7 +252,7 @@ function initCrateActions() {
       $.ajax({
         url: c_url,
         type: 'post',
-        data: {address: $('#publish-confirm-email').val() },
+        data: {address: $('#publish-confirm-email').val(), metadata: metadata},
         dataType: 'json',
         success: function(data) {
           $('#publish-confirm-email-status').text(data.msg);

@@ -6,6 +6,7 @@ use \OCA\crate_it\lib\SwordPublisher;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Http;
+use \OCA\crate_it\lib\Util;
 
 class PublishController extends Controller {
 
@@ -14,6 +15,11 @@ class PublishController extends Controller {
     private $crateManager;
     private $loggingService;
     private $mailer;
+
+    private function setEmailContent($metadata) {
+        $content = Util::renderTemplate('readme', $metadata);
+        return $content;
+    }
 
     public function __construct($appName, $request, $crateManager, $setupService, $publishingService, $alertingService, $loggingService, $mailer) {
         parent::__construct($appName, $request);
@@ -44,12 +50,14 @@ class PublishController extends Controller {
         $data = array();
         if(!empty($_SESSION['last_published_status'])) {
             $to = $this->params('address');
+            $metadata = $this->params('metadata');
             // TODO: This should be configurable
             $from = 'no-reply@cr8it.app';
             $subject = 'Cr8it Submit Status Receipt';
             try {
-                $content = $this->loggingService->getLog();
-                if($this->mailer->send($to, $from, $subject, $content)) {
+                $content = $this->setEmailContent($metadata);
+
+                if($this->mailer->sendHtml($to, $from, $subject, $content)) {
                     $data['msg'] = "Submit log sent to $to";
                     $status = 200;
                 } else {
@@ -82,6 +90,11 @@ class PublishController extends Controller {
         $package = $this->crateManager->packageCrate($crateName);
         $this->loggingService->log("Zipped content into '".basename($package)."'");
         $metadata = $this->crateManager->createMetadata($crateName);
+
+        $to = $metadata['submitter']['email'];
+        $from = 'no-reply@cr8it.app';
+        $subject = 'Cr8it Submit Status Receipt';
+
         $data = array();
         try {
             $this->loggingService->log("Submitting crate $crateName (".basename($package).")..");
@@ -89,6 +102,12 @@ class PublishController extends Controller {
             $this->alertingService->alert($metadata);
             $data['msg'] = "Crate '$crateName' successfully submitted to $collection";
             $this->loggingService->logPublishedDetails($package, $crateName);
+            if($to != '')
+            {
+                $content = $this->setEmailContent($metadata);
+                $data['metadata'] = $metadata;
+                $this->mailer->sendHtml($to, $from, $subject, $content);
+            }
             $status = 201;
         } catch (\Exception $e) {
             $this->loggingService->log("Submitting crate '$crateName' failed.");

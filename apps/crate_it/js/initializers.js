@@ -236,7 +236,7 @@ function initCrateActions() {
       },
       error: function(jqXHR) {
         $("div#publishingCrateModal").modal("hide");
-        confirmPublish(jqXHR.responseJSON.msg);
+        confirmPublish(jqXHR.responseJSON);
       }
     });
   };

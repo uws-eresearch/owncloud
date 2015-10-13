@@ -16,6 +16,12 @@ Feature: Add files and folders to a crate
     #CRATEIT-255
   Scenario: A user can see selected crate
     Then I should see selected crate "default_crate"
+    Then I go to the crate_it page
+    When I click the new crate button
+    And I fill in "New Crate Name" with "feature_test_crate"
+    Then I press "Create" on the popup dialog
+    And I go to the files page
+    Then I should see selected crate "feature_test_crate"
 
   #CRATEIT-46
   Scenario: A user can add a file to a crate

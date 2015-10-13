@@ -97,6 +97,9 @@ class CrateController extends Controller {
     {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateName()", \OCP\Util::DEBUG);
         try {
+            if($_SESSION['selected_crate'] == null) {
+                throw new \Exception("no selected crate");
+            }
             $crateName = $_SESSION['selected_crate'];
             return new JSONResponse($crateName);
         } catch(\Exception $e) {

@@ -87,6 +87,23 @@ class CrateController extends Controller {
         }
     }
 
+    /**
+     * Get Crate Name
+     *
+     * @Ajax
+     * @NoAdminRequired
+     */
+    public function getCrateName()
+    {
+        \OCP\Util::writeLog('crate_it', "CrateController::getCrateName()", \OCP\Util::DEBUG);
+        try {
+            error_log(print_r($_SESSION, true));
+            $crateName = $_SESSION['selected_crate'];
+            return new JSONResponse($crateName);
+        } catch(\Exception $e) {
+            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
+    }
     
     /**
      * Get Crate Size

@@ -41,5 +41,6 @@
     }]
   },
   "help_url": "http://htmlpreview.github.io/?https://github.com/IntersectAustralia/cr8it_doc/master/online-help.html",
-  "crate path": "/var/lib/owncloud/data/"
+  "crate path": "/var/lib/owncloud/data/",
+  "submitted_crate_url": "http://www.intersect.org.au/${crate_name}"
 }

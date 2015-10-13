@@ -8,7 +8,8 @@
     <my:DateCreated><?php p($_['created_date']) ?></my:DateCreated>
     <my:Description><?php p($_['description']) ?></my:Description>
     <my:DataRetentionPeriod><?php p($_['data_retention_period']) ?></my:DataRetentionPeriod>
-    <my:URL><?php print_unescaped($_['location']) ?></my:URL>
+    <my:Location><?php print_unescaped($_['location']) ?></my:Location>
+    <my:URL><?php print_unescaped($_['url']) ?></my:URL>
     <my:Type>dataset</my:Type>
     <my:WorkflowSource>Owncloud-Cr8IT</my:WorkflowSource>
     <my:WorkflowSourceVersion><?php p($_['version']) ?></my:WorkflowSourceVersion>

@@ -3,10 +3,10 @@
 namespace OCA\crate_it\Controller;
 
 use \OCA\crate_it\lib\SwordPublisher;
+use \OCA\crate_it\lib\Util;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Http;
-use \OCA\crate_it\lib\Util;
 
 class PublishController extends Controller {
 
@@ -15,11 +15,6 @@ class PublishController extends Controller {
     private $crateManager;
     private $loggingService;
     private $mailer;
-
-    private function setEmailContent($metadata) {
-        $content = Util::renderTemplate('readme', $metadata);
-        return $content;
-    }
 
     public function __construct($appName, $request, $crateManager, $setupService, $publishingService, $alertingService, $loggingService, $mailer) {
         parent::__construct($appName, $request);
@@ -55,7 +50,7 @@ class PublishController extends Controller {
             $from = 'no-reply@cr8it.app';
             $subject = 'Cr8it Submit Status Receipt';
             try {
-                $content = $this->setEmailContent($metadata);
+                $content = $this->getEmailContent($metadata);
 
                 if($this->mailer->sendHtml($to, $from, $subject, $content)) {
                     $data['msg'] = "Submit log sent to $to";
@@ -90,21 +85,22 @@ class PublishController extends Controller {
         $package = $this->crateManager->packageCrate($crateName);
         $this->loggingService->log("Zipped content into '".basename($package)."'");
         $metadata = $this->crateManager->createMetadata($crateName);
-
-        $to = $metadata['submitter']['email'];
-        $from = 'no-reply@cr8it.app';
-        $subject = 'Cr8it Submit Status Receipt';
-
+        $config = Util::getConfig();
         $data = array();
         try {
             $this->loggingService->log("Submitting crate $crateName (".basename($package).")..");
-            $metadata['location'] = $this->publishingService->publishCrate($package, $endpoint, $collection);
+            $cratePath = $this->publishingService->publishCrate($package, $endpoint, $collection);
+            $metadata['location'] = $cratePath;
+            $metadata['url'] = str_replace('${crate_name}', basename($cratePath), $config['submitted_crate_url']);
             $this->alertingService->alert($metadata);
             $data['msg'] = "Crate '$crateName' successfully submitted to $collection";
             $this->loggingService->logPublishedDetails($package, $crateName);
-            if($to != '')
-            {
-                $content = $this->setEmailContent($metadata);
+            # Publish complete. Email the submitter if an email address has been configured.
+            $to = $metadata['submitter']['email'];
+            if($to != '') {
+                $from = 'no-reply@cr8it.app';
+                $subject = 'Cr8it Submit Status Receipt';
+                $content = $this->getEmailContent($metadata);
                 $data['metadata'] = $metadata;
                 $this->mailer->sendHtml($to, $from, $subject, $content);
             }
@@ -119,5 +115,8 @@ class PublishController extends Controller {
         return new JSONResponse($data, $status);
     }
 
-
+    private function getEmailContent($metadata) {
+        $content = Util::renderTemplate('readme', $metadata);
+        return $content;
+    }
 }

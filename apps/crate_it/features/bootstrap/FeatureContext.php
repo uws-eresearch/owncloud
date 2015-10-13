@@ -1593,5 +1593,17 @@ JS;
         assertEquals($arg2, $retention[0]);
 
     }
+
+    /**
+     * @Then /^I should see selected crate "([^"]*)"$/
+     */
+    public function theIShouldSeeAsSelectedCrate($expected)
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//*[@id="selectedCrate"]';
+        $el = $page->find('xpath', $xpath);
+        $actual = $el->getHtml();
+        assertEquals('Selected Crate:'.$expected, $actual);
+    }
 }
 

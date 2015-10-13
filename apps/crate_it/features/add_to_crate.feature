@@ -13,6 +13,10 @@ Feature: Add files and folders to a crate
     And I'm logged in to ownCloud as "test"
     And I go to the files page
 
+    #CRATEIT-255
+  Scenario: A user can see selected crate
+    Then I should see selected crate "default_crate"
+
   #CRATEIT-46
   Scenario: A user can add a file to a crate
     When I add "file.txt" to the current crate

@@ -42,7 +42,7 @@ $(document).ready(function() {
                 selected_crate = 'Selected Crate:'+data;
             },
             error: function(jqXHR) {
-                displayError(jqXHR.responseJSON.msg);
+                selected_crate = jqXHR.responseJSON.msg;
             }
         });
        return selected_crate;

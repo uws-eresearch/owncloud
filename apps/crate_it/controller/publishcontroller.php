@@ -53,7 +53,7 @@ class PublishController extends Controller {
                 $content = $this->getEmailContent($metadata);
 
                 if($this->mailer->sendHtml($to, $from, $subject, $content)) {
-                    $data['msg'] = "A Confirmation email has been sent to $to";
+                    $data['msg'] = "A confirmation email has been sent to $to";
                     $status = 200;
                 } else {
                     throw new \Exception('Unable to send email at this time');

@@ -18,26 +18,26 @@
         <p>
             Your crate submission report is listed below:
         </p>
-        <h1>"<?php p($_['crate_name']) ?>" Submission Report</h1>
+        <h4>"<?php p($_['crate_name']) ?>" Submission Report</h4>
         <section resource="creative work" typeof="http://schema.org/CreativeWork">
-            <h1>Package Title</h1>
+            <h4>Package Title</h4>
         <span
             property="http://schema.org/name http://purl.org/dc/elements/1.1/title"><?php p($_['crate_name']) ?></span>
 
-            <h1>Package Creation Date</h1>
+            <h4>Package Creation Date</h4>
         <span content="<?php p($_['created_date']) ?>"
               property="http://schema.org/dateCreated"><?php p($_['created_date_formatted']) ?></span>
 
-            <h1>Package File Name</h1>
+            <h4>Package File Name</h4>
             <span property="http://schema.org/name"><?php p($_['crate_name'] . '.zip') ?></span>
 
-            <h1>ID</h1>
+            <h4>ID</h4>
             <span property="http://schema.org/id"><?php p($_['crate_name']) ?></span>
 
-            <h1>Description</h1>
+            <h4>Description</h4>
             <span property="http://schema.org/description"><?php p(nl2br($_['description'])) ?></span>
 
-            <h1>Creators</h1>
+            <h4>Creators</h4>
             <?php if ($_['creators']) { ?>
                 <table border="1">
                     <thead>
@@ -72,7 +72,7 @@
                 <span>None.</span>
 
             <?php } ?>
-            <h1>Grants</h1>
+            <h4>Grants</h4>
             <?php if ($_['activities']) { ?>
                 <table border="1">
                     <thead>
@@ -168,7 +168,7 @@
                 <span>None.</span>
 
             <?php } ?>
-            <h1>Software Information</h1>
+            <h4>Software Information</h4>
             <section property="http://purl.org/dc/terms/creator" typeof="http://schema.org/softwareApplication"
                      resource="">
                 <table border="1">
@@ -199,7 +199,7 @@
             </section>
         </section>
 
-        <h1>Files</h1>
+        <h4>Files</h4>
         <?php
         if ($_['files']) {
             print_unescaped($_['filetree']);

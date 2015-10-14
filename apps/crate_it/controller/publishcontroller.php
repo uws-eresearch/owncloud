@@ -53,7 +53,7 @@ class PublishController extends Controller {
                 $content = $this->getEmailContent($metadata);
 
                 if($this->mailer->sendHtml($to, $from, $subject, $content)) {
-                    $data['msg'] = "Submit log sent to $to";
+                    $data['msg'] = "A Confirmation email has been sent to $to";
                     $status = 200;
                 } else {
                     throw new \Exception('Unable to send email at this time');
@@ -93,15 +93,16 @@ class PublishController extends Controller {
             $metadata['location'] = $cratePath;
             $metadata['url'] = str_replace('${crate_name}', basename($cratePath), $config['submitted_crate_url']);
             $this->alertingService->alert($metadata);
-            $data['msg'] = "Crate '$crateName' successfully submitted to $collection";
+            $data['msg'] = "Crate '$crateName' successfully submitted.";
             $this->loggingService->logPublishedDetails($package, $crateName);
             # Publish complete. Email the submitter if an email address has been configured.
             $to = $metadata['submitter']['email'];
+            $data['metadata'] = $metadata;
             if($to != '') {
                 $from = 'no-reply@cr8it.app';
                 $subject = 'Cr8it Submit Status Receipt';
                 $content = $this->getEmailContent($metadata);
-                $data['metadata'] = $metadata;
+
                 $this->mailer->sendHtml($to, $from, $subject, $content);
             }
             $status = 201;
@@ -115,8 +116,10 @@ class PublishController extends Controller {
         return new JSONResponse($data, $status);
     }
 
+
     private function getEmailContent($metadata) {
-        $content = Util::renderTemplate('readme', $metadata);
+        $content = Util::renderTemplate('submission_email', $metadata);
         return $content;
     }
+
 }

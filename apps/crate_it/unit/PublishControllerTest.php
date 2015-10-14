@@ -31,7 +31,7 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
       $this->loggingService->method('logManifest')->willReturn(NULL);
       $this->mailer = $this->getMockBuilder('OCA\crate_it\lib\Mailer')->setMethods(array('send'))->getMock();
       $this->publishController = new PublishController(NULL, NULL, $crateManager, $setupService, $this->publishingService, $alertingService, $this->loggingService, $this->mailer);
-      $this->publishController->params = array('name' => 'test crate', 'endpoint' => 'test server', 'collection' => 'collection 123', 'address' => 'test@test.org');
+      $this->publishController->params = array('name' => 'test crate', 'endpoint' => 'test server', 'collection' => 'collection 123', 'address' => 'test@test.org', 'metadata' =>'');
     }
 
 

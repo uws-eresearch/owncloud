@@ -34,6 +34,7 @@ $application->registerRoutes($this, array('routes' => array(
     array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
     array('name' => 'crate#xml', 'url' => '/xml', 'verb' => 'GET'),
     array('name' => 'crate#get_manifest', 'url' => '/crate/get_manifest', 'verb' => 'GET'),
+    array('name' => 'crate#get_crate_name', 'url' => '/crate/get_crate_name', 'verb' => 'GET'),
     array('name' => 'crate#add', 'url' => '/crate/add', 'verb' => 'POST'),
     array('name' => 'crate#get_crate_size', 'url' => '/crate/get_crate_size', 'verb' => 'GET'),
     array('name' => 'crate#update_crate', 'url' => '/crate/update', 'verb' => 'POST'),

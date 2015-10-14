@@ -30,6 +30,24 @@ function getFileName(dir, filename) {
 }
 
 $(document).ready(function() {
+    var selected_crate = function() {
+        var selected_crate ='';
+        var c_url = OC.generateUrl('apps/crate_it/crate/get_crate_name');
+        $.ajax({
+            async: false,
+            url: c_url,
+            type: 'get',
+            dataType: 'json',
+            success: function (data) {
+                selected_crate = 'Selected Crate:'+data;
+            },
+            error: function(jqXHR) {
+                displayError(jqXHR.responseJSON.msg);
+            }
+        });
+       return selected_crate;
+    }
+
     if (location.pathname.indexOf("files") != -1) {
         if (typeof FileActions !== 'undefined') {
             FileActions.register('all', 'Add to crate', OC.PERMISSION_READ, '', function(filename) {
@@ -52,6 +70,7 @@ $(document).ready(function() {
                 });
             });
         }
+        $('div#controls').append('<div id="selectedCrate" class="">'+selected_crate()+'</div>');
     } else if (location.pathname.indexOf("crate_it") != -1) {
         loadTemplateVars();
         drawCrateContents();

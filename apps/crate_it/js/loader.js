@@ -39,7 +39,10 @@ $(document).ready(function() {
             type: 'get',
             dataType: 'json',
             success: function (data) {
-                selected_crate = data;
+                selected_crate = 'Selected Crate:'+data;
+            },
+            error: function(jqXHR) {
+                displayError(jqXHR.responseJSON.msg);
             }
         });
        return selected_crate;
@@ -67,7 +70,7 @@ $(document).ready(function() {
                 });
             });
         }
-        $('div#controls').append('<div id="selectedCrate" class="">Selected Crate:'+selected_crate()+'</div>');
+        $('div#controls').append('<div id="selectedCrate" class="">'+selected_crate()+'</div>');
     } else if (location.pathname.indexOf("crate_it") != -1) {
         loadTemplateVars();
         drawCrateContents();

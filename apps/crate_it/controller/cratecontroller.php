@@ -96,15 +96,15 @@ class CrateController extends Controller {
     public function getCrateName()
     {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateName()", \OCP\Util::DEBUG);
-        try {
-            if($_SESSION['selected_crate'] == null) {
-                throw new \Exception("no selected crate");
-            }
-            $crateName = $_SESSION['selected_crate'];
-            return new JSONResponse($crateName);
-        } catch(\Exception $e) {
-            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+
+        $status = Http::STATUS_OK;
+        if ($_SESSION['selected_crate']) {
+            $content = $_SESSION['selected_crate'];
+        }else {
+            $content = array('msg' => 'No selected crate.');
+            $status = Http::STATUS_INTERNAL_SERVER_ERROR;
         }
+        return new JSONResponse($content, $status);
     }
     
     /**

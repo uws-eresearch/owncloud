@@ -180,7 +180,7 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   public function testGetCrateNameFailure() {
     $_SESSION['selected_crate'] = null;
-    $errorMessage = 'no selected crate';
+    $errorMessage = 'No selected crate.';
     $this->jsonErrorResponse = new JSONResponse(array('msg' => $errorMessage), Http::STATUS_INTERNAL_SERVER_ERROR);
     $actual = $this->crateController->getCrateName();
     $this->assertEquals($this->jsonErrorResponse, $actual);

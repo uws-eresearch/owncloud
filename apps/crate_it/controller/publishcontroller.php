@@ -92,6 +92,9 @@ class PublishController extends Controller {
             $cratePath = $this->publishingService->publishCrate($package, $endpoint, $collection);
             $metadata['location'] = $cratePath;
             $metadata['url'] = str_replace('${crate_name}', basename($cratePath), $config['submitted_crate_url']);
+            date_default_timezone_set('Australia/Sydney');
+            $metadata['submitted_date'] = Util::getTimestamp("Y-m-d");
+            $metadata['submitted_time'] = Util::getTimestamp("H:i:s");
             $this->alertingService->alert($metadata);
             $data['msg'] = "Crate '$crateName' successfully submitted to $collection";
             $this->loggingService->logPublishedDetails($package, $crateName);

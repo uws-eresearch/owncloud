@@ -71,8 +71,6 @@ class Crate extends BagIt {
         date_default_timezone_set('Australia/Sydney');
         $metadata['created_date'] = Util::getTimestamp("Y-m-d H:i:s");
         $metadata['created_date_formatted'] = Util::getTimestamp("F jS, Y - H:i:s (T)");
-        $metadata['submitted_date'] = Util::getTimestamp("F jS, Y");
-        $metadata['submitted_time'] = Util::getTimestamp("H:i:s (T)");
         $vfs = &$metadata['vfs'][0];
         $metadata['filetree'] = $this->buildFileTreeFromRoot($vfs);
         $metadata['version'] = "Version ".\OCP\App::getAppVersion('crate_it');

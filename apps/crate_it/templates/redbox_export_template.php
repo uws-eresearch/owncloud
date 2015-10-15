@@ -5,7 +5,8 @@
 
     <my:Title><?php p($_['crate_name']) ?></my:Title>
     <my:ID><?php p($_['crate_name']) ?></my:ID>
-    <my:DateCreated><?php p($_['created_date']) ?></my:DateCreated>
+    <my:DateSubmitted><?php p($_['submitted_date']) ?></my:DateSubmitted>
+    <my:TimeSubmitted><?php p($_['submitted_time']) ?></my:TimeSubmitted>
     <my:Description><?php p($_['description']) ?></my:Description>
     <my:DataRetentionPeriod><?php p($_['data_retention_period']) ?></my:DataRetentionPeriod>
     <my:Location><?php print_unescaped($_['location']) ?></my:Location>

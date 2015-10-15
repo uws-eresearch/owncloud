@@ -293,7 +293,11 @@ function initCrateActions() {
           $('#publish-consistency').text('Unable ot determine crate consistency');
         }
     });
-    
+
+    if($('#publish-collection > option').length <=1){
+      $('#collection-choice').hide();
+    }
+
     $('#publish-description').text($('#description').text());
     $('#publish-data-retention-period').text($('#retention_period_value').text());
 

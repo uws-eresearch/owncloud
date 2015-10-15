@@ -4,9 +4,14 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h2 class="modal-title" id="publishModalLabel">Submit Crate</h2>
+        <p>
+          <br />
+          Please review the metadata associated with your Crate as detailed below. <br />
+          Click Submit to proceed or click Cancel to return to your Crate and update your metadata.
+        </p>
       </div>
       <div class="modal-body">
-        <section class="publish-body">
+        <section class="publish-body" id="collection-choice">
           <h3>Select Collection</h3>
           <label for="publish-collection" class="element-invisible">Select Collection</label>
           <select id="publish-collection">

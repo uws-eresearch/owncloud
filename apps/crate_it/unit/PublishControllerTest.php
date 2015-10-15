@@ -15,6 +15,7 @@ require_once 'service/publishingservice.php';
 use OCA\crate_it\Controller\PublishController;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\Template;
+use OCA\crate_it\lib\Util;
 
 class PublishControllerTest extends PHPUnit_Framework_TestCase {
 
@@ -41,7 +42,7 @@ class PublishControllerTest extends PHPUnit_Framework_TestCase {
 
     public function testPublishCrateSuccess() {
       $this->publishingService->method('publishCrate')->willReturn('path');
-      $metadata = array('location'=>'path', 'url' => 'http://www.intersect.org.au/path');
+      $metadata = array('location'=>'path', 'url' => 'http://www.intersect.org.au/path', 'submitted_date'=> Util::getTimestamp("Y-m-d"), 'submitted_time' => Util::getTimestamp("H:i:s"));
       $expected = new JSONResponse(array('msg' => 'Crate \'test crate\' successfully submitted.', 'metadata'=> $metadata), 201);
       $actual = $this->publishController->publishCrate();
       $this->assertEquals($expected, $actual);

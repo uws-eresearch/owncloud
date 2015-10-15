@@ -96,7 +96,11 @@ class PublishController extends Controller {
             $data['msg'] = "Crate '$crateName' successfully submitted.";
             $this->loggingService->logPublishedDetails($package, $crateName);
             # Publish complete. Email the submitter if an email address has been configured.
-            $to = $metadata['submitter']['email'];
+            if(!array_key_exists('submitter',$metadata)) {
+                $to = '';
+            } else {
+                $to = $metadata['submitter']['email'];
+            }
             $data['metadata'] = $metadata;
             if($to != '') {
                 $from = 'no-reply@cr8it.app';
@@ -108,7 +112,7 @@ class PublishController extends Controller {
             $status = 201;
         } catch (\Exception $e) {
             $this->loggingService->log("Submitting crate '$crateName' failed.");
-            $data['msg'] = "Error: failed to submit crate '$crateName' to $collection: {$e->getMessage()}";
+            $data['msg'] = "Error: failed to submit crate '$crateName': {$e->getMessage()}";
             $status = 500;
         }
         $this->loggingService->log($data['msg']);

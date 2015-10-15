@@ -98,7 +98,7 @@ class CrateController extends Controller {
         \OCP\Util::writeLog('crate_it', "CrateController::getCrateName()", \OCP\Util::DEBUG);
 
         $status = Http::STATUS_OK;
-        if ($_SESSION['selected_crate']) {
+        if (array_key_exists('selected_crate',$_SESSION)) {
             $content = $_SESSION['selected_crate'];
         }else {
             $content = array('msg' => 'No selected crate.');

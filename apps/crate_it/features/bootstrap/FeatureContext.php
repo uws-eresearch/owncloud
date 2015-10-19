@@ -1603,7 +1603,7 @@ JS;
         $xpath = '//*[@id="selectedCrate"]';
         $el = $page->find('xpath', $xpath);
         $actual = $el->getHtml();
-        assertEquals('Selected Crate:'.$expected, $actual);
+        assertEquals('Selected Crate: '.$expected, $actual);
     }
 }
 

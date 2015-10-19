@@ -39,7 +39,7 @@ $(document).ready(function() {
             type: 'get',
             dataType: 'json',
             success: function (data) {
-                selected_crate = 'Selected Crate:'+data;
+                selected_crate = 'Selected Crate: '+data;
             },
             error: function(jqXHR) {
                 selected_crate = jqXHR.responseJSON.msg;

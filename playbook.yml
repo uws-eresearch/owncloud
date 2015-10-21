@@ -28,7 +28,7 @@
     sudo: yes
 
   - name: Install Owncloud
-    yum: name=owncloud-7.0.7-1.el6
+    yum: name=owncloud-7.0.10-1.el6
     sudo: yes
 
   - name: Allow host OS to access server and configure Owncloud

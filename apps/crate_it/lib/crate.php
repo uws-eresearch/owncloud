@@ -329,7 +329,7 @@ class Crate extends BagIt {
                 'folderpath' => $folder
             );
             $vfsContents = &$vfsEntry['children'];
-            $paths = \OC\Files\Filesystem::getDirectoryContent($folder);//this does not work on mounted folder
+            $paths = \OC\Files\Filesystem::getDirectoryContent($folder);
             foreach($paths as $path) {
                 $relativePath = $path->getPath();
                 if(Util::startsWith($relativePath, '/'.\OCP\User::getUser().'/files/')) {

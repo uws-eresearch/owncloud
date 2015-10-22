@@ -200,11 +200,11 @@ class CrateManager {
     public function checkCrate($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
-        $files = $crate->getAllFilesAndFolders();     
+        $files = $crate->getAllFilesAndFolders();
         $result = array();
         foreach ($files as $filepath) {
             \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - checking ".$filepath, \OCP\Util::DEBUG);
-            $file_exist = file_exists($filepath); 
+            $file_exist = \OC\Files\Filesystem::file_exists($filepath);
             if (!$file_exist) {
                 $result[basename($filepath)] = $file_exist;
             }

@@ -218,8 +218,7 @@ class Crate extends BagIt {
         $res = array();
         foreach($flat as $elem) {
             $path = $elem['filename'] ? $elem['filename'] : $elem['folderpath'];
-            $absPath = $this->getFullPath($path);
-            $res[] = $absPath;
+            $res[] = $path;
         }
         return $res;
     }
@@ -330,14 +329,11 @@ class Crate extends BagIt {
                 'folderpath' => $folder
             );
             $vfsContents = &$vfsEntry['children'];
-            $paths = \OC\Files\Filesystem::getDirectoryContent($folder);
+            $paths = \OC\Files\Filesystem::getDirectoryContent($folder);//this does not work on mounted folder
             foreach($paths as $path) {
-                $relativePath = $path['path'];
-                if(Util::startsWith($relativePath, 'files/')) {
-                    $relativePath = substr($path['path'], strlen('files/'));
-                    if(!strncmp($folder, "Shared", 6)) {
-                        $relativePath = 'Shared/'.$relativePath;
-                    }
+                $relativePath = $path->getPath();
+                if(Util::startsWith($relativePath, '/'.\OCP\User::getUser().'/files/')) {
+                    $relativePath = substr($relativePath, strlen('/'.\OCP\User::getUser().'/files/'));
                 }
                 $this->addPath($relativePath, $vfsContents);
             }

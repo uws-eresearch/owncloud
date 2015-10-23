@@ -299,7 +299,11 @@ function initCrateActions() {
     }
 
     $('#publish-description').text($('#description').text());
-    $('#publish-data-retention-period').text($('#retention_period_value').text());
+    $('#publish-data-retention-period').text($('#retention_period_value').text() + ' (years)');
+
+    $('#publish-embargo-enabled').text($('span#embargo_enabled').text());
+    $('#publish-embargo-date').text($('span#embargo_until').text());
+    $('#publish-embargo-note').text($('span#embargo_note').text());
 
     $('#publish-creators').children().remove();
     // TODO: create proper render functions
@@ -368,12 +372,14 @@ function setupDescriptionOps() {
         type: 'post',
         dataType: 'json',
         data: {
-          'field': 'description',
-          'value': $('#crate_description').val()
+          'fields': [{
+            'field': 'description',
+            'value': $('#crate_description').val()
+          }]
         },
         success: function(data) {
           $('#description').html('');
-          $('#description').text(data.value);
+          $('#description').text(data.values['description']);
           $('#edit_description').removeClass('hidden');
           calulateHeights();
         },
@@ -427,12 +433,14 @@ function setupRetentionPeriodOps() {
         type: 'post',
         dataType: 'json',
         data: {
-          'field': 'data_retention_period',
-          'value': $("input[type='radio']:checked").val()
+          'fields': [{
+            'field': 'data_retention_period',
+            'value': $("input[type='radio']:checked").val()
+          }]
         },
         success: function(data) {
           $('#retention_period_value').html('');
-          $('#retention_period_value').text(data.value);
+          $('#retention_period_value').text(data.values['data_retention_period']);
           $('#choose_retention_period').removeClass('hidden');
 
         },
@@ -447,6 +455,105 @@ function setupRetentionPeriodOps() {
       $('#retention_period_value').text(old_retention_period);
       $('#choose_retention_period').removeClass('hidden');
     });
+  });
+}
+
+function setupEmbargoDetailsOps() {
+  var oldEmbargoEnabled;
+  var oldEmbargoDisabled;
+  var oldEmbargoDate;
+  var oldEmbargoDetails;
+
+  $('#choose_embargo_details').click(function(event) {
+    $('#embargo-summary').hide();
+    $('#edit_embargo_details').show();
+
+    oldEmbargoEnabled = $('#embargo_enabled_yes').is(':checked');
+    oldEmbargoDisabled = $('#embargo_enabled_no').is(':checked');
+    oldEmbargoDate = $('input#embargo_date').val();
+    oldEmbargoDetails = $('textarea#embargo_details').val();
+  });
+
+  $('#save_embargo').click(function(event) {
+    var c_url = OC.generateUrl('apps/crate_it/crate/update');
+
+    // Perform validation
+    var embargoEnabled = $('#embargo_enabled_yes').is(':checked');
+    var embargoDisabled = $('#embargo_enabled_no').is(':checked');
+    var embargoDate = $('input#embargo_date').val();
+    var embargoDetails = $('textarea#embargo_details').val();
+
+    var errors = false;
+    $('#embargo-details-modal-ul').html('');
+
+    if (!embargoEnabled && !embargoDisabled) {
+      errors = true;
+      $('#embargo-details-modal-ul').append('<li>Embargo enabled must be set to yes or no</li>');
+    }
+
+    if (embargoEnabled) {
+      if (!embargoDate) {
+        errors = true;
+        $('#embargo-details-modal-ul').append('<li>Embargo date must not be blank</li>');
+      }
+      if (!embargoDetails) {
+        errors = true;
+        $('#embargo-details-modal-ul').append('<li>Embargo details must not be blank</li>');
+      } else if (embargoDetails.length > 1024) {
+        errors = true;
+        $('#embargo-details-modal-ul').append('<li>Embargo details must be less than 1024 characters in length</li>');
+      }
+    } else {
+      embargoDate = '';
+      $('input#embargo_date').val('');
+      embargoDetails = '';
+      $('textarea#embargo_details').val('');
+    }
+
+    // Show the modal
+    if (errors) {
+      $('#embargo-details-submission-modal').modal({});
+      return;
+    }
+
+    $.ajax({
+      url: c_url,
+      type: 'post',
+      dataType: 'json',
+      data: {
+        'fields': [{
+          'field': 'embargo_enabled',
+          'value': embargoEnabled
+        }, {
+          'field': 'embargo_date',
+          'value': embargoDate
+        }, {
+          'field': 'embargo_details',
+          'value': embargoDetails
+        }]
+      },
+      success: function(data) {
+        $('span#embargo_enabled').html(data.values['embargo_enabled'] === 'true' ? 'Yes' : 'No');
+        $('span#embargo_until').html(data.values['embargo_date']);
+        $('span#embargo_note').html(data.values['embargo_details']);
+        $('#embargo-summary').show();
+        $('#edit_embargo_details').hide();
+      },
+      error: function(jqXHR) {
+        displayError(jqXHR.responseJSON.msg);
+      }
+    });
+  });
+
+  $('#cancel_embargo').click(function(event) {
+    $('#embargo-summary').show();
+    $('#edit_embargo_details').hide();
+
+    // Reset the inputs
+    $('#embargo_enabled_yes').prop("checked", oldEmbargoEnabled);
+    $('#embargo_enabled_no').prop("checked", oldEmbargoDisabled);
+    $('input#embargo_date').val(oldEmbargoDate);
+    $('textarea#embargo_details').val(oldEmbargoDetails);
   });
 }
 

@@ -376,8 +376,10 @@ function saveTree(successMessage, errorMessage, reload) {
         type: 'post',
         dataType: 'json',
         data: {
-            'field': 'vfs',
-            'value': $tree.tree('toJson')
+            'fields': [{
+                'field': 'vfs',
+                'value': $tree.tree('toJson')
+            }]
         },
         success: function (data) {
             if (successMessage) {
@@ -577,3 +579,7 @@ function calulateHeights() {
     var height = $('#meta-data').innerHeight() - tabsHeight;
     $('.collapse.standard .panel-body').height(height + 12);
 }
+
+$(function () {
+    $('#embargo_datetime_picker_button').datetimepicker();
+});

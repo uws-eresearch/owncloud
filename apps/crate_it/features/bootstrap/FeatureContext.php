@@ -1524,6 +1524,16 @@ JS;
     }
 
     /**
+     * @When /^I click the edit embargo details button$/
+     */
+    public function iClickTheEditEmbargoDetailsButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//button[@id="choose_embargo_details"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
      * @When /^I check the radio button "([^"]*)"$/
      */
     public function iCheckTheRadioButton($radioButtonText) {
@@ -1543,6 +1553,36 @@ JS;
     }
 
     /**
+     * @Given /^I click the save embargo details button$/
+     */
+    public function iClickTheSaveEmbargoDetailsButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="save_embargo"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I check the embargo enabled radio button$/
+     */
+    public function iCheckTheEmbargoEnabledRadioButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="embargo_enabled_yes"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I check the embargo disabled radio button$/
+     */
+    public function iCheckTheEmbargoDisabledRadioButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="embargo_enabled_no"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
      * @Given /^I should see the crate data retention period as "([^"]*)"$/
      */
     public function iShouldSeeTheCrateDataRetentionPeriodAs($arg1)
@@ -1550,6 +1590,53 @@ JS;
         $this->waitForPageToLoad();
         $page = $this->getSession()->getPage();
         $xpath = '//div[@id="retention_peroid_list"]/div[@id="retention_period_value"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        assertEquals($arg1, $str_desc);
+    }
+
+    /**
+     * @Given /^I should see embargo enabled as "([^"]*)"$/
+     */
+    public function iShouldSeeEmbargoEnabledAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//span[@id="embargo_enabled"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        assertEquals($arg1, $str_desc);
+    }
+
+    /**
+     * @Given /^I should see embargo until as "([^"]*)"$/
+     */
+    public function iShouldSeeEmbargoUntilAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//span[@id="embargo_until"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        assertEquals($arg1, $str_desc);
+    }
+
+    /**
+     * @Given /^I should see embargo until as today$/
+     */
+    public function iShouldSeeEmbargoUntilAsToday()
+    {
+        $this->iShouldSeeEmbargoUntilAs(date('Y-m-d'));
+    }
+
+    /**
+     * @Given /^I should see embargo note as "([^"]*)"$/
+     */
+    public function iShouldSeeEmbargoNoteAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//span[@id="embargo_note"]';
         $desc = $page->find('xpath', $xpath);
         $str_desc = (string)$desc->getText() ;
         assertEquals($arg1, $str_desc);
@@ -1564,6 +1651,7 @@ JS;
         $xpath = '//a[@id="crate-information-head"]';
         $page->find('xpath', $xpath)->click();
     }
+
     /**
      * @Given /^I click to wrap Creators$/
      */
@@ -1573,6 +1661,7 @@ JS;
         $xpath = '//a[@id="data-creators-head"]';
         $page->find('xpath', $xpath)->click();
     }
+
     /**
      * @Given /^I click to wrap Grants$/
      */
@@ -1584,6 +1673,46 @@ JS;
     }
 
     /**
+     * @Given /^I click to wrap Data Retention Period$/
+     */
+    public function iClickToWrapDataRetentionPeriod()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="data-retention-period-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click to wrap Embargo Details$/
+     */
+    public function iClickToWrapEmbargoDetails()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="embargo-details-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click the date picker$/
+     */
+    public function iClickTheDatePicker()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//i[@id="embargo_datetimepicker_icon"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I select today from the date picker$/
+     */
+    public function iSelectTodayFromTheDatePicker()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//td[contains(@class,"active")]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
      * @Given /^redbox alerts xml file "([^"]*)" should have field DataRetentionPeriod with value "([^"]*)"$/
      */
     public function redboxAlertsXmlFileShouldHaveFieldDataRetentionPeriodWithValue($arg1, $arg2)
@@ -1591,7 +1720,37 @@ JS;
         $command = 'grep -oPm1 "(?<=:DataRetentionPeriod>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
         $retention= $this->exec_sh_command($command);
         assertEquals($arg2, $retention[0]);
+    }
 
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field EmbargoEnabled with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveEmbargoEnabledValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:EmbargoEnabled>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $result = $this->exec_sh_command($command);
+        assertEquals($arg2, $result[0]);
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field EmbargoDate of today$/
+     */
+    public function redboxAlertsXmlFileShouldHaveEmbargoDateToday($arg1)
+    {
+        $today = date('Y-m-d');
+        $command = 'grep -oPm1 "(?<=:EmbargoDate>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $result = $this->exec_sh_command($command);
+        assertEquals($today, $result[0]);
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field EmbargoDetails with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveEmbargoDetailsValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:EmbargoDetails>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $result = $this->exec_sh_command($command);
+        assertEquals($arg2, $result[0]);
     }
 
     /**

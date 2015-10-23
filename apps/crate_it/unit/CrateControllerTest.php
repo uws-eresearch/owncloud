@@ -104,16 +104,9 @@ class CrateControllerTest extends PHPUnit_Framework_TestCase {
 
   public function testUpdateCrateSuccess() {
     $_SESSION['selected_crate'] = 'test';
-    $expected = new JSONResponse(array('msg' => ' successfully updated', 'value' => NULL));
+    $expected = new JSONResponse(array('msg' => 'crate successfully updated', 'values' => array()));
     $actual = $this->crateController->updateCrate();
     $this->assertEquals($expected, $actual);
-  }
-
-  public function testUpdateCrateFailure() {
-    $_SESSION['selected_crate'] = 'test';
-    $this->crateManager->method('updateCrate')->will($this->throwException($this->exception));
-    $actual = $this->crateController->updateCrate();
-    $this->assertEquals($this->jsonErrorResponse, $actual);
   }
 
   public function testRenameCrateSuccess() {

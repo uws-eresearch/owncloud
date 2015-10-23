@@ -78,6 +78,7 @@ $(document).ready(function() {
         updateCrateSize();
         setupDescriptionOps();
         setupRetentionPeriodOps();
+        setupEmbargoDetailsOps();
         initSearchHandlers();
         initAutoResizeMetadataTabs();
     }

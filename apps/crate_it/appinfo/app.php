@@ -60,7 +60,6 @@ namespace OCA\Cr8it;
     \OCP\Util::addScript('crate_it', 'tree.jquery');
     
     \OCP\Util::addScript('crate_it', 'loader');
-    \OCP\Util::addScript('crate_it', 'includeme');
     \OCP\Util::addScript('crate_it', 'validation');
     \OCP\Util::addScript('crate_it', 'search');
     \OCP\Util::addScript('crate_it', 'initializers');
@@ -75,6 +74,14 @@ namespace OCA\Cr8it;
     \OCP\Util::addStyle('crate_it', 'bootstrap.overrides');
     \OCP\Util::addStyle('crate_it', 'crate');
     \OCP\Util::addStyle('crate_it', 'jqtree');
+
+    // Bootstrap Datetime Picker
+    \OCP\Util::addScript('crate_it', 'moment.min');
+    \OCP\Util::addScript('crate_it', 'bootstrap-datetimepicker.min');
+    \OCP\Util::addStyle('crate_it', 'bootstrap-datetimepicker.min');
+
+    \OCP\Util::addScript('crate_it', 'includeme');
+
 
     // TODO: Only load in test environments
     // For tests

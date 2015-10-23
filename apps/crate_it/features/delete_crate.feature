@@ -35,6 +35,7 @@ Feature: Delete an existing crate
       And I click the Save button
       
       # Add creator
+      Then I click to wrap Creators
       Then I click on "add-creator"
       And I fill in the following:
         | add-creator-name  | Joe Bloggs     |

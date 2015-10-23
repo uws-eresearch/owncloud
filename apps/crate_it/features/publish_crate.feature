@@ -13,6 +13,7 @@ Feature: Publish crates to an endpoint
 
   #CRATEIT-178
   Scenario: A user can see a metadata summary before publishing
+    When I click to wrap Creators
     When I click on "add-creator"
     Then I fill in the following:
       | add-creator-name  | Joe Bloggs     |

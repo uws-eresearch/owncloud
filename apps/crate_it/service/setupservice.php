@@ -39,6 +39,9 @@ class SetupService {
         $manifestData = $this->crateManager->getManifest($selectedCrate);
         self::$params['description'] = $manifestData['description'];
         self::$params['data_retention_period'] = $manifestData['data_retention_period'];
+        self::$params['embargo_enabled'] = $manifestData['embargo_enabled'];
+        self::$params['embargo_date'] = $manifestData['embargo_date'];
+        self::$params['embargo_details'] = $manifestData['embargo_details'];
         $info = \OC_App::getAppInfo('crate_it');
         self::$params['version'] = $info['version'];
     }

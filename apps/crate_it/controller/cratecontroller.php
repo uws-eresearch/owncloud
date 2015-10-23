@@ -134,19 +134,28 @@ class CrateController extends Controller {
     public function updateCrate()
     {
         \OCP\Util::writeLog('crate_it', "CrateController::updateCrate()", \OCP\Util::DEBUG);
-        $field = $this->params('field');
-        $value = $this->params('value');
-        // TODO: This is an ugly workaround to avoid the max_input_vars ceiling
-        // the vfs field is a json string inside a json object
-        if($field == 'vfs') {
-            $value = json_decode($value, true);
+        $fieldsets = $this->params('fields');
+        $savedFields = array();
+
+        if (is_array($fieldsets)) {
+            foreach ($fieldsets as $fieldset) {
+                $field = $fieldset['field'];
+                $value = $fieldset['value'];
+
+                // TODO: This is an ugly workaround to avoid the max_input_vars ceiling
+                // the vfs field is a json string inside a json object
+                if ($field == 'vfs') {
+                    $value = json_decode($value, true);
+                }
+                try {
+                    $this->crateManager->updateCrate($_SESSION['selected_crate'], $field, $value);
+                    $savedFields[$field] = $value;
+                } catch (\Exception $e) {
+                    return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
+                }
+            }
         }
-        try {
-            $this->crateManager->updateCrate($_SESSION['selected_crate'], $field, $value);
-            return new JSONResponse(array('msg' => "$field successfully updated", 'value' => $value));
-        } catch(\Exception $e) {
-            return new JSONResponse(array('msg' => $e->getMessage()), Http::STATUS_INTERNAL_SERVER_ERROR);
-        }
+        return new JSONResponse(array('msg' => "crate successfully updated", 'values' => $savedFields));
     }
 
     /**

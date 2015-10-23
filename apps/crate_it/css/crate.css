@@ -448,7 +448,7 @@ border-top-right-radius: 0;
 	border-bottom: 1px solid #EEE;
 }
 
-.container-metadata .grant-numbers label, .container-metadata .data-creators label, .container-metadata .crate-size label {
+.container-metadata .grant-numbers label, .container-metadata .data-creators label, .container-metadata .crate-size label, .container-metadata .embargo-enabled label, .container-metadata .embargo-until label, .container-metadata .embargo-info label  {
 	font-weight: bold;	
 }
 .container-metadata .nothing-selected {
@@ -635,6 +635,11 @@ font-size: 18px;
 .margin-bottom {
   margin-bottom: 10px;
 }
+
+.margin-top {
+  margin-top: 10px;
+}
+
 .modal section.publish-body {
   border-bottom: 1px solid #e5e5e5;
   padding-bottom:20px;
@@ -674,4 +679,17 @@ font-size: 18px;
 	max-width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+i.embargo_datetime_icon {
+	display: inline !important;
+}
+
+textarea#embargo_details {
+	width: 230px;
+	height: 60px;
+}
+
+div.bootstrap-datetimepicker-widget {
+	background-color: #FFFFFF !important;
 }

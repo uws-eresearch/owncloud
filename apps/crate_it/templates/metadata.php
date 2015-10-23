@@ -37,12 +37,12 @@
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#meta-data" href="#data-creators" id="data-creators-head">
                         Data Creators
-                        <i class="pull-right fa fa-caret-down"></i>
+                        <i class="pull-right fa fa-caret-up"></i>
                     </a>
                 </h4>
             </div>
 
-            <div id="data-creators" class="panel-collapse collapse in standard">
+            <div id="data-creators" class="panel-collapse collapse standard">
                 <div class="panel-body">
                     <div id="creators_box" class="data-creators">
                         <h6>Selected Data Creators (<span id="creators_count"></span>)
@@ -127,18 +127,17 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#meta-data" href="#data-retention-period">
-                        Date Retention Period (year)
-                        <i class="pull-right fa fa-caret-down"></i>
+                    <a data-toggle="collapse" data-parent="#meta-data" href="#data-retention-period" id="data-retention-period-head">
+                        Data Retention Period
+                        <i class="pull-right fa fa-caret-up"></i>
                     </a>
                 </h4>
             </div>
-
-            <div id="data-retention-period" class="panel-collapse collapse in standard">
+            <div id="data-retention-period" class="panel-collapse collapse standard">
                 <div class="panel-body">
                     <div id='retention_peroid_list'>
                         <h6>
-                            SELECTED RETENTION PERIOD (YEAR)
+                            DATA RETENTION PERIOD (YEARS)
                             <button id="choose_retention_period" class="pull-right trans-button" type="button"
                                     placeholder="Choose"><i class="fa fa-edit"></i></button>
                         </h6>
@@ -149,6 +148,103 @@
             </div>
         </div>
 
-    </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#meta-data" href="#embargo-details" id="embargo-details-head">
+                        Embargo Details
+                        <i class="pull-right fa fa-caret-up"></i>
+                    </a>
+                </h4>
+            </div>
+            <div id="embargo-details" class="panel-collapse collapse standard">
 
+                <div id="embargo-details-submission-modal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Cannot save embargo details</h4>
+                            </div>
+                            <div class="modal-body">
+                                The following errors are preventing the embargo details from being saved:
+                                <ul id="embargo-details-modal-ul">
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <h6>EMBARGO DETAILS
+                        <button id="choose_embargo_details" class="pull-right trans-button" type="button" placeholder="Choose"><i class="fa fa-edit"></i></button>
+                    </h6>
+
+                    <div id="edit_embargo_details" class="metadata hidden">
+
+                        <div>
+                            Embargo Enabled
+                            <div>
+                                <input id="embargo_enabled_yes" type="radio" name="embargo_enabled" <?php p($_['embargo_enabled'] === 'true' ? 'checked' : '') ?>>
+                                <label for="embargo_enabled_yes">Yes</label>
+                                <input id="embargo_enabled_no"  type="radio" name="embargo_enabled" <?php p($_['embargo_enabled'] === 'false' ? 'checked' : '') ?>>
+                                <label for="embargo_enabled_no">No</label>
+                            </div>
+                        </div>
+
+                        <br/>
+
+                        <div class='input-append date' id='embargo_datetime_picker_button'>
+                            Embargo Date
+                            <div>
+                                <input id="embargo_date" name="embargo_date" type='text' data-format="yyyy-MM-dd" disabled="disabled" value="<?php p($_['embargo_date']) ?>">
+                                <span class="add-on">
+                                    <i id="embargo_datetimepicker_icon" class="fa fa-calendar embargo_datetime_icon"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <br/>
+
+                        <div>
+                            Embargo Details
+                            <div>
+                                <textarea id="embargo_details" name="embargo_details" placeholder="Enter a details of what the embargo restrictions are"><?php p($_['embargo_details']) ?></textarea>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <input id="save_embargo" type="button" value="Save">
+                        <input id="cancel_embargo" type="button" value="Cancel">
+
+                    </div>
+
+                    <div id="embargo-summary">
+                        <div class='embargo-enabled'>
+                            <h6 class="info">
+                                Embargo Enabled <?php p($_['embargo_enabled']) ?>
+                            </h6>
+                            <span id="embargo_enabled" class="standard"><?php if ($_['embargo_enabled']) {p($_['embargo_enabled'] === 'true' ? 'Yes' : 'No');} ?></span>
+                        </div>
+
+                        <div class='embargo-until'>
+                            <h6 class="info">
+                                Embargo Until
+                            </h6>
+                            <span id="embargo_until" class="standard"><?php p($_['embargo_date']) ?></span>
+                        </div>
+
+                        <div class='embargo-info'>
+                            <h6 class="info">
+                                Embargo Note
+                            </h6>
+                            <span id="embargo_note" class="standard"><?php p($_['embargo_details']) ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

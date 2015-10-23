@@ -45,8 +45,22 @@
           </div>
 
           <div class="col-4">
-            <h4 class="margin-bottom">Data Retention Period (year)</h4>
+            <h4 class="margin-bottom">Data Retention Period</h4>
             <div id='publish-data-retention-period'></div>
+
+            <h4 class="margin-top margin-bottom">Embargo Details</h4>
+            <div>
+              <h6>Embargo Enabled:</h6>
+              <div id="publish-embargo-enabled"></div>
+            </div>
+            <div>
+              <h6>Embargo Date:</h6>
+              <div id="publish-embargo-date"></div>
+            </div>
+            <div>
+              <h6>Embargo Note:</h6>
+              <div id="publish-embargo-note"></div>
+            </div>
           </div>
         </div>
           

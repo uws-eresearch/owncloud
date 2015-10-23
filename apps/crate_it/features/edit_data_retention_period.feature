@@ -20,7 +20,7 @@ Feature: Edit crate description
     And I wait for 1 seconds
     And I click to wrap Information
     And I wait for 1 seconds
-    And I click to wrap Creators
+    And I click to wrap Data Retention Period
     And I wait for 1 seconds
     When I click the edit data retention period button
     And I wait for 1 seconds

@@ -80,4 +80,7 @@
             </my:File>
         <?php } ?>
     </my:Contents>
+    <my:EmbargoEnabled><?php p($_['embargo_enabled']) ?></my:EmbargoEnabled>
+    <my:EmbargoDate><?php p($_['embargo_date']) ?></my:EmbargoDate>
+    <my:EmbargoDetails><?php p($_['embargo_details']) ?></my:EmbargoDetails>
 </my:RedboxCollection>

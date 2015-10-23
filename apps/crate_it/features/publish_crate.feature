@@ -103,6 +103,6 @@ Feature: Publish crates to an endpoint
       Then I press "Create" on the popup dialog
       When I click on "publish"
       And I press "Submit" on the popup dialog
-      Then redbox alerts xml file "feature_test_crate" should have field DataRetentionPeriod with value "Perpetuity"
+      Then redbox alerts xml file "feature_test_crate" should have field DataRetentionPeriod with value ""
 
 

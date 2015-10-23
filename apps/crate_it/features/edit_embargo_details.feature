@@ -13,7 +13,7 @@ Feature: Edit embargo details
     And I select crate "test_embrago_details"
 
   #CRATEIT-270
-  Scenario: Check default data retention period
+  Scenario: Check default embargo details
     When I click to wrap Embargo Details
     Then I should see embargo enabled as ""
     And I should see embargo until as ""

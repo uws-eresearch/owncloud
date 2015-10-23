@@ -431,7 +431,7 @@ class FeatureContext extends MinkContext
      */
     public function iHaveCrate($crateName) {
         // $mainfest = '{"description":"","creators":[],"activities":[],"vfs":[{"id":"rootfolder","name":"'.$crateName.'","folder":true,"children":[]}]}';
-        $mainfest = '"{\"description\":\"\",\"data_retention_period\":\"Perpetuity\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
+        $mainfest = '"{\"description\":\"\",\"data_retention_period\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
         $data_path = self::$CRATE_ROOT.$crateName.'/data';
         $command = "mkdir -m 755 -p $data_path\\";
         $this->exec_sh_command($command);

@@ -70,9 +70,9 @@
         </div>
       </div>
       <div class="modal-body">
-          NOTE: Submitting a large crate my take some time, please be patient while Cr8it works in
-          the background. You can elect to receive email notifications about your crate's status
-          once you click "Submit".</div>
+        <strong>NOTE:</strong> For the submission of data sets (i.e. Crates) larger than 16Gbytes you are advised to contact a Data Librarian for assistance by sending an email to
+        <a href="mailto:researchdata@newcastle.edu.au">researchdata@newcastle.edu.au</a>
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary">Submit</button>

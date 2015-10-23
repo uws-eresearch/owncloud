@@ -77,7 +77,7 @@ function initCrateActions() {
     var params = {
       'name': $('#crate_input_name').val(),
       'description': $('#crate_input_description').val(),
-      'data_retention_period': 'Perpetuity'
+      'data_retention_period': ''
     };
     var c_url = OC.generateUrl('apps/crate_it/crate/create');
     $.ajax({
@@ -404,12 +404,10 @@ function setupDescriptionOps() {
 
 function setupRetentionPeriodOps() {
 
-  var radio_button_list = ['<input type="radio" name="retention_radio" id="radio1" value="1">1',
-    '<input type="radio" name="retention_radio" id="radio2" value="5"> 5',
-    '<input type="radio" name="retention_radio" id="radio3" value="10"> 10',
-    '<input type="radio" name="retention_radio" id="radio4" value="15"> 15',
-    '<input type="radio" name="retention_radio" id="radio5" value="25"> 25',
-    '<input type="radio" name="retention_radio" id="radio6" value="Perpetuity"> Perpetuity'];
+  var radio_button_list = [
+    '<input type="radio" name="retention_radio" id="radio1" value="5"><label for="radio1">5</label>',
+    '<input type="radio" name="retention_radio" id="radio2" value="20"><label for="radio2">20</label>',
+    '<input type="radio" name="retention_radio" id="radio3" value="Perpetuity"><label for="radio3">Perpetuity</label>'];
 
   var html = '';
   for (i = 0; i< radio_button_list.length;i++) {

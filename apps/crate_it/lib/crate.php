@@ -13,7 +13,7 @@ class Crate extends BagIt {
     private $crateName;
     private $crateRoot;
 
-    public function __construct($crateRoot, $crateName, $description = '', $data_retention_period = 'Perpetuity') {
+    public function __construct($crateRoot, $crateName, $description = '', $data_retention_period = '') {
         \OCP\Util::writeLog('crate_it', "Crate::__construct(".$crateRoot.','.$crateName.','.$description.','.$data_retention_period.")", \OCP\Util::DEBUG);
         $this->crateName = $crateName;
         $this->crateRoot = $crateRoot;
@@ -27,7 +27,7 @@ class Crate extends BagIt {
     private function createManifest($description,$data_retention_period) {
         \OCP\Util::writeLog('crate_it', "Crate::createManifest(".$description.",".$data_retention_period.")", \OCP\Util::DEBUG);
         $description = NULL ? '' : $description;
-        $data_retention_period = NULL ? 'Perpetuity': $data_retention_period;
+        $data_retention_period = NULL ? '': $data_retention_period;
         $entry = array(
             'description' => $description,
             'data_retention_period' => $data_retention_period,

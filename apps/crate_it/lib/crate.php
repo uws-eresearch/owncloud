@@ -228,6 +228,9 @@ class Crate extends BagIt {
         $clone->createReadme();
         $clone->storeFiles();
         $packagePath = Util::joinPaths($tmpFolder, $this->crateName);
+        if(file_exists($packagePath.'.zip')) {
+            unlink($packagePath.'.zip');
+        }
         $clone->package($packagePath, 'zip');
         return $packagePath.'.zip';
     }

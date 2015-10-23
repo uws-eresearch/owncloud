@@ -128,7 +128,7 @@ function initCrateActions() {
       return;
     }
 
-    displayNotification('Your download is being prepared. This might take some time if the files are big');
+    displayNotification('Your download is being prepared. This might take some time if the files are big', 10000);
     var c_url = OC.generateUrl('apps/crate_it/crate/downloadzip?requesttoken={requesttoken}', {requesttoken: oc_requesttoken});
     window.location = c_url;
   };

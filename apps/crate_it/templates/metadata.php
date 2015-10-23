@@ -159,24 +159,6 @@
             </div>
             <div id="embargo-details" class="panel-collapse collapse standard">
 
-                <div id="embargo-details-submission-modal" class="modal fade">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Cannot save embargo details</h4>
-                            </div>
-                            <div class="modal-body">
-                                The following errors are preventing the embargo details from being saved:
-                                <ul id="embargo-details-modal-ul">
-                                </ul>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="panel-body">
                     <h6>EMBARGO DETAILS
                         <button id="choose_embargo_details" class="pull-right trans-button" type="button" placeholder="Choose"><i class="fa fa-edit"></i></button>

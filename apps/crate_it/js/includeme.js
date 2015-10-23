@@ -541,6 +541,33 @@ function reloadCrateData(manifest) {
     // Make sure edit description icon shows up on startup
     $('#edit_description').removeClass('hidden');
     $('#choose_retention_period').removeClass('hidden');
+
+    if (manifest['embargo_enabled']) {
+        $('span#embargo_enabled').html(manifest['embargo_enabled'] === 'true' ? 'Yes' : 'No');
+        $('#embargo_enabled_yes').prop("checked", manifest['embargo_enabled'] === 'true');
+        $('#embargo_enabled_no').prop("checked", manifest['embargo_enabled'] === 'false');
+    } else {
+        $('span#embargo_enabled').html('');
+        $('#embargo_enabled_yes').prop("checked", false);
+        $('#embargo_enabled_no').prop("checked", false);
+    }
+
+    if (manifest['embargo_date']) {
+        $('span#embargo_until').html(manifest['embargo_date']);
+        $('input#embargo_date').val(manifest['embargo_date']);
+    } else {
+        $('span#embargo_until').html('');
+        $('input#embargo_date').val('');
+    }
+
+    if (manifest['embargo_details']) {
+        $('span#embargo_note').html(manifest['embargo_details'].replace(/\n/g, "<br>"));
+        $('textarea#embargo_details').val(manifest['embargo_details']);
+    } else {
+        $('span#embargo_note').html('');
+        $('textarea#embargo_details').val('');
+    }
+
     buildFileTree(manifest);
     indentTree();
     // TODO Have a registry of search managers and loop over them

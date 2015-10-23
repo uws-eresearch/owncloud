@@ -535,7 +535,7 @@ function setupEmbargoDetailsOps() {
       success: function(data) {
         $('span#embargo_enabled').html(data.values['embargo_enabled'] === 'true' ? 'Yes' : 'No');
         $('span#embargo_until').html(data.values['embargo_date']);
-        $('span#embargo_note').html(data.values['embargo_details']);
+        $('span#embargo_note').html(data.values['embargo_details'].replace(/\n/g, "<br/>"));
         $('#embargo-summary').show();
         $('#edit_embargo_details').hide();
       },

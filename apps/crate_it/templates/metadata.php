@@ -240,7 +240,7 @@
                             <h6 class="info">
                                 Embargo Note
                             </h6>
-                            <span id="embargo_note" class="standard"><?php p($_['embargo_details']) ?></span>
+                            <span id="embargo_note" class="standard"><?php echo str_replace("\n", "<br>", $_['embargo_details']) ?></span>
                         </div>
                     </div>
                 </div>

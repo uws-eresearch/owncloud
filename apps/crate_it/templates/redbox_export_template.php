@@ -80,7 +80,7 @@
             </my:File>
         <?php } ?>
     </my:Contents>
-    <my:EmbargoEnabled><?php p($_['embargo_enabled']) ?></my:EmbargoEnabled>
-    <my:EmbargoDate><?php p($_['embargo_date']) ?></my:EmbargoDate>
-    <my:EmbargoDetails><?php p($_['embargo_details']) ?></my:EmbargoDetails>
+    <my:EmbargoEnabled><?php if(array_key_exists('embargo_enabled',$_)) {p($_['embargo_enabled']);} ?></my:EmbargoEnabled>
+    <my:EmbargoDate><?php if(array_key_exists('embargo_date',$_)) {p($_['embargo_date']);} ?></my:EmbargoDate>
+    <my:EmbargoDetails><?php if(array_key_exists('embargo_details',$_)) {p($_['embargo_details']);} ?></my:EmbargoDetails>
 </my:RedboxCollection>

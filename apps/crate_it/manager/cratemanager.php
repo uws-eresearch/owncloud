@@ -77,7 +77,10 @@ class CrateManager {
 
     private function ensureCrateIsSelected() {
         $crateList = $this->getCrateList();
-        if (!in_array($_SESSION['selected_crate'], $crateList)) {
+        if (!array_key_exists('selected_crate',$_SESSION)) {
+            $_SESSION['selected_crate'] = 'default_crate';
+        }
+        elseif (!in_array($_SESSION['selected_crate'], $crateList)) {
             if (in_array('default_crate', $crateList)) {
                 $_SESSION['selected_crate'] = 'default_crate';
                 session_commit();

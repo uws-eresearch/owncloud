@@ -38,7 +38,7 @@
             <span property="http://schema.org/description"><?php p(nl2br($_['description'])) ?></span>
 
             <h4>Creators</h4>
-            <?php if ($_['creators']) { ?>
+            <?php if (array_key_exists('creators', $_)) { ?>
                 <table border="1">
                     <thead>
                     <th>Name</th>
@@ -56,7 +56,7 @@
                         p($creator['email']);
                         print_unescaped('</td>');
                         print_unescaped('<td xmlns:dc="http://purl.org/dc/elements/1.1/">');
-                        if ($creator['url']) {
+                        if (array_key_exists('url', $creator)) {
                             print_unescaped();
                             print_unescaped('<a href="' . $creator['identifier'] . '"><span property="dc:identifier">' . $creator['identifier'] . '</span></a>');
                         } else {
@@ -73,7 +73,7 @@
 
             <?php } ?>
             <h4>Grants</h4>
-            <?php if ($_['activities']) { ?>
+            <?php if (array_key_exists('activities', $_)) { ?>
                 <table border="1">
                     <thead>
                     <th>Grant Number</th>
@@ -201,7 +201,7 @@
 
         <h4>Files</h4>
         <?php
-        if ($_['files']) {
+        if (array_key_exists('files', $_)) {
             print_unescaped($_['filetree']);
         } else {
             print_unescaped('<span>None.</span>');

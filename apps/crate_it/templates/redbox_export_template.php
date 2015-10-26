@@ -14,7 +14,7 @@
     <my:Type>dataset</my:Type>
     <my:WorkflowSource>Owncloud-Cr8IT</my:WorkflowSource>
     <my:WorkflowSourceVersion><?php p($_['version']) ?></my:WorkflowSourceVersion>
-    <?php if ($_['creators']) { ?>
+    <?php if (array_key_exists('creators', $_)) { ?>
         <my:Creators>
             <?php foreach ($_['creators'] as $creator) { ?>
                 <?php $isOverride = isset($creator["overrides"]) ?>
@@ -39,7 +39,7 @@
             <?php } ?>
         </my:Creators>
     <?php } ?>
-    <?php if ($_['activities']) { ?>
+    <?php if (array_key_exists('activities', $_)) { ?>
         <my:GrantNumbers>
             <?php foreach ($_['activities'] as $activity) { ?>
                 <?php $isOverride = isset($activity["overrides"]) ?>

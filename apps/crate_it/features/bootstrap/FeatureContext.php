@@ -1719,7 +1719,14 @@ JS;
     {
         $command = 'grep -oPm1 "(?<=:DataRetentionPeriod>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
         $retention= $this->exec_sh_command($command);
-        assertEquals($arg2, $retention[0]);
+        if (!empty($retention)){
+            $retention = $retention[0];
+        } elseif (empty($retention) && $arg2 == '') {
+            $retention = '';
+        } else {
+            $retention = 'Error';
+        }
+        assertEquals($arg2, $retention);
     }
 
     /**

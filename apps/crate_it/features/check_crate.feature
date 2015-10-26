@@ -24,7 +24,7 @@ Feature:Check crate
     And I click on "check"
     Then I should see "All items are valid." in the modal
     And I click on "confirm_checker"
-    And I wait for 3 seconds
+    And I wait for 5 seconds
     Then I should see green ticks next to these items
     | filename   |
     | folder1    |

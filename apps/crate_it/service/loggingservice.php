@@ -46,6 +46,7 @@ class LoggingService {
         $this->log("Zipped file size for '$zipname': $filesize bytes");
         $this->log("Package content for '$zipname':");
         $this->log("----start content-----");
+        $zip = parse_url($zip, PHP_URL_PATH);
         $za = new \ZipArchive();
 
         $za->open($zip);
@@ -55,7 +56,7 @@ class LoggingService {
             if($stat['size'] != 0) {
                 $this->log($stat['name']);
             }
-            if($stat['name'] == '/manifest-sha1.txt') {
+            if($stat['name'] == 'manifest-sha1.txt') {
                 $sha_content = $za->getFromIndex($i);
             }
         }

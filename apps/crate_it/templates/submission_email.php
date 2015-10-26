@@ -38,7 +38,7 @@
             <span property="http://schema.org/description"><?php p(nl2br($_['description'])) ?></span>
 
             <h4>Creators</h4>
-            <?php if (array_key_exists('creators', $_)) { ?>
+            <?php if (array_key_exists('creators', $_) && !empty($_['creators']))  { ?>
                 <table border="1">
                     <thead>
                     <th>Name</th>
@@ -73,7 +73,7 @@
 
             <?php } ?>
             <h4>Grants</h4>
-            <?php if (array_key_exists('activities', $_)) { ?>
+            <?php if (array_key_exists('activities', $_) && !empty($_['activities'])) { ?>
                 <table border="1">
                     <thead>
                     <th>Grant Number</th>
@@ -201,7 +201,7 @@
 
         <h4>Files</h4>
         <?php
-        if (array_key_exists('files', $_)) {
+        if (array_key_exists('files', $_) && !empty($_['files'])) {
             print_unescaped($_['filetree']);
         } else {
             print_unescaped('<span>None.</span>');

@@ -72,7 +72,8 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       dataType: 'json',
       data: {
         fields: [{
-          field: definition.manifestField
+          field: definition.manifestField,
+          value: ''
         }]
       },
       success: function(data) {

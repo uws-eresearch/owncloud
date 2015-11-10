@@ -258,7 +258,10 @@ class Crate extends BagIt {
         foreach($files as $path) {
             $absPath = $this->getFullPath($path);
             $pathInsideRootFolder = $this->getRootFolderName().'/'.$path;
-            $this->addFile($absPath, $pathInsideRootFolder);
+            $success = $this->addFile($absPath, $pathInsideRootFolder);
+            if (!$success) {
+                throw new \Exception("Could not add file $absPath to crate. Perhaps disk is full?");
+            }
         }
         $this->update();
         \OCP\Util::writeLog("crate_it", "Crate::storeFiles() - finished", \OCP\Util::DEBUG);

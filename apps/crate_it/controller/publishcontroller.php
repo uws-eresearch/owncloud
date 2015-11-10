@@ -82,12 +82,12 @@ class PublishController extends Controller {
         $collection = $this->params('collection');
         $this->loggingService->log("Attempting to submit crate $crateName to collection: $collection");
         $this->loggingService->logManifest($crateName);
-        $package = $this->crateManager->packageCrate($crateName);
-        $this->loggingService->log("Zipped content into '".basename($package)."'");
-        $metadata = $this->crateManager->createMetadata($crateName);
         $config = Util::getConfig();
         $data = array();
         try {
+            $package = $this->crateManager->packageCrate($crateName);
+            $this->loggingService->log("Zipped content into '".basename($package)."'");
+            $metadata = $this->crateManager->createMetadata($crateName);
             $this->loggingService->log("Submitting crate $crateName (".basename($package).")..");
             $cratePath = $this->publishingService->publishCrate($package, $endpoint, $collection);
             $metadata['location'] = $cratePath;

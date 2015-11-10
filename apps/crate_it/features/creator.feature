@@ -1,17 +1,19 @@
 @javascript
-Feature: Search, add and remove grant number 
+Feature: Search, add and remove creators 
   As a user
   I want to add crators related to the crate
   
   Background:
-    Given I have no crates
+    Given the browser is maximised
+    And I have no crates
     And I have crate "crate1"
     And I'm logged in to ownCloud as "test"
     And I go to the crate_it page
     And I select crate "crate1"
-    
+
   #CRATEIT-80
   Scenario: Creator lookup
+    Given I click to wrap Creators
     Given I fill in "keyword_creator" with "John"
     And I click the search creator button
     Then I should see these entries in the creator result list
@@ -22,6 +24,7 @@ Feature: Search, add and remove grant number
       
   #CRATEIT-80
   Scenario: Add and Remove creators
+    Given I click to wrap Creators
     Given I fill in "keyword_creator" with "John"
     And I click the search creator button
     And I add creator "1" to the list
@@ -42,6 +45,7 @@ Feature: Search, add and remove grant number
       
    #CRATEIT-80
    Scenario: Creator lookup result should exclude selected numbers
+     Given I click to wrap Creators
      Given I fill in "keyword_creator" with "John"
      And I click the search creator button 
      And I add creator "2" to the list
@@ -53,12 +57,14 @@ Feature: Search, add and remove grant number
      
    #CRATEIT-80
    Scenario: Server returns no results should trigger a notification
+     Given I click to wrap Creators
      Given I fill in "keyword_creator" with "John"
      When I click the search creator button and get no results
      Then I should see "0 new results returned"
      
    #CRATEIT-80
    Scenario: Click on 'Clear All' should remove all selected creators
+     Given I click to wrap Creators
      Given I fill in "keyword_creator" with "John"
      And I click the search creator button 
      And I add creator "1" to the list
@@ -70,6 +76,7 @@ Feature: Search, add and remove grant number
      
    #CRATEIT-80
    Scenario: A user can cancel clearing all creators
+     Given I click to wrap Creators
      Given I fill in "keyword_creator" with "John"
      And I click the search creator button 
      And I add creator "1" to the list
@@ -84,6 +91,7 @@ Feature: Search, add and remove grant number
       
     #CRATEIT-177
     Scenario: A user can manually add a creator
+      Given I click to wrap Creators
       When I click on "add-creator"
       Then I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -95,6 +103,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-177
     Scenario: A user can cancel manually adding a creator
+      Given I click to wrap Creators
       When I click on "add-creator"
       Then I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -111,6 +120,7 @@ Feature: Search, add and remove grant number
     
     #CRATEIT-177, CRATEIT-196
     Scenario: A user can remove a manually added creator
+      Given I click to wrap Creators
       When I click on "add-creator"
       And I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -143,6 +153,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-177
       Scenario: A manually added creator name is mandatory
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in "add-creator-name" with "  "
         Then I should see "Name is required"
@@ -150,6 +161,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-177
       Scenario: A manually added creator name has a maximum length of 256 characters
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in "add-creator-name" with a long string of 257 characters
         Then I should see "Name must not be more than 256 characters"
@@ -157,6 +169,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-197
       Scenario: A manually added creator email is mandatory
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in "add-creator-name" with "Elvis"
         And I fill in "add-creator-email" with "  "
@@ -165,6 +178,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-177
       Scenario: A manually added creator email has a maximum length of 128 characters
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in "add-creator-name" with "Elvis"
         And I fill in "add-creator-email" with a long string of 129 characters
@@ -173,6 +187,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-177
       Scenario: A manually added creator email must be a valid email address
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in "add-creator-name" with "Elvis"
         And I fill in "add-creator-email" with "elvis"
@@ -186,6 +201,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-183, CRATEIT-198
       Scenario: A user can edit a manually added creator
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -210,6 +226,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-183
       Scenario: A user can cancel editing a manually added creator
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -226,14 +243,15 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-183
       Scenario: A manually edited creator from the mint displays original details
+        Given I click to wrap Creators
         Given I fill in "keyword_creator" with "John"
         And I click the search creator button
         And I add creator "john@smith.com" to the selected list
         When I edit creator "john@smith.com"
-        And I fill in the following:
-          | edit-creators-name  | Elvis               |
-          | edit-creators-email | elvis@graceland.org |
-        Then I press "Save" on the popup dialog
+        And I fill in "edit-creators-name" with "Elvis"
+        And I fill in "edit-creators-email" with ""
+        And I fill in "edit-creators-email" with "elvis@graceland.org"
+        Then I click the save editor button
         When I edit creator "elvis@graceland.org"
         Then I should see the following:
           | original-creators-name | Prof John Smith     |
@@ -243,6 +261,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-183
       Scenario: A manually edited creator name is mandatory
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -255,6 +274,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-183
       Scenario: A manually edited creator name has a maximum length of 256 characters
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -267,6 +287,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-183
       Scenario: A manually edited creator email is required
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -274,11 +295,13 @@ Feature: Search, add and remove grant number
         Then I press "Add" on the popup dialog
         When I edit creator "joe@bloggs.org"
         And I fill in "edit-creators-name" with "Elvis"
-        And I fill in "edit-creators-email" with "  "
+        And I fill in "edit-creators-email" with ""
+        And I wait for 2 seconds
         Then I should see "Email is required"
 
       #CRATEIT-183
       Scenario: A manually edited creator email has a maximum length of 128 characters
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -292,6 +315,7 @@ Feature: Search, add and remove grant number
 
       #CRATEIT-183
       Scenario: A manually edited creator email must be a valid email address
+        Given I click to wrap Creators
         When I click on "add-creator"
         And I fill in the following:
           | add-creator-name  | Joe Bloggs     |
@@ -299,6 +323,7 @@ Feature: Search, add and remove grant number
         Then I press "Add" on the popup dialog
         When I edit creator "joe@bloggs.org"
         And I fill in "edit-creators-name" with "Elvis"
+        And I fill in "edit-creators-email" with ""
         And I fill in "edit-creators-email" with "elvis"
         Then I should see "Must be a valid email address"
         And the "Save" button in the popup dialog should be disabled
@@ -310,6 +335,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-199
     Scenario: A manually added a creators's fields are still mandatory after a previous add
+      Given I click to wrap Creators
       When I click on "add-creator"
       Then I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -320,6 +346,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-199
     Scenario: A manually added a creators's fields are still mandatory after a previous cancel
+      Given I click to wrap Creators
       When I click on "add-creator"
       Then I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -330,6 +357,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-212
     Scenario: A manually added creator identifier is optional
+      Given I click to wrap Creators
       When I click on "add-creator"
       Then I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -340,6 +368,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-212
     Scenario: A manually added creator identifier must be a URL
+      Given I click to wrap Creators
       When I click on "add-creator"
       Then I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -353,6 +382,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-212
     Scenario: A manually added creator identifier must be less than 2001 characters
+      Given I click to wrap Creators
       When I click on "add-creator"
       Then I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -363,6 +393,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-212
     Scenario: A manually edited creator identifier is optional
+      Given I click to wrap Creators
       When I click on "add-creator"
       And I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -375,6 +406,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-212
     Scenario: A manually edited creator identifier must be a URL
+      Given I click to wrap Creators
       When I click on "add-creator"
       And I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -390,6 +422,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-212
     Scenario: A manually edited creator identifier must be less than 2001 characters
+      Given I click to wrap Creators
       When I click on "add-creator"
       And I fill in the following:
         | add-creator-name  | Joe Bloggs     |
@@ -402,6 +435,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-212
     Scenario: A creator edited from the mint does not display URL
+      Given I click to wrap Creators
       Given I fill in "keyword_creator" with "John"
       And I click the search creator button
       And I add creator "1" to the list
@@ -410,6 +444,7 @@ Feature: Search, add and remove grant number
 
     #CRATEIT-224
     Scenario: A creator edited from the mint does not display URL
+      Given I click to wrap Creators
       Given I fill in "keyword_creator" with "John"
       And I click the search creator button
       And I add creator "1" to the list

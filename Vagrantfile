@@ -1,118 +1,84 @@
-require 'yaml'
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 
-dir = File.dirname(File.expand_path(__FILE__))
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
 
-configValues = YAML.load_file("#{dir}/puphpet/config.yaml")
-data = configValues['vagrantfile-local']
+VAGRANTFILE_API_VERSION = "2"
 
-if !data['vm']['provider']['virtualbox'].empty?
-  ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  config.vm.box = "centos64-x64-vbox43-1383512148"
+
+  # The url from where the 'config.vm.box' box will be fetched if it
+  # doesn't already exist on the user's system.
+  config.vm.box_url = "http://box.puphpet.com/centos64-x64-vbox43.box"
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 1080, host: 1080
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder "./apps/crate_it/", "/usr/share/owncloud/apps/crate_it/"
+  config.vm.synced_folder "./apps/file_previewer/", "/usr/share/owncloud/apps/file_previewer/"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  # config.vm.provider "virtualbox" do |vb|
+  #   # Display the VirtualBox GUI when booting the machine
+  #   vb.gui = true
+  #
+  #   # Customize the amount of memory on the VM:
+  #   vb.memory = "1024"
+  # end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
+  # such as FTP and Heroku are also available. See the documentation at
+  # https://docs.vagrantup.com/v2/push/atlas.html for more information.
+  # config.push.define "atlas" do |push|
+  #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
+  # end
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   sudo apt-get update
+  #   sudo apt-get install -y apache2
+  # SHELL
+
+  config.ssh.username = 'root'
+  config.ssh.insert_key = 'true'
+  config.ssh.password = 'vagrant'
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "playbook.yml"
+    ansible.verbose = 'v'
+  end
 end
-
-Vagrant.configure("2") do |config|
-  config.vm.box = "#{data['vm']['box']}"
-  config.vm.box_url = "#{data['vm']['box_url']}"
-
-  if data['vm']['hostname'].to_s != ''
-    config.vm.hostname = "#{data['vm']['hostname']}"
-  end
-
-  if data['vm']['network']['private_network'].to_s != ''
-    config.vm.network "private_network", ip: "#{data['vm']['network']['private_network']}"
-  end
-
-  data['vm']['network']['forwarded_port'].each do |i, port|
-    if port['guest'] != '' && port['host'] != ''
-      config.vm.network :forwarded_port, guest: port['guest'].to_i, host: port['host'].to_i
-    end
-  end
-
-  data['vm']['synced_folder'].each do |i, folder|
-    if folder['source'] != '' && folder['target'] != '' && folder['id'] != ''
-      nfs = (folder['nfs'] == "true") ? "nfs" : nil
-      config.vm.synced_folder "#{folder['source']}", "#{folder['target']}", id: "#{folder['id']}", type: nfs, owner:"#{folder['owner']}", group:"#{folder['group']}", mount_options: ["dmode=775,fmode=664"]
-    end
-  end
-
-  config.vm.usable_port_range = (10200..10500)
-
-  if !data['vm']['provider']['virtualbox'].empty?
-    config.vm.provider :virtualbox do |virtualbox|
-      # virtualbox.gui = true
-      data['vm']['provider']['virtualbox']['modifyvm'].each do |key, value|
-        if key == "natdnshostresolver1"
-          value = value ? "on" : "off"
-        end
-        virtualbox.customize ["modifyvm", :id, "--#{key}", "#{value}"]
-      end
-    end
-  end
-
-  config.vm.provision "shell" do |s|
-    s.path = "puphpet/shell/initial-setup.sh"
-    s.args = "/vagrant/puphpet"
-  end
-  config.vm.provision :shell, :path => "puphpet/shell/update-puppet.sh"
-  config.vm.provision :shell, :path => "puphpet/shell/r10k.sh"
-
-  config.vm.provision :puppet do |puppet|
-    ssh_username = !data['ssh']['username'].nil? ? data['ssh']['username'] : "vagrant"
-    puppet.facter = {
-      "ssh_username"     => "#{ssh_username}",
-      "provisioner_type" => ENV['VAGRANT_DEFAULT_PROVIDER'],
-    }
-    puppet.manifests_path = "#{data['vm']['provision']['puppet']['manifests_path']}"
-    puppet.manifest_file = "#{data['vm']['provision']['puppet']['manifest_file']}"
-
-    if !data['vm']['provision']['puppet']['options'].empty?
-      puppet.options = data['vm']['provision']['puppet']['options']
-    end
-  end
-
-  if File.file?("#{dir}/puphpet/files/dot/ssh/id_rsa")
-    config.ssh.private_key_path = [
-      "#{dir}/puphpet/files/dot/ssh/id_rsa",
-      "#{dir}/puphpet/files/dot/ssh/insecure_private_key"
-    ]
-  end
-
-  ssh_username = !data['ssh']['username'].nil? ? data['ssh']['username'] : "vagrant"
-
-  config.vm.provision "shell" do |kg|
-    kg.path = "puphpet/shell/ssh-keygen.sh"
-    kg.args = "#{ssh_username}"
-  end
-
-  config.vm.provision :shell, :path => "puphpet/shell/execute-files.sh"
-
-  if !data['ssh']['host'].nil?
-    config.ssh.host = "#{data['ssh']['host']}"
-  end
-  if !data['ssh']['port'].nil?
-    config.ssh.port = "#{data['ssh']['port']}"
-  end
-  if !data['ssh']['username'].nil?
-    config.ssh.username = "#{data['ssh']['username']}"
-  end
-  if !data['ssh']['guest_port'].nil?
-    config.ssh.guest_port = data['ssh']['guest_port']
-  end
-  if !data['ssh']['shell'].nil?
-    config.ssh.shell = "#{data['ssh']['shell']}"
-  end
-  if !data['ssh']['keep_alive'].nil?
-    config.ssh.keep_alive = data['ssh']['keep_alive']
-  end
-  if !data['ssh']['forward_agent'].nil?
-    config.ssh.forward_agent = data['ssh']['forward_agent']
-  end
-  if !data['ssh']['forward_x11'].nil?
-    config.ssh.forward_x11 = data['ssh']['forward_x11']
-  end
-  if !data['vagrant']['host'].nil?
-    config.vagrant.host = data['vagrant']['host'].gsub(":", "").intern
-  end
-
-end
-
-

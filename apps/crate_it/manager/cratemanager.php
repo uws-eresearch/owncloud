@@ -3,23 +3,12 @@
 namespace OCA\crate_it\Manager;
 
 use OCA\crate_it\lib\Crate;
+use OCA\crate_it\lib\Util;
 
 class CrateManager {
-
-    /**
-     * @var API
-     */
-    private $api;
-
-    /**
-     * @var twig
-     */
-    private $twig;
     
-    public function __construct($api, $twig){
-        $this->api = $api;
-        $this->twig = $twig;
-        if ($api->isLoggedIn()) {
+    public function __construct(){
+        if (\OCP\User::isLoggedIn()) {
             $this->ensureDefaultCrateExists();
             $this->ensureCrateIsSelected();
         }
@@ -27,10 +16,10 @@ class CrateManager {
     
 
     // TODO: getCrate and createCrate do just about the same thing, perhaps they can be rolled into one
-    public function createCrate($crateName, $description) {
-        \OCP\Util::writeLog('crate_it', "CrateManager::createCrate($crateName, $description)", \OCP\Util::DEBUG);
+    public function createCrate($crateName, $description, $data_retention_period) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::createCrate($crateName, $description, $data_retention_period)", \OCP\Util::DEBUG);
         $crateRoot = $this->getCrateRoot();
-        new Crate($crateRoot, $crateName, $description);
+        new Crate($crateRoot, $crateName, $description, $data_retention_period);
         // TODO: Just returns a parameter that was passed?
         return $crateName;
     }
@@ -66,8 +55,13 @@ class CrateManager {
     
     public function getCrateFiles($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateFiles(".$crateName.")", \OCP\Util::DEBUG);
-        $contents = $this->getManifestData($crateName);
+        $contents = $this->getManifest($crateName);
         return json_encode($contents['vfs']);
+    }
+
+    public function createMetadata($crateName) {
+        $crate = $this->getCrate($crateName);
+        return $crate->createMetadata();
     }
 
     private function ensureDefaultCrateExists() {
@@ -77,13 +71,16 @@ class CrateManager {
         }
         $crateList = $this->getCrateList();
         if(empty($crateList)) {
-            $this->createCrate('default_crate', '');
+            $this->createCrate('default_crate', '', '');
         }
     }
 
     private function ensureCrateIsSelected() {
         $crateList = $this->getCrateList();
-        if (!in_array($_SESSION['selected_crate'], $crateList)) {
+        if (!array_key_exists('selected_crate',$_SESSION)) {
+            $_SESSION['selected_crate'] = 'default_crate';
+        }
+        elseif (!in_array($_SESSION['selected_crate'], $crateList)) {
             if (in_array('default_crate', $crateList)) {
                 $_SESSION['selected_crate'] = 'default_crate';
                 session_commit();
@@ -96,18 +93,16 @@ class CrateManager {
 
     public function getReadme($crateName) {
         $crate = $this->getCrate($crateName);
-        return $crate->getReadme($this->twig);
+        return $crate->getReadme();
     }
 
     private function getCrateRoot() {        
         \OCP\Util::writeLog('crate_it', "CrateManager::getCrateRoot()", \OCP\Util::DEBUG);
-        $userId = $this->api->getUserId();
-        $baseDir = \OC::$SERVERROOT.'/data/'.$userId;
-        return $baseDir.'/crates';
+        return Util::joinPaths(Util::getUserPath(), 'crates');
     }
 
-    public function getManifestData($crateName) {
-        \OCP\Util::writeLog('crate_it', "CrateManager::getManifestData(".$crateName.")", \OCP\Util::DEBUG);
+    public function getManifest($crateName) {
+        \OCP\Util::writeLog('crate_it', "CrateManager::getManifest(".$crateName.")", \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
         return $crate->getManifest();
     }
@@ -147,13 +142,17 @@ class CrateManager {
     public function packageCrate($crateName){
         $this->updateCrateCheckIcons($crateName);
         $crate = $this->getCrate($crateName);
-        return $crate->packageCrate($this->twig);
+        $tempdir = Util::joinPaths(Util::getTempPath(), \OCP\User::getUser());
+        if (!file_exists($tempdir)) {
+            mkdir($tempdir, 0755, true);
+        }
+        return $crate->packageCrate($tempdir);
     }
 
     public function generateEPUB($crateName){
         \OCP\Util::writeLog('crate_it', "CrateManager::generateEPUB() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
-        return $crate->generateEPUB($this->twig);
+        return $crate->generateEPUB();
     }
     
     private function updateCrateCheckIcons($crateName) {        
@@ -204,18 +203,17 @@ class CrateManager {
     public function checkCrate($crateName) {
         \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - ".$crateName, \OCP\Util::DEBUG);
         $crate = $this->getCrate($crateName);
-        
-        $files = $crate->getAllFilesAndFolders();     
-        $res = array();
+        $files = $crate->getAllFilesAndFolders();
+        $result = array();
         foreach ($files as $filepath) {
             \OCP\Util::writeLog('crate_it', "CrateManager::checkCrate() - checking ".$filepath, \OCP\Util::DEBUG);
-            $file_exist = file_exists($filepath); 
+            $file_exist = \OC\Files\Filesystem::file_exists($filepath);
             if (!$file_exist) {
-                $res[basename($filepath)] = $file_exist; 
+                $result[basename($filepath)] = $file_exist;
             }
         }
         $this->updateCrateCheckIcons($crateName);
-        return $res;
+        return $result;
     }
     
     public function getManifestFileContent($crateName) {

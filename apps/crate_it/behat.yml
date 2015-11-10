@@ -6,3 +6,12 @@ default:
       base_url: 'http://localhost:8080'
       goutte: ~
       selenium2: ~
+
+jenkins:
+  filters:
+    tags: ~@wip
+  extensions:
+    Behat\MinkExtension\Extension:
+      base_url: 'http://localhost'
+      goutte: ~
+      selenium2: ~

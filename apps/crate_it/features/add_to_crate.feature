@@ -11,6 +11,17 @@ Feature: Add files and folders to a crate
     And I have file "\&" within the root folder
     And I have file "file2.txt" within "folder1/folder2"
     And I'm logged in to ownCloud as "test"
+    And I go to the files page
+
+    #CRATEIT-255
+  Scenario: A user can see selected crate
+    Then I should see selected crate "default_crate"
+    Then I go to the crate_it page
+    When I click the new crate button
+    And I fill in "New Crate Name" with "feature_test_crate"
+    Then I press "Create" on the popup dialog
+    And I go to the files page
+    Then I should see selected crate "feature_test_crate"
 
   #CRATEIT-46
   Scenario: A user can add a file to a crate
@@ -32,41 +43,32 @@ Feature: Add files and folders to a crate
     Then I go to the crate_it page
     Then "folder2" should not be visible in the current crate
     When I toggle expand on "folder1"
-    #And I wait for 2 seconds
     Then "folder2" should be visible in the current crate
     When I toggle expand on "folder1"
     Then "folder2" should not be visible in the current crate
 
   #CRATEIT-46
   Scenario: A user can add a file to a crate multiple times
-    When I go to the crate_it page
-    And I clear the crate
-    And I press "Clear" on the popup dialog
-    And I go to the files page
     When I add "file.txt" to the current crate
-    And I wait for 1 seconds
     And I add "file.txt" to the current crate
     When I go to the crate_it page
-	Then the default crate should contain "file.txt,file.txt" within the root folder, in that order
+    Then the default crate should contain "file.txt,file.txt" within the root folder, in that order
 
   #CRATEIT-46
   Scenario: A user can add a folder to a crate multiple times
     When I add "folder1" to the current crate
-    And I wait for 1 seconds
     And I add "folder1" to the current crate
     When I go to the crate_it page
-	Then the default crate should contain "folder1,folder1" within the root folder, in that order
+    Then the default crate should contain "folder1,folder1" within the root folder, in that order
 
   #CRATEIT-46
   Scenario: Files and folders are added to a crate sequentially
     When I add "file.txt" to the current crate
     And I add "folder1" to the current crate
-    And I wait for 1 seconds
     And I add "file.txt" to the current crate
-    And I wait for 1 seconds
     And I add "folder1" to the current crate
     When I go to the crate_it page
-	Then the default crate should contain "file.txt,folder1,file.txt,folder1" within the root folder, in that order
+    Then the default crate should contain "file.txt,folder1,file.txt,folder1" within the root folder, in that order
 
   #CRATEIT-46
   Scenario: Adding a subfolder to a crate ignores parent folders
@@ -80,3 +82,31 @@ Feature: Add files and folders to a crate
     When I add "&" to the current crate
     Then I go to the crate_it page
     Then the default crate should contain "&" within the root folder
+
+  #CRATEIT-239
+  Scenario: A user can add a file named _html to a crate
+    When I go to the crate_it page
+    And I have file "_html" within the root folder
+    And I go to the files page
+    When I add "_html" to the current crate
+    Then I go to the crate_it page
+    Then the default crate should contain "_html" within the root folder
+
+  #CRATEIT-239
+  Scenario: A user can not add a folder named _html to a crate
+    When I go to the crate_it page
+    And I have folders "_html"
+    And I go to the files page
+    When I add "_html" to the current crate
+    Then I go to the crate_it page
+    Then the default crate should not contain "_html" anywhere
+
+  #CRATEIT-239
+  Scenario: A nested _html folder is ignored when adding to a crate
+    When I go to the crate_it page
+    And I have folders "folder1/_html"
+    And I go to the files page
+    When I add "folder1" to the current crate
+    Then I go to the crate_it page
+    And I expand 'folder1'
+    Then the default crate should not contain "_html" anywhere

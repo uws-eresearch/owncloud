@@ -417,7 +417,7 @@ class BagIt
      * @param string $dest The file name for the destination file. This should 
      * be relative to the bag directory.
      *
-     * @return void
+     * @return bool true on success or false on failure.
      */
     function addFile($src, $dest)
     {
@@ -435,7 +435,7 @@ class BagIt
             mkdir($dirname, 0777, true);
         }
 
-        copy($src, $fulldest);
+        return copy($src, $fulldest);
     }
 
 

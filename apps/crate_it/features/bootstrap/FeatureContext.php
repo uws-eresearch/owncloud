@@ -25,9 +25,10 @@ require_once 'vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
 class FeatureContext extends MinkContext
 {
 
-    private static $file_root = '/var/www/html/owncloud/data/test/files/';
-    private static $crate_root = '/var/www/html/owncloud/data/test/crates/';
-    private static $ssh_command = 'ssh -i ../../puphpet/files/dot/ssh/id_rsa -p 2222 root@127.0.0.1 ';
+    private static $DATA_ROOT = '/var/lib/owncloud/data/';
+    private static $FILE_ROOT = '/var/lib/owncloud/data/test/files/';
+    private static $CRATE_ROOT = '/var/lib/owncloud/data/test/crates/';
+    private static $SSH_COMMAND = 'vagrant ssh -c ';
 
     /**
      * Initializes context.
@@ -49,6 +50,7 @@ class FeatureContext extends MinkContext
         $this->fillField('user', $user);
         $this->fillField('password', $user);
         $this->pressButton('submit');
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -116,7 +118,7 @@ class FeatureContext extends MinkContext
      * @Given /^I have folders? "([^"]*)"$/
      */
     public function iHaveFolders($folders) {
-        $command = 'mkdir -m 755 -p '.self::$file_root.$folders;
+        $command = 'mkdir -m 755 -p '.self::$FILE_ROOT.$folders;
         $this->exec_sh_command($command);
     }
 
@@ -126,7 +128,7 @@ class FeatureContext extends MinkContext
     public function iHaveFileWithin($file, $folder)
     {
         $folder = (!empty($folder) ? $folder.'/' : $folder);
-        $command = 'touch '.self::$file_root.$folder.$file;
+        $command = 'touch '.self::$FILE_ROOT.$folder.$file;
         $this->exec_sh_command($command);
     }
 
@@ -160,17 +162,14 @@ class FeatureContext extends MinkContext
     public function iAddToTheCurrentCrate($item) {
         $this->spin(function($context) use ($item) {
             $page = $context->getSession()->getPage();
-            // $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//label')->click();
-            $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//label');
+            $el = $page->find('xpath', "//span[starts-with(@class,'nametext')][.='$item']");
+            $el->mouseOver();
+            $el = $page->find('xpath', "//span[starts-with(@class,'nametext')][.='$item']/following-sibling::*[starts-with(@class,'fileactions')]/a[@data-action='Add to crate']");
             if (!$el->isVisible()) {
                 throw new Exception('The element should be visible');
             }
             $el->click();
-            $el = $page->find('xpath', '//tr[@data-file="' . $item. '"]//a[@data-action="Add to crate"]');
-            if (!$el->isVisible()) {
-                throw new Exception('The element should be visible');
-            }
-            $el->click();
+            $context->waitForPageToLoad();
             return true;	
         });
     }
@@ -234,20 +233,18 @@ class FeatureContext extends MinkContext
     /**
      * @Then /^the default crate should contain "([^"]*)" within the root folder, in that order$/
      */
-    public function theDefaultCrateShouldContainWithinTheRootFolderInThatOrder($arg1)
-    {
+    public function theDefaultCrateShouldContainWithinTheRootFolderInThatOrder($items) {
         $page = $this->getSession()->getPage();
-    	$web_assert = new WebAssert($this->getSession());
+    	// $web_assert = new WebAssert($this->getSession());
 		$nodes = $page->findAll('xpath', '//div[@id="files"]/ul/li/ul/li/div/span');
-        $node_order = array();
+        $actualOrder = array();
         foreach ($nodes as $node) {
-            $node_order[] = $node->getText();
+            $actualOrder[] = $node->getText();
         }
-		$expected_order = explode(',',$arg1);
-		$difference = array_diff($node_order, $expected_order);
-		if ( count($difference) > 0)
-		{
-			throw new Exception('The node order is "' .serialize($node_order). '" instead of "' .serialize($expected_order). '"');
+		$expectedOrder = explode(',',$items);
+		$difference = array_diff($expectedOrder, $actualOrder);
+		if (count($difference) > 0) {
+			throw new Exception('The node order is "' .serialize($actualOrder). '" instead of "' .serialize($expectedOrder). '"');
 		}
     }
 	
@@ -271,7 +268,7 @@ class FeatureContext extends MinkContext
      * @Given /^I have no files$/
      */
     public function iHaveNoFiles() {
-        $command = "rm -rf /var/www/html/owncloud/data/test/files/*";
+        $command = 'rm -rf '.self::$FILE_ROOT.'*';
         $this->exec_sh_command($command);
     }
 
@@ -434,13 +431,13 @@ class FeatureContext extends MinkContext
      */
     public function iHaveCrate($crateName) {
         // $mainfest = '{"description":"","creators":[],"activities":[],"vfs":[{"id":"rootfolder","name":"'.$crateName.'","folder":true,"children":[]}]}';
-        $mainfest = '"{\"description\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
-        $data_path = self::$crate_root.$crateName.'/data';
+        $mainfest = '"{\"description\":\"\",\"data_retention_period\":\"\",\"creators\":[],\"activities\":[],\"vfs\":[{\"id\":\"rootfolder\",\"name\":\"'.$crateName.'\",\"folder\":true,\"children\":[]}]}"';
+        $data_path = self::$CRATE_ROOT.$crateName.'/data';
         $command = "mkdir -m 755 -p $data_path\\";
         $this->exec_sh_command($command);
         $command = "echo $mainfest | sudo tee $data_path/manifest.json";
         $this->exec_sh_command($command);
-        $command = 'chown -R apache:apache '.self::$crate_root;
+        $command = 'chown -R apache:apache '.self::$CRATE_ROOT;
         $this->exec_sh_command($command);
     }
 
@@ -448,7 +445,7 @@ class FeatureContext extends MinkContext
      * @Given /^I have no crates$/
      */
     public function iHaveNoCrates() {
-        $command = 'rm -rf '.self::$crate_root;
+        $command = 'rm -rf '.self::$CRATE_ROOT;
         $this->exec_sh_command($command);
     }
 
@@ -616,17 +613,13 @@ class FeatureContext extends MinkContext
     /**
      * @Then /^I fill in "([^"]*)" with a long string of (\d+) characters$/
      */
-    public function iFillInWithALongStringOfCharacters($arg1, $arg2)
-    {
-        $value = str_repeat('a', $arg2);
-		if (strlen($value) != $arg2)
-		{
+    public function iFillInWithALongStringOfCharacters($field, $stringLength) {
+        $value = str_repeat('a', $stringLength);
+		if (strlen($value) != $stringLength) {
 			throw new Exception('Repeat characters fail');
 		}
-		$page = $this->getSession()->getPage();
-		$xpath = '//*[@id="'.$arg1.'"]';
-        $desc = $page->find('xpath', $xpath);
-		$desc->setValue($value);
+        $script = "$('#$field').val('$value').keyup();";
+        $this->getSession()->executeScript($script);
     }
 	
     /**
@@ -701,15 +694,6 @@ class FeatureContext extends MinkContext
         $web_assert = new WebAssert($this->getSession());
         $web_assert->elementExists('xpath', '//button[text() = "'.$buttonText.'" and @disabled]', $el);
     }
-
-	
-	public function grantNumberSectionCollapsed()
-	{
-		$page = $this->getSession()->getPage();
-		$xpath = '//div[@id="grant-numbers"]';
-		$el = $page->find('xpath', $xpath);
-		return !$el->isVisible();
-	}
 
     private function mockActivityLookup()
     {
@@ -808,19 +792,46 @@ JS;
     public function iExpandTheGrantNumberMetadataSection()
     {
 		$this->spin(function($context) {
-		    if ($context->grantNumberSectionCollapsed())
-			{
-	    		$page = $context->getSession()->getPage();
-				$xpath = '//a[@href="#grant-numbers"]/i';
-		        $expand_trigger = $page->find('xpath', $xpath);
-				$expand_trigger->click();
-			}
+    		$page = $context->getSession()->getPage();
+			$xpath = '//a[@href="#grant-numbers"]/i';
+	        $expand_trigger = $page->find('xpath', $xpath);
+			$expand_trigger->click();
+
 			return true;
 		});
         $this->waitForPageToLoad();
     }
 
-	
+    /**
+     * @Given /^I expand the creator metadata section$/
+     */
+    public function iExpandTheCreatorMetadataSection()
+    {
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $xpath = '//a[@href="#data-creators"]/i';
+            $expand_trigger = $page->find('xpath', $xpath);
+            $expand_trigger->click();
+            return true;
+        });
+        $this->waitForPageToLoad();
+    }
+
+    /**
+     * @Given /^I expand the description metadata section$/
+     */
+    public function iExpandTheDescriptionMetadataSection()
+    {
+        $this->spin(function($context) {
+            $page = $context->getSession()->getPage();
+            $xpath = '//a[@href="#crate-information"]/i';
+            $expand_trigger = $page->find('xpath', $xpath);
+            $expand_trigger->click();
+            return true;
+        });
+        $this->waitForPageToLoad();
+    }
+    	
     /**
      * @Given /^I click the search grant number button$/
      */
@@ -876,9 +887,9 @@ JS;
             $el->click();
             return true;
         });
-        sleep(2);
         // clear mockjax
         $this->getSession()->executeScript('$.mockjaxClear();');
+        $this->waitForPageToLoad();
     }
 
     /**
@@ -896,7 +907,6 @@ JS;
             $el->click();
             return true;
         });
-        sleep(2);
         // clear mockjax
         $this->getSession()->executeScript('$.mockjaxClear();');
     }
@@ -1142,6 +1152,17 @@ JS;
         $xpath = '//input[@id="save_description"]';
         $page->find('xpath', $xpath)->click();
     }
+
+    /**
+     * @Given /^I click the save editor button$/
+     */
+    public function iClickTheSaveEditorButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//button[@id="save_editor"]';
+        $page->find('xpath', $xpath)->click();
+        $this->waitForPageToLoad();
+    }
     
     /**
      * @Given /^I click the Cancel button$/
@@ -1170,18 +1191,16 @@ JS;
     /**
      * @Given /^I remove "([^"]*)" from the file system$/
      */
-    public function iRemoveFromTheFileSystem($arg1)
-    {
-        $command = "rm -rf /var/www/html/owncloud/data/test/files/$arg1";
+    public function iRemoveFromTheFileSystem($item) {
+        $command = 'rm -rf '.self::$FILE_ROOT.$item;
         $this->exec_sh_command($command);
     }
 
     /**
      * @Given /^I rename "([^"]*)" to "([^"]*)" in the file system$/
      */
-    public function iRenameToInTheFileSystem($arg1, $arg2)
-    {
-        $command = "mv /var/www/html/owncloud/data/test/files/$arg1 /var/www/html/owncloud/data/test/files/$arg2";
+    public function iRenameToInTheFileSystem($oldName, $newName) {
+        $command = 'mv '.self::$FILE_ROOT.$oldName.' '.self::$FILE_ROOT.$newName;
         $this->exec_sh_command($command);
     }
 
@@ -1323,7 +1342,7 @@ $.mockjax({
     url: c_url,
     type: 'post',
     dataType: 'json',
-    responseText : {"msg":"default_crate successfully published to test collection"}
+    responseText : {"msg":"default_crate successfully submitted to test collection"}
   });
 JS;
         $this->getSession()->executeScript($js);
@@ -1351,11 +1370,13 @@ JS;
 
     private function exec_sh_command($command) {
         if(getenv('TEST_ENV') == 'vagrant') {
-            $command = self::$ssh_command."'$command'";
+            $command = self::$SSH_COMMAND."'$command'";
         } else {
             $command = 'sudo '.$command;
         }
-        exec($command);
+        exec($command,$output);
+        return $output;
+
     }
     
     /**
@@ -1368,7 +1389,7 @@ JS;
         {
             $filename = $row['filename'];
             $size = $row['size_in_bytes'];
-            $filepath = self::$file_root.$filename;
+            $filepath = self::$FILE_ROOT.$filename;
             $command = "dd if=/dev/zero of=$filepath bs=$size count=1";
             $this->exec_sh_command($command);
         }
@@ -1377,24 +1398,22 @@ JS;
     /**
      * @Then /^the selected crate should have size "([^"]*)"$/
      */
-    public function theSelectedCrateShouldHaveSize($arg1)
+    public function theSelectedCrateShouldHaveSize($expected)
     {
         $page = $this->getSession()->getPage();
         $xpath = '//*[@id="crate_size_human"]';       
         $el = $page->find('xpath', $xpath);
-        $size = $el->getHtml();
-        assertEquals($size, $arg1);
+        $actual = $el->getHtml();
+        assertEquals($expected, $actual);
     }
     
     /**
      * @Then /^I should see green ticks next to these items$/
      */
-    public function iShouldSeeGreenTicksNextToTheseItems(TableNode $table)
-    {
+    public function iShouldSeeGreenTicksNextToTheseItems(TableNode $table) {
         $rows = $table->getHash();
         $page = $this->getSession()->getPage();
-        foreach ($rows as $row)
-        {
+        foreach ($rows as $row) {
             $filename = $row['filename'];
             $web_assert = new WebAssert($this->getSession());
             $root_folder = $web_assert->elementExists('xpath', '//span[.="'.$filename.'"]/i[@class="fa fa-check"]', $page);
@@ -1442,5 +1461,315 @@ JS;
         
     }
 
+    /**
+     * @Given /^the browser is maximised$/
+     */
+    public function theBrowserIsMaximised() {
+        $width = $this->getSession()->evaluateScript('return screen.width;');
+        $height = $this->getSession()->evaluateScript('return screen.height;');
+        $this->getSession()->getDriver()->resizeWindow($width, $height, 'current');
+    }
+
+
+    /**
+     * @Given /^I have no published crates$/
+     */
+    public function iHaveNoPublishedCrates() {
+        $command = 'rm -rf '.self::$DATA_ROOT.'/publish/'.'*test*';
+        $this->exec_sh_command($command);
+    }
+
+    /**
+     * @Given /^I have no redbox alerts$/
+     */
+    public function iHaveNoRedboxAlerts() {
+        $command = 'rm -rf '.self::$DATA_ROOT.'/alerts/'.'*test*.xml';
+        $this->exec_sh_command($command);
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field WorkflowSource with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveFieldWorkflowSourceWithValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:WorkflowSource>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $workflowsource= $this->exec_sh_command($command);
+        if ($workflowsource[0] != $arg2)
+        {
+            throw new Exception("The redbox alert xml file should have tag WorkflowSource with value '$arg2', but it's '$workflowsource'");
+        }
+
+    }
+
+    /**
+     * @Then /^the selected crate should have data retention period "([^"]*)"$/
+     */
+    public function theSelectedCrateShouldHaveDataRetentionPeriod($expected)
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//*[@id="retention_period_value"]';
+        $el = $page->find('xpath', $xpath);
+        $actual = $el->getHtml();
+        assertEquals($expected, $actual);
+    }
+
+    /**
+     * @When /^I click the edit data retention period button$/
+     */
+    public function iClickTheEditDataRetentionPeriodButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//button[@id="choose_retention_period"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @When /^I click the edit embargo details button$/
+     */
+    public function iClickTheEditEmbargoDetailsButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//button[@id="choose_embargo_details"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @When /^I check the radio button "([^"]*)"$/
+     */
+    public function iCheckTheRadioButton($radioButtonText) {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@value='.$radioButtonText.']';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click the Save button for data retention period$/
+     */
+    public function iClickTheSaveButtonForDataRetentionPeriod()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="save_retention_period"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click the save embargo details button$/
+     */
+    public function iClickTheSaveEmbargoDetailsButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="save_embargo"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I check the embargo enabled radio button$/
+     */
+    public function iCheckTheEmbargoEnabledRadioButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="embargo_enabled_yes"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I check the embargo disabled radio button$/
+     */
+    public function iCheckTheEmbargoDisabledRadioButton()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//input[@id="embargo_enabled_no"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I should see the crate data retention period as "([^"]*)"$/
+     */
+    public function iShouldSeeTheCrateDataRetentionPeriodAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//div[@id="retention_peroid_list"]/div[@id="retention_period_value"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        assertEquals($arg1, $str_desc);
+    }
+
+    /**
+     * @Given /^I should see embargo enabled as "([^"]*)"$/
+     */
+    public function iShouldSeeEmbargoEnabledAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//span[@id="embargo_enabled"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        assertEquals($arg1, $str_desc);
+    }
+
+    /**
+     * @Given /^I should see embargo until as "([^"]*)"$/
+     */
+    public function iShouldSeeEmbargoUntilAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//span[@id="embargo_until"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        assertEquals($arg1, $str_desc);
+    }
+
+    /**
+     * @Given /^I should see embargo until as today$/
+     */
+    public function iShouldSeeEmbargoUntilAsToday()
+    {
+        $this->iShouldSeeEmbargoUntilAs(date('Y-m-d'));
+    }
+
+    /**
+     * @Given /^I should see embargo note as "([^"]*)"$/
+     */
+    public function iShouldSeeEmbargoNoteAs($arg1)
+    {
+        $this->waitForPageToLoad();
+        $page = $this->getSession()->getPage();
+        $xpath = '//span[@id="embargo_note"]';
+        $desc = $page->find('xpath', $xpath);
+        $str_desc = (string)$desc->getText() ;
+        assertEquals($arg1, $str_desc);
+    }
+
+    /**
+     * @Given /^I click to wrap Information$/
+     */
+    public function iClickToWrapInformation()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="crate-information-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click to wrap Creators$/
+     */
+    public function iClickToWrapCreators()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="data-creators-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click to wrap Grants$/
+     */
+    public function iClickToWrapGrants()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="grant-numbers-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click to wrap Data Retention Period$/
+     */
+    public function iClickToWrapDataRetentionPeriod()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="data-retention-period-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click to wrap Embargo Details$/
+     */
+    public function iClickToWrapEmbargoDetails()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//a[@id="embargo-details-head"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I click the date picker$/
+     */
+    public function iClickTheDatePicker()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//i[@id="embargo_datetimepicker_icon"]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^I select today from the date picker$/
+     */
+    public function iSelectTodayFromTheDatePicker()
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//td[contains(@class,"active")]';
+        $page->find('xpath', $xpath)->click();
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field DataRetentionPeriod with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveFieldDataRetentionPeriodWithValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:DataRetentionPeriod>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $retention= $this->exec_sh_command($command);
+        if (!empty($retention)){
+            $retention = $retention[0];
+        } elseif (empty($retention) && $arg2 == '') {
+            $retention = '';
+        } else {
+            $retention = 'Error';
+        }
+        assertEquals($arg2, $retention);
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field EmbargoEnabled with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveEmbargoEnabledValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:EmbargoEnabled>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $result = $this->exec_sh_command($command);
+        assertEquals($arg2, $result[0]);
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field EmbargoDate of today$/
+     */
+    public function redboxAlertsXmlFileShouldHaveEmbargoDateToday($arg1)
+    {
+        $today = date('Y-m-d');
+        $command = 'grep -oPm1 "(?<=:EmbargoDate>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $result = $this->exec_sh_command($command);
+        assertEquals($today, $result[0]);
+    }
+
+    /**
+     * @Given /^redbox alerts xml file "([^"]*)" should have field EmbargoDetails with value "([^"]*)"$/
+     */
+    public function redboxAlertsXmlFileShouldHaveEmbargoDetailsValue($arg1, $arg2)
+    {
+        $command = 'grep -oPm1 "(?<=:EmbargoDetails>)[^<]+" '.self::$DATA_ROOT . 'alerts/' . "*$arg1*.xml";
+        $result = $this->exec_sh_command($command);
+        assertEquals($arg2, $result[0]);
+    }
+
+    /**
+     * @Then /^I should see selected crate "([^"]*)"$/
+     */
+    public function theIShouldSeeAsSelectedCrate($expected)
+    {
+        $page = $this->getSession()->getPage();
+        $xpath = '//*[@id="selectedCrate"]';
+        $el = $page->find('xpath', $xpath);
+        $actual = $el->getHtml();
+        assertEquals('Selected Crate: '.$expected, $actual);
+    }
 }
 

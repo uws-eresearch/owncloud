@@ -71,7 +71,10 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       type: 'post',
       dataType: 'json',
       data: {
-        field: definition.manifestField,
+        fields: [{
+          field: definition.manifestField,
+          value: ''
+        }]
       },
       success: function(data) {
         searchResultsList = searchResultsList.concat(selectedList);
@@ -246,8 +249,10 @@ function SearchManager(definition, selectedList, $resultsUl, $selectedUl, $notif
       type: 'post',
       dataType: 'json',
       data: {
-        field: definition.manifestField,
-        value: selectedList
+        fields: [{
+          field: definition.manifestField,
+          value: selectedList
+        }]
       },
       success: function(data) {
         if ($sourceLi) {

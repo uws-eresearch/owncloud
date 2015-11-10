@@ -2,9 +2,9 @@
   <body>
     <h1>Table of Contents</h1>
     <p>
-      {% for file in files %}
-        <a href="file://{{ file.preview }}">{{ file.name }}</a><br>
-      {% endfor %}
+      <?php foreach($_['files'] as $file) { ?>
+        <a href="file://<?php p($_['file.preview']) ?>"><?php p($_['file.name']) ?></a><br>
+      <?php } ?>
     </p>
   </body>
 </html>

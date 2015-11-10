@@ -1,0 +1,115 @@
+---
+- hosts: all
+  tasks:
+
+  - name: Disable iptables
+    service: >
+      name=iptables
+      enabled=no
+      state=stopped
+    sudo: yes
+
+  - name: Remove yum priorities that results in downloading the wrong Owncloud versions
+    yum: >
+      name=yum-plugin-priorities
+      state=absent
+    sudo: yes
+
+  - name: Install EPEL repository
+    yum: >
+      name=epel-release
+      state=present
+    sudo: yes
+
+  - name: Install REMI repository
+    yum: >
+      name=http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+      state=present
+    sudo: yes
+
+  - name: Install Owncloud
+    yum: name=owncloud-7.0.10-1.el6
+    sudo: yes
+
+  - name: Allow host OS to access server and configure Owncloud
+    file: >
+      src=/etc/httpd/conf.d/owncloud-access.conf.avail
+      dest=/etc/httpd/conf.d/z-owncloud-access.conf
+      state=link
+    sudo: yes
+
+  - name: Give Apache write access to Owncloud
+    file: >
+      path=/usr/share/owncloud
+      owner=apache
+      group=apache
+    sudo: yes
+
+  - name: Install git
+    yum: name=git
+    sudo: yes
+
+  - name: Install Simple Sword Server for Testing
+    git: >
+      repo=https://github.com/swordapp/Simple-Sword-Server.git
+      dest=/usr/share/simple-sword-server
+    sudo: yes
+
+  - name: Change directory permissions
+    file: >
+      path=/usr/share/simple-sword-server
+      owner=apache
+      group=apache
+      recurse=yes
+    sudo: yes
+
+  - name: Overwrite Simple Sword Server with our own config
+    copy: >
+      src=sss.py
+      dest=/usr/share/simple-sword-server/sss/sss.py
+      owner=apache
+      group=apache
+    sudo: yes
+
+  - name: Install python libraries
+    yum: name={{item}}
+    with_items:
+      - python-pip
+      - python-devel
+      - libxml2-devel
+      - libxslt-devel
+      - httpd-devel
+      - mod_wsgi
+    sudo: yes
+
+  - name: Install Simple Sword Server python dependencies
+    command: pip install web.py lxml
+    sudo: yes
+
+  - name: Copy Simple Sword Server Apache config
+    copy: >
+      src=sss.conf
+      dest=/etc/httpd/conf.d/
+      owner=apache
+      group=apache
+    sudo: yes
+
+  - name: Install sample cr8it config
+    copy: >
+      dest=/var/lib/owncloud/data/cr8it_config.json
+      src=./apps/crate_it/sample_cr8it_config.json
+    sudo: yes
+
+  - name: Restart Apache
+    service: >
+      name=httpd
+      enabled=yes
+      state=restarted
+    sudo: yes
+
+# TODO: Move cr8it_config.json to correct folder
+# TODO: change owncloud 7 config from syslog to owncloud log
+# TODO: Turn on php error logging 'syslog' to 'owncloud' in cr8it config.json
+# TODO: Copy vagrant guest ssh authorized_keys to root account so behat tests work
+# TODO: Update default cra8it config and start sword server so tests will work
+# TODO: Install calibre so ePub generation will work

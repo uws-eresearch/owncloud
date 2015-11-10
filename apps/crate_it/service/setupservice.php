@@ -2,23 +2,15 @@
 
 namespace OCA\crate_it\Service;
 
-
+use OCA\crate_it\lib\Util;
 
 class SetupService {
     
-    /**
-     * @var CrateManager
-     */
     private $crateManager;
     
-    /**
-     * @var Publisher
-     */
     private $publisher;
 
-    /**
-     * @var configParams
-     */
+    // TODO add other defaults here
     private static $params = array('description_length' => 6000, 'max_sword_mb' => 0, 'max_zip_mb' => 0,);
 
     private static $loaded = false;
@@ -41,13 +33,20 @@ class SetupService {
         $this->loadConfigParams();
         $selectedCrate = $this->getSelectedCrate();
         self::$params['selected_crate'] = $selectedCrate;
-        $this->publisher->setEndpoints(self::$params['publish endpoints']['sword']);
+        $this->publisher->registerPublishers(self::$params['publish endpoints']);
         self::$params['collections'] = $this->publisher->getCollections();
         self::$params['crates'] = $this->crateManager->getCrateList();
-        $manifestData = $this->crateManager->getManifestData($selectedCrate);
-        self::$params['description'] = $manifestData['description'];  
-        $this->getReleaseInfo();
+        $manifestData = $this->crateManager->getManifest($selectedCrate);
+        self::$params['description'] = $manifestData['description'];
+        self::$params['data_retention_period'] = $manifestData['data_retention_period'];
+        self::$params['embargo_enabled'] = array_key_exists('embargo_enabled',$manifestData) ? $manifestData['embargo_enabled']:'';
+        self::$params['embargo_date'] = array_key_exists('embargo_date',$manifestData) ? $manifestData['embargo_date']:'';
+        self::$params['embargo_details'] = array_key_exists('embargo_details',$manifestData) ? $manifestData['embargo_details']:'';
+
+        $info = \OC_App::getAppInfo('crate_it');
+        self::$params['version'] = $info['version'];
     }
+    
     
     private function getSelectedCrate() {
         if(!isset($_SESSION['selected_crate'])) {
@@ -56,32 +55,16 @@ class SetupService {
         return $_SESSION['selected_crate'];
     }
 
-    private function getReleaseInfo() {
-        $git = array();
-        $params = self::$params['git'];
-        exec("git --git-dir={$params['git-dir']} --work-tree={$params['work-tree']} describe --tags", $git);
-        $git = explode('-', $git[0]);
-        self::$params['release'] = $git[0];
-        self::$params['commit'] = $git[2];
-    }
-
 
     private function loadConfigParams() {
-        $config = $this->readConfig();
+        $config = Util::getConfig();
+        // TODO: No error handling if config is null
         foreach($config as $key => $value) {
-            \OCP\Util::writeLog('crate_it', "SetupService::loadConfigParams() - loading $key:$value", \OCP\Util::DEBUG);         
-            
+            \OCP\Util::writeLog('crate_it', "SetupService::loadConfigParams() - loading $key:".json_encode($value), \OCP\Util::DEBUG);
             self::$params[$key] = $value;
         }
     }
 
-    private function readConfig() {
-        $config = NULL;
-        $configFile = \OC::$SERVERROOT . '/data/cr8it_config.json';
-        if (file_exists($configFile)) {
-          $config = json_decode(file_get_contents($configFile), true); // convert it to an array.
-        }
-        return $config;
-    }
 
 }
+

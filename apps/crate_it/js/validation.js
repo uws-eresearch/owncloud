@@ -21,11 +21,11 @@ CrateIt.Validation = {
         }
       }
       return result;
-    }
+    };
 
     this.addValidator = function(validator) {
       validators.push(validator);
-    }
+    };
 
     var checkValidity = function() {
       var valid = _self.validate();
@@ -34,16 +34,16 @@ CrateIt.Validation = {
       } else {
         showInvalidMessage();
       }
-    }
+    };
 
     var showInvalidMessage = function() {
       $message.text(invalidMessage);
       $message.show();
-    }
+    };
 
     var hideInvalidMessage = function() {
       $message.hide();
-    }
+    };
 
     $field.keyup(checkValidity);
 
@@ -66,7 +66,7 @@ CrateIt.Validation = {
         validators[key] = validator;
       }
       validator.addValidator(fieldValidator);
-    }
+    };
 
 
     this.validate = function() {
@@ -82,7 +82,7 @@ CrateIt.Validation = {
       } else {
         $submit.prop('disabled', true);
       }
-    }
+    };
 
     $form.keyup(_self.validate);
 
@@ -95,7 +95,7 @@ CrateIt.Validation = {
 
     this.isValid = function(value) {
       return regex.test(value);
-    }
+    };
 
   },
 
@@ -104,7 +104,7 @@ CrateIt.Validation = {
 
     this.isValid = function(value) {
       return value.length <= maxLength;
-    }
+    };
 
   },
 
@@ -113,7 +113,7 @@ CrateIt.Validation = {
 
     this.isValid = function(value) {
       return !(!value || /^\s*$/.test(value));
-    }
+    };
 
   },
 
@@ -124,8 +124,19 @@ CrateIt.Validation = {
 
     this.isValid = function(value) {
       return regex.test(value);
-    }
+    };
 
+  },
+  
+  // NOTE: This is unused atm - the crate name validation is done differently currently
+  // Should modify to use this validation scheme instead (when we have time)
+  CrateNameValidator: function() {
+      this.invalidMessage = "Invalid name. Illegal characters '\\', '/', '<', '>', ':', '\"', '|', '?' and '*' are not allowed";
+      var regex = /[\/\\\<\>:\"\|?\*]/;
+      
+      this.isValid = function(value) {
+        return !regex.test(value);
+      };
   },
 
   UrlValidator: function() {
@@ -135,7 +146,7 @@ CrateIt.Validation = {
 
     this.isValid = function(value) {
       return regex.test(value);
-    }
+    };
 
   },
 
@@ -149,8 +160,8 @@ CrateIt.Validation = {
       if (!$('#manual-creators').is(':visible')) {
         result = true;
       }
-      return result
-    }
+      return result;
+    };
   },
 
   OptionalValidator: function(validator) {
@@ -158,7 +169,7 @@ CrateIt.Validation = {
 
     this.isValid = function(value) {
       return /^\s*$/.test(value) || validator.isValid(value);
-    }
+    };
 
   }
 

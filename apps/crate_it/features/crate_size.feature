@@ -14,6 +14,7 @@ Feature: Crate Size Update
     | file4.txt | 8192          |
     | file5.txt | 1048576       |
     And I'm logged in to ownCloud as "test"
+    And I go to the files page
 
     #CRATEIT-205
     Scenario: Crate size updates when adding and removing files
@@ -27,11 +28,11 @@ Feature: Crate Size Update
       And I go to the files page
       And I add "file3.txt" to the current crate
       And I go to the crate_it page
-      Then the selected crate should have size "1.3 kB"
+      Then the selected crate should have size "1 kB"
       And I go to the files page
       And I add "file4.txt" to the current crate
       And I go to the crate_it page
-      Then the selected crate should have size "9.3 kB"
+      Then the selected crate should have size "9 kB"
       And I go to the files page
       And I add "file5.txt" to the current crate
       And I go to the crate_it page
@@ -49,17 +50,17 @@ Feature: Crate Size Update
       # size should be unchanged without refresh
       Then the selected crate should have size "1 MB"
       And I go to the crate_it page
-      Then the selected crate should have size "8.3 kB"
+      Then the selected crate should have size "8 kB"
       And I remove "file2.txt"
       Then I press "Remove" on the popup dialog
-      Then the selected crate should have size "8.1 kB"
+      Then the selected crate should have size "8 kB"
       And I remove "file4.txt"
       Then I press "Remove" on the popup dialog
       Then the selected crate should have size "150 B"
       And I go to the files page
       And I add "file4.txt" to the current crate
       And I go to the crate_it page
-      Then the selected crate should have size "8.1 kB"
+      Then the selected crate should have size "8 kB"
       # clear the crate
       And I clear the crate
       And I press "Clear" on the popup dialog

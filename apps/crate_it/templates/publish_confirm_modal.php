@@ -3,13 +3,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="publishConfirmModalLabel">Publish Confirmation</h4>
+        <h4 class="modal-title" id="publishConfirmModalLabel">Submit Confirmation</h4>
       </div>
       <div class="modal-body">
         <h4>Status</h4>
         <span id="publish-confirm-status"></span>
         <h4>Email Status</h4>
-        <p>Enter an email address to send the publish log to</p>
+        <p>Enter an email address to send the submission report to</p>
         <label for="publish-confirm-email" class="element-invisible">Email address</label>
         <input id="publish-confirm-email" type="text" class="modal-input"></input>
         <p>

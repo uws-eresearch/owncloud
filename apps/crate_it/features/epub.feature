@@ -9,6 +9,7 @@ Feature: Download ePub
     And I go to the crate_it page
 
   #CRATEIT-124
+  @wip
   Scenario: A user can see the download ePub button
     When I click the download button
     Then I should see "ePub"

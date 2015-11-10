@@ -5,12 +5,15 @@ Feature: Publish crates to an endpoint
   
   Background:
     Given I have no crates
+    And I have no published crates
+    And I have no redbox alerts
     And I'm logged in to ownCloud as "test"
     And I go to the crate_it page
 
 
   #CRATEIT-178
   Scenario: A user can see a metadata summary before publishing
+    When I click to wrap Creators
     When I click on "add-creator"
     Then I fill in the following:
       | add-creator-name  | Joe Bloggs     |
@@ -36,23 +39,22 @@ Feature: Publish crates to an endpoint
     Scenario: A user sees a message confirming a successful publish
       Given that I can publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
-      Then I should see "default_crate successfully published to test collection"
-      And I wait for 10 seconds
+      And I press "Submit" on the popup dialog
+      Then I should see "default_crate successfully submitted to test collection"
 
     #CRATEIT-59
     Scenario: A user can cancel publishing a crate
       Given that I can publish a crate
       When I click on "publish"
       And I press "Cancel" on the popup dialog
-      Then I should not see "default_crate successfully published to test collection"
+      Then I should not see "default_crate successfully submitted to test collection"
 
     #CRATEIT-59
     #CRATEIT-212
     Scenario: A user sees an error message if there were problems publishing a crate
       Given that I can not publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
+      And I press "Submit" on the popup dialog
       Then I should see "Error: there were problems zipping the crate"
 
     #CRATEIT-59
@@ -70,8 +72,8 @@ Feature: Publish crates to an endpoint
     Scenario: Publish confirm allows user to enter email address for confirmation
       Given that I can not publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
-      Then I should see "Enter an email address to send the publish log to"
+      And I press "Submit" on the popup dialog
+      Then I should see "Enter an email address to send the submission report to"
       Then the "Send" button in the popup dialog should be disabled
       When I fill in "publish-confirm-email" with "test@test.org"
       Then the "Send" button in the popup dialog should not be disabled
@@ -80,10 +82,27 @@ Feature: Publish crates to an endpoint
     Scenario: Publish confirm email address must be valid
       Given that I can not publish a crate
       When I click on "publish"
-      And I press "Publish" on the popup dialog
+      And I press "Submit" on the popup dialog
       When I fill in "publish-confirm-email" with "sdfd"
       Then I should see "Must be a valid email address"
       Then the "Send" button in the popup dialog should be disabled
 
+    #CRATEIT-248
+    Scenario: Redbox alert xml should contains cr8it identifier
+      When I click the new crate button
+      And I fill in "New Crate Name" with "feature_test_crate"
+      Then I press "Create" on the popup dialog
+      When I click on "publish"
+      And I press "Submit" on the popup dialog
+      Then redbox alerts xml file "feature_test_crate" should have field WorkflowSource with value "Owncloud-Cr8IT"
+
+      #CRATEIT-269
+    Scenario: Data retention period exists in Redbox xml file
+      When I click the new crate button
+      And I fill in "New Crate Name" with "feature_test_crate"
+      Then I press "Create" on the popup dialog
+      When I click on "publish"
+      And I press "Submit" on the popup dialog
+      Then redbox alerts xml file "feature_test_crate" should have field DataRetentionPeriod with value ""
 
 
